@@ -2979,13 +2979,13 @@ PWM_BLUE3
 Text Label 2250 10500 1    60   ~ 0
 PWM_BLUE4
 Text Label 4500 4700 0    60   ~ 0
-BUTTON1
+GRID_BUTTON1
 Text Label 4500 4600 0    60   ~ 0
-BUTTON2
+GRID_BUTTON2
 Text Label 4500 4500 0    60   ~ 0
-BUTTON3
+GRID_BUTTON3
 Text Label 4500 4400 0    60   ~ 0
-BUTTON4
+GRID_BUTTON4
 Entry Wire Line
 	4300 4300 4400 4400
 Entry Wire Line
@@ -2995,7 +2995,7 @@ Entry Wire Line
 Entry Wire Line
 	4300 4600 4400 4700
 Text HLabel 1800 4300 0    60   Output ~ 0
-BUTTON[1..4]
+GRID_BUTTON[1..4]
 Text HLabel 1800 6400 0    60   Input ~ 0
 PWM_RED[1..4]
 Text HLabel 1800 8500 0    60   Input ~ 0
@@ -6338,7 +6338,7 @@ F 3 "" H 19050 6600 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 Text Label 1850 4300 0    60   ~ 0
-BUTTON[1..4]
+GRID_BUTTON[1..4]
 Text Label 1850 6400 0    60   ~ 0
 PWM_RED[1..4]
 Text Label 1850 8500 0    60   ~ 0
@@ -7027,4 +7027,5 @@ F 3 "" H 3500 13850 50  0001 C CNN
 	1    3500 13850
 	1    0    0    -1  
 $EndComp
+Connection ~ 6050 4400
 $EndSCHEMATC
