@@ -79,13 +79,13 @@ Entry Wire Line
 	12200 3750 12300 3650
 Text HLabel 13050 3350 2    60   Output ~ 0
 PWM_RED[1..4]
-Text Label 11000 4050 0    60   ~ 0
+Text Label 11100 5750 0    60   ~ 0
 PWM_GREEN1
-Text Label 11000 4150 0    60   ~ 0
+Text Label 11100 5850 0    60   ~ 0
 PWM_GREEN2
-Text Label 11000 5150 0    60   ~ 0
+Text Label 11100 5950 0    60   ~ 0
 PWM_GREEN3
-Text Label 11000 5250 0    60   ~ 0
+Text Label 11100 6050 0    60   ~ 0
 PWM_GREEN4
 Entry Wire Line
 	12200 4050 12300 3950
@@ -95,15 +95,15 @@ Entry Wire Line
 	12200 5150 12300 5050
 Entry Wire Line
 	12200 5250 12300 5150
-Text HLabel 12500 3950 2    60   Output ~ 0
+Text HLabel 13200 5650 2    60   Output ~ 0
 PWM_GREEN[1..4]
-Text Label 11200 5750 0    60   ~ 0
+Text Label 11000 4050 0    60   ~ 0
 PWM_BLUE1
-Text Label 11200 5850 0    60   ~ 0
+Text Label 11000 4150 0    60   ~ 0
 PWM_BLUE2
-Text Label 11200 5950 0    60   ~ 0
+Text Label 11000 5150 0    60   ~ 0
 PWM_BLUE3
-Text Label 11200 6050 0    60   ~ 0
+Text Label 11000 5250 0    60   ~ 0
 PWM_BLUE4
 Entry Wire Line
 	12200 5750 12300 5650
@@ -113,7 +113,7 @@ Entry Wire Line
 	12200 5950 12300 5850
 Entry Wire Line
 	12200 6050 12300 5950
-Text HLabel 13100 5650 2    60   Output ~ 0
+Text HLabel 12500 3950 2    60   Output ~ 0
 PWM_BLUE[1..4]
 Wire Wire Line
 	10900 3450 12200 3450
@@ -148,7 +148,7 @@ Wire Wire Line
 Wire Wire Line
 	10900 6050 12200 6050
 Wire Bus Line
-	12300 5650 13100 5650
+	12300 5650 13200 5650
 Wire Bus Line
 	12300 5650 12300 5950
 Wire Wire Line
@@ -1069,9 +1069,9 @@ Connection ~ 3400 8850
 Wire Wire Line
 	3900 9150 3800 9150
 Wire Wire Line
-	3800 9150 3800 9250
+	3800 9250 3800 9150
 Wire Wire Line
-	3800 9250 2800 9250
+	2800 9250 3800 9250
 Wire Wire Line
 	3400 9200 3400 9250
 Connection ~ 3400 9250
@@ -1164,9 +1164,9 @@ Text Label 12000 2750 0    60   ~ 0
 COL[1..6]
 Text Label 12350 3350 0    60   ~ 0
 PWM_RED[1..4]
-Text Label 12350 3950 0    60   ~ 0
+Text Label 12400 5650 0    60   ~ 0
 PWM_GREEN[1..4]
-Text Label 12350 5650 0    60   ~ 0
+Text Label 12350 3950 0    60   ~ 0
 PWM_BLUE[1..4]
 Text Label 3850 4950 0    60   ~ 0
 GRID_BUTTON[1..4]
