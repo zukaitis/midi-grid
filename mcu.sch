@@ -333,9 +333,9 @@ Text Label 11000 4350 0    60   ~ 0
 COL2
 Text Label 11000 4450 0    60   ~ 0
 COL3
-Text Label 11000 3850 0    60   ~ 0
-COL4
 Text Label 11000 3950 0    60   ~ 0
+COL4
+Text Label 11000 3850 0    60   ~ 0
 COL5
 Text Label 11000 4950 0    60   ~ 0
 COL6
@@ -1069,9 +1069,9 @@ Connection ~ 3400 8850
 Wire Wire Line
 	3900 9150 3800 9150
 Wire Wire Line
-	3800 9250 3800 9150
+	3800 9150 3800 9250
 Wire Wire Line
-	2800 9250 3800 9250
+	3800 9250 2800 9250
 Wire Wire Line
 	3400 9200 3400 9250
 Connection ~ 3400 9250

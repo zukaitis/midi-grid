@@ -3775,13 +3775,13 @@ $EndComp
 $Comp
 L LL4148 D131
 U 1 1 5A26AB9D
-P 21200 3900
-F 0 "D131" H 21200 4000 50  0000 C CNN
-F 1 "LL4148" H 21200 3800 50  0000 C CNN
-F 2 "Diodes_SMD:D_MiniMELF" H 21200 3725 50  0001 C CNN
-F 3 "" H 21200 3900 50  0001 C CNN
-	1    21200 3900
-	0    -1   -1   0   
+P 21350 3900
+F 0 "D131" H 21350 3800 50  0000 C CNN
+F 1 "LL4148" H 21350 4000 50  0000 C CNN
+F 2 "Diodes_SMD:D_MiniMELF" H 21350 3725 50  0001 C CNN
+F 3 "" H 21350 3900 50  0001 C CNN
+	1    21350 3900
+	-1   0    0    1   
 $EndComp
 $Comp
 L LED_RAGB D134
@@ -3819,13 +3819,13 @@ $EndComp
 $Comp
 L LL4148 D139
 U 1 1 5A26ABC7
-P 21200 5600
-F 0 "D139" H 21200 5700 50  0000 C CNN
-F 1 "LL4148" H 21200 5500 50  0000 C CNN
-F 2 "Diodes_SMD:D_MiniMELF" H 21200 5425 50  0001 C CNN
-F 3 "" H 21200 5600 50  0001 C CNN
-	1    21200 5600
-	0    -1   -1   0   
+P 21350 5350
+F 0 "D139" H 21350 5250 50  0000 C CNN
+F 1 "LL4148" H 21350 5450 50  0000 C CNN
+F 2 "Diodes_SMD:D_MiniMELF" H 21350 5175 50  0001 C CNN
+F 3 "" H 21350 5350 50  0001 C CNN
+	1    21350 5350
+	-1   0    0    1   
 $EndComp
 $Comp
 L SW_Push SW8
@@ -3853,12 +3853,12 @@ $Comp
 L SW_Push SW9
 U 1 1 5A26ABE5
 P 21200 4550
-F 0 "SW9" V 21350 4350 50  0000 L CNN
+F 0 "SW9" V 21050 4350 50  0000 L CNN
 F 1 "SW_Push" H 21200 4490 50  0001 C CNN
 F 2 "ProjectLib:Tactile_switch_12x12_black_cap_no_holes" H 21200 4750 50  0001 C CNN
 F 3 "" H 21200 4750 50  0001 C CNN
 	1    21200 4550
-	0    -1   -1   0   
+	0    -1   1    0   
 $EndComp
 $Comp
 L LED_RAGB D144
@@ -4061,7 +4061,7 @@ Wire Wire Line
 	12550 4100 12550 3650
 Connection ~ 12050 3250
 Wire Wire Line
-	6050 4100 21200 4100
+	6050 4100 21500 4100
 Connection ~ 11300 4100
 Connection ~ 10050 4100
 Wire Wire Line
@@ -4341,7 +4341,7 @@ Wire Wire Line
 	12550 7250 12550 6800
 Connection ~ 12050 6400
 Wire Wire Line
-	5750 7250 21200 7250
+	5750 7250 21600 7250
 Connection ~ 11300 7250
 Connection ~ 10050 7250
 Wire Wire Line
@@ -6210,12 +6210,12 @@ Wire Wire Line
 $Comp
 L SW_Push SW6
 U 1 1 5A2ED1C1
-P 20650 3700
-F 0 "SW6" H 20700 3800 50  0000 L CNN
-F 1 "SW_Push" H 20650 3640 50  0001 C CNN
-F 2 "ProjectLib:Tactile_switch_12x12_black_cap_no_holes" H 20650 3900 50  0001 C CNN
-F 3 "" H 20650 3900 50  0001 C CNN
-	1    20650 3700
+P 20650 3900
+F 0 "SW6" H 20700 4000 50  0000 L CNN
+F 1 "SW_Push" H 20650 3840 50  0001 C CNN
+F 2 "ProjectLib:Tactile_switch_12x12_black_cap_no_holes" H 20650 4100 50  0001 C CNN
+F 3 "" H 20650 4100 50  0001 C CNN
+	1    20650 3900
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -6229,11 +6229,9 @@ Wire Wire Line
 	20650 4300 20650 4350
 Wire Wire Line
 	20050 4300 21200 4300
-Wire Wire Line
-	21200 4100 21200 4050
 Connection ~ 19300 4100
 Wire Wire Line
-	20850 3700 21200 3700
+	20850 3900 21200 3900
 Wire Wire Line
 	20050 2950 20050 4350
 Connection ~ 20050 4300
@@ -6245,13 +6243,9 @@ Wire Wire Line
 	21200 4800 21200 4750
 Wire Wire Line
 	20150 5350 20450 5350
-Wire Wire Line
-	21200 7250 21200 5750
 Connection ~ 19300 7250
 Wire Wire Line
 	20850 5350 21200 5350
-Wire Wire Line
-	21200 5350 21200 5450
 Wire Wire Line
 	20050 4750 20050 5450
 Wire Wire Line
@@ -6324,8 +6318,8 @@ Wire Wire Line
 	19650 2550 19750 2550
 Connection ~ 19750 2550
 Wire Wire Line
-	20450 3700 20050 3700
-Connection ~ 20050 3700
+	20450 3900 20050 3900
+Connection ~ 20050 3900
 $Comp
 L SW_Push SW12
 U 1 1 5A35CC65
@@ -6347,8 +6341,6 @@ Text Label 1850 10600 0    60   ~ 0
 PWM_BLUE[1..4]
 Text Label 1850 12700 0    60   ~ 0
 COLUMN[1..6]
-Wire Wire Line
-	21200 3700 21200 3750
 Wire Wire Line
 	21200 5150 21200 5100
 Wire Wire Line
@@ -7028,4 +7020,34 @@ F 3 "" H 3500 13850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 6050 4400
+Text Label 5000 5650 0    60   ~ 0
+K_RED1
+Text Label 5000 5550 0    60   ~ 0
+K_RED2
+Text Label 5000 5450 0    60   ~ 0
+K_RED3
+Text Label 5000 5350 0    60   ~ 0
+K_RED4
+Text Label 5000 7450 0    60   ~ 0
+K_GREEN4
+Text Label 5000 7550 0    60   ~ 0
+K_GREEN3
+Text Label 5000 7650 0    60   ~ 0
+K_GREEN2
+Text Label 5000 7750 0    60   ~ 0
+K_GREEN1
+Text Label 5000 9850 0    60   ~ 0
+K_BLUE1
+Text Label 5000 9750 0    60   ~ 0
+K_BLUE2
+Text Label 5000 9650 0    60   ~ 0
+K_BLUE3
+Text Label 5000 9550 0    60   ~ 0
+K_BLUE4
+Wire Wire Line
+	21500 4100 21500 5350
+Wire Wire Line
+	21600 7250 21600 3900
+Wire Wire Line
+	21600 3900 21500 3900
 $EndSCHEMATC
