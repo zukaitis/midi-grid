@@ -3465,8 +3465,6 @@ F 3 "" H 3500 14050 50  0001 C CNN
 	1    3500 14050
 	1    0    0    -1  
 $EndComp
-NoConn ~ 9850 13350
-NoConn ~ 9850 13450
 NoConn ~ 9850 13550
 NoConn ~ 9850 13650
 NoConn ~ 9850 13750
@@ -5927,7 +5925,7 @@ Wire Bus Line
 	5550 12800 10150 12800
 Connection ~ 7850 12800
 Wire Bus Line
-	10150 12800 10150 13150
+	10150 12800 10150 13350
 Wire Wire Line
 	18350 3250 18850 3250
 Wire Wire Line
@@ -7050,4 +7048,24 @@ Wire Wire Line
 	21600 7250 21600 3900
 Wire Wire Line
 	21600 3900 21500 3900
+Text Label 17950 2750 1    60   ~ 0
+G17
+Text Label 18500 2750 1    60   ~ 0
+G18
+Text Label 19200 2750 1    60   ~ 0
+G19
+Text Label 19750 2750 1    60   ~ 0
+G20
+Text Label 9850 13350 0    60   ~ 0
+G19
+Text Label 9850 13450 0    60   ~ 0
+G20
+Wire Wire Line
+	9850 13350 10050 13350
+Wire Wire Line
+	9850 13450 10050 13450
+Entry Wire Line
+	10050 13350 10150 13250
+Entry Wire Line
+	10050 13450 10150 13350
 $EndSCHEMATC
