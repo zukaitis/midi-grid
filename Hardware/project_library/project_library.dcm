@@ -1,0 +1,20 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP USBUF
+D 2-line EMI filter and ESD protection with R pull-up, for USB interfaces
+K ESD USB EMI
+F http://www.st.com/content/ccc/resource/technical/document/datasheet/3e/ec/b2/54/b2/76/47/90/CD00001361.pdf/files/CD00001361.pdf/jcr:content/translations/en.CD00001361.pdf
+$ENDCMP
+#
+$CMP lcd_nokia_5110
+D ILI9341 controller, SPI TFT LCD Display, 9-pin breakout PCB, 4-pin SD card interface, 5V/3.3V
+K GLCD TFT ILI9341 320x240
+F www.newhavendisplay.com/app_notes/ILI9341.pdf
+$ENDCMP
+#
+$CMP Button_matrix_4x4
+D 4x4 push button matrix
+K switch normally-open pushbutton push-button
+$ENDCMP
+#
+#End Doc Library
