@@ -24,7 +24,7 @@
   (pad 0 thru_hole circle (at -7 0) (size 4 4) (drill 2.2) (layers *.Cu *.Mask))
   (pad 0 thru_hole circle (at 7 0) (size 4 4) (drill 2.2) (layers *.Cu *.Mask))
   (pad 2 thru_hole oval (at 0 7.5) (size 2 3) (drill 1) (layers *.Cu *.Mask))
-  (model UserLib.3dshapes/encoder.wrl
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/encoder.wrl
     (at (xyz 0 0 0.5))
     (scale (xyz 360 360 360))
     (rotate (xyz 0 0 180))

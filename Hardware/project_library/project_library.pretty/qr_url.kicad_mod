@@ -1,4 +1,5 @@
-(module ProjectLib:qr_url (layer F.Cu) (tedit 5A53AFEC)
+(module qr_url (layer F.Cu) (tedit 5A53AFEC)
+  (attr virtual)
   (fp_text reference GR2 (at -6.2 9) (layer F.SilkS) hide
     (effects (font (thickness 0.3)))
   )

@@ -211,6 +211,7 @@ F 0 "F1" V 4600 3700 50  0000 C CNN
 F 1 "Polyfuse" V 4800 3700 50  0000 C CNN
 F 2 "project_library:R_1206" H 4750 3500 50  0001 L CNN
 F 3 "" H 4700 3700 50  0001 C CNN
+F 4 "https://eu.mouser.com/productdetail/?qs=PWhpLWeW8wckT8hV5jLiAA%3D%3D" V 4700 3700 60  0001 C CNN "Catalog link"
 	1    4700 3700
 	0    1    1    0   
 $EndComp
@@ -225,6 +226,7 @@ F 0 "U7" H 5800 3825 50  0000 C CNN
 F 1 "LD1117STR" H 5950 3825 50  0000 L CNN
 F 2 "project_library:SOT-223-3Lead_TabPin2" H 5950 3700 50  0001 C CNN
 F 3 "" H 5950 3700 50  0001 C CNN
+F 4 "http://uk.farnell.com/stmicroelectronics/ld1117str/ic-v-reg-adj-1-25-15v-smd-1117/dp/1202824" H 5950 3700 60  0001 C CNN "Catalog link"
 	1    5950 3700
 	1    0    0    -1  
 $EndComp

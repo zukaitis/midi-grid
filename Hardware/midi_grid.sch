@@ -199,6 +199,7 @@ F 0 "J1" H 1600 4450 50  0000 L CNN
 F 1 "USB_OTG" H 1600 4350 50  0000 L CNN
 F 2 "project_library:USB_Micro-B_Molex-105017-0001" H 1950 3950 50  0001 C CNN
 F 3 "" H 1950 3950 50  0001 C CNN
+F 4 "https://www.lemona.lt/?page=item&i_id=216110" H 1800 4000 60  0001 C CNN "Catalog link"
 	1    1800 4000
 	1    0    0    -1  
 $EndComp
@@ -211,6 +212,7 @@ F 0 "J2" H 2550 4800 50  0000 C CNN
 F 1 "3.5mm jack" H 2550 4300 50  0000 L CNN
 F 2 "project_library:3.5mm-jack" H 2950 4600 50  0001 C CNN
 F 3 "" H 2950 4600 50  0001 C CNN
+F 4 "http://lt.farnell.com/cliff-electronic-components/fc68133/stereo-jack-3-5mm-5pos-pcb/dp/2518190" H 2700 4500 60  0001 C CNN "Catalog link"
 	1    2700 4500
 	1    0    0    -1  
 $EndComp
@@ -222,6 +224,7 @@ F 0 "J3" H 2550 5400 50  0000 C CNN
 F 1 "3.5mm jack" H 2550 4900 50  0000 L CNN
 F 2 "project_library:3.5mm-jack" H 2950 5200 50  0001 C CNN
 F 3 "" H 2950 5200 50  0001 C CNN
+F 4 "http://lt.farnell.com/cliff-electronic-components/fc68133/stereo-jack-3-5mm-5pos-pcb/dp/2518190" H 2700 5100 60  0001 C CNN "Catalog link"
 	1    2700 5100
 	1    0    0    -1  
 $EndComp

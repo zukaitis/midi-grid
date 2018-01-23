@@ -160,6 +160,7 @@ F 0 "A1" H 7150 3300 50  0000 L CNN
 F 1 "Nokia 5110 LCD" H 7150 2300 50  0000 L CNN
 F 2 "project_library:Nokia_5110_lcd" H 6650 3200 50  0001 C CNN
 F 3 "" H 6750 3300 50  0001 C CNN
+F 4 "https://www.ebay.com/itm/84-48-LCD-Module-White-Backlight-Adapter-PCB-for-Nokia-5110-Arduino/400488314619" H 7400 2800 60  0001 C CNN "Catalog link"
 	1    7400 2800
 	1    0    0    -1  
 $EndComp
@@ -291,7 +292,7 @@ L R_Small R62
 U 1 1 5A52FA84
 P 6200 3100
 F 0 "R62" V 6300 3100 50  0000 C CNN
-F 1 "220" V 6400 3100 50  0000 C CNN
+F 1 "220R" V 6400 3100 50  0000 C CNN
 F 2 "project_library:R_0603" H 6200 3100 50  0001 C CNN
 F 3 "" H 6200 3100 50  0001 C CNN
 	1    6200 3100
