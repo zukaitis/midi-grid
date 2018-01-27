@@ -43,7 +43,7 @@ encoding utf-8
 Sheet 3 5
 Title "midi-grid"
 Date "2018-01-15"
-Rev "1.0"
+Rev "1.1"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -414,9 +414,9 @@ Text HLabel 12500 6350 2    60   Output ~ 0
 SPI_SCLK
 Text HLabel 12500 6450 2    60   Output ~ 0
 LCD_LIGHT
-Text HLabel 12500 6250 2    60   Output ~ 0
-LCD_DC
 Text HLabel 12500 6150 2    60   Output ~ 0
+LCD_DC
+Text HLabel 12500 6250 2    60   Output ~ 0
 LCD_CS
 Text HLabel 12500 5350 2    60   Output ~ 0
 LCD_RESET

@@ -43,7 +43,7 @@ encoding utf-8
 Sheet 2 5
 Title "midi-grid"
 Date "2018-01-15"
-Rev "1.0"
+Rev "1.1"
 Comp ""
 Comment1 ""
 Comment2 ""
