@@ -270,7 +270,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
 }
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim) // all but tim1 config copied
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;

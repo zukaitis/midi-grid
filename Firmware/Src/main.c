@@ -548,7 +548,7 @@ static void MX_DMA_Init(void)
         * EVENT_OUT
         * EXTI
 */
-static void MX_GPIO_Init(void)
+static void MX_GPIO_Init(void) // all but lcd and midi detect pin configurations copied
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
