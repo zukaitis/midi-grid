@@ -8,6 +8,6 @@
 #ifndef GRID_BUTTONS_GRID_BUTTONS_INIT_H_
 #define GRID_BUTTONS_GRID_BUTTONS_INIT_H_
 
-
+void grid_initializeGpio();
 
 #endif /* GRID_BUTTONS_GRID_BUTTONS_INIT_H_ */

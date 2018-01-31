@@ -50,6 +50,8 @@
 #include "stm32f4xx_hal.h"
 #include "usb/usb_device.h"
 
+#include "grid_buttons/grid_buttons.h"
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -106,6 +108,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
   */
 int main(void)
 {
+    volatile uint32_t i=0;
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -128,24 +131,28 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_SPI2_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_TIM4_Init();
-  MX_USART6_UART_Init();
+  //MX_DMA_Init();
+  //MX_SPI2_Init();
+  //MX_TIM1_Init();
+  //MX_TIM2_Init();
+ // MX_TIM3_Init();
+ // MX_TIM4_Init();
+ // MX_USART6_UART_Init();
   MX_USB_DEVICE_Init();
-  MX_ADC1_Init();
+//  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+ // grid_initialize();
+ //grid_setOutput();
+
   while (1)
   {
-
+      i++;
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
