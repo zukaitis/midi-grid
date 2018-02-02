@@ -7,9 +7,11 @@
 #include "grid_buttons/grid_buttons_configuration.h"
 #include "stm32f4xx_hal.h"
 
+#if 0
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;
 static TIM_HandleTypeDef pwmTimerBlue;
+#endif
 
 void grid_initializeGpio()
 {
@@ -46,8 +48,18 @@ void grid_initializeGpio()
 	  GPIO_InitStruct.Pull = GPIO_NOPULL;
 	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 	  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-}
 
+
+	  __HAL_RCC_GPIOB_CLK_ENABLE();
+	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	  GPIO_InitStruct.Pin = PWM_BLUE1_Pin|PWM_RED1_Pin;
+	  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	  GPIO_InitStruct.Pin = PWM_GREEN1_Pin;
+	  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+}
+#if 0
 grid_initializePwmOutputs()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
@@ -145,3 +157,4 @@ grid_initializePwmOutputs()
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
     HAL_GPIO_Init( GPIOB, &GPIO_InitStruct );
 }
+#endif

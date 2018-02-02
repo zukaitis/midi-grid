@@ -68,6 +68,6 @@
 
 void grid_initializeGpio();
 
-const uint16_t pwmClockPeriod = 49000;
+//const unsigned int pwmClockPeriod = 49000;
 
 #endif /* GRID_BUTTONS_GRID_BUTTONS_INIT_H_ */

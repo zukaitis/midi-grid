@@ -7,11 +7,11 @@
 #include "grid_buttons/grid_buttons_configuration.h"
 #include "stm32f4xx_hal.h"
 
-static const uint16_t columnSelectValue = { 0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
-                                            0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
-                                            0xF8EF, 0xF9EF, 0xFAEF, 0xFBEF,
-                                            0xFCEF, 0xFDEF, 0xFEEF, 0xFFEF,
-                                            0x78FF, 0x79FF, 0x7AFF, 0x7BFF };
+static const uint16_t columnSelectValue[16] = { 0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
+                                                0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
+                                                0xF8EF, 0xF9EF, 0xFAEF, 0xFBEF,
+                                                0xFCEF, 0xFDEF, 0xFEEF, 0xFFEF,
+                                                0x78FF, 0x79FF, 0x7AFF, 0x7BFF };
 
 void grid_initialize()
 {
@@ -20,5 +20,6 @@ void grid_initialize()
 
 void grid_setOutput()
 {
-    GPIOA->ODR = 0xFFEF;
+    GPIOA->ODR = 0xF8DF;
+    GPIOB->ODR =PWM_GREEN1_Pin;
 }

@@ -147,8 +147,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
- // grid_initialize();
- //grid_setOutput();
+  grid_initialize();
+ grid_setOutput();
 
   while (1)
   {
