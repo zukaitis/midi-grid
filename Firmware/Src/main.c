@@ -148,8 +148,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   grid_initialize();
- grid_setOutput();
-
+ //grid_setOutput();
+  grid_enable();
   while (1)
   {
       i++;

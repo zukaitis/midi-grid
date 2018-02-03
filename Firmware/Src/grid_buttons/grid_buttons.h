@@ -7,6 +7,7 @@
 #ifndef GRID_BUTTONS_H_
 #define GRID_BUTTONS_H_
 
+void grid_enable();
 void grid_initialize();
 void grid_setOutput();
 
