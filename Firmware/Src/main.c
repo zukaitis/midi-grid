@@ -49,6 +49,7 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "usb/usb_device.h"
+#include "usb/queue32.h"
 
 #include "grid_buttons/grid_buttons.h"
 
@@ -69,6 +70,22 @@ TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
 
+struct MidiMessage
+{
+    uint8_t cin;
+    uint8_t channel;
+    uint8_t note;
+    uint8_t velocity;
+};
+
+union MidiInput
+{
+    uint32_t input;
+    struct MidiMessage message;
+};
+
+union MidiInput midiInput;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -88,9 +105,14 @@ static void MX_ADC1_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
-                                
-                                
-                                
+extern stB4Arrq rxq;
+
+uint8_t sessionLayout[10][8] = {
+        {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
+        {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
+        {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
+        {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
+        {19, 29, 39, 49, 59, 69, 79, 89}, {111, 110, 109, 108, 107, 106, 105, 104} };
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -109,6 +131,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 int main(void)
 {
     volatile uint32_t i=0;
+    uint8_t buttonX, buttonY, event, velocity;
+    uint8_t ledPositionX, ledPositionY, channel;
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -130,7 +154,7 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  //MX_GPIO_Init();
+  MX_GPIO_Init();
   //MX_DMA_Init();
   //MX_SPI2_Init();
   //MX_TIM1_Init();
@@ -138,7 +162,7 @@ int main(void)
  // MX_TIM3_Init();
  // MX_TIM4_Init();
  // MX_USART6_UART_Init();
- // MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
 //  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
@@ -153,13 +177,37 @@ int main(void)
   while (1)
   {
       i++;
-  /* USER CODE END WHILE */
+      // led flash message - 0x15519109 (Hex)
 
-  /* USER CODE BEGIN 3 */
+        if (0 != rxq.num)
+        {
+            midiInput.input = (uint32_t)*b4arrq_pop(&rxq);
+            if (0x09 == midiInput.message.cin) // note on
+            {
+                // not sure if conditional below is needed
+                if ((midiInput.message.note > 10) && (midiInput.message.note < 89))
+                {
+                    ledPositionX = (midiInput.message.note % 10) - 1;
+                    ledPositionY = (midiInput.message.note / 10) - 1;
+                    channel = midiInput.message.channel & 0x0F;
+                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.velocity, channel);
+                }
+            }
+        }
 
-  }
-  /* USER CODE END 3 */
-
+        if (grid_getButtonEvent(&buttonX, &buttonY, &event))
+        {
+            velocity = (event) ? 127 : 0;
+            if (4 > buttonY)
+            {
+                sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+                processMidiMessage();
+                //LCD_print("zdrw jums", 12, 2);
+            }
+        }
+        grid_updateLeds();
+    }
+      /* USER CODE END 3 */
 }
 
 /**
