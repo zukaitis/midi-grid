@@ -62,7 +62,7 @@
 #define LED_PULSE_STEP_COUNT        15
 #define LED_PULSE_STEP_PERIOD_MS    67  // 1000ms / 15 = 66.6... ms
 
-#define PWM_CLOCK_PERIOD 48000 // 500us
+#define PWM_CLOCK_PERIOD 47000 // <500us - has to be shorter than base period
 
 #define GRID_BUTTON_MASK 0x000F
 

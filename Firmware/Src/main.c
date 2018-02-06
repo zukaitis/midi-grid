@@ -174,6 +174,8 @@ int main(void)
   grid_initialize();
  //grid_setOutput();
   grid_enable();
+  while(1)
+  {};
   while (1)
   {
       i++;

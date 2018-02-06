@@ -95,7 +95,7 @@ void grid_initializePwmOutputs()
     timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
 
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM2;
-    timerOutputCompareConfiguration.Pulse = PWM_CLOCK_PERIOD - 1; // start with passive output
+    timerOutputCompareConfiguration.Pulse = PWM_CLOCK_PERIOD; // start with passive output
     timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
 
