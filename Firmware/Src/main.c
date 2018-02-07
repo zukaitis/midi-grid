@@ -174,8 +174,6 @@ int main(void)
   grid_initialize();
  //grid_setOutput();
   grid_enable();
-  while(1)
-  {};
   while (1)
   {
       i++;
@@ -200,12 +198,9 @@ int main(void)
         if (grid_getButtonEvent(&buttonX, &buttonY, &event))
         {
             velocity = (event) ? 127 : 0;
-            if (4 > buttonY)
-            {
-                sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
-                processMidiMessage();
-                //LCD_print("zdrw jums", 12, 2);
-            }
+            sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+            processMidiMessage();
+            //LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
     }
