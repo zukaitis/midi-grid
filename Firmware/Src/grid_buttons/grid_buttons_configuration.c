@@ -91,6 +91,10 @@ void grid_initializePwmOutputs()
     TIM_SlaveConfigTypeDef timerSlaveConfiguration;
     TIM_OC_InitTypeDef timerOutputCompareConfiguration;
 
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    __HAL_RCC_TIM3_CLK_ENABLE();
+    __HAL_RCC_TIM4_CLK_ENABLE();
+
     // Same configuration for all three channels
     timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
 
