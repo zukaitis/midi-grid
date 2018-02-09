@@ -181,10 +181,25 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
     ledOutput[ledPositionX][ledPositionY].Blue = brightnessRed[colour->Blue];
 }
 
-void grid_setOutput()
+void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint16_t outputRed, uint16_t outputGreen, uint16_t outputBlue )
 {
-    GPIOA->ODR = 0xF8DF;
-    GPIOB->ODR = PWM_GREEN1_Pin;
+    if (ledPositionY > 3)
+    {
+        ledPositionX += 9; // + 10 - 1
+        ledPositionY = ledPositionY % 2;
+    }
+    else if (0 == ledPositionX)
+    {
+        ledPositionX = NUMBER_OF_COLUMNS - 1;
+    }
+    else
+    {
+        --ledPositionX;
+    }
+
+    ledOutput[ledPositionX][ledPositionY].Red = outputRed;
+    ledOutput[ledPositionX][ledPositionY].Green = outputGreen;
+    ledOutput[ledPositionX][ledPositionY].Blue = outputBlue;
 }
 
 void grid_updateLeds()

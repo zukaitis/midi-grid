@@ -88,6 +88,7 @@ union MidiInput midiInput;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+uint16_t brightnessTestResult[46000];
 
 /* USER CODE END PV */
 
@@ -101,6 +102,7 @@ static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 
 void randomLightAnimation();
+void runBrigthnessTest();
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -158,8 +160,8 @@ int main(void)
   //MX_SPI2_Init();
   //MX_TIM1_Init();
  // MX_USART6_UART_Init();
-  MX_USB_DEVICE_Init();
-//  MX_ADC1_Init();
+  //MX_USB_DEVICE_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -170,14 +172,19 @@ int main(void)
   grid_initialize();
   grid_enable();
 
+  runBrigthnessTest();
+
   while (0 == rxq.num)
   {
       randomLightAnimation();
       if (grid_getButtonEvent(&buttonX, &buttonY, &event))
       {
-          velocity = (event) ? 127 : 0;
-          sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
-          processMidiMessage();
+          if (isUsbConnected())
+          {
+              velocity = (event) ? 127 : 0;
+              sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+              processMidiMessage();
+          }
           break;
       }
   }
@@ -252,6 +259,29 @@ void randomLightAnimation()
         }
         grid_setLedColour(ledPositionX, ledPositionY, &colour);
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
+    }
+}
+
+void runBrigthnessTest()
+{
+    uint32_t nextReadoutTime = 0;
+    uint16_t i = 0;
+    grid_setLedOutputDirectly(0, 0, 1001, 1001, 1001);
+    grid_setLedOutputDirectly(1, 0, 1001, 47000, 47000);
+    grid_setLedOutputDirectly(2, 0, 47000, 1001, 47000);
+    grid_setLedOutputDirectly(3, 0, 47000, 47000, 1001);
+    HAL_ADC_Start(&hadc1);
+    for (i=47000; i>1000;--i)
+    {
+        grid_setLedOutputDirectly(4, 4, i, 47000, 47000);
+        nextReadoutTime = HAL_GetTick() + 10; // 10ms delay
+        while (HAL_GetTick() < nextReadoutTime)
+        {};
+        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK)
+        {
+            brightnessTestResult[47000-i] = HAL_ADC_GetValue(&hadc1);
+        }
+
     }
 }
 
@@ -331,21 +361,15 @@ static void MX_ADC1_Init(void)
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+  hadc1.Init.EOCSelection = DISABLE; //ADC_EOC_SINGLE_CONV;
+  HAL_ADC_Init(&hadc1);
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
   sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
 
 }
 
@@ -480,36 +504,13 @@ static void MX_GPIO_Init(void) // all but lcd and midi detect pin configurations
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GRID_COLUMN_OUT5_Pin|GRID_COLUMN_OUT4_Pin|GRID_COLUMN_OUT1_Pin|GRID_COLUMN_OUT2_Pin 
-                          |GRID_COLUMN_OUT3_Pin|GRID_COLUMN_OUT6_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LCD_RESET_Pin|LCD_DC_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : BUTTON_IN1_Pin ROTARY1_A_Pin ROTARY1_B_Pin BUTTON_IN2_Pin 
-                           ROTARY2_A_Pin ROTARY2_B_Pin */
-  GPIO_InitStruct.Pin = BUTTON_IN1_Pin|ROTARY1_A_Pin|ROTARY1_B_Pin|BUTTON_IN2_Pin 
-                          |ROTARY2_A_Pin|ROTARY2_B_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : GRID_BUTTON_IN1_Pin GRID_BUTTON_IN2_Pin GRID_BUTTON_IN3_Pin GRID_BUTTON_IN4_Pin 
-                           MIDI_OUT_DETECT_Pin */
-  GPIO_InitStruct.Pin = GRID_BUTTON_IN1_Pin|GRID_BUTTON_IN2_Pin|GRID_BUTTON_IN3_Pin|GRID_BUTTON_IN4_Pin 
-                          |MIDI_OUT_DETECT_Pin;
+  /*Configure GPIO pins : MIDI_OUT_DETECT_Pin */
+  GPIO_InitStruct.Pin = MIDI_OUT_DETECT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : GRID_COLUMN_OUT5_Pin GRID_COLUMN_OUT4_Pin GRID_COLUMN_OUT1_Pin GRID_COLUMN_OUT2_Pin 
-                           GRID_COLUMN_OUT3_Pin GRID_COLUMN_OUT6_Pin */
-  GPIO_InitStruct.Pin = GRID_COLUMN_OUT5_Pin|GRID_COLUMN_OUT4_Pin|GRID_COLUMN_OUT1_Pin|GRID_COLUMN_OUT2_Pin 
-                          |GRID_COLUMN_OUT3_Pin|GRID_COLUMN_OUT6_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LCD_RESET_Pin LCD_DC_Pin */
   GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_DC_Pin;

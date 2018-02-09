@@ -35,7 +35,8 @@ void grid_initialize();
 void grid_setLedColourFromLaunchpadPalette( uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourNumber );
 void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour );
 void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourCode, uint8_t controlType);
-void grid_setOutput();
+void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint16_t outputRed, uint16_t outputGreen,
+        uint16_t outputBlue );
 void grid_updateLeds();
 
 
