@@ -113,7 +113,14 @@ uint8_t sessionLayout[10][8] = {
         {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
         {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
         {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
-        {19, 29, 39, 49, 59, 69, 79, 89}, {111, 110, 109, 108, 107, 106, 105, 104} };
+        {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} };
+
+uint8_t drumLayout[10][8] = {
+        {36, 40, 44, 48, 52, 56, 60, 64}, {37, 41, 45, 49, 53, 57, 61, 65},
+        {38, 42, 46, 50, 54, 58, 62, 66}, {39, 43, 47, 51, 55, 59, 63, 67},
+        {68, 72, 76, 80, 84, 88, 92, 96}, {69, 73, 77, 81, 85, 89, 93, 97},
+        {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
+        {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -155,13 +162,13 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+  //MX_GPIO_Init();
   //MX_DMA_Init();
   //MX_SPI2_Init();
   //MX_TIM1_Init();
  // MX_USART6_UART_Init();
-  //MX_USB_DEVICE_Init();
-  MX_ADC1_Init();
+  MX_USB_DEVICE_Init();
+  //MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -172,7 +179,7 @@ int main(void)
   grid_initialize();
   grid_enable();
 
-  runBrigthnessTest();
+  //runBrigthnessTest();
 
   while (0 == rxq.num)
   {
@@ -218,7 +225,8 @@ int main(void)
         if (grid_getButtonEvent(&buttonX, &buttonY, &event))
         {
             velocity = (event) ? 127 : 0;
-            sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+            //sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+            sendNoteOn(7,drumLayout[buttonX][buttonY],velocity);
             processMidiMessage();
             //LCD_print("zdrw jums", 12, 2);
         }
@@ -270,17 +278,17 @@ void runBrigthnessTest()
     grid_setLedOutputDirectly(1, 0, 1001, 47000, 47000);
     grid_setLedOutputDirectly(2, 0, 47000, 1001, 47000);
     grid_setLedOutputDirectly(3, 0, 47000, 47000, 1001);
-    HAL_ADC_Start(&hadc1);
+    //HAL_ADC_Start(&hadc1);
     for (i=47000; i>1000;--i)
     {
         grid_setLedOutputDirectly(4, 4, i, 47000, 47000);
         nextReadoutTime = HAL_GetTick() + 10; // 10ms delay
         while (HAL_GetTick() < nextReadoutTime)
         {};
-        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK)
-        {
-            brightnessTestResult[47000-i] = HAL_ADC_GetValue(&hadc1);
-        }
+//        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK)
+//        {
+//            brightnessTestResult[47000-i] = HAL_ADC_GetValue(&hadc1);
+//        }
 
     }
 }

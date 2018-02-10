@@ -100,34 +100,36 @@ void grid_initialize()
 void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourCode, uint8_t controlType)
 {
     uint8_t i;
+    // remove led from flashing or pulsing list if it's in that list and proceed with setting that led
+    if (LedLighting_FLASH == gridLed[ledPositionX][ledPositionY].lightingType)
+    {
+        for (i=0; i<numberOfFlashingLeds; i++)
+        {
+            if ((ledPositionX == flashingLed[i].positionX)&&(ledPositionY == flashingLed[i].positionY))
+            {
+                flashingLed[i] = flashingLed[numberOfFlashingLeds - 1]; // move last element into the place of element that is being removed
+                //i = numberOfFlashingLeds; // break loop
+                numberOfFlashingLeds--;
+                break;
+            }
+        }
+    }
+    else if (LedLighting_PULSE == gridLed[ledPositionX][ledPositionY].lightingType)
+    {
+        for (i=0; i<numberOfPulsingLeds;i++)
+        {
+            if ((ledPositionX == pulsingLed[i].positionX)&&(ledPositionY == pulsingLed[i].positionY))
+            {
+                pulsingLed[i] = pulsingLed[numberOfPulsingLeds - 1]; // move last element into the place of element that is being removed
+                //i = numberOfPulsingLeds; // break loop
+                numberOfPulsingLeds--;
+                break;
+            }
+        }
+    }
+
     if (LedLighting_LIGHT == controlType)
     {
-        if (LedLighting_FLASH == gridLed[ledPositionX][ledPositionY].lightingType)
-        {
-            for (i=0; i<numberOfFlashingLeds; i++)
-            {
-                if ((ledPositionX == flashingLed[i].positionX)&&(ledPositionY == flashingLed[i].positionY))
-                {
-                    flashingLed[i] = flashingLed[numberOfFlashingLeds - 1]; // move last element into the place of element that is being removed
-                    //i = numberOfFlashingLeds; // break loop
-                    numberOfFlashingLeds--;
-                    break;
-                }
-            }
-        }
-        else if (LedLighting_PULSE == gridLed[ledPositionX][ledPositionY].lightingType)
-        {
-            for (i=0; i<numberOfPulsingLeds;i++)
-            {
-                if ((ledPositionX == pulsingLed[i].positionX)&&(ledPositionY == pulsingLed[i].positionY))
-                {
-                    pulsingLed[i] = pulsingLed[numberOfPulsingLeds - 1]; // move last element into the place of element that is being removed
-                    //i = numberOfPulsingLeds; // break loop
-                    numberOfPulsingLeds--;
-                    break;
-                }
-            }
-        }
         gridLed[ledPositionX][ledPositionY].colour = launchpadColourPalette[colourCode];
         gridLed[ledPositionX][ledPositionY].lightingType = LedLighting_LIGHT;
         grid_setLedColourFromLaunchpadPalette(ledPositionX, ledPositionY, colourCode);
@@ -165,7 +167,7 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
     if (ledPositionY > 3)
     {
         ledPositionX += 9; // + 10 - 1
-        ledPositionY = ledPositionY % 2;
+        ledPositionY = ledPositionY % 4;
     }
     else if (0 == ledPositionX)
     {
@@ -186,7 +188,7 @@ void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint
     if (ledPositionY > 3)
     {
         ledPositionX += 9; // + 10 - 1
-        ledPositionY = ledPositionY % 2;
+        ledPositionY = ledPositionY % 4;
     }
     else if (0 == ledPositionX)
     {
