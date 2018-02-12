@@ -30,6 +30,8 @@ static struct LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS] = {
         {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
         {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE} };
 
+static const struct LedPwmOutput ledPassive = LED_PASSIVE;
+
 static uint16_t registeredGridButtonInput[NUMBER_OF_COLUMNS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 static struct FlashingLed flashingLed[64];
@@ -182,6 +184,19 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
     ledOutput[ledPositionX][ledPositionY].Green = brightnessRed[colour->Green];
     ledOutput[ledPositionX][ledPositionY].Blue = brightnessRed[colour->Blue];
 }
+
+void grid_setAllLedsOff()
+{
+    uint8_t x, y;
+    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
+    {
+        for (y = 0; y < NUMBER_OF_ROWS; y++)
+        {
+            ledOutput[x][y] = ledPassive;
+        }
+    }
+}
+
 
 void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint16_t outputRed, uint16_t outputGreen, uint16_t outputBlue )
 {

@@ -128,7 +128,7 @@ uint8_t drumLayout[10][8] = {
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+extern void initialise_monitor_handles(void); // semihosting
 /* USER CODE END 0 */
 
 /**
@@ -176,10 +176,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  initialise_monitor_handles(); // enable semihosting
+
   grid_initialize();
   grid_enable();
 
   //runBrigthnessTest();
+
+  printf("Semihosting output enabled\n");
 
   while (0 == rxq.num)
   {
@@ -196,15 +200,16 @@ int main(void)
       }
   }
 
+  while (!isUsbConnected())
+  {
+    i++;
+  }
+  printf("Printing unacknowledged MIDI messages:\n");
+
   while (1)
   {
       i++;
       // led flash message - 0x15519109 (Hex)
-
-      while (!isUsbConnected())
-      {
-        i++;
-      }
 
         if (0 != rxq.num)
         {
@@ -219,6 +224,14 @@ int main(void)
                     channel = midiInput.message.channel & 0x0F;
                     grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.velocity, channel);
                 }
+                else
+                {
+                    printf("%08lX\n", midiInput.input);
+                }
+            }
+            else
+            {
+                printf("%08lX\n", midiInput.input);
             }
         }
 
@@ -239,6 +252,7 @@ int main(void)
 void randomLightAnimation()
 {
     static uint32_t newLightTime = 0;
+    static uint8_t ledsChanged = 0;
     uint8_t ledPositionX, ledPositionY;
     uint8_t fullyLitColour;
     struct Colour colour;
@@ -267,6 +281,12 @@ void randomLightAnimation()
         }
         grid_setLedColour(ledPositionX, ledPositionY, &colour);
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
+        ledsChanged++;
+        if (ledsChanged > 63)
+        {
+            grid_setAllLedsOff();
+            ledsChanged = 0;
+        }
     }
 }
 
