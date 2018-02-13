@@ -72,10 +72,8 @@ UART_HandleTypeDef huart6;
 
 struct MidiMessage
 {
-    uint8_t cin;
-    uint8_t channel;
-    uint8_t note;
-    uint8_t velocity;
+    uint8_t header;
+    uint8_t data[3];
 };
 
 union MidiInput
@@ -101,6 +99,7 @@ static void MX_TIM1_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 
+void printMidiMessage(union MidiInput message);
 void randomLightAnimation();
 void runBrigthnessTest();
 
@@ -122,6 +121,19 @@ uint8_t drumLayout[10][8] = {
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
+static const uint8_t topRowControllerNumbers[8] = {4, 7, 5, 6, 3, 2, 0, 1};
+
+enum Layout
+{
+    Layout_SESSION = 0,
+    Layout_USER1,
+    Layout_USER2,
+    Layout_RESERVED,
+    Layout_VOLUME,
+    Layout_PAN
+};
+
+static uint8_t currentLayout = Layout_SESSION;
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -140,7 +152,8 @@ int main(void)
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, event, velocity;
-    uint8_t ledPositionX, ledPositionY, channel;
+    uint8_t ledPositionX, ledPositionY;
+    uint8_t codeIndexNumber, channel;
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -213,34 +226,100 @@ int main(void)
 
         if (0 != rxq.num)
         {
-            midiInput.input = (uint32_t)*b4arrq_pop(&rxq);
-            if (0x09 == midiInput.message.cin) // note on
+            midiInput.input = *b4arrq_pop(&rxq);
+            codeIndexNumber = midiInput.message.header & 0x0F;
+            if (0x9 == codeIndexNumber) // note on
             {
-                // not sure if conditional below is needed
-                if ((midiInput.message.note > 10) && (midiInput.message.note < 89))
+                if (Layout_USER1 == currentLayout)
                 {
-                    ledPositionX = (midiInput.message.note % 10) - 1;
-                    ledPositionY = (midiInput.message.note / 10) - 1;
-                    channel = midiInput.message.channel & 0x0F;
-                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.velocity, channel);
+                    // only this layout uses drum layout
+                }
+                // not sure if conditional below is needed
+                if ((midiInput.message.data[1] >= 11) && (midiInput.message.data[1] <= 89))
+                {
+
+                    ledPositionX = (midiInput.message.data[1] % 10) - 1;
+                    ledPositionY = (midiInput.message.data[1] / 10) - 1;
+                    channel = midiInput.message.data[0] & 0x0F;
+                    if (channel > 2)
+                    {
+                        channel = 0;
+                    }
+                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
                 }
                 else
                 {
-                    printf("%08lX\n", midiInput.input);
+                    printMidiMessage(midiInput);
+                }
+            }
+            else if (0xB == codeIndexNumber) // change control
+            {
+                if ((midiInput.message.data[1] >= 104) && (midiInput.message.data[1] <= 111))
+                {
+                    ledPositionX = 9;
+                    ledPositionY = topRowControllerNumbers[midiInput.message.data[1] - 104];
+                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], 0);
+                }
+                else
+                {
+                    printMidiMessage(midiInput);
+                }
+            }
+            else if (0x7 == codeIndexNumber) // end of SysEx message
+            {
+                if (0x22 == midiInput.message.data[0]) // layout change message
+                {
+                    if (midiInput.message.data[1] < 6)
+                    {
+                        currentLayout = midiInput.message.data[1];
+                    }
+                    else
+                    {
+                        printMidiMessage(midiInput);
+                    }
+                }
+                else
+                {
+                    printMidiMessage(midiInput);
                 }
             }
             else
             {
-                printf("%08lX\n", midiInput.input);
+                printMidiMessage(midiInput);
             }
         }
 
         if (grid_getButtonEvent(&buttonX, &buttonY, &event))
         {
-            velocity = (event) ? 127 : 0;
-            //sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
-            sendNoteOn(7,drumLayout[buttonX][buttonY],velocity);
-            processMidiMessage();
+            velocity = (event != 0) ? 127 : 0;
+            if (9 == buttonX) // control row
+            {
+                sendCtlChange( 0,sessionLayout[buttonX][buttonY],velocity );
+            }
+            else
+            {
+                if (Layout_SESSION == currentLayout)
+                {
+                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                    processMidiMessage();
+                }
+                else if (Layout_USER1 == currentLayout)
+                {
+                    sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
+                    processMidiMessage();
+                }
+                else if (Layout_USER2 == currentLayout)
+                {
+                    sendNoteOn( 15, drumLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
+                    processMidiMessage();
+                }
+                else
+                {
+                    //don't send anything
+                }
+            }
+
+
             //LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
@@ -248,6 +327,33 @@ int main(void)
       /* USER CODE END 3 */
 }
 
+void printMidiMessage(union MidiInput message)
+{
+    uint8_t channel;
+    uint8_t codeIndexNumber = midiInput.message.header & 0x0F;
+    if (0x09 == codeIndexNumber)
+    {
+        channel = midiInput.message.data[0] & 0x0F;
+        printf("NO, ch:%i n:%i v:%i\n", channel, midiInput.message.data[1], midiInput.message.data[2]);
+    }
+    else if (0x0B == codeIndexNumber)
+    {
+        channel = midiInput.message.data[0] & 0x0F;
+        printf("CC, ch:%i c:%i v:%i\n", channel, midiInput.message.data[1], midiInput.message.data[2]);
+    }
+    else if (0x04 == codeIndexNumber)
+    {
+        printf("SE, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
+    }
+    else if (0x07 == codeIndexNumber)
+    {
+        printf("SEe, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
+    }
+    else
+    {
+        printf("Unknown message, CIN: %Xh\n", codeIndexNumber);
+    }
+}
 
 void randomLightAnimation()
 {
