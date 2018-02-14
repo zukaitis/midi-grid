@@ -53,6 +53,8 @@
 
 #include "grid_buttons/grid_buttons.h"
 
+//#define USE_SEMIHOSTING
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -187,16 +189,17 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
+#ifdef USE_SEMIHOSTING
   initialise_monitor_handles(); // enable semihosting
+#endif
 
   grid_initialize();
   grid_enable();
 
   //runBrigthnessTest();
-
+#ifdef USE_SEMIHOSTING
   printf("Semihosting output enabled\n");
+#endif
 
   while (0 == rxq.num)
   {
@@ -217,7 +220,9 @@ int main(void)
   {
     i++;
   }
+#ifdef USE_SEMIHOSTING
   printf("Printing unacknowledged MIDI messages:\n");
+#endif
 
   while (1)
   {
@@ -228,28 +233,66 @@ int main(void)
         {
             midiInput.input = *b4arrq_pop(&rxq);
             codeIndexNumber = midiInput.message.header & 0x0F;
-            if (0x9 == codeIndexNumber) // note on
+            if ((0x9 == codeIndexNumber) || (0x8 == codeIndexNumber)) // note on or note off
             {
                 if (Layout_USER1 == currentLayout)
                 {
                     // only this layout uses drum layout
-                }
-                // not sure if conditional below is needed
-                if ((midiInput.message.data[1] >= 11) && (midiInput.message.data[1] <= 89))
-                {
-
-                    ledPositionX = (midiInput.message.data[1] % 10) - 1;
-                    ledPositionY = (midiInput.message.data[1] / 10) - 1;
-                    channel = midiInput.message.data[0] & 0x0F;
-                    if (channel > 2)
+                    if ((midiInput.message.data[1] >= 36) && (midiInput.message.data[1] <= 107))
                     {
-                        channel = 0;
+                        if (midiInput.message.data[1] <= 67)
+                        {
+                            ledPositionX = midiInput.message.data[1] % 4;
+                            ledPositionY = (midiInput.message.data[1] - 36) / 4;
+                        }
+                        else if (midiInput.message.data[1] <= 99)
+                        {
+                            ledPositionX = midiInput.message.data[1] % 4 + 4;
+                            ledPositionY = (midiInput.message.data[1] - 68) / 4;
+                        }
+                        else
+                        {
+                            ledPositionX = 8;
+                            ledPositionY = 107 - midiInput.message.data[1];
+                        }
+                        channel = midiInput.message.data[0] & 0x0F;
+                        if (channel > 2)
+                        {
+                            channel = 0;
+                        }
+                        if (0x8 == codeIndexNumber) // note off
+                        {
+                            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, 0, 0);
+                        }
+                        else
+                        {
+                            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
+                        }
                     }
-                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
+                    else
+                    {
+                        printMidiMessage(midiInput);
+                    }
                 }
                 else
                 {
-                    printMidiMessage(midiInput);
+                    // not sure if this conditional is needed
+                    if ((midiInput.message.data[1] >= 11) && (midiInput.message.data[1] <= 89))
+                    {
+
+                        ledPositionX = (midiInput.message.data[1] % 10) - 1;
+                        ledPositionY = (midiInput.message.data[1] / 10) - 1;
+                        channel = midiInput.message.data[0] & 0x0F;
+                        if (channel > 2)
+                        {
+                            channel = 0;
+                        }
+                        grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
+                    }
+                    else
+                    {
+                        printMidiMessage(midiInput);
+                    }
                 }
             }
             else if (0xB == codeIndexNumber) // change control
@@ -295,6 +338,7 @@ int main(void)
             if (9 == buttonX) // control row
             {
                 sendCtlChange( 0,sessionLayout[buttonX][buttonY],velocity );
+                processMidiMessage();
             }
             else
             {
@@ -318,8 +362,6 @@ int main(void)
                     //don't send anything
                 }
             }
-
-
             //LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
@@ -329,6 +371,7 @@ int main(void)
 
 void printMidiMessage(union MidiInput message)
 {
+#ifdef USE_SEMIHOSTING
     uint8_t channel;
     uint8_t codeIndexNumber = midiInput.message.header & 0x0F;
     if (0x09 == codeIndexNumber)
@@ -353,6 +396,7 @@ void printMidiMessage(union MidiInput message)
     {
         printf("Unknown message, CIN: %Xh\n", codeIndexNumber);
     }
+#endif
 }
 
 void randomLightAnimation()
