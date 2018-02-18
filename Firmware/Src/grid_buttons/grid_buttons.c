@@ -180,9 +180,9 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
         --ledPositionX;
     }
 
-    ledOutput[ledPositionX][ledPositionY].Red = brightnessRed[colour->Red];
-    ledOutput[ledPositionX][ledPositionY].Green = brightnessRed[colour->Green];
-    ledOutput[ledPositionX][ledPositionY].Blue = brightnessRed[colour->Blue];
+    ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour->Red];
+    ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour->Green];
+    ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour->Blue];
 }
 
 void grid_setAllLedsOff()

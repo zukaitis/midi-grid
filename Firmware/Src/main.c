@@ -50,6 +50,7 @@
 #include "stm32f4xx_hal.h"
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
+#include "lcd/lcd.h"
 
 #include "grid_buttons/grid_buttons.h"
 
@@ -183,7 +184,7 @@ int main(void)
   //MX_TIM1_Init();
  // MX_USART6_UART_Init();
   MX_USB_DEVICE_Init();
-  //MX_ADC1_Init();
+ // MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -196,6 +197,8 @@ int main(void)
   grid_initialize();
   grid_enable();
 
+  LCD_init();
+  LCD_print("yo", 12, 2);
   //runBrigthnessTest();
 #ifdef USE_SEMIHOSTING
   printf("Semihosting output enabled\n");
@@ -203,7 +206,7 @@ int main(void)
 
   while (0 == rxq.num)
   {
-      randomLightAnimation();
+      //randomLightAnimation();
       if (grid_getButtonEvent(&buttonX, &buttonY, &event))
       {
           if (isUsbConnected())
@@ -315,6 +318,32 @@ int main(void)
                     if (midiInput.message.data[1] < 6)
                     {
                         currentLayout = midiInput.message.data[1];
+                        struct Colour colour = {0, 0, 0};
+                        switch (currentLayout)
+                        {
+                            case Layout_SESSION:
+                                colour.Red = 64;
+                                break;
+                            case Layout_USER1:
+                                colour.Green = 64;
+                                break;
+                            case Layout_USER2:
+                                colour.Blue = 64;
+                                break;
+                            case Layout_RESERVED:
+                                colour.Red = 64;
+                                colour.Green = 64;
+                                break;
+                            case Layout_PAN:
+                                colour.Red = 64;
+                                colour.Blue = 64;
+                                break;
+                            case Layout_VOLUME:
+                                colour.Green = 64;
+                                colour.Blue = 64;
+                                break;
+                        }
+                        grid_setLedColour(9, 4, &colour);
                     }
                     else
                     {
@@ -354,15 +383,20 @@ int main(void)
                 }
                 else if (Layout_USER2 == currentLayout)
                 {
-                    sendNoteOn( 15, drumLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
+                    sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
                     processMidiMessage();
                 }
-                else
+                else //if ((Layout_VOLUME == currentLayout) || (Layout_PAN == currentLayout))
                 {
-                    //don't send anything
+                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                    processMidiMessage();
                 }
+//                else
+//                {
+//                    //don't send anything
+//                }
             }
-            //LCD_print("zdrw jums", 12, 2);
+            LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
     }
@@ -386,7 +420,14 @@ void printMidiMessage(union MidiInput message)
     }
     else if (0x04 == codeIndexNumber)
     {
-        printf("SE, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
+        if ((0x2000F004 == midiInput.input) || (0x18022904 == midiInput.input))
+        {
+            // ignore SysEx header messages
+        }
+        else
+        {
+            printf("SE, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
+        }
     }
     else if (0x07 == codeIndexNumber)
     {
@@ -442,24 +483,35 @@ void randomLightAnimation()
 
 void runBrigthnessTest()
 {
-    uint32_t nextReadoutTime = 0;
+    volatile uint32_t nextReadoutTime = 0;
+    uint16_t result = 0;
     uint16_t i = 0;
     grid_setLedOutputDirectly(0, 0, 1001, 1001, 1001);
     grid_setLedOutputDirectly(1, 0, 1001, 47000, 47000);
     grid_setLedOutputDirectly(2, 0, 47000, 1001, 47000);
     grid_setLedOutputDirectly(3, 0, 47000, 47000, 1001);
-    //HAL_ADC_Start(&hadc1);
+    grid_setLedOutputDirectly(9, 4, 47000, 47000, 47000);
+
+    nextReadoutTime = HAL_GetTick() + 10000; // 10s delay at the start
+    while (HAL_GetTick() < nextReadoutTime)
+    {};
+
     for (i=47000; i>1000;--i)
     {
-        grid_setLedOutputDirectly(4, 4, i, 47000, 47000);
+        grid_setLedOutputDirectly(9, 4, i, 47000, 47000);
         nextReadoutTime = HAL_GetTick() + 10; // 10ms delay
         while (HAL_GetTick() < nextReadoutTime)
         {};
-//        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK)
-//        {
-//            brightnessTestResult[47000-i] = HAL_ADC_GetValue(&hadc1);
-//        }
-
+        HAL_ADC_Start(&hadc1);
+        if (HAL_ADC_PollForConversion(&hadc1, 1000) == HAL_OK)
+        {
+            result = HAL_ADC_GetValue(&hadc1);
+            brightnessTestResult[47000-i] = result;
+            if (4095 == result)
+            {
+                break;
+            }
+        }
     }
 }
 
@@ -528,18 +580,22 @@ static void MX_ADC1_Init(void)
 
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
     */
+
+  __GPIOC_CLK_ENABLE();
+  __ADC1_CLK_ENABLE();
+
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = DISABLE; //ADC_EOC_SINGLE_CONV;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   HAL_ADC_Init(&hadc1);
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
