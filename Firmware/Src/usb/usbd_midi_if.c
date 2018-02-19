@@ -127,6 +127,49 @@ void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value){
   sendMidiMessage(buffer,4);
 }
 
+void sendSysEx( const uint8_t* data, uint8_t length )
+{
+    uint8_t bytesRemaining;
+    uint8_t i = 0;
+    while (i<length)
+    {
+        bytesRemaining = length - i;
+        if (bytesRemaining > 3)
+        {
+            buffer[0] = 0x04;
+            buffer[1] = data[i];
+            buffer[2] = data[i+1];
+            buffer[3] = data[i+2];
+            sendMidiMessage(buffer,4);
+        }
+        else if (3 == bytesRemaining)
+        {
+            buffer[0] = 0x07;
+            buffer[1] = data[i];
+            buffer[2] = data[i+1];
+            buffer[3] = data[i+2];
+            sendMidiMessage(buffer,4);
+        }
+        else if (2 == bytesRemaining)
+        {
+            buffer[0] = 0x06;
+            buffer[1] = data[i];
+            buffer[2] = data[i+1];
+            buffer[3] = 0;
+            sendMidiMessage(buffer,4);
+        }
+        else if (1 == bytesRemaining)
+        {
+            buffer[0] = 0x05;
+            buffer[1] = data[i];
+            buffer[2] = 0;
+            buffer[3] = 0;
+            sendMidiMessage(buffer,4);
+        }
+        i += 3;
+    }
+}
+
 void processMidiMessage(){
   uint8_t *pbuf;
   uint8_t kindmessage;

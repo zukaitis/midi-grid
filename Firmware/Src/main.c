@@ -54,7 +54,7 @@
 
 #include "grid_buttons/grid_buttons.h"
 
-//#define USE_SEMIHOSTING
+#define USE_SEMIHOSTING
 
 /* USER CODE BEGIN Includes */
 
@@ -78,6 +78,8 @@ struct MidiMessage
     uint8_t header;
     uint8_t data[3];
 };
+
+static const uint8_t challengeResponse[9] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00};
 
 union MidiInput
 {
@@ -197,8 +199,8 @@ int main(void)
   grid_initialize();
   grid_enable();
 
-  LCD_init();
-  LCD_print("yo", 12, 2);
+  //LCD_init();
+  //LCD_print("yo", 12, 2);
   //runBrigthnessTest();
 #ifdef USE_SEMIHOSTING
   printf("Semihosting output enabled\n");
@@ -355,6 +357,15 @@ int main(void)
                     printMidiMessage(midiInput);
                 }
             }
+            else if (0x4 == codeIndexNumber) // SysEx message
+            {
+                // SysEx reception has to be reiplemented
+                if (0x40 == midiInput.message.data[0]) // challenge message
+                {
+                    sendSysEx(&challengeResponse[0], 9); // always return zeros as challenge response
+                    processMidiMessage();
+                }
+            }
             else
             {
                 printMidiMessage(midiInput);
@@ -396,7 +407,7 @@ int main(void)
 //                    //don't send anything
 //                }
             }
-            LCD_print("zdrw jums", 12, 2);
+            //LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
     }
