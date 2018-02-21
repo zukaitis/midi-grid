@@ -109,6 +109,7 @@ void sendNoteOn(uint8_t ch, uint8_t note, uint8_t vel){
   buffer[2] = 0x7f & note;
   buffer[3] = 0x7f & vel;
   sendMidiMessage(buffer,4);
+  processMidiMessage();
 }
 
 void sendNoteOff(uint8_t ch, uint8_t note){
@@ -117,6 +118,7 @@ void sendNoteOff(uint8_t ch, uint8_t note){
   buffer[2] = 0x7f & note;
   buffer[3] = 0;
   sendMidiMessage(buffer,4);
+  processMidiMessage();
 }
 
 void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value){
@@ -125,7 +127,10 @@ void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value){
   buffer[2] = 0x7f & num;
   buffer[3] = 0x7f & value;
   sendMidiMessage(buffer,4);
+  processMidiMessage();
 }
+
+
 
 void sendSysEx( const uint8_t* data, uint8_t length )
 {
@@ -141,6 +146,7 @@ void sendSysEx( const uint8_t* data, uint8_t length )
             buffer[2] = data[i+1];
             buffer[3] = data[i+2];
             sendMidiMessage(buffer,4);
+            processMidiMessage();
         }
         else if (3 == bytesRemaining)
         {
@@ -149,6 +155,7 @@ void sendSysEx( const uint8_t* data, uint8_t length )
             buffer[2] = data[i+1];
             buffer[3] = data[i+2];
             sendMidiMessage(buffer,4);
+            processMidiMessage();
         }
         else if (2 == bytesRemaining)
         {
@@ -157,6 +164,7 @@ void sendSysEx( const uint8_t* data, uint8_t length )
             buffer[2] = data[i+1];
             buffer[3] = 0;
             sendMidiMessage(buffer,4);
+            processMidiMessage();
         }
         else if (1 == bytesRemaining)
         {
@@ -165,6 +173,7 @@ void sendSysEx( const uint8_t* data, uint8_t length )
             buffer[2] = 0;
             buffer[3] = 0;
             sendMidiMessage(buffer,4);
+            processMidiMessage();
         }
         i += 3;
     }

@@ -48,13 +48,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+
+#include "program/launchpad.h"
+#include "lcd/lcd.h"
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
-#include "lcd/lcd.h"
 
 #include "grid_buttons/grid_buttons.h"
-
-#define USE_SEMIHOSTING
 
 /* USER CODE BEGIN Includes */
 
@@ -73,25 +73,11 @@ TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
 
-struct MidiMessage
-{
-    uint8_t header;
-    uint8_t data[3];
-};
-
-static const uint8_t challengeResponse[9] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00};
-
-union MidiInput
-{
-    uint32_t input;
-    struct MidiMessage message;
-};
-
-union MidiInput midiInput;
-
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint16_t brightnessTestResult[46000];
+
+extern stB4Arrq rxq;
 
 /* USER CODE END PV */
 
@@ -104,41 +90,11 @@ static void MX_TIM1_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 
-void printMidiMessage(union MidiInput message);
 void randomLightAnimation();
 void runBrigthnessTest();
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
-extern stB4Arrq rxq;
-
-uint8_t sessionLayout[10][8] = {
-        {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
-        {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
-        {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
-        {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
-        {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} };
-
-uint8_t drumLayout[10][8] = {
-        {36, 40, 44, 48, 52, 56, 60, 64}, {37, 41, 45, 49, 53, 57, 61, 65},
-        {38, 42, 46, 50, 54, 58, 62, 66}, {39, 43, 47, 51, 55, 59, 63, 67},
-        {68, 72, 76, 80, 84, 88, 92, 96}, {69, 73, 77, 81, 85, 89, 93, 97},
-        {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
-        {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
-
-static const uint8_t topRowControllerNumbers[8] = {4, 7, 5, 6, 3, 2, 0, 1};
-
-enum Layout
-{
-    Layout_SESSION = 0,
-    Layout_USER1,
-    Layout_USER2,
-    Layout_RESERVED,
-    Layout_VOLUME,
-    Layout_PAN
-};
-
-static uint8_t currentLayout = Layout_SESSION;
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -157,8 +113,6 @@ int main(void)
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, event, velocity;
-    uint8_t ledPositionX, ledPositionY;
-    uint8_t codeIndexNumber, channel;
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -215,7 +169,6 @@ int main(void)
           {
               velocity = (event) ? 127 : 0;
               sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
-              processMidiMessage();
           }
           break;
       }
@@ -223,232 +176,14 @@ int main(void)
 
   while (!isUsbConnected())
   {
-    i++;
+      i++;
   }
 #ifdef USE_SEMIHOSTING
   printf("Printing unacknowledged MIDI messages:\n");
 #endif
+  launchpad_runProgram();
 
-  while (1)
-  {
-      i++;
-      // led flash message - 0x15519109 (Hex)
-
-        if (0 != rxq.num)
-        {
-            midiInput.input = *b4arrq_pop(&rxq);
-            codeIndexNumber = midiInput.message.header & 0x0F;
-            if ((0x9 == codeIndexNumber) || (0x8 == codeIndexNumber)) // note on or note off
-            {
-                if (Layout_USER1 == currentLayout)
-                {
-                    // only this layout uses drum layout
-                    if ((midiInput.message.data[1] >= 36) && (midiInput.message.data[1] <= 107))
-                    {
-                        if (midiInput.message.data[1] <= 67)
-                        {
-                            ledPositionX = midiInput.message.data[1] % 4;
-                            ledPositionY = (midiInput.message.data[1] - 36) / 4;
-                        }
-                        else if (midiInput.message.data[1] <= 99)
-                        {
-                            ledPositionX = midiInput.message.data[1] % 4 + 4;
-                            ledPositionY = (midiInput.message.data[1] - 68) / 4;
-                        }
-                        else
-                        {
-                            ledPositionX = 8;
-                            ledPositionY = 107 - midiInput.message.data[1];
-                        }
-                        channel = midiInput.message.data[0] & 0x0F;
-                        if (channel > 2)
-                        {
-                            channel = 0;
-                        }
-                        if (0x8 == codeIndexNumber) // note off
-                        {
-                            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, 0, 0);
-                        }
-                        else
-                        {
-                            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
-                        }
-                    }
-                    else
-                    {
-                        printMidiMessage(midiInput);
-                    }
-                }
-                else
-                {
-                    // not sure if this conditional is needed
-                    if ((midiInput.message.data[1] >= 11) && (midiInput.message.data[1] <= 89))
-                    {
-
-                        ledPositionX = (midiInput.message.data[1] % 10) - 1;
-                        ledPositionY = (midiInput.message.data[1] / 10) - 1;
-                        channel = midiInput.message.data[0] & 0x0F;
-                        if (channel > 2)
-                        {
-                            channel = 0;
-                        }
-                        grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], channel);
-                    }
-                    else
-                    {
-                        printMidiMessage(midiInput);
-                    }
-                }
-            }
-            else if (0xB == codeIndexNumber) // change control
-            {
-                if ((midiInput.message.data[1] >= 104) && (midiInput.message.data[1] <= 111))
-                {
-                    ledPositionX = 9;
-                    ledPositionY = topRowControllerNumbers[midiInput.message.data[1] - 104];
-                    grid_setLedFromMidiMessage(ledPositionX, ledPositionY, midiInput.message.data[2], 0);
-                }
-                else
-                {
-                    printMidiMessage(midiInput);
-                }
-            }
-            else if (0x7 == codeIndexNumber) // end of SysEx message
-            {
-                if (0x22 == midiInput.message.data[0]) // layout change message
-                {
-                    if (midiInput.message.data[1] < 6)
-                    {
-                        currentLayout = midiInput.message.data[1];
-                        struct Colour colour = {0, 0, 0};
-                        switch (currentLayout)
-                        {
-                            case Layout_SESSION:
-                                colour.Red = 64;
-                                break;
-                            case Layout_USER1:
-                                colour.Green = 64;
-                                break;
-                            case Layout_USER2:
-                                colour.Blue = 64;
-                                break;
-                            case Layout_RESERVED:
-                                colour.Red = 64;
-                                colour.Green = 64;
-                                break;
-                            case Layout_PAN:
-                                colour.Red = 64;
-                                colour.Blue = 64;
-                                break;
-                            case Layout_VOLUME:
-                                colour.Green = 64;
-                                colour.Blue = 64;
-                                break;
-                        }
-                        grid_setLedColour(9, 4, &colour);
-                    }
-                    else
-                    {
-                        printMidiMessage(midiInput);
-                    }
-                }
-                else
-                {
-                    printMidiMessage(midiInput);
-                }
-            }
-            else if (0x4 == codeIndexNumber) // SysEx message
-            {
-                // SysEx reception has to be reiplemented
-                if (0x40 == midiInput.message.data[0]) // challenge message
-                {
-                    sendSysEx(&challengeResponse[0], 9); // always return zeros as challenge response
-                    processMidiMessage();
-                }
-            }
-            else
-            {
-                printMidiMessage(midiInput);
-            }
-        }
-
-        if (grid_getButtonEvent(&buttonX, &buttonY, &event))
-        {
-            velocity = (event != 0) ? 127 : 0;
-            if (9 == buttonX) // control row
-            {
-                sendCtlChange( 0,sessionLayout[buttonX][buttonY],velocity );
-                processMidiMessage();
-            }
-            else
-            {
-                if (Layout_SESSION == currentLayout)
-                {
-                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
-                    processMidiMessage();
-                }
-                else if (Layout_USER1 == currentLayout)
-                {
-                    sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
-                    processMidiMessage();
-                }
-                else if (Layout_USER2 == currentLayout)
-                {
-                    sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
-                    processMidiMessage();
-                }
-                else //if ((Layout_VOLUME == currentLayout) || (Layout_PAN == currentLayout))
-                {
-                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
-                    processMidiMessage();
-                }
-//                else
-//                {
-//                    //don't send anything
-//                }
-            }
-            //LCD_print("zdrw jums", 12, 2);
-        }
-        grid_updateLeds();
-    }
       /* USER CODE END 3 */
-}
-
-void printMidiMessage(union MidiInput message)
-{
-#ifdef USE_SEMIHOSTING
-    uint8_t channel;
-    uint8_t codeIndexNumber = midiInput.message.header & 0x0F;
-    if (0x09 == codeIndexNumber)
-    {
-        channel = midiInput.message.data[0] & 0x0F;
-        printf("NO, ch:%i n:%i v:%i\n", channel, midiInput.message.data[1], midiInput.message.data[2]);
-    }
-    else if (0x0B == codeIndexNumber)
-    {
-        channel = midiInput.message.data[0] & 0x0F;
-        printf("CC, ch:%i c:%i v:%i\n", channel, midiInput.message.data[1], midiInput.message.data[2]);
-    }
-    else if (0x04 == codeIndexNumber)
-    {
-        if ((0x2000F004 == midiInput.input) || (0x18022904 == midiInput.input))
-        {
-            // ignore SysEx header messages
-        }
-        else
-        {
-            printf("SE, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
-        }
-    }
-    else if (0x07 == codeIndexNumber)
-    {
-        printf("SEe, d: %02Xh %02Xh %02Xh\n", midiInput.message.data[0], midiInput.message.data[1], midiInput.message.data[2]);
-    }
-    else
-    {
-        printf("Unknown message, CIN: %Xh\n", codeIndexNumber);
-    }
-#endif
 }
 
 void randomLightAnimation()

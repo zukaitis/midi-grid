@@ -54,7 +54,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+//#define USE_SEMIHOSTING
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
