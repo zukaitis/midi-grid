@@ -24,7 +24,7 @@ struct MidiPacket
     uint8_t data[3];
 };
 
-static const uint8_t challengeResponse[9] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00};
+static const uint8_t challengeResponse[10] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7};
 static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18};
 
 union MidiInput
@@ -237,7 +237,7 @@ void processSystemExclusiveMidiPacket( const struct MidiPacket* packet )
     }
 }
 
-void processSystemExclusiveMessage(uint8_t *message, uint8_t length)
+void processSystemExclusiveMessage( uint8_t *message, uint8_t length )
 {
     if (length > 7)
     {
@@ -245,11 +245,11 @@ void processSystemExclusiveMessage(uint8_t *message, uint8_t length)
         {
             if (0x22 == message[6])
             {
-                setCurrentLayout(message[7]);
+                setCurrentLayout( message[7] );
             }
             else if (0x40 == message[6])
             {
-                sendSysEx(&challengeResponse[0], 9); // always return zeros as challenge response
+                sendSysEx( &challengeResponse[0], 10 ); // always return zeros as challenge response
             }
         }
     }
@@ -259,7 +259,7 @@ void processSystemExclusiveMessage(uint8_t *message, uint8_t length)
     }
 }
 
-void setCurrentLayout(uint8_t layout)
+void setCurrentLayout( uint8_t layout )
 {
     if (layout < 6)
     {
@@ -289,7 +289,7 @@ void setCurrentLayout(uint8_t layout)
                 colour.Blue = 64;
                 break;
         }
-        grid_setLedColour(9, 4, &colour);
+        grid_setLedColour( 9, 4, &colour );
     }
 }
 

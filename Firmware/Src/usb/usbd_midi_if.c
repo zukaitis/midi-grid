@@ -109,7 +109,7 @@ void sendNoteOn(uint8_t ch, uint8_t note, uint8_t vel){
   buffer[2] = 0x7f & note;
   buffer[3] = 0x7f & vel;
   sendMidiMessage(buffer,4);
-  processMidiMessage();
+  USBD_MIDI_SendPacket();
 }
 
 void sendNoteOff(uint8_t ch, uint8_t note){
@@ -118,7 +118,7 @@ void sendNoteOff(uint8_t ch, uint8_t note){
   buffer[2] = 0x7f & note;
   buffer[3] = 0;
   sendMidiMessage(buffer,4);
-  processMidiMessage();
+  USBD_MIDI_SendPacket();
 }
 
 void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value){
@@ -127,7 +127,7 @@ void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value){
   buffer[2] = 0x7f & num;
   buffer[3] = 0x7f & value;
   sendMidiMessage(buffer,4);
-  processMidiMessage();
+  USBD_MIDI_SendPacket();
 }
 
 
@@ -142,40 +142,44 @@ void sendSysEx( const uint8_t* data, uint8_t length )
         if (bytesRemaining > 3)
         {
             buffer[0] = 0x04;
-            buffer[1] = data[i];
-            buffer[2] = data[i+1];
-            buffer[3] = data[i+2];
+            buffer[1] = data[i++];
+            buffer[2] = data[i++];
+            buffer[3] = data[i++];
             sendMidiMessage(buffer,4);
-            processMidiMessage();
+            USBD_MIDI_SendPacket();
         }
-        else if (3 == bytesRemaining)
+        else
         {
-            buffer[0] = 0x07;
-            buffer[1] = data[i];
-            buffer[2] = data[i+1];
-            buffer[3] = data[i+2];
-            sendMidiMessage(buffer,4);
-            processMidiMessage();
+            if (3 == bytesRemaining)
+            {
+                buffer[0] = 0x07;
+                buffer[1] = data[i++];
+                buffer[2] = data[i++];
+                buffer[3] = data[i];
+                sendMidiMessage(buffer,4);
+                USBD_MIDI_SendPacket();
+            }
+            else if (2 == bytesRemaining)
+            {
+                buffer[0] = 0x06;
+                buffer[1] = data[i++];
+                buffer[2] = data[i];
+                buffer[3] = 0;
+                sendMidiMessage(buffer,4);
+                USBD_MIDI_SendPacket();
+            }
+            else // 1 byte remaining
+            {
+                buffer[0] = 0x05;
+                buffer[1] = data[i];
+                buffer[2] = 0;
+                buffer[3] = 0;
+                sendMidiMessage(buffer,4);
+                USBD_MIDI_SendPacket();
+            }
+            break;
         }
-        else if (2 == bytesRemaining)
-        {
-            buffer[0] = 0x06;
-            buffer[1] = data[i];
-            buffer[2] = data[i+1];
-            buffer[3] = 0;
-            sendMidiMessage(buffer,4);
-            processMidiMessage();
-        }
-        else if (1 == bytesRemaining)
-        {
-            buffer[0] = 0x05;
-            buffer[1] = data[i];
-            buffer[2] = 0;
-            buffer[3] = 0;
-            sendMidiMessage(buffer,4);
-            processMidiMessage();
-        }
-        i += 3;
+
     }
 }
 
