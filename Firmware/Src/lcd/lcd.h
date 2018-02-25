@@ -68,6 +68,16 @@
 #define LCD_WIDTH 84
 #define LCD_HEIGHT 48
 #define LCD_SIZE LCD_WIDTH * LCD_HEIGHT / 8
+#define LCD_NUMBER_OF_LINES 6
+#define LCD_BUFFER_SIZE 504
+
+#define LCD_GPIO_Port GPIOB
+#define LCD_RESET_Pin GPIO_PIN_2
+#define LCD_DC_Pin GPIO_PIN_10
+#define LCD_CS_Pin GPIO_PIN_12
+#define LCD_SCK_Pin GPIO_PIN_13
+#define LCD_LIGHT_Pin GPIO_PIN_14
+#define LCD_MOSI_Pin GPIO_PIN_15
 
 /*
  * @brief LCD parameters
@@ -96,6 +106,9 @@ struct LCD_GPIO{
 	GPIO_TypeDef* CLKPORT;
 	uint16_t CLKPIN;
 };
+
+void lcd_clear();
+void lcd_update();
 
 /*----- GPIO Pins -----*/
 void LCD_setRST(GPIO_TypeDef* PORT, uint16_t PIN);

@@ -93,18 +93,10 @@
 #define PWM_BLUE3_GPIO_Port GPIOB
 #define PWM_BLUE4_Pin GPIO_PIN_1
 #define PWM_BLUE4_GPIO_Port GPIOB
-#define LCD_RESET_Pin GPIO_PIN_2
-#define LCD_RESET_GPIO_Port GPIOB
-#define LCD_DC_Pin GPIO_PIN_10
-#define LCD_DC_GPIO_Port GPIOB
-#define LCD_CS_Pin GPIO_PIN_12
-#define LCD_CS_GPIO_Port GPIOB
-#define LCD_SCK_Pin GPIO_PIN_13
-#define LCD_SCK_GPIO_Port GPIOB
+
 #define LCD_LIGHT_Pin GPIO_PIN_14
 #define LCD_LIGHT_GPIO_Port GPIOB
-#define LCD_MOSI_Pin GPIO_PIN_15
-#define LCD_MOSI_GPIO_Port GPIOB
+
 #define MIDI_OUT_Pin GPIO_PIN_6
 #define MIDI_OUT_GPIO_Port GPIOC
 #define MIDI_IN_Pin GPIO_PIN_7

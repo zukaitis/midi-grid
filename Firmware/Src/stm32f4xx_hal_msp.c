@@ -144,7 +144,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
   if(hspi->Instance==SPI2)
   {
   /* USER CODE BEGIN SPI2_MspInit 0 */
-
+#if 0
   /* USER CODE END SPI2_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_SPI2_CLK_ENABLE();
@@ -181,7 +181,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     __HAL_LINKDMA(hspi,hdmatx,hdma_spi2_tx);
 
   /* USER CODE BEGIN SPI2_MspInit 1 */
-
+#endif
   /* USER CODE END SPI2_MspInit 1 */
   }
 
@@ -203,7 +203,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     PB13     ------> SPI2_SCK
     PB15     ------> SPI2_MOSI 
     */
-    HAL_GPIO_DeInit(GPIOB, LCD_CS_Pin|LCD_SCK_Pin|LCD_MOSI_Pin);
+    //HAL_GPIO_DeInit(GPIOB, LCD_CS_Pin|LCD_SCK_Pin|LCD_MOSI_Pin);
 
     /* SPI2 DMA DeInit */
     HAL_DMA_DeInit(hspi->hdmatx);

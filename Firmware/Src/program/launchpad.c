@@ -251,6 +251,14 @@ void processSystemExclusiveMessage( uint8_t *message, uint8_t length )
             {
                 sendSysEx( &challengeResponse[0], 10 ); // always return zeros as challenge response
             }
+            else
+            {
+                printSysExMessage(message, length);
+            }
+        }
+        else
+        {
+            printSysExMessage(message, length);
         }
     }
     else
@@ -264,6 +272,7 @@ void setCurrentLayout( uint8_t layout )
     if (layout < 6)
     {
         currentLayout = layout;
+        // unnecessary stuff below
         struct Colour colour = {0, 0, 0};
         switch (currentLayout)
         {

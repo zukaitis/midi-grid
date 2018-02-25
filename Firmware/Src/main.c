@@ -63,8 +63,8 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
-SPI_HandleTypeDef hspi2;
-DMA_HandleTypeDef hdma_spi2_tx;
+//SPI_HandleTypeDef hspi2;
+//DMA_HandleTypeDef hdma_spi2_tx;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
@@ -150,11 +150,26 @@ int main(void)
   initialise_monitor_handles(); // enable semihosting
 #endif
 
-  grid_initialize();
-  grid_enable();
+//  grid_initialize();
+//  grid_enable();
 
-  //LCD_init();
-  //LCD_print("yo", 12, 2);
+  LCD_init();
+  LCD_print("yo", 12, 2);
+  char outstring[4] = {0, 0, 0, 0};
+  while(1)
+  {
+      if (HAL_GetTick() > i)
+      {
+          outstring[0] = i/100000 + 0x30;
+          outstring[1] = i/10000 + 0x30;
+          outstring[2] = i/1000 + 0x30;
+          outstring[3] = 0;
+          lcd_clear();
+          LCD_print(&outstring[0], 16, (i/1000)%48);
+          lcd_update();
+          i = HAL_GetTick() + 1000; //1s
+      }
+  }
   //runBrigthnessTest();
 #ifdef USE_SEMIHOSTING
   printf("Semihosting output enabled\n");
@@ -356,7 +371,7 @@ static void MX_ADC1_Init(void)
 /* SPI2 init function */
 static void MX_SPI2_Init(void)
 {
-
+#if 0
   /* SPI2 parameter configuration*/
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
@@ -374,7 +389,7 @@ static void MX_SPI2_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
+#endif
 }
 
 /* TIM1 init function */
@@ -455,6 +470,7 @@ static void MX_USART6_UART_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+#if 0
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
 
@@ -462,6 +478,7 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
+#endif
 
 }
 
