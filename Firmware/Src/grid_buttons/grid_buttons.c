@@ -7,6 +7,8 @@
 #include "grid_buttons/grid_buttons.h"
 #include "grid_buttons/grid_buttons_configuration.h"
 
+#include "lcd/lcd.h" // for debugging
+
 #define LED_PASSIVE {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD}
 //#define LED_PASSIVE {.Red = 40000, .Green = 8200, .Blue = 40000}
 
@@ -16,7 +18,7 @@ static uint8_t buttonInputUpdatedFlag = 1;
 static uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
 static uint8_t gridInitializationDone = 0;
 
-static struct GridLed gridLed[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+static struct GridLed gridLed[10][8];
 
 static struct LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS] = {
         {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
@@ -118,7 +120,7 @@ void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint
     }
     else if (LedLighting_PULSE == gridLed[ledPositionX][ledPositionY].lightingType)
     {
-        for (i=0; i<numberOfPulsingLeds;i++)
+        for (i=0; i<numberOfPulsingLeds; i++)
         {
             if ((ledPositionX == pulsingLed[i].positionX)&&(ledPositionY == pulsingLed[i].positionY))
             {
@@ -166,6 +168,10 @@ void grid_setLedColourFromLaunchpadPalette( uint8_t ledPositionX, uint8_t ledPos
 
 void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour )
 {
+    // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
+    uint8_t directLed = (ledPositionX > 7) ? 1 : 0;
+
+
     if (ledPositionY > 3)
     {
         ledPositionX += 9; // + 10 - 1
@@ -180,9 +186,18 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
         --ledPositionX;
     }
 
-    ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour->Red];
-    ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour->Green];
-    ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour->Blue];
+    if (directLed)
+    {
+        ledOutput[ledPositionX][ledPositionY].Red = brightnessDirect[colour->Red];
+        ledOutput[ledPositionX][ledPositionY].Green = brightnessDirect[colour->Green];
+        ledOutput[ledPositionX][ledPositionY].Blue = brightnessDirect[colour->Blue];
+    }
+    else
+    {
+        ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour->Red];
+        ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour->Green];
+        ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour->Blue];
+    }
 }
 
 void grid_setAllLedsOff()

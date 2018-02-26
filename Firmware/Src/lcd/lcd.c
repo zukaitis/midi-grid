@@ -301,8 +301,19 @@ void lcd_putChar(uint8_t x, uint8_t y, char c)
 {
     for(uint8_t i = 0; i < 6; i++)
     {
-        lcdBuffer[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
-        lcdBuffer[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
+        if ((x+i) >= LCD_WIDTH)
+        {
+            break;
+        }
+        else
+        {
+            lcdBuffer[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
+
+            if (y < (LCD_HEIGHT - FONT_HEIGHT))
+            {
+                lcdBuffer[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
+            }
+        }
     }
 }
 
@@ -324,19 +335,44 @@ void LCD_putChar(char c){
  * @param x: starting point on the x-axis (column)
  * @param y: starting point on the y-axis (line)
  */
-void LCD_print(char *str, uint8_t x, uint8_t y){
-#if 0
-  LCD_goXY(x, y);
-  while(*str){
-    LCD_putChar(*str++);
-  }
-#else
-    while(*str)
+void lcd_print(char *str, uint8_t x, uint8_t y)
+{
+    if ((x < LCD_WIDTH)&&(y < LCD_HEIGHT))
     {
-        lcd_putChar(x, y, *str++);
-        x += 6;
+        while(*str)
+        {
+            lcd_putChar(x, y, *str++);
+            x += 6;
+        }
     }
-#endif
+}
+
+void lcd_printJustified(char *string, uint8_t x, uint8_t y, enum Justification justification)
+{
+    uint8_t textWidth = strlen(string) * FONT_WIDTH;
+
+    if (Justification_LEFT ==  justification)
+    {
+        if (textWidth < (LCD_WIDTH - x))
+        {
+            lcd_print(string, x, y);
+        }
+    }
+    else if (Justification_RIGHT ==  justification)
+    {
+        if (textWidth < x)
+        {
+            lcd_print(string, (x - textWidth), y);
+        }
+    }
+    else if (Justification_CENTER ==  justification)
+    {
+        textWidth = textWidth/2;
+        if ((textWidth < x) && (textWidth < (LCD_WIDTH - x)))
+        {
+            lcd_print(string, (x - textWidth), y);
+        }
+    }
 }
 
 /*

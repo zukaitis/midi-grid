@@ -110,6 +110,7 @@ extern void initialise_monitor_handles(void); // semihosting
   * @retval None
   */
 int main(void)
+
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, event, velocity;
@@ -150,26 +151,30 @@ int main(void)
   initialise_monitor_handles(); // enable semihosting
 #endif
 
-//  grid_initialize();
-//  grid_enable();
+  grid_initialize();
+  grid_enable();
 
   LCD_init();
-  LCD_print("yo", 12, 2);
-  char outstring[4] = {0, 0, 0, 0};
-  while(1)
-  {
-      if (HAL_GetTick() > i)
-      {
-          outstring[0] = i/100000 + 0x30;
-          outstring[1] = i/10000 + 0x30;
-          outstring[2] = i/1000 + 0x30;
-          outstring[3] = 0;
-          lcd_clear();
-          LCD_print(&outstring[0], 16, (i/1000)%48);
-          lcd_update();
-          i = HAL_GetTick() + 1000; //1s
-      }
-  }
+  lcd_printJustified("Been there", 0, 0, Justification_LEFT);
+  lcd_printJustified("Done that", LCD_WIDTH, 15, Justification_RIGHT);
+  lcd_printJustified("Doing again", LCD_WIDTH/2, 24, Justification_CENTER);
+  lcd_printJustified("tomorrow", LCD_WIDTH/2, 31, Justification_CENTER);
+  lcd_update();
+//  char outstring[4] = {0, 0, 0, 0};
+//  while(1)
+//  {
+//      if (HAL_GetTick() > i)
+//      {
+//          outstring[0] = i/100000 + 0x30;
+//          outstring[1] = i/10000 + 0x30;
+//          outstring[2] = i/1000 + 0x30;
+//          outstring[3] = 0;
+//          lcd_clear();
+//          LCD_print(&outstring[0], 16, (i/1000)%48);
+//          lcd_update();
+//          i = HAL_GetTick() + 1000; //1s
+//      }
+//  }
   //runBrigthnessTest();
 #ifdef USE_SEMIHOSTING
   printf("Semihosting output enabled\n");

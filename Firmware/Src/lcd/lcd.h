@@ -79,6 +79,13 @@
 #define LCD_LIGHT_Pin GPIO_PIN_14
 #define LCD_MOSI_Pin GPIO_PIN_15
 
+enum Justification
+{
+    Justification_LEFT,
+    Justification_RIGHT,
+    Justification_CENTER
+};
+
 /*
  * @brief LCD parameters
  */
@@ -109,6 +116,7 @@ struct LCD_GPIO{
 
 void lcd_clear();
 void lcd_update();
+void lcd_printJustified(char *string, uint8_t x, uint8_t y, enum Justification justification);
 
 /*----- GPIO Pins -----*/
 void LCD_setRST(GPIO_TypeDef* PORT, uint16_t PIN);
@@ -124,7 +132,7 @@ void LCD_init();
 void LCD_invert(bool mode);
 void LCD_invertText(bool mode);
 void LCD_putChar(char c);
-void LCD_print(char *str, uint8_t x, uint8_t y);
+void lcd_print(char *str, uint8_t x, uint8_t y);
 void LCD_clrScr();
 void LCD_goXY(uint8_t x, uint8_t y);
 
