@@ -307,10 +307,12 @@ void lcd_putChar(uint8_t x, uint8_t y, char c)
         }
         else
         {
+            lcdBuffer[y/8][x+i] &= ~(0xFF << (y % 8));
             lcdBuffer[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
 
             if (y < (LCD_HEIGHT - FONT_HEIGHT))
             {
+                lcdBuffer[y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
                 lcdBuffer[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
             }
         }

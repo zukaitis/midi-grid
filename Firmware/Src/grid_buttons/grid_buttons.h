@@ -40,5 +40,6 @@ void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint
         uint16_t outputBlue );
 void grid_updateLeds();
 
+struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY);
 
 #endif /* GRID_BUTTONS_H_ */

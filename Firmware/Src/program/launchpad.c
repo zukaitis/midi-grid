@@ -123,7 +123,6 @@ void launchpad_runProgram()
   //                    //don't send anything
   //                }
             }
-              //LCD_print("zdrw jums", 12, 2);
         }
         grid_updateLeds();
     }
@@ -195,6 +194,13 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
         grid_setLedFromMidiMessage(ledPositionX, ledPositionY, value, 0);
+        if (ledPositionY < 4)
+        {
+            char string[4];
+            sprintf(string, "%03d", value);
+            lcd_print(string, 10, ledPositionY*10);
+            lcd_update();
+        }
     }
     else
     {

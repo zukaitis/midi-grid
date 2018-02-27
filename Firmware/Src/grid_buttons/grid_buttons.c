@@ -200,6 +200,11 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
     }
 }
 
+struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
+{
+    return gridLed[ledPositionX][ledPositionY].colour;
+}
+
 void grid_setAllLedsOff()
 {
     uint8_t x, y;
