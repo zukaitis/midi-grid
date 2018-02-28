@@ -1,4 +1,4 @@
 # midi-grid
 DIY RGB MIDI grid controller, will have more info soon
 
-![3D render](https://github.com/zukaitis/midi-grid/blob/master/Images/pcb_3d_render_front.png)
+[![Video](https://img.youtube.com/vi/7otjcxH8tro/0.jpg)](https://youtu.be/7otjcxH8tro "Demo video")

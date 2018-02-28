@@ -17,9 +17,9 @@ enum ButtonEventType
 
 enum LedLightingType
 {
-    LedLighting_LIGHT = 0,
-    LedLighting_FLASH,
-    LedLighting_PULSE
+    LedLightingType_LIGHT = 0,
+    LedLightingType_FLASH,
+    LedLightingType_PULSE
 };
 
 struct Colour
@@ -35,7 +35,7 @@ void grid_initialize();
 void grid_setAllLedsOff();
 void grid_setLedColourFromLaunchpadPalette( uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourNumber );
 void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour );
-void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourCode, uint8_t controlType);
+void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour, enum LedLightingType ledLightingType);
 void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint16_t outputRed, uint16_t outputGreen,
         uint16_t outputBlue );
 void grid_updateLeds();

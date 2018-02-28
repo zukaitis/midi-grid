@@ -101,11 +101,11 @@ void grid_initialize()
     gridInitializationDone = 1;
 }
 
-void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourCode, uint8_t controlType)
+void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour, enum LedLightingType ledLightingType)
 {
     uint8_t i;
     // remove led from flashing or pulsing list if it's in that list and proceed with setting that led
-    if (LedLighting_FLASH == gridLed[ledPositionX][ledPositionY].lightingType)
+    if (LedLightingType_FLASH == gridLed[ledPositionX][ledPositionY].ledLightingType)
     {
         for (i=0; i<numberOfFlashingLeds; i++)
         {
@@ -118,7 +118,7 @@ void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint
             }
         }
     }
-    else if (LedLighting_PULSE == gridLed[ledPositionX][ledPositionY].lightingType)
+    else if (LedLightingType_PULSE == gridLed[ledPositionX][ledPositionY].ledLightingType)
     {
         for (i=0; i<numberOfPulsingLeds; i++)
         {
@@ -132,38 +132,35 @@ void grid_setLedFromMidiMessage(uint8_t ledPositionX, uint8_t ledPositionY, uint
         }
     }
 
-    if (LedLighting_LIGHT == controlType)
+    switch (ledLightingType)
     {
-        gridLed[ledPositionX][ledPositionY].colour = launchpadColourPalette[colourCode];
-        gridLed[ledPositionX][ledPositionY].lightingType = LedLighting_LIGHT;
-        grid_setLedColourFromLaunchpadPalette(ledPositionX, ledPositionY, colourCode);
+        case LedLightingType_LIGHT:
+            gridLed[ledPositionX][ledPositionY].colour = *colour;
+            gridLed[ledPositionX][ledPositionY].ledLightingType = LedLightingType_LIGHT;
+            grid_setLedColour(ledPositionX, ledPositionY, colour);
+            break;
+        case LedLightingType_FLASH:
+            //save current color to have an alternate
+            flashingLed[numberOfFlashingLeds].positionX = ledPositionX;
+            flashingLed[numberOfFlashingLeds].positionY = ledPositionY;
+            flashingLed[numberOfFlashingLeds].alternateColour = gridLed[ledPositionX][ledPositionY].colour;
+            ++numberOfFlashingLeds;
+            gridLed[ledPositionX][ledPositionY].ledLightingType = LedLightingType_FLASH;
+            gridLed[ledPositionX][ledPositionY].colour = *colour;
+            grid_setLedColour(ledPositionX, ledPositionY, colour);
+            break;
+        case LedLightingType_PULSE:
+            //save current color to have an alternate
+            pulsingLed[numberOfPulsingLeds].positionX = ledPositionX;
+            pulsingLed[numberOfPulsingLeds].positionY = ledPositionY;
+            ++numberOfPulsingLeds;
+            gridLed[ledPositionX][ledPositionY].ledLightingType = LedLightingType_PULSE;
+            gridLed[ledPositionX][ledPositionY].colour = *colour;
+            // don't change output value, it will be set on next pulse period
+            break;
+        default:
+            break;
     }
-    else if (LedLighting_FLASH == controlType)
-    {
-        //save current color to have an alternate
-        flashingLed[numberOfFlashingLeds].positionX = ledPositionX;
-        flashingLed[numberOfFlashingLeds].positionY = ledPositionY;
-        flashingLed[numberOfFlashingLeds].alternateColour = gridLed[ledPositionX][ledPositionY].colour;
-        ++numberOfFlashingLeds;
-        gridLed[ledPositionX][ledPositionY].lightingType = LedLighting_FLASH;
-        gridLed[ledPositionX][ledPositionY].colour = launchpadColourPalette[colourCode];
-        grid_setLedColourFromLaunchpadPalette(ledPositionX, ledPositionY, colourCode);
-    }
-    else if (LedLighting_PULSE == controlType)
-    {
-        //save current color to have an alternate
-        pulsingLed[numberOfPulsingLeds].positionX = ledPositionX;
-        pulsingLed[numberOfPulsingLeds].positionY = ledPositionY;
-        ++numberOfPulsingLeds;
-        gridLed[ledPositionX][ledPositionY].lightingType = LedLighting_PULSE;
-        gridLed[ledPositionX][ledPositionY].colour = launchpadColourPalette[colourCode]; // color code cannot be 0 in pulse mode
-        // don't change output value, it will be set on next pulse period
-    }
-}
-
-void grid_setLedColourFromLaunchpadPalette( uint8_t ledPositionX, uint8_t ledPositionY, uint8_t colourNumber )
-{
-    grid_setLedColour( ledPositionX, ledPositionY, &launchpadColourPalette[colourNumber] );
 }
 
 void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour )

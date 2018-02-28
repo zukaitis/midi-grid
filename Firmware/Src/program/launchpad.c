@@ -6,7 +6,6 @@
  */
 #include "program/launchpad.h"
 
-#include "grid_buttons/grid_buttons.h"
 #include "main.h"
 #include "lcd/lcd.h"
 #include "usb/usb_device.h"
@@ -61,8 +60,7 @@ void printSysExMessage(uint8_t *message, uint8_t length);
 void launchpad_runProgram()
 {
     uint8_t buttonX, buttonY, event, velocity;
-    uint8_t ledPositionX, ledPositionY;
-    uint8_t codeIndexNumber, channel;
+    uint8_t codeIndexNumber;
     while (1)
     {
         // led flash message - 0x15519109 (Hex)
@@ -71,25 +69,26 @@ void launchpad_runProgram()
         {
             midiInput.input = *b4arrq_pop(&rxq);
             codeIndexNumber = midiInput.packet.header & 0x0F;
-            if (0x9 == codeIndexNumber) // note on
+            switch (codeIndexNumber)
             {
-                processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
-            }
-            else if (0x8 == codeIndexNumber) // note off
-            {
-                processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], 0);
-            }
-            else if (0xB == codeIndexNumber) // change control
-            {
-                processChangeControlMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
-            }
-            else if ((codeIndexNumber >= 0x4) && (codeIndexNumber <= 0x7))
-            {
-                processSystemExclusiveMidiPacket( &midiInput.packet );
-            }
-            else
-            {
-                printMidiMessage(midiInput);
+                case 0x09: // note on
+                    processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
+                    break;
+                case 0x08: // note off
+                    processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], 0);
+                    break;
+                case 0x0B: // change control
+                    processChangeControlMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
+                    break;
+                case 0x04: // system exclusive
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                    processSystemExclusiveMidiPacket( &midiInput.packet );
+                    break;
+                default:
+                    printMidiMessage(midiInput);
+                    break;
             }
         }
 
@@ -102,26 +101,21 @@ void launchpad_runProgram()
             }
             else
             {
-                if (Layout_SESSION == currentLayout)
+                switch (currentLayout)
                 {
-                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                    case Layout_SESSION:
+                        sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                        break;
+                    case Layout_USER1:
+                        sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
+                        break;
+                    case Layout_USER2:
+                        sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
+                        break;
+                    default:
+                        sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                        break;
                 }
-                else if (Layout_USER1 == currentLayout)
-                {
-                    sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
-                }
-                else if (Layout_USER2 == currentLayout)
-                {
-                    sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
-                }
-                else //if ((Layout_VOLUME == currentLayout) || (Layout_PAN == currentLayout))
-                {
-                    sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
-                }
-  //                else
-  //                {
-  //                    //don't send anything
-  //                }
             }
         }
         grid_updateLeds();
@@ -157,7 +151,7 @@ void processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t velocity)
                 channel = 0;
             }
 
-            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, velocity, channel);
+            grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[velocity], (enum LedLightingType)channel);
         }
         else
         {
@@ -177,7 +171,7 @@ void processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t velocity)
                 channel = 0;
             }
 
-            grid_setLedFromMidiMessage(ledPositionX, ledPositionY, velocity, channel);
+            grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[velocity], (enum LedLightingType)channel);
         }
         else
         {
@@ -193,8 +187,8 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
     {
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
-        grid_setLedFromMidiMessage(ledPositionX, ledPositionY, value, 0);
-        if (ledPositionY < 4)
+        grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[value], (enum LedLightingType)channel);
+        if (ledPositionY < 4) // debug
         {
             char string[4];
             sprintf(string, "%03d", value);
@@ -306,6 +300,27 @@ void setCurrentLayout( uint8_t layout )
         }
         grid_setLedColour( 9, 4, &colour );
     }
+}
+
+#if 0
+void gui_changeLaunchpadMode()
+{
+        do
+        {
+            //struct Colour ledColour = grid_getColour(9, 3); // session mode led
+
+//            if ({3, 2, 2} == ledColour)
+//            {
+//
+//            }
+
+        } while (0);
+}
+#endif
+
+enum Launchpad95Mode getLaunchpad95Mode()
+{
+
 }
 
 void printMidiMessage(union MidiInput message)
