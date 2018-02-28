@@ -58,5 +58,6 @@ enum Launchpad95Mode
 };
 
 void launchpad_runProgram();
+enum Launchpad95Mode launchpad_getLaunchpad95Mode();
 
 #endif /* PROGRAM_LAUNCHPAD_H_ */

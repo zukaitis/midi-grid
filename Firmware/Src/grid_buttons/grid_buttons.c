@@ -202,6 +202,15 @@ struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
     return gridLed[ledPositionX][ledPositionY].colour;
 }
 
+uint8_t grid_areColoursEqual(const struct Colour * colour1, const struct Colour * colour2)
+{
+    uint8_t equal = 0x01;
+    equal &= (colour1->Red == colour2->Red);
+    equal &= (colour1->Green == colour2->Green);
+    equal &= (colour1->Blue == colour2->Blue);
+    return equal;
+}
+
 void grid_setAllLedsOff()
 {
     uint8_t x, y;

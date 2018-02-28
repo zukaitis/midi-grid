@@ -188,11 +188,11 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
         grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[value], (enum LedLightingType)channel);
-        if (ledPositionY < 4) // debug
+        if (ledPositionY == 1) // debug
         {
             char string[4];
             sprintf(string, "%03d", value);
-            lcd_print(string, 10, ledPositionY*10);
+            lcd_print(string, 10, 10);
             lcd_update();
         }
     }
@@ -318,9 +318,63 @@ void gui_changeLaunchpadMode()
 }
 #endif
 
-enum Launchpad95Mode getLaunchpad95Mode()
+enum Launchpad95Mode launchpad_getLaunchpad95Mode()
 {
+    enum Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
+    struct Colour colour;
 
+    do
+    {
+        colour = grid_getLedColour(9, 3); // session led
+        if (grid_areColoursEqual(&colour, &launchpadColourPalette[21]))
+        {
+            mode = Launchpad95Mode_SESSION;
+            break;
+        }
+
+        colour = grid_getLedColour(9, 2); // user1 led
+        if (grid_areColoursEqual(&colour, &launchpadColourPalette[37]))
+        {
+            mode = Launchpad95Mode_INSTRUMENT;
+            break;
+        }
+        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[48]))
+        {
+            mode = Launchpad95Mode_DEVICE_CONTROLLER;
+            break;
+        }
+        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[45]))
+        {
+            mode = Launchpad95Mode_USER1;
+            break;
+        }
+
+        colour = grid_getLedColour(9, 0); // user2 led
+        if (grid_areColoursEqual(&colour, &launchpadColourPalette[53]))
+        {
+            mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
+            break;
+        }
+        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[9]))
+        {
+            mode = Launchpad95Mode_MELODIC_SEQUENCER;
+            break;
+        }
+        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[45]))
+        {
+            mode = Launchpad95Mode_USER2;
+            break;
+        }
+
+        colour = grid_getLedColour(9, 1); // mixer led
+        if (grid_areColoursEqual(&colour, &launchpadColourPalette[29]))
+        {
+            mode = Launchpad95Mode_MIXER;
+            break;
+        }
+    } while (0);
+
+    return mode;
 }
 
 void printMidiMessage(union MidiInput message)
