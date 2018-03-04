@@ -15,6 +15,8 @@ static DMA_HandleTypeDef lcdSpiDma;
 // + 1 line to avoid additional conditionals in putchar function
 static uint8_t lcdBuffer[LCD_NUMBER_OF_LINES+1][LCD_WIDTH];
 
+static uint8_t lcdUpdateRequired = 0;
+
 void lcd_initializeBacklightPwm();
 
 static void lcd_resetController();
@@ -101,6 +103,20 @@ void lcd_update()
     HAL_SPI_Transmit_DMA( &lcdSpi, &lcdBuffer[0][0], LCD_BUFFER_SIZE );
 }
 
+void lcd_refresh()
+{
+    static uint32_t refreshCheckTime = 0;
+    if (HAL_GetTick() >= refreshCheckTime)
+    {
+        if (lcdUpdateRequired)
+        {
+            lcd_update();
+            lcdUpdateRequired = 0;
+        }
+        refreshCheckTime += 10; // check every 10ms
+    }
+}
+
 void lcd_resetController()
 {
     HAL_GPIO_WritePin( LCD_GPIO_Port, LCD_RESET_Pin, GPIO_PIN_RESET );
@@ -181,7 +197,7 @@ void lcd_initializeSpi()
     lcdSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
     lcdSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
     lcdSpi.Init.NSS = SPI_NSS_HARD_OUTPUT;
-    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16; // 6MBbit?
     lcdSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
     lcdSpi.Init.TIMode = SPI_TIMODE_DISABLE;
     lcdSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -297,7 +313,7 @@ void LCD_invertText(bool mode){
   }
 }
 
-void lcd_putChar(uint8_t x, uint8_t y, char c)
+void lcd_putChar(uint8_t x, uint8_t y, const char c)
 {
     for(uint8_t i = 0; i < 6; i++)
     {
@@ -310,7 +326,7 @@ void lcd_putChar(uint8_t x, uint8_t y, char c)
             lcdBuffer[y/8][x+i] &= ~(0xFF << (y % 8));
             lcdBuffer[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
 
-            if (y < (LCD_HEIGHT - FONT_HEIGHT))
+            if ((y < (LCD_HEIGHT - FONT_HEIGHT)) && (0 != (y % 8)))
             {
                 lcdBuffer[y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
                 lcdBuffer[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
@@ -337,7 +353,7 @@ void LCD_putChar(char c){
  * @param x: starting point on the x-axis (column)
  * @param y: starting point on the y-axis (line)
  */
-void lcd_print(char *str, uint8_t x, uint8_t y)
+void lcd_print(const char *str, uint8_t x, uint8_t y)
 {
     if ((x < LCD_WIDTH)&&(y < LCD_HEIGHT))
     {
@@ -347,9 +363,10 @@ void lcd_print(char *str, uint8_t x, uint8_t y)
             x += 6;
         }
     }
+    lcdUpdateRequired = 1;
 }
 
-void lcd_printJustified(char *string, uint8_t x, uint8_t y, enum Justification justification)
+void lcd_printJustified(const char *string, uint8_t x, uint8_t y, enum Justification justification)
 {
     uint8_t textWidth = strlen(string) * FONT_WIDTH;
 
@@ -370,7 +387,7 @@ void lcd_printJustified(char *string, uint8_t x, uint8_t y, enum Justification j
     else if (Justification_CENTER ==  justification)
     {
         textWidth = textWidth/2;
-        if ((textWidth < x) && (textWidth < (LCD_WIDTH - x)))
+        if ((textWidth <= x) && (textWidth <= (LCD_WIDTH - x)))
         {
             lcd_print(string, (x - textWidth), y);
         }

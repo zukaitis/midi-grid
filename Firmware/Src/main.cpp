@@ -49,12 +49,14 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 
+extern "C" {
 #include "program/launchpad.h"
 #include "lcd/lcd.h"
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
 
 #include "grid_buttons/grid_buttons.h"
+}
 
 /* USER CODE BEGIN Includes */
 
@@ -110,7 +112,6 @@ extern void initialise_monitor_handles(void); // semihosting
   * @retval None
   */
 int main(void)
-
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, event, velocity;
@@ -155,11 +156,9 @@ int main(void)
   grid_enable();
 
   LCD_init();
-  lcd_printJustified("Been there", 0, 0, Justification_LEFT);
-  lcd_printJustified("Done that", LCD_WIDTH, 15, Justification_RIGHT);
-  lcd_printJustified("Doing again", LCD_WIDTH/2, 24, Justification_CENTER);
-  lcd_printJustified("tomorrow", LCD_WIDTH/2, 31, Justification_CENTER);
-  lcd_update();
+  lcd_printJustified("abcdefgh", LCD_WIDTH/2, 0, Justification_CENTER);
+  lcd_printJustified("ijklmnop", LCD_WIDTH/2, 9, Justification_CENTER);
+  lcd_printJustified("qrstuvwxyz", LCD_WIDTH/2, 18, Justification_CENTER);
 //  char outstring[4] = {0, 0, 0, 0};
 //  while(1)
 //  {
@@ -171,7 +170,6 @@ int main(void)
 //          outstring[3] = 0;
 //          lcd_clear();
 //          LCD_print(&outstring[0], 16, (i/1000)%48);
-//          lcd_update();
 //          i = HAL_GetTick() + 1000; //1s
 //      }
 //  }
@@ -188,7 +186,7 @@ int main(void)
           if (isUsbConnected())
           {
               velocity = (event) ? 127 : 0;
-              sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
+              //sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
           }
           break;
       }

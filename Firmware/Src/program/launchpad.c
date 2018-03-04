@@ -7,6 +7,7 @@
 #include "program/launchpad.h"
 
 #include "main.h"
+//#include "lcd/gui.hpp"
 #include "lcd/lcd.h"
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
@@ -118,7 +119,8 @@ void launchpad_runProgram()
                 }
             }
         }
-        grid_updateLeds();
+        grid_refreshLeds();
+        lcd_refresh();
     }
 }
 
@@ -188,13 +190,7 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
         grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[value], (enum LedLightingType)channel);
-        if (ledPositionY == 1) // debug
-        {
-            char string[4];
-            sprintf(string, "%03d", value);
-            lcd_print(string, 10, 10);
-            lcd_update();
-        }
+        //gui_changeLaunchpadMode();
     }
     else
     {

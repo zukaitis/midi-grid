@@ -245,7 +245,7 @@ void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint
     ledOutput[ledPositionX][ledPositionY].Blue = outputBlue;
 }
 
-void grid_updateLeds()
+void grid_refreshLeds()
 {
     uint8_t i;
     static uint32_t ledFlashCheckTime = 0;

@@ -38,7 +38,7 @@ void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct
 void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour, enum LedLightingType ledLightingType);
 void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint16_t outputRed, uint16_t outputGreen,
         uint16_t outputBlue );
-void grid_updateLeds();
+void grid_refreshLeds();
 uint8_t grid_areColoursEqual(const struct Colour * colour1, const struct Colour * colour2);
 
 struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY);
