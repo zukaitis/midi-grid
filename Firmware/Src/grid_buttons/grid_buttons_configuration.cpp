@@ -4,7 +4,7 @@
  *  Created on: 2018-01-29
  *      Author: Gedas
  */
-#include "grid_buttons/grid_buttons_configuration.h"
+#include "grid_buttons/grid_buttons_configuration.hpp"
 
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;

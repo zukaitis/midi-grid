@@ -1,4 +1,4 @@
-#include "lcd/lcd.h"
+#include "lcd/lcd.hpp"
 #include <stm32f411xe.h> // ?
 #include "stm32f4xx_hal.h"
 //#include "sys/_stdint.h"
@@ -602,7 +602,7 @@ void LCD_drawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2){
   LCD_drawLine(x1, y2, x2, y2);
 }
 
-void DMA1_Stream4_IRQHandler(void)
+extern "C" void DMA1_Stream4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream4_IRQn 0 */
 

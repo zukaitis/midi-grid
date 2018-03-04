@@ -26,7 +26,7 @@ extern void setHdlNoteOff(void (*fptr)(uint8_t ch, uint8_t note, uint8_t vel));
 extern void setHdlNoteOn(void (*fptr)(uint8_t ch, uint8_t note, uint8_t vel));
 extern void setHdlCtlChange(void (*fptr)(uint8_t ch, uint8_t num, uint8_t value));
 
-extern void sendNoteOn(uint8_t ch, uint8_t note, uint8_t vel);
+void sendNoteOn(uint8_t ch, uint8_t note, uint8_t vel);
 extern void sendNoteOff(uint8_t ch, uint8_t note);
 extern void sendCtlChange(uint8_t ch, uint8_t num, uint8_t value);
 extern void sendSysEx( const uint8_t* data, uint8_t length );

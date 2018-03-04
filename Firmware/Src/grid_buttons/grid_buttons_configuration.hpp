@@ -7,7 +7,7 @@
 #ifndef GRID_BUTTONS_GRID_BUTTONS_INIT_H_
 #define GRID_BUTTONS_GRID_BUTTONS_INIT_H_
 
-#include "grid_buttons/grid_buttons.h"
+#include "grid_buttons/grid_buttons.hpp"
 #include "stm32f4xx_hal.h"
 
 #define GRID_BUTTON_IN_GPIO_PORT GPIOC

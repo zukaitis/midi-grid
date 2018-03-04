@@ -5,9 +5,9 @@
  *      Author: Gedas
  */
 #include "lcd/gui.hpp"
-#include "lcd/lcd.h"
-#include "grid_buttons/grid_buttons.h"
-#include "program/launchpad.h"
+#include "lcd/lcd.hpp"
+#include "grid_buttons/grid_buttons.hpp"
+#include "program/launchpad.hpp"
 
 #if 0
 void Gui::gui_changeLaunchpadMode()

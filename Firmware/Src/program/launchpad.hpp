@@ -8,7 +8,7 @@
 #define PROGRAM_LAUNCHPAD_H_
 
 #include <stdint.h>
-#include "grid_buttons/grid_buttons.h"
+#include "grid_buttons/grid_buttons.hpp"
 
 static const uint8_t sessionLayout[10][8] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},

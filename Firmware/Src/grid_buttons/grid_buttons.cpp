@@ -4,10 +4,10 @@
  *  Created on: 2018-01-29
  *      Author: Gedas
  */
-#include "grid_buttons/grid_buttons.h"
-#include "grid_buttons/grid_buttons_configuration.h"
+#include "grid_buttons/grid_buttons.hpp"
+#include "grid_buttons/grid_buttons_configuration.hpp"
 
-#include "lcd/lcd.h" // for debugging
+#include "lcd/lcd.hpp" // for debugging
 
 #define LED_PASSIVE {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD}
 //#define LED_PASSIVE {.Red = 40000, .Green = 8200, .Blue = 40000}
@@ -307,7 +307,7 @@ void grid_refreshLeds()
 }
 
 // Grid base interrupt, speed is the factor here, so all operations are performed directly with registers
-void TIM1_UP_TIM10_IRQHandler()
+extern "C" void TIM1_UP_TIM10_IRQHandler()
 {
     // Clear interrupt flag
     BASE_INTERRUPT_TIMER->SR = ~TIM_FLAG_UPDATE;

@@ -4,13 +4,17 @@
  *  Created on: 2018-02-21
  *      Author: Gedas
  */
-#include "program/launchpad.h"
+#include "program/launchpad.hpp"
 
 #include "main.h"
 //#include "lcd/gui.hpp"
-#include "lcd/lcd.h"
+#include "lcd/lcd.hpp"
+
+extern "C" {
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
+#include "usb/usbd_midi_if.h"
+};
 
 #define SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH 64
 
