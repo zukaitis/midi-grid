@@ -116,6 +116,8 @@ int main(void)
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, event, velocity;
+
+    Lcd& lcd_ = Lcd::getInstance();
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -156,10 +158,10 @@ int main(void)
   grid_initialize();
   grid_enable();
 
-  LCD_init();
-  lcd_printJustified("abcdefgh", LCD_WIDTH/2, 0, Justification_CENTER);
-  lcd_printJustified("ijklmnop", LCD_WIDTH/2, 9, Justification_CENTER);
-  lcd_printJustified("qrstuvwxyz", LCD_WIDTH/2, 18, Justification_CENTER);
+  lcd_.initialize();
+  lcd_.print("abcdefgh", lcd_.WIDTH/2, 0, lcd_.Justification_CENTER);
+  lcd_.print("ijklmnop", lcd_.WIDTH/2, 9, lcd_.Justification_CENTER);
+  lcd_.print("qrstuvwxyz", lcd_.WIDTH/2, 18, lcd_.Justification_CENTER);
 //  char outstring[4] = {0, 0, 0, 0};
 //  while(1)
 //  {
@@ -483,21 +485,11 @@ static void MX_GPIO_Init(void) // all but lcd and midi detect pin configurations
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LCD_RESET_Pin|LCD_DC_Pin, GPIO_PIN_SET);
-
   /*Configure GPIO pins : MIDI_OUT_DETECT_Pin */
   GPIO_InitStruct.Pin = MIDI_OUT_DETECT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : LCD_RESET_Pin LCD_DC_Pin */
-  GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_DC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

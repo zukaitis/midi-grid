@@ -51,7 +51,6 @@
 
 extern DMA_HandleTypeDef hdma_spi2_tx;
 
-extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */

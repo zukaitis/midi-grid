@@ -7,7 +7,8 @@
 #include "program/launchpad.hpp"
 
 #include "main.h"
-//#include "lcd/gui.hpp"
+
+#include "lcd/gui.hpp"
 #include "lcd/lcd.hpp"
 
 extern "C" {
@@ -124,7 +125,7 @@ void launchpad_runProgram()
             }
         }
         grid_refreshLeds();
-        lcd_refresh();
+        Lcd::getInstance().refresh();
     }
 }
 
@@ -194,7 +195,7 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
         grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[value], (enum LedLightingType)channel);
-        //gui_changeLaunchpadMode();
+        Gui::getInstance().gui_changeLaunchpadMode();
     }
     else
     {

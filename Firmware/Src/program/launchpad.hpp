@@ -57,19 +57,6 @@ enum Launchpad95Mode
     Launchpad95Mode_UNKNOWN
 };
 
-#if 0
-static const char launchpad95ModeString[8][15] = {
-        "Session\0",
-        "Instrument\0",
-        "Device control\0",
-        "User 1\0",
-        "Drum step seq.\0",
-        "Melodic seq.\0",
-        "User 2\0",
-        "Mixer\0"
-};
-#endif
-
 void launchpad_runProgram();
 enum Launchpad95Mode launchpad_getLaunchpad95Mode();
 
