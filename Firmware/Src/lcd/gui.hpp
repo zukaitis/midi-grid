@@ -46,7 +46,7 @@ private:
     };
 
     Lcd& lcd;
-    GuiMode guiMode; // = GuiMode_LAUNCHPAD95;
+    GuiMode guiMode;
 
 };
 

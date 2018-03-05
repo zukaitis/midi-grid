@@ -1,4 +1,4 @@
-#include "lcd/lcd.hpp"
+#include "lcd/Lcd.hpp"
 
 #include <stm32f411xe.h> // ?
 #include "stm32f4xx_hal.h"
@@ -18,13 +18,13 @@ Lcd::~Lcd()
 
 void Lcd::initialize()
 {
-    initializeControl();
+    lcdControl.initialize();
     clear();
 }
 
 void Lcd::clear()
 {
-    memset(&lcdBuffer[0][0], 0x00, LCD_BUFFER_SIZE);
+    memset(&lcdBuffer[0][0], 0x00, lcdControl.LCD_BUFFER_SIZE);
     updateRequired = true;
 }
 
@@ -35,7 +35,7 @@ void Lcd::refresh()
     {
         if (updateRequired)
         {
-            update(&lcdBuffer[0][0]);
+            lcdControl.update(&lcdBuffer[0][0]);
             updateRequired = false;
         }
         refreshCheckTime += 10; // check every 10ms

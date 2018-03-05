@@ -5,25 +5,7 @@
  *      Author: Gedas
  */
 #include <lcd/LcdControl.hpp>
-#include "stm32f4xx_hal.h"
 
-#define LCD_GPIO_Port GPIOB
-#define LCD_RESET_Pin GPIO_PIN_2
-#define LCD_DC_Pin GPIO_PIN_10
-#define LCD_CS_Pin GPIO_PIN_12
-#define LCD_SCK_Pin GPIO_PIN_13
-#define LCD_LIGHT_Pin GPIO_PIN_14
-#define LCD_MOSI_Pin GPIO_PIN_15
-
-#define LCD_SETYADDR 0x40
-#define LCD_SETXADDR 0x80
-#define LCD_DISPLAY_BLANK 0x08
-#define LCD_DISPLAY_NORMAL 0x0C
-#define LCD_DISPLAY_ALL_ON 0x09
-#define LCD_DISPLAY_INVERTED 0x0D
-
-static TIM_HandleTypeDef lcdBacklightPwmTimer;
-static SPI_HandleTypeDef lcdSpi;
 static DMA_HandleTypeDef lcdSpiDma;
 
 LcdControl::LcdControl()
@@ -43,6 +25,12 @@ void LcdControl::resetController()
 void LcdControl::writeCommand( const uint8_t command )
 {
     uint8_t commandToWrite = command;
+
+    while(HAL_DMA_STATE_BUSY == HAL_DMA_GetState(&lcdSpiDma))
+    {
+        // wait until previous transfer is done
+    }
+
     HAL_GPIO_WritePin( LCD_GPIO_Port, LCD_DC_Pin, GPIO_PIN_RESET ); //command mode
     HAL_SPI_Transmit_DMA(&lcdSpi, &commandToWrite, 1);
 }
@@ -50,6 +38,12 @@ void LcdControl::writeCommand( const uint8_t command )
 void LcdControl::update(uint8_t* buffer)
 {
     setCursor( 0, 0 );
+
+    while(HAL_DMA_STATE_BUSY == HAL_DMA_GetState(&lcdSpiDma))
+    {
+        // wait until previous transfer is done
+    }
+
     HAL_GPIO_WritePin(LCD_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET);  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, buffer, LCD_BUFFER_SIZE );
 }
@@ -136,7 +130,7 @@ void LcdControl::initializeSpi()
     HAL_SPI_Init(&lcdSpi);
 }
 
-void LcdControl::initializeControl()
+void LcdControl::initialize()
 {
     initializeGpio();
     initializeSpi();
@@ -149,7 +143,7 @@ void LcdControl::initializeControl()
     writeCommand( 0x04 ); //set temp coefficent.
     writeCommand( 0x14 ); //LCD bias mode 1:40.
     writeCommand( 0x20 ); //LCD basic commands.
-    writeCommand( LCD_DISPLAY_NORMAL ); //LCD normal.
+    writeCommand( 0x0C ); //LCD normal.
 }
 
 void LcdControl::initializeBacklightPwm()

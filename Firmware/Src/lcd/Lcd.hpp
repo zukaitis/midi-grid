@@ -56,7 +56,7 @@
 
 #include "lcd/LcdControl.hpp"
 
-class Lcd : public LcdControl
+class Lcd
 {
 public:
 
@@ -89,6 +89,8 @@ public:
 private:
 
     Lcd();
+
+    LcdControl lcdControl;
 
     void putChar( const uint8_t x, const uint8_t y, const char c );
     bool updateRequired;

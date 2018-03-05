@@ -55,7 +55,7 @@ extern "C" {
 #include "usb/queue32.h"
 }
 
-#include "lcd/lcd.hpp"
+#include "lcd/Lcd.hpp"
 #include "program/launchpad.hpp"
 #include "grid_buttons/grid_buttons.hpp"
 

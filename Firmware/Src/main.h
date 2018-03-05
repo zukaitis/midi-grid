@@ -94,7 +94,7 @@
 #define PWM_BLUE4_Pin GPIO_PIN_1
 #define PWM_BLUE4_GPIO_Port GPIOB
 
-#define LCD_LIGHT_Pin GPIO_PIN_14
+//#define LCD_LIGHT_Pin GPIO_PIN_14
 #define LCD_LIGHT_GPIO_Port GPIOB
 
 #define MIDI_OUT_Pin GPIO_PIN_6
