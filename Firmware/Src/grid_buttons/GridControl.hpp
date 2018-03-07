@@ -1,0 +1,144 @@
+/*
+ * GridControl.hpp
+ *
+ *  Created on: 2018-03-06
+ *      Author: Gedas
+ */
+
+#ifndef GRID_BUTTONS_GRIDCONTROL_HPP_
+#define GRID_BUTTONS_GRIDCONTROL_HPP_
+
+#include "stm32f4xx_hal.h"
+
+namespace grid {
+namespace grid_control {
+
+const uint8_t NUMBER_OF_ROWS = 4;
+const uint8_t NUMBER_OF_COLUMNS = 20;
+const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
+
+#define LED_FLASH_PERIOD_MS         250 // 120bpm - default flashing rate
+#define LED_PULSE_STEP_COUNT        15
+#define LED_PULSE_STEP_PERIOD_MS    67  // 1000ms / 15 = 66.6... ms
+
+const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
+
+const LedPwmOutput ledPassive = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
+
+#define GRID_BUTTON_MASK 0x000F
+
+
+
+
+class GridControl
+{
+public:
+
+    static GridControl& getInstance()
+    {
+        static GridControl instance;
+        return instance;
+    }
+
+    ~GridControl();
+
+    // where to define Colour struct?
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour* colour );
+    void initializeBaseInterruptTimer();
+    void initializeGpio();
+    void initializePwmOutputs();
+    void startTimers();
+
+    bool isGridColumnInputStable(const uint8_t column);
+    uint8_t getGridColumnInput(const uint8_t column);
+
+    void interruptServiceRoutine();
+
+    bool buttonInputUpdated = false;
+
+private:
+    GridControl();
+
+    TIM_HandleTypeDef pwmTimerRed;
+    TIM_HandleTypeDef pwmTimerGreen;
+    TIM_HandleTypeDef pwmTimerBlue;
+    TIM_HandleTypeDef baseInterruptTimer;
+
+    LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
+
+};
+
+
+GPIO_TypeDef* GRID_BUTTON_IN_GPIO_PORT = GPIOC;
+const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
+const uint16_t BUTTON_IN2_Pin = GPIO_PIN_10;
+const uint16_t ROTARY1_A_Pin = GPIO_PIN_14;
+const uint16_t ROTARY1_B_Pin = GPIO_PIN_15;
+const uint16_t ROTARY2_A_Pin = GPIO_PIN_11;
+const uint16_t ROTARY2_B_Pin = GPIO_PIN_12;
+const uint16_t GRID_BUTTON_IN1_Pin = GPIO_PIN_0;
+const uint16_t GRID_BUTTON_IN2_Pin = GPIO_PIN_1;
+const uint16_t GRID_BUTTON_IN3_Pin = GPIO_PIN_2;
+const uint16_t GRID_BUTTON_IN4_Pin = GPIO_PIN_3;
+
+GPIO_TypeDef* GRID_COLUMN_CONTROL_GPIO_PORT = GPIOA;
+const uint16_t GRID_COLUMN_OUT1_Pin = GPIO_PIN_8;
+const uint16_t GRID_COLUMN_OUT2_Pin = GPIO_PIN_9;
+const uint16_t GRID_COLUMN_OUT3_Pin = GPIO_PIN_10;
+const uint16_t GRID_COLUMN_OUT4_Pin = GPIO_PIN_5;
+const uint16_t GRID_COLUMN_OUT5_Pin = GPIO_PIN_4;
+const uint16_t GRID_COLUMN_OUT6_Pin = GPIO_PIN_15;
+
+GPIO_TypeDef* PWM_RED_GPIO_PORT = GPIOA;
+const uint16_t PWM_RED1_Pin = GPIO_PIN_0;
+const uint16_t PWM_RED2_Pin = GPIO_PIN_1;
+const uint16_t PWM_RED3_Pin = GPIO_PIN_2;
+const uint16_t PWM_RED4_Pin = GPIO_PIN_3;
+
+GPIO_TypeDef* PWM_GREEN_GPIO_PORT = GPIOB;
+const uint16_t PWM_GREEN1_Pin = GPIO_PIN_6;
+const uint16_t PWM_GREEN2_Pin = GPIO_PIN_7;
+const uint16_t PWM_GREEN3_Pin = GPIO_PIN_8;
+const uint16_t PWM_GREEN4_Pin = GPIO_PIN_9;
+
+GPIO_TypeDef* PWM_BLUE1_2_GPIO_PORT = GPIOA;
+const uint16_t PWM_BLUE1_Pin = GPIO_PIN_6;
+const uint16_t PWM_BLUE2_Pin = GPIO_PIN_7;
+GPIO_TypeDef* PWM_BLUE3_4_GPIO_PORT = GPIOB;
+const uint16_t PWM_BLUE3_Pin = GPIO_PIN_0;
+const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
+
+TIM_TypeDef* PWM_TIMER_RED = TIM2;
+TIM_TypeDef* PWM_TIMER_GREEN =TIM4;
+TIM_TypeDef* PWM_TIMER_BLUE = TIM3;
+TIM_TypeDef* BASE_INTERRUPT_TIMER = TIM10;
+
+static const uint16_t brightnessPad[65] = {
+        47000, 46662, 46365, 46057, 45727, 45373, 44999, 44607,
+        44195, 43763, 43317, 42851, 42373, 41879, 41359, 40843,
+        40287, 39741, 39177, 38600, 37993, 37397, 36771, 36144,
+        35499, 34851, 34185, 33501, 32796, 32108, 31429, 30721,
+        29973, 29231, 28494, 27733, 26952, 26156, 25383, 24564,
+        23781, 22934, 22103, 21275, 20401, 19570, 18699, 17802,
+        16959, 16053, 15165, 14210, 13317, 12399, 11433, 10421,
+        9485, 8522, 7585, 6597, 5642, 4627, 3641, 2591, 1001 };
+
+static const uint16_t brightnessDirect[65] = {
+        47000, 46777, 46692, 46603, 46506, 46402, 46291, 46175,
+        46053, 45925, 45792, 45652, 45509, 45361, 45207, 45050,
+        44887, 44721, 44552, 44379, 44198, 44019, 43836, 43646,
+        43458, 43262, 43069, 42867, 42663, 42458, 42252, 42048,
+        41834, 41618, 41409, 41191, 40968, 40741, 40527, 40301,
+        40078, 39845, 39615, 39393, 39144, 38921, 38681, 38449,
+        38217, 37979, 37735, 37500, 37247, 37005, 36767, 36511,
+        36263, 36011, 35787, 35511, 35271, 35013, 34797, 34520, 34259 };
+
+static const uint16_t columnSelectValue[NUMBER_OF_COLUMNS] = {  0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
+                                                                0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
+                                                                0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
+                                                                0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
+                                                                0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
+
+} } // namespace
+#endif /* GRID_BUTTONS_GRIDCONTROL_HPP_ */

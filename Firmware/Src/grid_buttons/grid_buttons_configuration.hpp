@@ -54,9 +54,9 @@
 #define PWM_TIMER_BLUE          TIM3
 #define BASE_INTERRUPT_TIMER    TIM10
 
-#define NUMBER_OF_ROWS      4
-#define NUMBER_OF_COLUMNS   20
-#define NUMBER_OF_BUTTON_DEBOUNCING_CYCLES 2
+//#define NUMBER_OF_ROWS      4
+//#define NUMBER_OF_COLUMNS   20
+//#define NUMBER_OF_BUTTON_DEBOUNCING_CYCLES 2
 
 #define LED_FLASH_PERIOD_MS         250 // 120bpm - default flashing rate
 #define LED_PULSE_STEP_COUNT        15

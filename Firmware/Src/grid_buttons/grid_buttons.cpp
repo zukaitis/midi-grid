@@ -6,33 +6,14 @@
  */
 #include "grid_buttons/grid_buttons.hpp"
 #include "grid_buttons/grid_buttons_configuration.hpp"
+#include "grid_buttons/GridControl.hpp"
 
 #include "lcd/lcd.hpp" // for debugging
 
-#define LED_PASSIVE {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD}
-//#define LED_PASSIVE {.Red = 40000, .Green = 8200, .Blue = 40000}
-
-static uint8_t currentColumnNumber = 0;
-static uint8_t currentColumnDebouncingIndex = 0;
-static uint8_t buttonInputUpdatedFlag = 1;
-static uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
-static uint8_t gridInitializationDone = 0;
+namespace grid
+{
 
 static struct GridLed gridLed[10][8];
-
-static struct LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS] = {
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE},
-        {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE}, {LED_PASSIVE, LED_PASSIVE, LED_PASSIVE, LED_PASSIVE} };
-
-static const struct LedPwmOutput ledPassive = LED_PASSIVE;
 
 static uint16_t registeredGridButtonInput[NUMBER_OF_COLUMNS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -42,34 +23,37 @@ static uint8_t numberOfFlashingLeds = 0;
 static struct PulsingLed pulsingLed[64];
 static uint8_t numberOfPulsingLeds = 0;
 
-void grid_enable()
+Grid::Grid() : gridControl( grid_control::GridControl::getInstance() )
 {
-    if (gridInitializationDone)
+}
+
+void Grid::enable()
+{
+    if (initialized)
     {
         grid_startTimers();
     }
 }
 
-uint8_t grid_getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, uint8_t* buttonEvent)
+bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent)
 {
     int8_t x, y;
-    uint16_t isInputValueStable;
-    uint16_t buttonColumnChanges;
-    static uint8_t buttonChangeDetected = 0;
-    if (buttonInputUpdatedFlag || buttonChangeDetected)
+    uint8_t buttonColumnChanges, buttonInput;
+    static bool buttonChangeDetected = false;
+
+    if (gridControl.buttonInputUpdated || buttonChangeDetected)
     {
-        buttonChangeDetected = 0; //reset this variable every time, it will be set back if necessary
-        buttonInputUpdatedFlag = 0;
-        for (x=0; x<NUMBER_OF_COLUMNS; x++)
+        buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
+        gridControl.buttonInputUpdated = false;
+        for (x=0; x<grid_control::NUMBER_OF_COLUMNS; x++)
         {
-            buttonColumnChanges = registeredGridButtonInput[x] ^ (GRID_BUTTON_MASK & buttonInput[x][0]);
-            if (0 != buttonColumnChanges)
+            if (gridControl.isGridColumnInputStable(x))
             {
-                // XOR both acquired input values of one column, to see whether they are equal
-                isInputValueStable = GRID_BUTTON_MASK & (buttonInput[x][0] ^ buttonInput[x][1]);
-                if (0 == isInputValueStable)
+                buttonInput = gridControl.getGridColumnInput(x);
+                buttonColumnChanges = registeredGridButtonInput[x] ^ buttonInput;
+                if (0 != buttonColumnChanges)
                 {
-                    for (y=0; y<NUMBER_OF_ROWS; y++)
+                    for (y=0; y<grid_control::NUMBER_OF_ROWS; y++)
                     {
                         if (0 != ((buttonColumnChanges >> y) & 0x0001))
                         {
@@ -82,26 +66,31 @@ uint8_t grid_getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, 
                             }
                             *buttonPositionX = x;
                             *buttonPositionY = y;
-                            buttonChangeDetected = 1;
-                            return 1;
+                            buttonChangeDetected = true;
+                            return true;
                         }
                     }
                 }
             }
         }
     }
-    return 0;
+    return false;
 }
 
-void grid_initialize()
+void Grid::initialize()
 {
     grid_initializeGpio();
     grid_initializeBaseInterruptTimer();
     grid_initializePwmOutputs();
-    gridInitializationDone = 1;
+    initialized = true;
 }
 
-void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour, enum LedLightingType ledLightingType)
+void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour* colour)
+{
+    setLed(ledPositionX, ledPositionY, colour, LedLightingType_LIGHT);
+}
+
+void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour* colour, const LedLightingType lightingType)
 {
     uint8_t i;
     // remove led from flashing or pulsing list if it's in that list and proceed with setting that led
@@ -132,7 +121,7 @@ void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour
         }
     }
 
-    switch (ledLightingType)
+    switch (lightingType)
     {
         case LedLightingType_LIGHT:
             gridLed[ledPositionX][ledPositionY].colour = *colour;
@@ -166,35 +155,16 @@ void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour
 void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour )
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
-    uint8_t directLed = (ledPositionX > 7) ? 1 : 0;
+    bool directLed = (ledPositionX > 7);
 
-
-    if (ledPositionY > 3)
+    if (ledPositionY >= grid_control::NUMBER_OF_ROWS)
     {
-        ledPositionX += 9; // + 10 - 1
-        ledPositionY = ledPositionY % 4;
-    }
-    else if (0 == ledPositionX)
-    {
-        ledPositionX = NUMBER_OF_COLUMNS - 1;
-    }
-    else
-    {
-        --ledPositionX;
+        ledPositionX += NUMBER_OF_COLUMNS;
+        ledPositionY = ledPositionY % grid_control::NUMBER_OF_ROWS;
     }
 
-    if (directLed)
-    {
-        ledOutput[ledPositionX][ledPositionY].Red = brightnessDirect[colour->Red];
-        ledOutput[ledPositionX][ledPositionY].Green = brightnessDirect[colour->Green];
-        ledOutput[ledPositionX][ledPositionY].Blue = brightnessDirect[colour->Blue];
-    }
-    else
-    {
-        ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour->Red];
-        ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour->Green];
-        ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour->Blue];
-    }
+    gridControl.setLedColour( ledPositionX, ledPositionY, directLed, colour );
+
 }
 
 struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
@@ -214,9 +184,9 @@ uint8_t grid_areColoursEqual(const struct Colour * colour1, const struct Colour 
 void grid_setAllLedsOff()
 {
     uint8_t x, y;
-    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
+    for (x = 0; x < grid_control::NUMBER_OF_COLUMNS; x++)
     {
-        for (y = 0; y < NUMBER_OF_ROWS; y++)
+        for (y = 0; y < grid_control::NUMBER_OF_ROWS; y++)
         {
             ledOutput[x][y] = ledPassive;
         }
@@ -233,7 +203,7 @@ void grid_setLedOutputDirectly( uint8_t ledPositionX, uint8_t ledPositionY, uint
     }
     else if (0 == ledPositionX)
     {
-        ledPositionX = NUMBER_OF_COLUMNS - 1;
+        ledPositionX = grid_control::NUMBER_OF_COLUMNS - 1;
     }
     else
     {
@@ -306,43 +276,5 @@ void grid_refreshLeds()
     }
 }
 
-// Grid base interrupt, speed is the factor here, so all operations are performed directly with registers
-extern "C" void TIM1_UP_TIM10_IRQHandler()
-{
-    // Clear interrupt flag
-    BASE_INTERRUPT_TIMER->SR = ~TIM_FLAG_UPDATE;
-
-    buttonInput[currentColumnNumber][currentColumnDebouncingIndex] = GRID_BUTTON_IN_GPIO_PORT->IDR;
-
-    ++currentColumnNumber;
-    if (NUMBER_OF_COLUMNS == currentColumnNumber)
-    {
-        currentColumnDebouncingIndex ^= 0x01; // switch debouncing index between 0 and 1
-        currentColumnNumber = 0;
-        buttonInputUpdatedFlag = 1;
-    }
-
-    GRID_COLUMN_CONTROL_GPIO_PORT->ODR = columnSelectValue[currentColumnNumber];
-
-    // CCR values set at interrupt are only compared after update (at the next period)
-    PWM_TIMER_RED->CCR1 = ledOutput[currentColumnNumber][0].Red;
-    PWM_TIMER_RED->CCR2 = ledOutput[currentColumnNumber][1].Red;
-    PWM_TIMER_RED->CCR3 = ledOutput[currentColumnNumber][2].Red;
-    PWM_TIMER_RED->CCR4 = ledOutput[currentColumnNumber][3].Red;
-
-    PWM_TIMER_GREEN->CCR1 = ledOutput[currentColumnNumber][0].Green;
-    PWM_TIMER_GREEN->CCR2 = ledOutput[currentColumnNumber][1].Green;
-    PWM_TIMER_GREEN->CCR3 = ledOutput[currentColumnNumber][2].Green;
-    PWM_TIMER_GREEN->CCR4 = ledOutput[currentColumnNumber][3].Green;
-
-    PWM_TIMER_BLUE->CCR1 = ledOutput[currentColumnNumber][0].Blue;
-    PWM_TIMER_BLUE->CCR2 = ledOutput[currentColumnNumber][1].Blue;
-    PWM_TIMER_BLUE->CCR3 = ledOutput[currentColumnNumber][2].Blue;
-    PWM_TIMER_BLUE->CCR4 = ledOutput[currentColumnNumber][3].Blue;
-
-    // this should be done automatically through slave reset
-    PWM_TIMER_RED->CNT = 0;
-    PWM_TIMER_GREEN->CNT = 0;
-    PWM_TIMER_BLUE->CNT = 0;
-}
+}// namespace
 
