@@ -4,8 +4,7 @@
  *  Created on: 2018-01-29
  *      Author: Gedas
  */
-#ifndef GRID_BUTTONS_GRID_BUTTONS_INIT_H_
-#define GRID_BUTTONS_GRID_BUTTONS_INIT_H_
+#if 0
 
 #include "grid_buttons/grid_buttons.hpp"
 #include "stm32f4xx_hal.h"
@@ -95,31 +94,9 @@ static const uint16_t brightnessDirect[65] = {
         38217, 37979, 37735, 37500, 37247, 37005, 36767, 36511,
         36263, 36011, 35787, 35511, 35271, 35013, 34797, 34520, 34259 };
 
-struct LedPwmOutput
-{
-    uint16_t Red;
-    uint16_t Green;
-    uint16_t Blue;
-};
 
-struct FlashingLed
-{
-    uint8_t positionX;
-    uint8_t positionY;
-    struct Colour alternateColour;
-};
 
-struct PulsingLed
-{
-    uint8_t positionX;
-    uint8_t positionY;
-};
 
-struct GridLed
-{
-    struct Colour colour;
-    enum LedLightingType ledLightingType; // light?flash?pulse
-};
 
 void grid_initializeBaseInterruptTimer();
 void grid_initializeGpio();

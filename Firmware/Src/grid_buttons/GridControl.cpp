@@ -7,7 +7,6 @@
 
 #include "grid_buttons/GridControl.hpp"
 
-namespace grid {
 namespace grid_control {
 
 GridControl::GridControl()
@@ -18,17 +17,16 @@ GridControl::GridControl()
     {
         for (j=0; j<NUMBER_OF_ROWS; j++)
         {
-            ledOutput[i][j] = ledPassive;
+            ledOutput[i][j] = LED_PASSIVE;
         }
     }
-
 }
 
 GridControl::~GridControl()
 {
 }
 
-void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour* colour )
+void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const grid::Colour colour )
 {
     if (0 == ledPositionX)
     {
@@ -41,15 +39,27 @@ void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool
 
     if (directLed)
     {
-        ledOutput[ledPositionX][ledPositionY].Red = brightnessDirect[colour->Red];
-        ledOutput[ledPositionX][ledPositionY].Green = brightnessDirect[colour->Green];
-        ledOutput[ledPositionX][ledPositionY].Blue = brightnessDirect[colour->Blue];
+        ledOutput[ledPositionX][ledPositionY].Red = brightnessDirect[colour.Red];
+        ledOutput[ledPositionX][ledPositionY].Green = brightnessDirect[colour.Green];
+        ledOutput[ledPositionX][ledPositionY].Blue = brightnessDirect[colour.Blue];
     }
     else
     {
-        ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour->Red];
-        ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour->Green];
-        ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour->Blue];
+        ledOutput[ledPositionX][ledPositionY].Red = brightnessPad[colour.Red];
+        ledOutput[ledPositionX][ledPositionY].Green = brightnessPad[colour.Green];
+        ledOutput[ledPositionX][ledPositionY].Blue = brightnessPad[colour.Blue];
+    }
+}
+
+void GridControl::turnAllLedsOff()
+{
+    uint8_t x, y;
+    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
+    {
+        for (y = 0; y < NUMBER_OF_ROWS; y++)
+        {
+            ledOutput[x][y] = LED_PASSIVE;
+        }
     }
 }
 
@@ -60,7 +70,7 @@ bool GridControl::isGridColumnInputStable(const uint8_t column)
 
 uint8_t GridControl::getGridColumnInput(const uint8_t column)
 {
-    return GRID_BUTTON_MASK & buttonInput[column][0];
+    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput[column][0]);
 }
 
 void GridControl::initializeBaseInterruptTimer()
@@ -71,9 +81,9 @@ void GridControl::initializeBaseInterruptTimer()
     __HAL_RCC_TIM10_CLK_ENABLE();
 
     baseInterruptTimer.Instance = BASE_INTERRUPT_TIMER;
-    baseInterruptTimer.Init.Prescaler = baseInterruptClockPrescaler - 1; // 1us is the desired timer step
+    baseInterruptTimer.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1; // 1us is the desired timer step
     baseInterruptTimer.Init.CounterMode = TIM_COUNTERMODE_UP;
-    baseInterruptTimer.Init.Period = baseInterruptClockPeriod - 1;  // 1s / (4*100) = 2.5ms
+    baseInterruptTimer.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;  // 1s / (4*100) = 2.5ms
     baseInterruptTimer.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init(&baseInterruptTimer);
 
@@ -300,4 +310,4 @@ extern "C" void TIM1_UP_TIM10_IRQHandler()
     gridControl_.interruptServiceRoutine();
 }
 
-} }// namespace
+} // namespace

@@ -32,34 +32,52 @@ struct Colour
     uint8_t Blue;
 };
 
-#define NUMBER_OF_ROWS      8
-#define NUMBER_OF_COLUMNS   10
+struct FlashingLed
+{
+    uint8_t positionX;
+    uint8_t positionY;
+    Colour alternateColour;
+};
 
-void grid_setAllLedsOff();
-void grid_setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour );
-void grid_setLed(uint8_t ledPositionX, uint8_t ledPositionY, const struct Colour* colour, enum LedLightingType ledLightingType);
-void grid_refreshLeds();
-uint8_t grid_areColoursEqual(const struct Colour * colour1, const struct Colour * colour2);
+struct PulsingLed
+{
+    uint8_t positionX;
+    uint8_t positionY;
+};
 
-struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY);
+struct GridLed
+{
+    Colour colour;
+    LedLightingType lightingType; // light?flash?pulse
+};
+
+static const uint8_t NUMBER_OF_ROWS = 8;
+static const uint8_t NUMBER_OF_COLUMNS = 10;
+
+static const uint32_t LED_FLASH_PERIOD_MS = 250; // 120bpm - default flashing rate
+static const uint32_t LED_PULSE_STEP_PERIOD_MS = 67; // 1000ms / 15 = 66.6... ms
+static const uint8_t LED_PULSE_STEP_COUNT = 15;
 
 class Grid
 {
 public:
-
     void enable();
     bool getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent);
     void initialize();
+    void refreshLeds();
 
-    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour* colour);
-    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour* colour, const LedLightingType lightingType);
+    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour);
+    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType);
+    void turnAllLedsOff();
 
+    bool areColoursEqual(const Colour& colour1, const Colour& colour2);
 private:
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour );
+
     grid_control::GridControl& gridControl;
     bool initialized = false;
 
 };
-
 
 } //namespace
 #endif /* GRID_BUTTONS_H_ */

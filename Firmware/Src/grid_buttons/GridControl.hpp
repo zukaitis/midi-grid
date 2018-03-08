@@ -10,30 +10,33 @@
 
 #include "stm32f4xx_hal.h"
 
-namespace grid {
 namespace grid_control {
 
-const uint8_t NUMBER_OF_ROWS = 4;
-const uint8_t NUMBER_OF_COLUMNS = 20;
-const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
+struct LedPwmOutput
+{
+    uint16_t Red;
+    uint16_t Green;
+    uint16_t Blue;
+};
 
-#define LED_FLASH_PERIOD_MS         250 // 120bpm - default flashing rate
-#define LED_PULSE_STEP_COUNT        15
-#define LED_PULSE_STEP_PERIOD_MS    67  // 1000ms / 15 = 66.6... ms
+static const uint8_t NUMBER_OF_ROWS = 4;
+static const uint8_t NUMBER_OF_COLUMNS = 20;
+static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
 
-const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
+static const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
+static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 96; // 1us
+static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 500; // 500us
 
-const LedPwmOutput ledPassive = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
+static const LedPwmOutput LED_PASSIVE = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
 
-#define GRID_BUTTON_MASK 0x000F
-
-
+static const uint16_t GRID_BUTTON_MASK = 0x000F;
 
 
 class GridControl
 {
 public:
 
+    // singleton, because class uses interrupt
     static GridControl& getInstance()
     {
         static GridControl instance;
@@ -42,8 +45,8 @@ public:
 
     ~GridControl();
 
-    // where to define Colour struct?
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour* colour );
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const grid::Colour colour );
+    void turnAllLedsOff();
     void initializeBaseInterruptTimer();
     void initializeGpio();
     void initializePwmOutputs();
@@ -140,5 +143,5 @@ static const uint16_t columnSelectValue[NUMBER_OF_COLUMNS] = {  0xF8DF, 0xF9DF, 
                                                                 0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
                                                                 0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
 
-} } // namespace
+} // namespace
 #endif /* GRID_BUTTONS_GRIDCONTROL_HPP_ */
