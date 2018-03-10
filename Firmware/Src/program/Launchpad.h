@@ -8,7 +8,47 @@
 #define PROGRAM_LAUNCHPAD_H_
 
 #include <stdint.h>
-#include "grid_buttons/grid_buttons.hpp"
+#include "Types.h"
+
+namespace grid
+{
+    class Grid;
+}
+
+namespace gui
+{
+    class Gui;
+}
+
+namespace launchpad
+{
+
+enum Layout
+{
+    Layout_SESSION = 0,
+    Layout_USER1,
+    Layout_USER2,
+    Layout_RESERVED,
+    Layout_VOLUME,
+    Layout_PAN
+};
+
+static const uint8_t SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH = 64;
+
+struct MidiPacket
+{
+    uint8_t header;
+    uint8_t data[3];
+};
+
+static const uint8_t challengeResponse[10] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7};
+static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18};
+
+union MidiInput
+{
+    uint32_t input;
+    MidiPacket packet;
+};
 
 static const uint8_t sessionLayout[10][8] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
@@ -24,7 +64,7 @@ static const uint8_t drumLayout[10][8] = {
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const struct grid::Colour launchpadColourPalette[128] = {
+static const struct Colour launchpadColourPalette[128] = {
         {0, 0, 0}, {8, 8, 8}, {32, 32, 32}, {64, 64, 64}, {64, 20, 18}, {64, 3, 0}, {23, 1, 0}, {7, 0, 0},
         {64, 48, 25}, {64, 22, 0}, {23, 8, 0}, {10, 7, 0}, {64, 64, 9}, {64, 64, 0}, {23, 23, 0}, {6, 6, 0},
         {33, 64, 11}, {17, 64, 0}, {6, 23, 0}, {5, 11, 0}, {14, 64, 11}, {0, 64, 0}, {0, 23, 0}, {0, 7, 0},
@@ -57,7 +97,34 @@ enum Launchpad95Mode
     Launchpad95Mode_UNKNOWN
 };
 
-void launchpad_runProgram();
-enum Launchpad95Mode launchpad_getLaunchpad95Mode();
+class Launchpad
+{
+public:
+    Launchpad( grid::Grid& grid_, gui::Gui& gui_ );
+
+    void runProgram();
+    Launchpad95Mode getLaunchpad95Mode();
+private:
+    void setCurrentLayout(uint8_t layout);
+    void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
+    void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
+    void processSystemExclusiveMidiPacket( const struct MidiPacket* packet );
+    void processSystemExclusiveMessage(uint8_t *message, uint8_t length);
+
+    void printMidiMessage(MidiInput message);
+    void printSysExMessage(uint8_t *message, uint8_t length);
+
+    grid::Grid& grid;
+    gui::Gui& gui;
+
+    uint8_t currentLayout = Layout_SESSION;
+
+    uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
+    uint8_t systemExclusiveInputMessageLength = 0;
+
+    MidiInput midiInput;
+};
+
+} // namespace
 
 #endif /* PROGRAM_LAUNCHPAD_H_ */

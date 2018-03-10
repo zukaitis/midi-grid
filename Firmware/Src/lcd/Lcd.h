@@ -51,21 +51,28 @@
 #ifndef nokia5110_LCD
 #define nokia5110_LCD
 
-#include "font.h"
 #include "stm32f4xx_hal.h"
+#include "font.h"
 
-#include "lcd/LcdControl.hpp"
+#include "lcd/LcdControl.h"
+
+namespace lcd
+{
+
+enum Justification
+{
+    Justification_LEFT,
+    Justification_RIGHT,
+    Justification_CENTER
+};
+
+static const uint8_t WIDTH = 84;
+static const uint8_t HEIGHT = 48;
+static const uint8_t NUMBER_OF_LINES = 6;
 
 class Lcd
 {
 public:
-
-    enum Justification
-    {
-        Justification_LEFT,
-        Justification_RIGHT,
-        Justification_CENTER
-    };
 
     void clear();
     void refresh();
@@ -82,21 +89,18 @@ public:
 
     ~Lcd();
 
-    static const uint8_t WIDTH = 84;
-    static const uint8_t HEIGHT = 48;
-    static const uint8_t NUMBER_OF_LINES = 6;
-
 private:
 
     Lcd();
 
-    LcdControl lcdControl;
+    lcd_control::LcdControl lcdControl;
 
     void putChar( const uint8_t x, const uint8_t y, const char c );
-    bool updateRequired;
+    bool updateRequired = false;
 
     uint8_t lcdBuffer[NUMBER_OF_LINES][WIDTH];
 };
 
+} // namespace
 
 #endif

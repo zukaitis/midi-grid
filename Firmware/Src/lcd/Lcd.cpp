@@ -1,14 +1,15 @@
-#include "lcd/Lcd.hpp"
+#include "lcd/Lcd.h"
 
-#include <stm32f411xe.h> // ?
+//#include <stm32f411xe.h> // ?
 #include "stm32f4xx_hal.h"
-//#include "sys/_stdint.h"
+
 #include <stdint.h>
 #include <string.h>
 
-/*----- Library Functions -----*/
+namespace lcd
+{
 
-Lcd::Lcd(): updateRequired( false )
+Lcd::Lcd()
 {
 }
 
@@ -112,3 +113,4 @@ void Lcd::print(const char *string, const uint8_t x, const uint8_t y, const Just
     }
 }
 
+} // namespace

@@ -5,7 +5,7 @@
  *      Author: Gedas
  */
 
-#include "grid_buttons/GridControl.hpp"
+#include "grid/GridControl.h"
 
 namespace grid_control
 {
@@ -27,7 +27,7 @@ GridControl::~GridControl()
 {
 }
 
-void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const grid::Colour colour )
+void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour )
 {
     if (0 == ledPositionX)
     {

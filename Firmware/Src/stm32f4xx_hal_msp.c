@@ -49,6 +49,21 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#define LCD_LIGHT_Pin GPIO_PIN_14
+#define LCD_LIGHT_GPIO_Port GPIOB
+
+#define MIDI_OUT_Pin GPIO_PIN_6
+#define MIDI_OUT_GPIO_Port GPIOC
+#define MIDI_IN_Pin GPIO_PIN_7
+#define MIDI_IN_GPIO_Port GPIOC
+#define MIDI_OUT_DETECT_Pin GPIO_PIN_9
+#define MIDI_OUT_DETECT_GPIO_Port GPIOC
+
+#define SWDIO_Pin GPIO_PIN_13
+#define SWDIO_GPIO_Port GPIOA
+#define SWDCLK_Pin GPIO_PIN_14
+#define SWDCLK_GPIO_Port GPIOA
+
 extern DMA_HandleTypeDef hdma_spi2_tx;
 
 /* USER CODE BEGIN 0 */
@@ -310,7 +325,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim) // all but tim1 config copied
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM1;
-    HAL_GPIO_Init(LCD_LIGHT_GPIO_Port, &GPIO_InitStruct);
+    //HAL_GPIO_Init(LCD_LIGHT_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM1_MspPostInit 1 */
 

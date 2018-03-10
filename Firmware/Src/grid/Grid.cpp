@@ -4,15 +4,18 @@
  *  Created on: 2018-01-29
  *      Author: Gedas
  */
-#include "grid_buttons/grid_buttons.hpp"
-#include "grid_buttons/GridControl.hpp"
+#include "grid/Grid.h"
 
-#include "lcd/lcd.hpp" // for debugging
+//#include "lcd/Lcd.h" // for debugging
 
 namespace grid
 {
 
 Grid::Grid() : gridControl( grid_control::GridControl::getInstance() )
+{
+}
+
+Grid::~Grid()
 {
 }
 
@@ -139,7 +142,7 @@ void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const 
     }
 }
 
-void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour )
+void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     bool directLed = (ledPositionX > 7);
@@ -154,12 +157,12 @@ void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
 
 }
 
-Colour Grid::getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
+Colour Grid::getLedColour(uint8_t ledPositionX, uint8_t ledPositionY) const
 {
     return gridLed[ledPositionX][ledPositionY].colour;
 }
 
-bool Grid::areColoursEqual(const Colour& colour1, const Colour& colour2)
+bool Grid::areColoursEqual(const Colour& colour1, const Colour& colour2) const
 {
     bool equal = true;
     equal &= (colour1.Red == colour2.Red);
@@ -176,7 +179,7 @@ void Grid::turnAllLedsOff()
 }
 
 
-void Grid::refreshLeds()
+void Grid::refreshLeds() const
 {
     uint8_t i;
     static uint32_t ledFlashCheckTime = 0;

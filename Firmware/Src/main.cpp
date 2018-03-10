@@ -48,16 +48,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "lcd/Lcd.h"
 
 extern "C" {
 #include "usb/usb_device.h"
 #include "usb/usbd_midi_if.h"
 #include "usb/queue32.h"
 }
-
-#include "lcd/Lcd.hpp"
-#include "program/launchpad.hpp"
-#include "grid_buttons/grid_buttons.hpp"
 
 /* USER CODE BEGIN Includes */
 
@@ -78,7 +75,7 @@ UART_HandleTypeDef huart6;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint16_t brightnessTestResult[46000];
+
 
 extern stB4Arrq rxq;
 
@@ -93,13 +90,10 @@ static void MX_TIM1_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 
-void randomLightAnimation();
-void runBrigthnessTest();
+//uint16_t brightnessTestResult[46000];
+//void runBrigthnessTest();
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
-static Lcd& lcd_ = Lcd::getInstance();
-static grid::Grid& grid_ = grid::Grid::getInstance();
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -117,135 +111,119 @@ extern void initialise_monitor_handles(void); // semihosting
   */
 int main(void)
 {
+    ApplicationMain& applicationMain = ApplicationMain::getInstance();
+    applicationMain.initialize();
+    applicationMain.run(); // doesn't return
+}
+
+ApplicationMain::ApplicationMain() :
+        grid( grid::Grid() ),
+        gui( gui::Gui() ),
+        launchpad( launchpad::Launchpad(grid, gui) ),
+        lcd_(lcd::Lcd::getInstance())
+{}
+
+ApplicationMain::~ApplicationMain()
+{}
+
+void ApplicationMain::initialize()
+{
+    HAL_Init();
+    SystemClock_Config();
+
+    //MX_GPIO_Init();
+    // MX_USART6_UART_Init();
+    MX_USB_DEVICE_Init();
+    // MX_ADC1_Init();
+
+    #ifdef USE_SEMIHOSTING
+    initialise_monitor_handles(); // enable semihosting
+    #endif
+
+    grid.initialize();
+    grid.enable();
+
+    lcd_.initialize();
+    lcd_.print("abcdefgh", lcd::WIDTH/2, 0, lcd::Justification_CENTER);
+    lcd_.print("ijklmnop", lcd::WIDTH/2, 9, lcd::Justification_CENTER);
+    lcd_.print("qrstuvwxyz", lcd::WIDTH/2, 18, lcd::Justification_CENTER);
+
+    //runBrigthnessTest();
+    #ifdef USE_SEMIHOSTING
+    printf("Semihosting output enabled\n");
+    #endif
+
+}
+
+void ApplicationMain::run()
+{
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, velocity;
     grid::ButtonEvent event;
 
-  /* USER CODE BEGIN 1 */
+    while (0 == rxq.num)
+    {
+        //randomLightAnimation();
+        if (grid.getButtonEvent(&buttonX, &buttonY, &event))
+        {
+            if (isUsbConnected())
+            {
+                velocity = (event) ? 127 : 0;
+                sendNoteOn(0,launchpad::sessionLayout[buttonX][buttonY],velocity);
+            }
+            break;
+        }
+    }
 
-  /* USER CODE END 1 */
-
-  /* MCU Configuration----------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  //MX_GPIO_Init();
-  //MX_DMA_Init();
-  //MX_SPI2_Init();
-  //MX_TIM1_Init();
- // MX_USART6_UART_Init();
-  MX_USB_DEVICE_Init();
- // MX_ADC1_Init();
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-#ifdef USE_SEMIHOSTING
-  initialise_monitor_handles(); // enable semihosting
-#endif
-
-  grid_.initialize();
-  grid_.enable();
-
-  lcd_.initialize();
-  lcd_.print("abcdefgh", lcd_.WIDTH/2, 0, lcd_.Justification_CENTER);
-  lcd_.print("ijklmnop", lcd_.WIDTH/2, 9, lcd_.Justification_CENTER);
-  lcd_.print("qrstuvwxyz", lcd_.WIDTH/2, 18, lcd_.Justification_CENTER);
-//  char outstring[4] = {0, 0, 0, 0};
-//  while(1)
-//  {
-//      if (HAL_GetTick() > i)
-//      {
-//          outstring[0] = i/100000 + 0x30;
-//          outstring[1] = i/10000 + 0x30;
-//          outstring[2] = i/1000 + 0x30;
-//          outstring[3] = 0;
-//          lcd_clear();
-//          LCD_print(&outstring[0], 16, (i/1000)%48);
-//          i = HAL_GetTick() + 1000; //1s
-//      }
-//  }
-  //runBrigthnessTest();
-#ifdef USE_SEMIHOSTING
-  printf("Semihosting output enabled\n");
-#endif
-
-  while (0 == rxq.num)
-  {
-      //randomLightAnimation();
-      if (grid_.getButtonEvent(&buttonX, &buttonY, &event))
-      {
-          if (isUsbConnected())
-          {
-              velocity = (event) ? 127 : 0;
-              sendNoteOn(0,sessionLayout[buttonX][buttonY],velocity);
-          }
-          break;
-      }
-  }
-
-  while (!isUsbConnected())
-  {
-      i++;
-  }
-#ifdef USE_SEMIHOSTING
-  printf("Printing unacknowledged MIDI messages:\n");
-#endif
-  launchpad_runProgram();
-
-      /* USER CODE END 3 */
+    while (!isUsbConnected())
+    {
+        i++;
+    }
+    #ifdef USE_SEMIHOSTING
+    printf("Printing unacknowledged MIDI messages:\n");
+    #endif
+    launchpad.runProgram();
 }
 
-void randomLightAnimation()
+void ApplicationMain::randomLightAnimation()
 {
     static uint32_t newLightTime = 0;
     static uint8_t ledsChanged = 0;
     uint8_t ledPositionX, ledPositionY;
     uint8_t fullyLitColour;
-    grid::Colour colour;
+    Colour colour;
     if (HAL_GetTick() >= newLightTime)
     {
         ledPositionX = rand() % 8;
         ledPositionY = rand() % 8;
         fullyLitColour = rand() % 3;
-        if (0 == fullyLitColour)
+        switch (fullyLitColour)
         {
-            colour.Red = 64;
-            colour.Green = rand() % 65;
-            colour.Blue = rand() % 65;
+            case 0:
+                colour.Red = 64;
+                colour.Green = rand() % 65;
+                colour.Blue = rand() % 65;
+                break;
+            case 1:
+                colour.Red = rand() % 65;
+                colour.Green = 64;
+                colour.Blue = rand() % 65;
+                break;
+            case 2:
+                colour.Red = rand() % 65;
+                colour.Green = rand() % 65;
+                colour.Blue = 64;
+                break;
+            default:
+                break;
         }
-        else if (1 == fullyLitColour)
-        {
-            colour.Red = rand() % 65;
-            colour.Green = 64;
-            colour.Blue = rand() % 65;
-        }
-        else if (2 == fullyLitColour)
-        {
-            colour.Red = rand() % 65;
-            colour.Green = rand() % 65;
-            colour.Blue = 64;
-        }
-        grid_.setLed(ledPositionX, ledPositionY, colour);
+
+        grid.setLed(ledPositionX, ledPositionY, colour);
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
         {
-            grid_.turnAllLedsOff();
+            grid.turnAllLedsOff();
             ledsChanged = 0;
         }
     }
@@ -341,36 +319,34 @@ void SystemClock_Config(void)
 /* ADC1 init function */
 static void MX_ADC1_Init(void)
 {
-
-  ADC_ChannelConfTypeDef sConfig;
+    ADC_ChannelConfTypeDef sConfig;
 
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
     */
 
-  __GPIOC_CLK_ENABLE();
-  __ADC1_CLK_ENABLE();
+    __GPIOC_CLK_ENABLE();
+    __ADC1_CLK_ENABLE();
 
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = ENABLE;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  HAL_ADC_Init(&hadc1);
+    hadc1.Instance = ADC1;
+    hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+    hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+    hadc1.Init.ScanConvMode = DISABLE;
+    hadc1.Init.ContinuousConvMode = ENABLE;
+    hadc1.Init.DiscontinuousConvMode = DISABLE;
+    hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+    hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+    hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+    hadc1.Init.NbrOfConversion = 1;
+    hadc1.Init.DMAContinuousRequests = DISABLE;
+    hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+    HAL_ADC_Init(&hadc1);
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
-  sConfig.Channel = ADC_CHANNEL_14;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-
+    sConfig.Channel = ADC_CHANNEL_14;
+    sConfig.Rank = 1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
 }
 
 /* SPI2 init function */
@@ -400,59 +376,55 @@ static void MX_SPI2_Init(void)
 /* TIM1 init function */
 static void MX_TIM1_Init(void)
 {
+    TIM_MasterConfigTypeDef sMasterConfig;
+    TIM_OC_InitTypeDef sConfigOC;
+    TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
 
-  TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
-  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
+    htim1.Instance = TIM1;
+    htim1.Init.Prescaler = 15;
+    htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim1.Init.Period = 49000;
+    htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim1.Init.RepetitionCounter = 0;
+    HAL_TIM_PWM_Init(&htim1);
 
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 15;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 49000;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  HAL_TIM_PWM_Init(&htim1);
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig);
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig);
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = 0;
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2);
 
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-  HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2);
+    sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+    sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+    sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+    sBreakDeadTimeConfig.DeadTime = 0;
+    sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+    sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+    sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+    HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig);
 
-  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
-  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
-  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0;
-  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
-  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
-  HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig);
-
-  HAL_TIM_MspPostInit(&htim1);
-
+    HAL_TIM_MspPostInit(&htim1);
 }
 
 /* USART6 init function */
 static void MX_USART6_UART_Init(void)
 {
-
-  huart6.Instance = USART6;
-  huart6.Init.BaudRate = 31250;
-  huart6.Init.WordLength = UART_WORDLENGTH_8B;
-  huart6.Init.StopBits = UART_STOPBITS_1;
-  huart6.Init.Parity = UART_PARITY_NONE;
-  huart6.Init.Mode = UART_MODE_TX_RX;
-  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart6);
-
+    huart6.Instance = USART6;
+    huart6.Init.BaudRate = 31250;
+    huart6.Init.WordLength = UART_WORDLENGTH_8B;
+    huart6.Init.StopBits = UART_STOPBITS_1;
+    huart6.Init.Parity = UART_PARITY_NONE;
+    huart6.Init.Mode = UART_MODE_TX_RX;
+    huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+    HAL_UART_Init(&huart6);
 }
 
 /** 
@@ -481,66 +453,17 @@ static void MX_DMA_Init(void)
 */
 static void MX_GPIO_Init(void) // all but lcd and midi detect pin configurations copied
 {
+    GPIO_InitTypeDef GPIO_InitStruct;
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+    /* GPIO Ports Clock Enable */
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pins : MIDI_OUT_DETECT_Pin */
-  GPIO_InitStruct.Pin = MIDI_OUT_DETECT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
+    /*Configure GPIO pins : MIDI_OUT_DETECT_Pin */
+    //GPIO_InitStruct.Pin = MIDI_OUT_DETECT_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  file: The file name as string.
-  * @param  line: The line in file as a number.
-  * @retval None
-  */
-void _Error_Handler(char *file, int line)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  while(1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
-}
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

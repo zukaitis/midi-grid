@@ -4,7 +4,10 @@
  *  Created on: 2018-03-04
  *      Author: Gedas
  */
-#include <lcd/LcdControl.hpp>
+#include <lcd/LcdControl.h>
+
+namespace lcd_control
+{
 
 static DMA_HandleTypeDef lcdSpiDma;
 
@@ -187,3 +190,6 @@ extern "C" void DMA1_Stream4_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(&lcdSpiDma);
 }
+
+} // namespace
+

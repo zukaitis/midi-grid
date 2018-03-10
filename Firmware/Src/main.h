@@ -51,54 +51,56 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-/* Includes ------------------------------------------------------------------*/
+//#include "lcd/Lcd.h"
+#include "program/Launchpad.h"
+#include "grid/Grid.h"
+#include "lcd/Gui.h"
 
-/* USER CODE BEGIN Includes */
-//#define USE_SEMIHOSTING
-/* USER CODE END Includes */
-
-/* Private define ------------------------------------------------------------*/
-
-//#define LCD_LIGHT_Pin GPIO_PIN_14
-#define LCD_LIGHT_GPIO_Port GPIOB
-
-#define MIDI_OUT_Pin GPIO_PIN_6
-#define MIDI_OUT_GPIO_Port GPIOC
-#define MIDI_IN_Pin GPIO_PIN_7
-#define MIDI_IN_GPIO_Port GPIOC
-#define MIDI_OUT_DETECT_Pin GPIO_PIN_9
-#define MIDI_OUT_DETECT_GPIO_Port GPIOC
-
-#define USB_DM_Pin GPIO_PIN_11
-#define USB_DM_GPIO_Port GPIOA
-#define USB_DP_Pin GPIO_PIN_12
-#define USB_DP_GPIO_Port GPIOA
-#define SWDIO_Pin GPIO_PIN_13
-#define SWDIO_GPIO_Port GPIOA
-#define SWDCLK_Pin GPIO_PIN_14
-#define SWDCLK_GPIO_Port GPIOA
-
-/* ########################## Assert Selection ############################## */
-/**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
-  *        HAL drivers code
-  */
-/* #define USE_FULL_ASSERT    1U */
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
-
-#ifdef __cplusplus
- extern "C" {
-#endif
-void _Error_Handler(char *, int);
-
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
-#ifdef __cplusplus
+namespace lcd
+{
+    class Lcd;
 }
-#endif
+
+//namespace gui
+//{
+//    class Gui;
+//}
+//
+//namespace grid
+//{
+//    class Grid;
+//}
+//
+//namespace launchpad
+//{
+//    class Launchpad;
+//}
+
+class ApplicationMain
+{
+public:
+
+    // singleton, because class has to be called from main() function
+    static ApplicationMain& getInstance()
+    {
+        static ApplicationMain instance;
+        return instance;
+    }
+
+    ~ApplicationMain();
+
+    void initialize();
+    void run();
+    void randomLightAnimation();
+
+private:
+    ApplicationMain();
+
+    grid::Grid grid;
+    gui::Gui gui;
+    launchpad::Launchpad launchpad;
+    lcd::Lcd& lcd_;
+
+};
 
 #endif /* __MAIN_H__ */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -9,7 +9,7 @@
 #define GRID_BUTTONS_GRIDCONTROL_HPP_
 
 #include "stm32f4xx_hal.h"
-#include "grid_buttons/grid_buttons.hpp"
+#include "Types.h"
 
 namespace grid_control
 {
@@ -46,7 +46,7 @@ public:
 
     ~GridControl();
 
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const grid::Colour colour );
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
     void turnAllLedsOff();
     void initializeBaseInterruptTimer();
     void initializeGpio();

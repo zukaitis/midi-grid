@@ -1,13 +1,10 @@
-/*
- * grid_buttons.h
- *
- *  Created on: 2018-01-29
- *      Author: Gedas
- */
+
 #ifndef GRID_BUTTONS_H_
 #define GRID_BUTTONS_H_
 
 #include "stm32f4xx_hal.h"
+#include "Types.h"
+#include "grid/GridControl.h"
 
 namespace grid_control
 {
@@ -28,13 +25,6 @@ enum LedLightingType
     LedLightingType_LIGHT = 0,
     LedLightingType_FLASH,
     LedLightingType_PULSE
-};
-
-struct Colour
-{
-    uint8_t Red;
-    uint8_t Green;
-    uint8_t Blue;
 };
 
 struct FlashingLed
@@ -66,43 +56,35 @@ static const uint8_t LED_PULSE_STEP_COUNT = 15;
 class Grid
 {
 public:
-
-    // singleton, temporarily
-    static Grid& getInstance()
-    {
-        static Grid instance;
-        return instance;
-    }
+    Grid();
+    ~Grid();
 
     void enable();
     bool getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent);
     void initialize();
-    void refreshLeds();
+    void refreshLeds() const;
 
     void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour);
     void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType);
     void turnAllLedsOff();
 
-    Colour getLedColour(uint8_t ledPositionX, uint8_t ledPositionY);
-    bool areColoursEqual(const Colour& colour1, const Colour& colour2);
+    Colour getLedColour(uint8_t ledPositionX, uint8_t ledPositionY) const;
+    bool areColoursEqual(const Colour& colour1, const Colour& colour2) const;
 private:
-    Grid();
-
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour );
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
     grid_control::GridControl& gridControl;
     bool initialized = false;
 
     GridLed gridLed[10][8];
 
-    uint16_t registeredGridButtonInput[grid::NUMBER_OF_COLUMNS];
+    uint16_t registeredGridButtonInput[grid_control::NUMBER_OF_COLUMNS];
 
     FlashingLed flashingLed[64];
     uint8_t numberOfFlashingLeds = 0;
 
     PulsingLed pulsingLed[64];
     uint8_t numberOfPulsingLeds = 0;
-
 };
 
 } //namespace
