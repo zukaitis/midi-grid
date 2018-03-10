@@ -9,8 +9,10 @@
 #define GRID_BUTTONS_GRIDCONTROL_HPP_
 
 #include "stm32f4xx_hal.h"
+#include "grid_buttons/grid_buttons.hpp"
 
-namespace grid_control {
+namespace grid_control
+{
 
 struct LedPwmOutput
 {
@@ -30,7 +32,6 @@ static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 500; // 500us
 static const LedPwmOutput LED_PASSIVE = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
-
 
 class GridControl
 {
@@ -72,50 +73,49 @@ private:
 
 };
 
+static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
+static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
+static const uint16_t BUTTON_IN2_Pin = GPIO_PIN_10;
+static const uint16_t ROTARY1_A_Pin = GPIO_PIN_14;
+static const uint16_t ROTARY1_B_Pin = GPIO_PIN_15;
+static const uint16_t ROTARY2_A_Pin = GPIO_PIN_11;
+static const uint16_t ROTARY2_B_Pin = GPIO_PIN_12;
+static const uint16_t GRID_BUTTON_IN1_Pin = GPIO_PIN_0;
+static const uint16_t GRID_BUTTON_IN2_Pin = GPIO_PIN_1;
+static const uint16_t GRID_BUTTON_IN3_Pin = GPIO_PIN_2;
+static const uint16_t GRID_BUTTON_IN4_Pin = GPIO_PIN_3;
 
-GPIO_TypeDef* GRID_BUTTON_IN_GPIO_PORT = GPIOC;
-const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
-const uint16_t BUTTON_IN2_Pin = GPIO_PIN_10;
-const uint16_t ROTARY1_A_Pin = GPIO_PIN_14;
-const uint16_t ROTARY1_B_Pin = GPIO_PIN_15;
-const uint16_t ROTARY2_A_Pin = GPIO_PIN_11;
-const uint16_t ROTARY2_B_Pin = GPIO_PIN_12;
-const uint16_t GRID_BUTTON_IN1_Pin = GPIO_PIN_0;
-const uint16_t GRID_BUTTON_IN2_Pin = GPIO_PIN_1;
-const uint16_t GRID_BUTTON_IN3_Pin = GPIO_PIN_2;
-const uint16_t GRID_BUTTON_IN4_Pin = GPIO_PIN_3;
+static GPIO_TypeDef* const GRID_COLUMN_CONTROL_GPIO_PORT = GPIOA;
+static const uint16_t GRID_COLUMN_OUT1_Pin = GPIO_PIN_8;
+static const uint16_t GRID_COLUMN_OUT2_Pin = GPIO_PIN_9;
+static const uint16_t GRID_COLUMN_OUT3_Pin = GPIO_PIN_10;
+static const uint16_t GRID_COLUMN_OUT4_Pin = GPIO_PIN_5;
+static const uint16_t GRID_COLUMN_OUT5_Pin = GPIO_PIN_4;
+static const uint16_t GRID_COLUMN_OUT6_Pin = GPIO_PIN_15;
 
-GPIO_TypeDef* GRID_COLUMN_CONTROL_GPIO_PORT = GPIOA;
-const uint16_t GRID_COLUMN_OUT1_Pin = GPIO_PIN_8;
-const uint16_t GRID_COLUMN_OUT2_Pin = GPIO_PIN_9;
-const uint16_t GRID_COLUMN_OUT3_Pin = GPIO_PIN_10;
-const uint16_t GRID_COLUMN_OUT4_Pin = GPIO_PIN_5;
-const uint16_t GRID_COLUMN_OUT5_Pin = GPIO_PIN_4;
-const uint16_t GRID_COLUMN_OUT6_Pin = GPIO_PIN_15;
+static GPIO_TypeDef* const PWM_RED_GPIO_PORT = GPIOA;
+static const uint16_t PWM_RED1_Pin = GPIO_PIN_0;
+static const uint16_t PWM_RED2_Pin = GPIO_PIN_1;
+static const uint16_t PWM_RED3_Pin = GPIO_PIN_2;
+static const uint16_t PWM_RED4_Pin = GPIO_PIN_3;
 
-GPIO_TypeDef* PWM_RED_GPIO_PORT = GPIOA;
-const uint16_t PWM_RED1_Pin = GPIO_PIN_0;
-const uint16_t PWM_RED2_Pin = GPIO_PIN_1;
-const uint16_t PWM_RED3_Pin = GPIO_PIN_2;
-const uint16_t PWM_RED4_Pin = GPIO_PIN_3;
-
-GPIO_TypeDef* PWM_GREEN_GPIO_PORT = GPIOB;
+static GPIO_TypeDef* const PWM_GREEN_GPIO_PORT = GPIOB;
 const uint16_t PWM_GREEN1_Pin = GPIO_PIN_6;
 const uint16_t PWM_GREEN2_Pin = GPIO_PIN_7;
 const uint16_t PWM_GREEN3_Pin = GPIO_PIN_8;
 const uint16_t PWM_GREEN4_Pin = GPIO_PIN_9;
 
-GPIO_TypeDef* PWM_BLUE1_2_GPIO_PORT = GPIOA;
-const uint16_t PWM_BLUE1_Pin = GPIO_PIN_6;
-const uint16_t PWM_BLUE2_Pin = GPIO_PIN_7;
-GPIO_TypeDef* PWM_BLUE3_4_GPIO_PORT = GPIOB;
-const uint16_t PWM_BLUE3_Pin = GPIO_PIN_0;
-const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
+static GPIO_TypeDef* const PWM_BLUE1_2_GPIO_PORT = GPIOA;
+static const uint16_t PWM_BLUE1_Pin = GPIO_PIN_6;
+static const uint16_t PWM_BLUE2_Pin = GPIO_PIN_7;
+static GPIO_TypeDef* const PWM_BLUE3_4_GPIO_PORT = GPIOB;
+static const uint16_t PWM_BLUE3_Pin = GPIO_PIN_0;
+static const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
 
-TIM_TypeDef* PWM_TIMER_RED = TIM2;
-TIM_TypeDef* PWM_TIMER_GREEN =TIM4;
-TIM_TypeDef* PWM_TIMER_BLUE = TIM3;
-TIM_TypeDef* BASE_INTERRUPT_TIMER = TIM10;
+static TIM_TypeDef* const PWM_TIMER_RED = TIM2;
+static TIM_TypeDef* const PWM_TIMER_GREEN =TIM4;
+static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
+static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM10;
 
 static const uint16_t brightnessPad[65] = {
         47000, 46662, 46365, 46057, 45727, 45373, 44999, 44607,

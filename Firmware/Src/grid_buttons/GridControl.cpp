@@ -7,7 +7,8 @@
 
 #include "grid_buttons/GridControl.hpp"
 
-namespace grid_control {
+namespace grid_control
+{
 
 GridControl::GridControl()
 {

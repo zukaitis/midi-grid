@@ -97,7 +97,10 @@ void randomLightAnimation();
 void runBrigthnessTest();
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-                                
+
+static Lcd& lcd_ = Lcd::getInstance();
+static grid::Grid& grid_ = grid::Grid::getInstance();
+
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -115,9 +118,9 @@ extern void initialise_monitor_handles(void); // semihosting
 int main(void)
 {
     volatile uint32_t i=0;
-    uint8_t buttonX, buttonY, event, velocity;
+    uint8_t buttonX, buttonY, velocity;
+    grid::ButtonEvent event;
 
-    Lcd& lcd_ = Lcd::getInstance();
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -155,8 +158,8 @@ int main(void)
   initialise_monitor_handles(); // enable semihosting
 #endif
 
-  grid_initialize();
-  grid_enable();
+  grid_.initialize();
+  grid_.enable();
 
   lcd_.initialize();
   lcd_.print("abcdefgh", lcd_.WIDTH/2, 0, lcd_.Justification_CENTER);
@@ -184,7 +187,7 @@ int main(void)
   while (0 == rxq.num)
   {
       //randomLightAnimation();
-      if (grid_getButtonEvent(&buttonX, &buttonY, &event))
+      if (grid_.getButtonEvent(&buttonX, &buttonY, &event))
       {
           if (isUsbConnected())
           {
@@ -213,7 +216,7 @@ void randomLightAnimation()
     static uint8_t ledsChanged = 0;
     uint8_t ledPositionX, ledPositionY;
     uint8_t fullyLitColour;
-    struct Colour colour;
+    grid::Colour colour;
     if (HAL_GetTick() >= newLightTime)
     {
         ledPositionX = rand() % 8;
@@ -237,17 +240,18 @@ void randomLightAnimation()
             colour.Green = rand() % 65;
             colour.Blue = 64;
         }
-        grid_setLedColour(ledPositionX, ledPositionY, &colour);
+        grid_.setLed(ledPositionX, ledPositionY, colour);
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
         {
-            grid_setAllLedsOff();
+            grid_.turnAllLedsOff();
             ledsChanged = 0;
         }
     }
 }
 
+#if 0
 void runBrigthnessTest()
 {
     volatile uint32_t nextReadoutTime = 0;
@@ -281,6 +285,7 @@ void runBrigthnessTest()
         }
     }
 }
+#endif
 
 /**
   * @brief System Clock Configuration

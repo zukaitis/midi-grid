@@ -8,6 +8,7 @@
 
 #include "main.h"
 
+#include "grid_buttons/grid_buttons.hpp"
 #include "lcd/gui.hpp"
 #include "lcd/lcd.hpp"
 
@@ -50,6 +51,8 @@ enum Layout
     Layout_PAN
 };
 
+static grid::Grid& grid_ = grid::Grid::getInstance();
+
 static uint8_t currentLayout = Layout_SESSION;
 
 static uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
@@ -65,7 +68,8 @@ void printSysExMessage(uint8_t *message, uint8_t length);
 
 void launchpad_runProgram()
 {
-    uint8_t buttonX, buttonY, event, velocity;
+    uint8_t buttonX, buttonY, velocity;
+    grid::ButtonEvent event;
     uint8_t codeIndexNumber;
     while (1)
     {
@@ -98,9 +102,9 @@ void launchpad_runProgram()
             }
         }
 
-        if (grid_getButtonEvent(&buttonX, &buttonY, &event))
+        if (grid_.getButtonEvent(&buttonX, &buttonY, &event))
         {
-            velocity = (event != 0) ? 127 : 0;
+            velocity = (grid::ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
             {
                 sendCtlChange( 0,sessionLayout[buttonX][buttonY],velocity );
@@ -124,7 +128,7 @@ void launchpad_runProgram()
                 }
             }
         }
-        grid_refreshLeds();
+        grid_.refreshLeds();
         Lcd::getInstance().refresh();
     }
 }
@@ -158,7 +162,7 @@ void processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t velocity)
                 channel = 0;
             }
 
-            grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[velocity], (enum LedLightingType)channel);
+            grid_.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
         }
         else
         {
@@ -178,7 +182,7 @@ void processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t velocity)
                 channel = 0;
             }
 
-            grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[velocity], (enum LedLightingType)channel);
+            grid_.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
         }
         else
         {
@@ -194,7 +198,7 @@ void processChangeControlMidiMessage(uint8_t channel, uint8_t control, uint8_t v
     {
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
-        grid_setLed(ledPositionX, ledPositionY, &launchpadColourPalette[value], (enum LedLightingType)channel);
+        grid_.setLed( ledPositionX, ledPositionY, launchpadColourPalette[value], static_cast<grid::LedLightingType>(channel) );
         Gui::getInstance().gui_changeLaunchpadMode();
     }
     else
@@ -274,7 +278,7 @@ void setCurrentLayout( uint8_t layout )
     {
         currentLayout = layout;
         // unnecessary stuff below
-        struct Colour colour = {0, 0, 0};
+        grid::Colour colour = {0, 0, 0};
         switch (currentLayout)
         {
             case Layout_SESSION:
@@ -299,7 +303,7 @@ void setCurrentLayout( uint8_t layout )
                 colour.Blue = 64;
                 break;
         }
-        grid_setLedColour( 9, 4, &colour );
+        grid_.setLed( 9, 4, colour );
     }
 }
 
@@ -322,53 +326,53 @@ void gui_changeLaunchpadMode()
 enum Launchpad95Mode launchpad_getLaunchpad95Mode()
 {
     enum Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
-    struct Colour colour;
+    grid::Colour colour;
 
     do
     {
-        colour = grid_getLedColour(9, 3); // session led
-        if (grid_areColoursEqual(&colour, &launchpadColourPalette[21]))
+        colour = grid_.getLedColour(9, 3); // session led
+        if (grid_.areColoursEqual(colour, launchpadColourPalette[21]))
         {
             mode = Launchpad95Mode_SESSION;
             break;
         }
 
-        colour = grid_getLedColour(9, 2); // user1 led
-        if (grid_areColoursEqual(&colour, &launchpadColourPalette[37]))
+        colour = grid_.getLedColour(9, 2); // user1 led
+        if (grid_.areColoursEqual(colour, launchpadColourPalette[37]))
         {
             mode = Launchpad95Mode_INSTRUMENT;
             break;
         }
-        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[48]))
+        else if (grid_.areColoursEqual(colour, launchpadColourPalette[48]))
         {
             mode = Launchpad95Mode_DEVICE_CONTROLLER;
             break;
         }
-        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[45]))
+        else if (grid_.areColoursEqual(colour, launchpadColourPalette[45]))
         {
             mode = Launchpad95Mode_USER1;
             break;
         }
 
-        colour = grid_getLedColour(9, 0); // user2 led
-        if (grid_areColoursEqual(&colour, &launchpadColourPalette[53]))
+        colour = grid_.getLedColour(9, 0); // user2 led
+        if (grid_.areColoursEqual(colour, launchpadColourPalette[53]))
         {
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
             break;
         }
-        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[9]))
+        else if (grid_.areColoursEqual(colour, launchpadColourPalette[9]))
         {
             mode = Launchpad95Mode_MELODIC_SEQUENCER;
             break;
         }
-        else if (grid_areColoursEqual(&colour, &launchpadColourPalette[45]))
+        else if (grid_.areColoursEqual(colour, launchpadColourPalette[45]))
         {
             mode = Launchpad95Mode_USER2;
             break;
         }
 
-        colour = grid_getLedColour(9, 1); // mixer led
-        if (grid_areColoursEqual(&colour, &launchpadColourPalette[29]))
+        colour = grid_.getLedColour(9, 1); // mixer led
+        if (grid_.areColoursEqual(colour, launchpadColourPalette[29]))
         {
             mode = Launchpad95Mode_MIXER;
             break;

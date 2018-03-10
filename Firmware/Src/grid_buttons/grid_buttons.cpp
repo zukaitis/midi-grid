@@ -5,23 +5,12 @@
  *      Author: Gedas
  */
 #include "grid_buttons/grid_buttons.hpp"
-#include "grid_buttons/grid_buttons_configuration.hpp"
 #include "grid_buttons/GridControl.hpp"
 
 #include "lcd/lcd.hpp" // for debugging
 
 namespace grid
 {
-
-static struct GridLed gridLed[10][8];
-
-static uint16_t registeredGridButtonInput[NUMBER_OF_COLUMNS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-static struct FlashingLed flashingLed[64];
-static uint8_t numberOfFlashingLeds = 0;
-
-static struct PulsingLed pulsingLed[64];
-static uint8_t numberOfPulsingLeds = 0;
 
 Grid::Grid() : gridControl( grid_control::GridControl::getInstance() )
 {
@@ -31,7 +20,7 @@ void Grid::enable()
 {
     if (initialized)
     {
-        grid_startTimers();
+        gridControl.startTimers();
     }
 }
 
@@ -57,7 +46,7 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
                     {
                         if (0 != ((buttonColumnChanges >> y) & 0x0001))
                         {
-                            *buttonEvent = (buttonInput[x][0] >> y) & 0x01;
+                            *buttonEvent = static_cast<ButtonEvent>((buttonInput >> y) & 0x01);
                             registeredGridButtonInput[x] ^= (1 << y); // toggle bit that was registered
                             if (x >= NUMBER_OF_COLUMNS)
                             {
@@ -79,9 +68,9 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
 
 void Grid::initialize()
 {
-    grid_initializeGpio();
-    grid_initializeBaseInterruptTimer();
-    grid_initializePwmOutputs();
+    gridControl.initializeGpio();
+    gridControl.initializeBaseInterruptTimer();
+    gridControl.initializePwmOutputs();
     initialized = true;
 }
 
@@ -165,7 +154,7 @@ void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
 
 }
 
-struct Colour grid_getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
+Colour Grid::getLedColour(uint8_t ledPositionX, uint8_t ledPositionY)
 {
     return gridLed[ledPositionX][ledPositionY].colour;
 }

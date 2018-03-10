@@ -59,41 +59,6 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define BUTTON_IN1_Pin GPIO_PIN_13
-#define BUTTON_IN1_GPIO_Port GPIOC
-#define ROTARY1_A_Pin GPIO_PIN_14
-#define ROTARY1_A_GPIO_Port GPIOC
-#define ROTARY1_B_Pin GPIO_PIN_15
-#define ROTARY1_B_GPIO_Port GPIOC
-#define GRID_BUTTON_IN1_Pin GPIO_PIN_0
-#define GRID_BUTTON_IN1_GPIO_Port GPIOC
-#define GRID_BUTTON_IN2_Pin GPIO_PIN_1
-#define GRID_BUTTON_IN2_GPIO_Port GPIOC
-#define GRID_BUTTON_IN3_Pin GPIO_PIN_2
-#define GRID_BUTTON_IN3_GPIO_Port GPIOC
-#define GRID_BUTTON_IN4_Pin GPIO_PIN_3
-#define GRID_BUTTON_IN4_GPIO_Port GPIOC
-#define PWM_RED1_Pin GPIO_PIN_0
-#define PWM_RED1_GPIO_Port GPIOA
-#define PWM_RED2_Pin GPIO_PIN_1
-#define PWM_RED2_GPIO_Port GPIOA
-#define PWM_RED3_Pin GPIO_PIN_2
-#define PWM_RED3_GPIO_Port GPIOA
-#define PWM_RED4_Pin GPIO_PIN_3
-#define PWM_RED4_GPIO_Port GPIOA
-#define GRID_COLUMN_OUT5_Pin GPIO_PIN_4
-#define GRID_COLUMN_OUT5_GPIO_Port GPIOA
-#define GRID_COLUMN_OUT4_Pin GPIO_PIN_5
-#define GRID_COLUMN_OUT4_GPIO_Port GPIOA
-#define PWM_BLUE1_Pin GPIO_PIN_6
-#define PWM_BLUE1_GPIO_Port GPIOA
-#define PWM_BLUE2_Pin GPIO_PIN_7
-#define PWM_BLUE2_GPIO_Port GPIOA
-#define PWM_BLUE3_Pin GPIO_PIN_0
-#define PWM_BLUE3_GPIO_Port GPIOB
-#define PWM_BLUE4_Pin GPIO_PIN_1
-#define PWM_BLUE4_GPIO_Port GPIOB
-
 //#define LCD_LIGHT_Pin GPIO_PIN_14
 #define LCD_LIGHT_GPIO_Port GPIOB
 
@@ -103,12 +68,7 @@
 #define MIDI_IN_GPIO_Port GPIOC
 #define MIDI_OUT_DETECT_Pin GPIO_PIN_9
 #define MIDI_OUT_DETECT_GPIO_Port GPIOC
-#define GRID_COLUMN_OUT1_Pin GPIO_PIN_8
-#define GRID_COLUMN_OUT1_GPIO_Port GPIOA
-#define GRID_COLUMN_OUT2_Pin GPIO_PIN_9
-#define GRID_COLUMN_OUT2_GPIO_Port GPIOA
-#define GRID_COLUMN_OUT3_Pin GPIO_PIN_10
-#define GRID_COLUMN_OUT3_GPIO_Port GPIOA
+
 #define USB_DM_Pin GPIO_PIN_11
 #define USB_DM_GPIO_Port GPIOA
 #define USB_DP_Pin GPIO_PIN_12
@@ -117,22 +77,6 @@
 #define SWDIO_GPIO_Port GPIOA
 #define SWDCLK_Pin GPIO_PIN_14
 #define SWDCLK_GPIO_Port GPIOA
-#define GRID_COLUMN_OUT6_Pin GPIO_PIN_15
-#define GRID_COLUMN_OUT6_GPIO_Port GPIOA
-#define BUTTON_IN2_Pin GPIO_PIN_10
-#define BUTTON_IN2_GPIO_Port GPIOC
-#define ROTARY2_A_Pin GPIO_PIN_11
-#define ROTARY2_A_GPIO_Port GPIOC
-#define ROTARY2_B_Pin GPIO_PIN_12
-#define ROTARY2_B_GPIO_Port GPIOC
-#define PWM_GREEN1_Pin GPIO_PIN_6
-#define PWM_GREEN1_GPIO_Port GPIOB
-#define PWM_GREEN2_Pin GPIO_PIN_7
-#define PWM_GREEN2_GPIO_Port GPIOB
-#define PWM_GREEN3_Pin GPIO_PIN_8
-#define PWM_GREEN3_GPIO_Port GPIOB
-#define PWM_GREEN4_Pin GPIO_PIN_9
-#define PWM_GREEN4_GPIO_Port GPIOB
 
 /* ########################## Assert Selection ############################## */
 /**
