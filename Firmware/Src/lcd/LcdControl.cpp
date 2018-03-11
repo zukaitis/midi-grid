@@ -4,7 +4,7 @@
  *  Created on: 2018-03-04
  *      Author: Gedas
  */
-#include <lcd/LcdControl.h>
+#include "lcd/LcdControl.h"
 
 namespace lcd_control
 {
@@ -57,11 +57,6 @@ void LcdControl::setCursor( const uint8_t x, const uint8_t y )
     writeCommand(0x40 | y); // row.
 }
 
-void LcdControl::initializeBacklightTimer()
-{
-    HAL_GPIO_WritePin( LCD_GPIO_Port, LCD_LIGHT_Pin, GPIO_PIN_SET );
-}
-
 void LcdControl::initializeDma()
 {
     __HAL_RCC_DMA1_CLK_ENABLE();
@@ -97,7 +92,7 @@ void LcdControl::initializeGpio()
     PB13     ------> SPI2_SCK
     PB15     ------> SPI2_MOSI
     */
-    gpioConfiguration.Pin = LCD_DC_Pin|LCD_RESET_Pin|LCD_LIGHT_Pin;
+    gpioConfiguration.Pin = LCD_DC_Pin|LCD_RESET_Pin; //|LCD_LIGHT_Pin;
     gpioConfiguration.Mode = GPIO_MODE_OUTPUT_PP;
     gpioConfiguration.Pull = GPIO_NOPULL;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -110,7 +105,7 @@ void LcdControl::initializeGpio()
 
     gpioConfiguration.Pin = LCD_LIGHT_Pin;
     gpioConfiguration.Alternate = GPIO_AF1_TIM1;
-    //HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
 }
 
 void LcdControl::initializeSpi()
@@ -138,7 +133,7 @@ void LcdControl::initialize()
     initializeGpio();
     initializeSpi();
     initializeDma();
-    initializeBacklightTimer();
+    initializeBacklightPwm(); //Timer();
 
     resetController();
     writeCommand( 0x21 ); //LCD extended commands.
@@ -151,9 +146,8 @@ void LcdControl::initialize()
 
 void LcdControl::initializeBacklightPwm()
 {
-    TIM_ClockConfigTypeDef sClockSourceConfig;
-    TIM_SlaveConfigTypeDef sSlaveConfig;
-    TIM_OC_InitTypeDef sConfigOC;
+    TIM_ClockConfigTypeDef timerClockSourceConfiguration;
+    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
 
     __HAL_RCC_TIM1_CLK_ENABLE();
 
@@ -165,25 +159,19 @@ void LcdControl::initializeBacklightPwm()
     lcdBacklightPwmTimer.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init(&lcdBacklightPwmTimer);
 
-    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    HAL_TIM_ConfigClockSource(&lcdBacklightPwmTimer, &sClockSourceConfig);
+    timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    HAL_TIM_ConfigClockSource(&lcdBacklightPwmTimer, &timerClockSourceConfiguration);
 
     HAL_TIM_PWM_Init(&lcdBacklightPwmTimer);
 
-//  //sSlaveConfig.InputTrigger = TIM_TS_ITR0;
-//  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
-//  //sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
-//  HAL_TIM_SlaveConfigSynchronization(&lcdBacklightPwmTimer, &sSlaveConfig);
+    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
+    timerOutputCompareConfiguration.Pulse = 25000;
+    timerOutputCompareConfiguration.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+    timerOutputCompareConfiguration.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
+    HAL_TIM_PWM_ConfigChannel(&lcdBacklightPwmTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_2);
 
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 25000;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_SET;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    HAL_TIM_PWM_ConfigChannel(&lcdBacklightPwmTimer, &sConfigOC, TIM_CHANNEL_3);
-
-    //TIM_CCxNChannelCmd(lcdBacklightPwmTimer.Instance, TIM_CHANNEL_3, TIM_CCxN_ENABLE);
-    __HAL_TIM_ENABLE(&lcdBacklightPwmTimer);
+    HAL_TIMEx_PWMN_Start(&lcdBacklightPwmTimer, TIM_CHANNEL_2);
 }
 
 extern "C" void DMA1_Stream4_IRQHandler(void)

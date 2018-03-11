@@ -310,7 +310,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim) // all but tim1 config copied
 {
-
+#if 0
   GPIO_InitTypeDef GPIO_InitStruct;
   if(htim->Instance==TIM1)
   {
@@ -331,7 +331,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim) // all but tim1 config copied
 
   /* USER CODE END TIM1_MspPostInit 1 */
   }
-#if 0
+
   else if(htim->Instance==TIM2)
   {
   /* USER CODE BEGIN TIM2_MspPostInit 0 */
@@ -413,7 +413,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim) // all but tim1 config copied
 
 void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm)
 {
-
+#if 0
   if(htim_pwm->Instance==TIM1)
   {
   /* USER CODE BEGIN TIM1_MspDeInit 0 */
@@ -425,7 +425,7 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm)
 
   /* USER CODE END TIM1_MspDeInit 1 */
   }
-#if 0
+
   else if(htim_pwm->Instance==TIM4)
   {
   /* USER CODE BEGIN TIM4_MspDeInit 0 */

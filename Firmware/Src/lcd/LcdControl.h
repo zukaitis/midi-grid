@@ -38,8 +38,6 @@ private:
     void resetController();
     void writeCommand( const uint8_t command );
 
-    void initializeBacklightTimer();
-
     void initializeDma();
 
     void setCursor( const uint8_t x, const uint8_t y );
