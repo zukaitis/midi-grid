@@ -42,6 +42,8 @@ extern uint32_t APP_Rx_ptr_out;
 extern uint32_t APP_Rx_length;
 extern uint8_t  USB_Tx_State;
 
+extern USBD_MIDI_ItfTypeDef USBD_Interface_fops_FS;
+
 extern USBD_ClassTypeDef  USBD_MIDI;
 #define USBD_MIDI_CLASS    &USBD_MIDI
 

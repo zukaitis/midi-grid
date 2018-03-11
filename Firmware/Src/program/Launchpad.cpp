@@ -13,19 +13,19 @@
 extern "C" {
 #include "usb/usb_device.h"
 #include "usb/queue32.h"
-#include "usb/usbd_midi_if.h"
 };
 
 
 
-extern stB4Arrq rxq;
+//extern stB4Arrq rxq;
 
 namespace launchpad
 {
 
-Launchpad::Launchpad( grid::Grid& grid_, gui::Gui& gui_ ) :
-        grid(grid_),
-        gui(gui_)
+Launchpad::Launchpad( grid::Grid& grid_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
+        grid( grid_ ),
+        gui( gui_ ),
+        usbMidi( usbMidi_ )
 {};
 
 void Launchpad::runProgram()
@@ -33,33 +33,34 @@ void Launchpad::runProgram()
     uint8_t buttonX, buttonY, velocity;
     grid::ButtonEvent event;
     uint8_t codeIndexNumber;
+    midi::MidiPacket inputPacket;
     while (1)
     {
         // led flash message - 0x15519109 (Hex)
 
-        if (0 != rxq.num)
+        if (usbMidi.getPacket(inputPacket))
         {
-            midiInput.input = *b4arrq_pop(&rxq);
-            codeIndexNumber = midiInput.packet.header & 0x0F;
+            //midiInput.input = *b4arrq_pop(&rxq);
+            codeIndexNumber = inputPacket.header & 0x0F;
             switch (codeIndexNumber)
             {
                 case 0x09: // note on
-                    processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
+                    processNoteOnMidiMessage(inputPacket.data[0] & 0x0F, inputPacket.data[1], inputPacket.data[2]);
                     break;
                 case 0x08: // note off
-                    processNoteOnMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], 0);
+                    processNoteOnMidiMessage(inputPacket.data[0] & 0x0F, inputPacket.data[1], 0);
                     break;
                 case 0x0B: // change control
-                    processChangeControlMidiMessage(midiInput.packet.data[0] & 0x0F, midiInput.packet.data[1], midiInput.packet.data[2]);
+                    processChangeControlMidiMessage(inputPacket.data[0] & 0x0F, inputPacket.data[1], inputPacket.data[2]);
                     break;
                 case 0x04: // system exclusive
                 case 0x05:
                 case 0x06:
                 case 0x07:
-                    processSystemExclusiveMidiPacket( &midiInput.packet );
+                    processSystemExclusiveMidiPacket( &inputPacket );
                     break;
                 default:
-                    printMidiMessage(midiInput);
+                    printMidiMessage(&inputPacket);
                     break;
             }
         }
@@ -69,29 +70,29 @@ void Launchpad::runProgram()
             velocity = (grid::ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
             {
-                sendCtlChange( 0,sessionLayout[buttonX][buttonY],velocity );
+                usbMidi.sendControlChange( 0,sessionLayout[buttonX][buttonY],velocity );
             }
             else
             {
                 switch (currentLayout)
                 {
                     case Layout_SESSION:
-                        sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                        usbMidi.sendNoteOn( 0, sessionLayout[buttonX][buttonY], velocity );
                         break;
                     case Layout_USER1:
-                        sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
+                        usbMidi.sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
                         break;
                     case Layout_USER2:
-                        sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
+                        usbMidi.sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
                         break;
                     default:
-                        sendNoteOn( 0,sessionLayout[buttonX][buttonY],velocity );
+                        usbMidi.sendNoteOn( 0, sessionLayout[buttonX][buttonY], velocity );
                         break;
                 }
             }
         }
         grid.refreshLeds();
-        //lcd::Lcd::getInstance().refresh();
+        gui.refresh();
     }
 }
 
@@ -126,10 +127,6 @@ void Launchpad::processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t 
 
             grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
         }
-        else
-        {
-            printMidiMessage(midiInput);
-        }
     }
     else
     {
@@ -146,10 +143,6 @@ void Launchpad::processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t 
 
             grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
         }
-        else
-        {
-            printMidiMessage(midiInput);
-        }
     }
 }
 
@@ -163,13 +156,9 @@ void Launchpad::processChangeControlMidiMessage(uint8_t channel, uint8_t control
         grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[value], static_cast<grid::LedLightingType>(channel) );
         gui.displayLaunchpad95Mode( getLaunchpad95Mode() );
     }
-    else
-    {
-        printMidiMessage(midiInput);
-    }
 }
 
-void Launchpad::processSystemExclusiveMidiPacket( const struct MidiPacket* packet )
+void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket* packet )
 {
     uint8_t codeIndexNumber = packet->header & 0x0F;
     if (0x4 == codeIndexNumber) // start or continuation of SysEx message
@@ -216,7 +205,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length 
             }
             else if (0x40 == message[6])
             {
-                sendSysEx( &challengeResponse[0], 10 ); // always return zeros as challenge response
+                usbMidi.sendSystemExclussive( &challengeResponse[0], 10 ); // always return zeros as challenge response
             }
             else
             {
@@ -328,7 +317,7 @@ Launchpad95Mode Launchpad::getLaunchpad95Mode()
     return mode;
 }
 
-void Launchpad::printMidiMessage(union MidiInput message)
+void Launchpad::printMidiMessage(midi::MidiPacket* packet)
 {
 #ifdef USE_SEMIHOSTING
     uint8_t channel;

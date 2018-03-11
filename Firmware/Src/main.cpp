@@ -52,7 +52,6 @@
 
 extern "C" {
 #include "usb/usb_device.h"
-#include "usb/usbd_midi_if.h"
 #include "usb/queue32.h"
 }
 
@@ -76,8 +75,7 @@ UART_HandleTypeDef huart6;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-
-extern stB4Arrq rxq;
+//extern stB4Arrq rxq;
 
 /* USER CODE END PV */
 
@@ -119,7 +117,8 @@ int main(void)
 ApplicationMain::ApplicationMain() :
         grid( grid::Grid() ),
         gui( gui::Gui() ),
-        launchpad( launchpad::Launchpad(grid, gui) ),
+        usbMidi( midi::UsbMidi() ),
+        launchpad( launchpad::Launchpad(grid, gui, usbMidi) ),
         lcd_(lcd::Lcd::getInstance())
 {}
 
@@ -161,7 +160,7 @@ void ApplicationMain::run()
     uint8_t buttonX, buttonY, velocity;
     grid::ButtonEvent event;
 
-    while (0 == rxq.num)
+    while (!usbMidi.isPacketAvailable())
     {
         //randomLightAnimation();
         if (grid.getButtonEvent(&buttonX, &buttonY, &event))
@@ -169,7 +168,7 @@ void ApplicationMain::run()
             if (isUsbConnected())
             {
                 velocity = (event) ? 127 : 0;
-                sendNoteOn(0,launchpad::sessionLayout[buttonX][buttonY],velocity);
+                usbMidi.sendNoteOn(0,launchpad::sessionLayout[buttonX][buttonY],velocity);
             }
             break;
         }

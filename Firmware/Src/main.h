@@ -55,6 +55,7 @@
 #include "program/Launchpad.h"
 #include "grid/Grid.h"
 #include "lcd/Gui.h"
+#include "usb/UsbMidi.h"
 
 namespace lcd
 {
@@ -98,6 +99,7 @@ private:
 
     grid::Grid grid;
     gui::Gui gui;
+    midi::UsbMidi usbMidi;
     launchpad::Launchpad launchpad;
     lcd::Lcd& lcd_;
 

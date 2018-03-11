@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include "Types.h"
+#include "usb/UsbMidi.h"
 
 namespace grid
 {
@@ -18,6 +19,11 @@ namespace grid
 namespace gui
 {
     class Gui;
+}
+
+namespace midi
+{
+    class UsbMidi;
 }
 
 namespace launchpad
@@ -35,20 +41,8 @@ enum Layout
 
 static const uint8_t SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH = 64;
 
-struct MidiPacket
-{
-    uint8_t header;
-    uint8_t data[3];
-};
-
 static const uint8_t challengeResponse[10] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7};
 static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18};
-
-union MidiInput
-{
-    uint32_t input;
-    MidiPacket packet;
-};
 
 static const uint8_t sessionLayout[10][8] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
@@ -100,7 +94,7 @@ enum Launchpad95Mode
 class Launchpad
 {
 public:
-    Launchpad( grid::Grid& grid_, gui::Gui& gui_ );
+    Launchpad( grid::Grid& grid_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
 
     void runProgram();
     Launchpad95Mode getLaunchpad95Mode();
@@ -108,21 +102,22 @@ private:
     void setCurrentLayout(uint8_t layout);
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
     void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
-    void processSystemExclusiveMidiPacket( const struct MidiPacket* packet );
+    void processSystemExclusiveMidiPacket( const midi::MidiPacket* packet );
     void processSystemExclusiveMessage(uint8_t *message, uint8_t length);
 
-    void printMidiMessage(MidiInput message);
+    void printMidiMessage(midi::MidiPacket* packet);
     void printSysExMessage(uint8_t *message, uint8_t length);
 
     grid::Grid& grid;
     gui::Gui& gui;
+    midi::UsbMidi& usbMidi;
 
     uint8_t currentLayout = Layout_SESSION;
 
     uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
     uint8_t systemExclusiveInputMessageLength = 0;
 
-    MidiInput midiInput;
+    //midi::MidiInput midiInput;
 };
 
 } // namespace

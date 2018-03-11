@@ -30,4 +30,9 @@ void Gui::gui_changeLaunchpad95Submode()
 
 }
 
+void Gui::refresh()
+{
+    lcd.refresh();
+}
+
 } // namespace

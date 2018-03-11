@@ -53,7 +53,7 @@
 #include "usbd_core.h"
 #include "usb/usbd_desc.h"
 #include "usbd_midi.h"
-#include "usb/usbd_midi_if.h"
+//#include "usb/usbd_midi_if.h"
 
 /* USB Device Core handle declaration */
 USBD_HandleTypeDef hUsbDeviceFS;
