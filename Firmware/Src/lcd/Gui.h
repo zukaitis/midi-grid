@@ -43,6 +43,8 @@ public:
 
     void displayLaunchpad95Mode( launchpad::Launchpad95Mode mode );
     void gui_changeLaunchpad95Submode();
+    void displayUsbLogo();
+
     void refresh();
 
 private:

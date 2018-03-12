@@ -52,7 +52,9 @@
 #define nokia5110_LCD
 
 #include "stm32f4xx_hal.h"
-#include "font.h"
+
+#include "lcd/font.h"
+#include "lcd/images.h"
 
 #include "lcd/LcdControl.h"
 
@@ -66,6 +68,16 @@ enum Justification
     Justification_CENTER
 };
 
+struct Image
+{
+    const uint8_t* image;
+    uint16_t arraySize;
+    uint8_t width;
+    uint8_t height;
+};
+
+static const Image usbLogo = {usbLogoArray, 336, 84, 32};
+
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
 static const uint8_t NUMBER_OF_LINES = 6;
@@ -78,6 +90,7 @@ public:
     void refresh();
     void print(const char *string, const uint8_t x, const uint8_t y, const Justification justification);
     void print(const char *string, uint8_t x, const uint8_t y);
+    void displayImage(const uint8_t x, const uint8_t y, const Image image);
 
     void initialize();
 

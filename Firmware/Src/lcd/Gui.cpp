@@ -30,6 +30,11 @@ void Gui::gui_changeLaunchpad95Submode()
 
 }
 
+void Gui::displayUsbLogo()
+{
+    lcd.displayImage(0, 0, lcd::usbLogo);
+}
+
 void Gui::refresh()
 {
     lcd.refresh();

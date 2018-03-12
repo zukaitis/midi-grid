@@ -113,4 +113,30 @@ void Lcd::print(const char *string, const uint8_t x, const uint8_t y, const Just
     }
 }
 
+void Lcd::displayImage(const uint8_t x, const uint8_t y, const Image image)
+{
+    for (uint8_t j = 0; j < (image.height/8); j++)
+    {
+        for(uint8_t i = 0; i < image.width; i++)
+        {
+            if ((x+i) >= WIDTH)
+            {
+                break;
+            }
+            else
+            {
+                lcdBuffer[j+y/8][x+i] &= ~(0xFF << (y % 8));
+                lcdBuffer[j+y/8][x+i] |= image.image[j*WIDTH + i] << (y % 8);
+
+                if (((j*8 + y) < (HEIGHT - 8)) && (0 != (y % 8)))
+                {
+                    lcdBuffer[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
+                    lcdBuffer[j+y/8+1][x+i] |= image.image[j*WIDTH + i] >> (8 - y % 8);
+                }
+            }
+        }
+    }
+    updateRequired = true;
+}
+
 } // namespace
