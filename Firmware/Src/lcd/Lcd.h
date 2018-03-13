@@ -78,6 +78,11 @@ struct Image
 
 static const Image usbLogo = {usbLogoArray, 336, 84, 32};
 
+static const Image circleFull = {circleFullArray, 8, 8, 8};
+static const Image circle = {circleArray, 8, 8, 8};
+static const Image circleBigDot = {circleBigDotArray, 8, 8, 8};
+static const Image circleSmallDot = {circleSmallDotArray, 8, 8, 8};
+
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
 static const uint8_t NUMBER_OF_LINES = 6;

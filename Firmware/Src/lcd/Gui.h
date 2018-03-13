@@ -24,6 +24,11 @@ namespace launchpad
 namespace gui
 {
 
+static const uint16_t MIDI_TIMEOUT_STEP = 250; // ms
+static const uint16_t MIDI_TIMEOUT = 2500; // ms - 3*750ms + 250ms
+static const uint16_t MIDI_TIMEOUT_FULL_CIRCLE = 1750; // ms - 2*750ms
+static const uint16_t MIDI_TIMEOUT_BIG_DOT = 1000; // ms - 3*750ms + 250ms
+
 static const char launchpad95ModeString[8][16] = {
         "Session\0",
         "Instrument\0",
@@ -44,11 +49,23 @@ public:
     void displayLaunchpad95Mode( launchpad::Launchpad95Mode mode );
     void gui_changeLaunchpad95Submode();
     void displayUsbLogo();
+    void displayStatusBar();
 
     void refresh();
+    void refreshStatusBar();
+
+    void registerMidiInputActivity();
+    void registerMidiOutputActivity();
+    void registerMidiExternalActivity();
 
 private:
     lcd::Lcd& lcd;
+    bool statusBarActive = false;
+
+    uint16_t midiInputTimeout = 0;
+    uint16_t midiOutputTimeout = 0;
+    uint16_t midiExternalTimeout = 0;
+
 };
 
 } // namespace

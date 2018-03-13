@@ -63,6 +63,7 @@ void Launchpad::runProgram()
                     printMidiMessage(&inputPacket);
                     break;
             }
+            gui.registerMidiInputActivity();
         }
 
         if (grid.getButtonEvent(&buttonX, &buttonY, &event))
@@ -90,6 +91,7 @@ void Launchpad::runProgram()
                         break;
                 }
             }
+            gui.registerMidiOutputActivity();
         }
         grid.refreshLeds();
         gui.refresh();
@@ -206,6 +208,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length 
             else if (0x40 == message[6])
             {
                 usbMidi.sendSystemExclussive( &challengeResponse[0], 10 ); // always return zeros as challenge response
+                gui.registerMidiOutputActivity();
             }
             else
             {

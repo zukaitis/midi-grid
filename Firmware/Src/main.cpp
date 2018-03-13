@@ -146,7 +146,7 @@ void ApplicationMain::initialize()
 //    lcd_.print("abcdefgh", lcd::WIDTH/2, 0, lcd::Justification_CENTER);
 //    lcd_.print("ijklmnop", lcd::WIDTH/2, 9, lcd::Justification_CENTER);
 //    lcd_.print("qrstuvwxyz", lcd::WIDTH/2, 18, lcd::Justification_CENTER);
-    gui.displayUsbLogo();
+    gui.displayStatusBar();
 
     //runBrigthnessTest();
     #ifdef USE_SEMIHOSTING

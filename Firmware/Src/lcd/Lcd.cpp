@@ -1,6 +1,5 @@
 #include "lcd/Lcd.h"
 
-//#include <stm32f411xe.h> // ?
 #include "stm32f4xx_hal.h"
 
 #include <stdint.h>
@@ -39,7 +38,7 @@ void Lcd::refresh()
             lcdControl.update(&lcdBuffer[0][0]);
             updateRequired = false;
         }
-        refreshCheckTime += 10; // check every 10ms
+        refreshCheckTime = HAL_GetTick() + 10; // check every 10ms
     }
 }
 
