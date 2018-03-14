@@ -20,10 +20,10 @@ Gui::~Gui()
 
 void Gui::displayLaunchpad95Mode( launchpad::Launchpad95Mode mode )
 {
-    lcd.print("              ", 0, 32); // clear that portion of the lcd
+    lcd.clearArea(0, 8, 83, 15);
     if (launchpad::Launchpad95Mode_UNKNOWN != mode)
     {
-        lcd.print(launchpad95ModeString[mode], lcd::WIDTH/2, 32, lcd::Justification_CENTER);
+        lcd.print(launchpad95ModeString[mode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
     }
 }
 
@@ -39,16 +39,9 @@ void Gui::displayUsbLogo()
 
 void Gui::displayStatusBar()
 {
+    lcd.clearArea(0, 0, 83, 7);
     lcd.print( "L95", 0, 0 );
-
-    lcd.print( "I:", 24, 0 );
-    lcd.displayImage(35, 0, lcd::circle);
-
-    lcd.print( "O:", 44, 0 );
-    lcd.displayImage(55, 0, lcd::circle);
-
-    lcd.print( "E:", 64, 0 );
-    lcd.displayImage(75, 0, lcd::circle);
+    lcd.displayImage(63, 0, lcd::usbSymbolSmall);
 
     statusBarActive = true;
 }
@@ -63,92 +56,41 @@ void Gui::refresh()
     lcd.refresh();
 }
 
+
+
 void Gui::refreshStatusBar()
 {
     static uint32_t refreshCheckTime = 0;
-    uint32_t i = HAL_GetTick();
-    //if (HAL_GetTick() >= refreshCheckTime)
+
+    if (HAL_GetTick() >= refreshCheckTime)
     {
-#if 0
         if (midiInputTimeout > 0)
         {
             midiInputTimeout -= MIDI_TIMEOUT_STEP;
-            do
+            if (midiInputTimeout > 0)
             {
-                if (midiInputTimeout > MIDI_TIMEOUT_FULL_CIRCLE)
-                {
-                    lcd.displayImage(35, 0, lcd::circleFull);
-                    break;
-                }
-                if (midiInputTimeout > MIDI_TIMEOUT_BIG_DOT)
-                {
-                    lcd.displayImage(35, 0, lcd::circleBigDot);
-                    break;
-                }
-                if (midiInputTimeout > 0)
-                {
-                    lcd.displayImage(35, 0, lcd::circleSmallDot);
-                }
-                else
-                {
-                    lcd.displayImage(35, 0, lcd::circle);
-                }
-            } while (false);
+                lcd.displayImage(73, 0, lcd::arrowSmallDown);
+            }
+            else
+            {
+                lcd.clearArea(73, 0, 77, 7);
+            }
         }
 
         if (midiOutputTimeout > 0)
         {
             midiOutputTimeout -= MIDI_TIMEOUT_STEP;
-            do
+            if (midiOutputTimeout > 0)
             {
-                if (midiOutputTimeout > MIDI_TIMEOUT_FULL_CIRCLE)
-                {
-                    lcd.displayImage(55, 0, lcd::circleFull);
-                    break;
-                }
-                if (midiOutputTimeout > MIDI_TIMEOUT_BIG_DOT)
-                {
-                    lcd.displayImage(55, 0, lcd::circleBigDot);
-                    break;
-                }
-                if (midiOutputTimeout > 0)
-                {
-                    lcd.displayImage(55, 0, lcd::circleSmallDot);
-                }
-                else
-                {
-                    lcd.displayImage(55, 0, lcd::circle);
-                }
-            } while (false);
+                lcd.displayImage(78, 0, lcd::arrowSmallUp);
+            }
+            else
+            {
+                lcd.clearArea(78, 0, 83, 7);
+            }
         }
 
-        if (midiExternalTimeout > 0)
-        {
-            midiExternalTimeout -= MIDI_TIMEOUT_STEP;
-            do
-            {
-                if (midiExternalTimeout > MIDI_TIMEOUT_FULL_CIRCLE)
-                {
-                    lcd.displayImage(75, 0, lcd::circleFull);
-                    break;
-                }
-                if (midiExternalTimeout > MIDI_TIMEOUT_BIG_DOT)
-                {
-                    lcd.displayImage(75, 0, lcd::circleBigDot);
-                    break;
-                }
-                if (midiExternalTimeout > 0)
-                {
-                    lcd.displayImage(75, 0, lcd::circleSmallDot);
-                }
-                else
-                {
-                    lcd.displayImage(75, 0, lcd::circle);
-                }
-            } while (false);
-        }
-#endif
-        refreshCheckTime = HAL_GetTick() + 10000; //MIDI_TIMEOUT_STEP; // check every 250ms
+        refreshCheckTime = HAL_GetTick() + MIDI_TIMEOUT_STEP; // check every 250ms
     }
 }
 

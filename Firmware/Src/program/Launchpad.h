@@ -114,6 +114,8 @@ private:
 
     uint8_t currentLayout = Layout_SESSION;
 
+    Launchpad95Mode currentLaunchpad95Mode = Launchpad95Mode_UNKNOWN;
+
     uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
     uint8_t systemExclusiveInputMessageLength = 0;
 

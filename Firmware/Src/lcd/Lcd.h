@@ -78,10 +78,10 @@ struct Image
 
 static const Image usbLogo = {usbLogoArray, 336, 84, 32};
 
-static const Image circleFull = {circleFullArray, 8, 8, 8};
-static const Image circle = {circleArray, 8, 8, 8};
-static const Image circleBigDot = {circleBigDotArray, 8, 8, 8};
-static const Image circleSmallDot = {circleSmallDotArray, 8, 8, 8};
+static const Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
+static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
+static const Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
+static const Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
 
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
@@ -92,6 +92,7 @@ class Lcd
 public:
 
     void clear();
+    void clearArea(const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2);
     void refresh();
     void print(const char *string, const uint8_t x, const uint8_t y, const Justification justification);
     void print(const char *string, uint8_t x, const uint8_t y);

@@ -138,4 +138,27 @@ void Lcd::displayImage(const uint8_t x, const uint8_t y, const Image image)
     updateRequired = true;
 }
 
+void Lcd::clearArea(const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2)
+{
+    for (uint8_t j = 0; j <= ((y2-y1)/8); j++)
+    {
+        for(uint8_t i = 0; i < (x2-x1+1); i++)
+        {
+            if ((x1+i) >= WIDTH)
+            {
+                break;
+            }
+            else
+            {
+                lcdBuffer[j+y1/8][x1+i] &= ~(0xFF << (y1 % 8));
+                if (((j*8 + y1) < (HEIGHT - 8)) && (0 != (y1 % 8)))
+                {
+                    lcdBuffer[j+y1/8+1][x1+i] &= ~(0xFF >> (8 - y1 % 8));
+                }
+            }
+        }
+    }
+    updateRequired = true;
+}
+
 } // namespace

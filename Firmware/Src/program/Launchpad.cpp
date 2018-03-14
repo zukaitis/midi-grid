@@ -317,6 +317,11 @@ Launchpad95Mode Launchpad::getLaunchpad95Mode()
         }
     } while (0);
 
+    if (Launchpad95Mode_UNKNOWN != mode)
+    {
+        currentLaunchpad95Mode = mode;
+    }
+
     return mode;
 }
 

@@ -25,9 +25,7 @@ namespace gui
 {
 
 static const uint16_t MIDI_TIMEOUT_STEP = 250; // ms
-static const uint16_t MIDI_TIMEOUT = 2500; // ms - 3*750ms + 250ms
-static const uint16_t MIDI_TIMEOUT_FULL_CIRCLE = 1750; // ms - 2*750ms
-static const uint16_t MIDI_TIMEOUT_BIG_DOT = 1000; // ms - 3*750ms + 250ms
+static const uint16_t MIDI_TIMEOUT = 1250; // ms
 
 static const char launchpad95ModeString[8][16] = {
         "Session\0",
