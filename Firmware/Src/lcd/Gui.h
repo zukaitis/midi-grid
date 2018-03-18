@@ -38,6 +38,18 @@ static const char launchpad95ModeString[8][16] = {
         "Mixer\0"
 };
 
+static const char launchpad95SubmodeString[9][16] = {
+        " \0",
+        "Scale\0",
+        "Volume\0",
+        "Pan\0",
+        "Send A\0",
+        "Send B\0",
+        "MSS: Length\0",
+        "MSS: Octave\0",
+        "MSS: Velocity\0"
+};
+
 class Gui
 {
 public:
@@ -45,7 +57,9 @@ public:
     ~Gui();
 
     void displayLaunchpad95Mode( launchpad::Launchpad95Mode mode );
-    void gui_changeLaunchpad95Submode();
+    void displayLaunchpad95Submode( launchpad::Launchpad95Submode submode );
+    void displayTrackName(char* name, uint8_t length);
+    void displayClipName(char* name, uint8_t length);
     void displayUsbLogo();
     void displayStatusBar();
 

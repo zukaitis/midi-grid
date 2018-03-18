@@ -9,6 +9,7 @@
 
 #include "grid/Grid.h"
 #include "lcd/Gui.h"
+#include "lcd/Lcd.h"
 
 extern "C" {
 #include "usb/usb_device.h"
@@ -144,6 +145,28 @@ void Launchpad::processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t 
             }
 
             grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+
+            if (8 == ledPositionX)
+            {
+                // possible submode change
+                Launchpad95Submode submode = getLaunchpad95Submode();
+                if (Launchpad95Submode_DEFAULT == submode)
+                {
+                    gui.displayLaunchpad95Mode( currentLaunchpad95Mode );
+                }
+                else
+                {
+                    gui.displayLaunchpad95Submode( submode );
+                }
+            }
+#if 1 // debug
+            char str[4];
+            sprintf(str, "%03i", velocity);
+            if (89 == note)
+            {
+                lcd::Lcd::getInstance().print(str,10, 20);
+            }
+#endif
         }
     }
 }
@@ -156,7 +179,20 @@ void Launchpad::processChangeControlMidiMessage(uint8_t channel, uint8_t control
         ledPositionX = 9;
         ledPositionY = topRowControllerNumbers[control - 104];
         grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[value], static_cast<grid::LedLightingType>(channel) );
-        gui.displayLaunchpad95Mode( getLaunchpad95Mode() );
+        if (ledPositionY <= 3)
+        {
+            currentLaunchpad95Mode = getLaunchpad95Mode();
+            gui.displayLaunchpad95Mode( currentLaunchpad95Mode );
+            if (Launchpad95Mode_MELODIC_SEQUENCER == currentLaunchpad95Mode)
+            {
+                // only melodic step sequencer can stay in submode between mode changes
+                Launchpad95Submode submode = getLaunchpad95Submode();
+                if (Launchpad95Submode_DEFAULT != submode)
+                {
+                    gui.displayLaunchpad95Submode( submode );
+                }
+            }
+        }
     }
 }
 
@@ -201,18 +237,22 @@ void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length 
     {
         if (0 == memcmp(message, launchpad_standartSystemExclusiveMessageHeader, 6))
         {
-            if (0x22 == message[6])
+            switch(message[6])
             {
-                setCurrentLayout( message[7] );
-            }
-            else if (0x40 == message[6])
-            {
-                usbMidi.sendSystemExclussive( &challengeResponse[0], 10 ); // always return zeros as challenge response
-                gui.registerMidiOutputActivity();
-            }
-            else
-            {
-                printSysExMessage(message, length);
+                case 0x22:
+                    setCurrentLayout( message[7] );
+                    break;
+                case 0x40:
+                    usbMidi.sendSystemExclussive( &challengeResponse[0], 10 ); // always return zeros as challenge response
+                    gui.registerMidiOutputActivity();
+                    break;
+                case 0x14: // text scroll
+                    message[length-1] = 0; // put string terminator at the end
+                    processDawInfoMessage((char*)&message[7], length-7-1);
+                    break;
+                default:
+                    printSysExMessage(message, length);
+                    break;
             }
         }
         else
@@ -258,6 +298,20 @@ void Launchpad::setCurrentLayout( uint8_t layout )
                 break;
         }
         grid.setLed( 9, 4, colour );
+    }
+}
+
+void Launchpad::processDawInfoMessage( char* message, uint8_t length )
+{
+    switch (message[0])
+    {
+        case 't':
+            gui.displayTrackName(&message[1], length-1);
+            break;
+        case 'c':
+            gui.displayClipName(&message[1], length-1);
+        default:
+            break;
     }
 }
 
@@ -315,14 +369,87 @@ Launchpad95Mode Launchpad::getLaunchpad95Mode()
             mode = Launchpad95Mode_MIXER;
             break;
         }
-    } while (0);
-
-    if (Launchpad95Mode_UNKNOWN != mode)
-    {
-        currentLaunchpad95Mode = mode;
-    }
+    } while (false);
 
     return mode;
+}
+
+Launchpad95Submode Launchpad::getLaunchpad95Submode()
+{
+    Launchpad95Submode submode = Launchpad95Submode_DEFAULT;
+    Colour colour;
+
+    switch (currentLaunchpad95Mode)
+    {
+        case Launchpad95Mode_INSTRUMENT:
+            colour = grid.getLedColour(8, 7);
+            if (grid.areColoursEqual(colour, launchpadColourPalette[9]))
+            {
+                submode = Launchpad95Submode_SCALE;
+            }
+            break;
+        case Launchpad95Mode_DRUM_STEP_SEQUENCER:
+            colour = grid.getLedColour(8, 7);
+            if (grid.areColoursEqual(colour, launchpadColourPalette[5]))
+            {
+                submode = Launchpad95Submode_SCALE;
+            }
+            break;
+        case Launchpad95Mode_MIXER:
+            do
+            {
+                colour = grid.getLedColour(8, 7);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[31]))
+                {
+                    submode = Launchpad95Submode_VOLUME;
+                    break;
+                }
+                colour = grid.getLedColour(8, 6);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[31]))
+                {
+                    submode = Launchpad95Submode_PAN;
+                    break;
+                }
+                colour = grid.getLedColour(8, 5);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[31]))
+                {
+                    submode = Launchpad95Submode_SEND_A;
+                    break;
+                }
+                colour = grid.getLedColour(8, 4);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[31]))
+                {
+                    submode = Launchpad95Submode_SEND_B;
+                }
+            } while (false);
+            break;
+        case Launchpad95Mode_MELODIC_SEQUENCER:
+            do
+            {
+                colour = grid.getLedColour(8, 3);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[29]))
+                {
+                    submode = Launchpad95Submode_LENGTH;
+                    break;
+                }
+                colour = grid.getLedColour(8, 2);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[48]))
+                {
+                    submode = Launchpad95Submode_OCTAVE;
+                    break;
+                }
+                colour = grid.getLedColour(8, 1);
+                if (grid.areColoursEqual(colour, launchpadColourPalette[37]))
+                {
+                    submode = Launchpad95Submode_VELOCITY;
+                }
+            } while (false);
+            break;
+        default:
+            break;
+    }
+
+    return submode;
 }
 
 void Launchpad::printMidiMessage(midi::MidiPacket* packet)

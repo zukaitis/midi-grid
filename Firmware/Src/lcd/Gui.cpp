@@ -27,9 +27,35 @@ void Gui::displayLaunchpad95Mode( launchpad::Launchpad95Mode mode )
     }
 }
 
-void Gui::gui_changeLaunchpad95Submode()
+void Gui::displayLaunchpad95Submode( launchpad::Launchpad95Submode submode )
 {
+    if (launchpad::Launchpad95Submode_DEFAULT != submode)
+    {
+        lcd.clearArea(0, 8, 83, 15);
+        lcd.print(launchpad95SubmodeString[submode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
+    }
+}
 
+void Gui::displayTrackName(char* name, uint8_t length)
+{
+    lcd.clearArea(0, 32, 83, 39);
+    if (length > 14)
+    {
+        name[13] = '.'; // shorten the name
+        name[14] = '\0';
+    }
+    lcd.print(name, lcd::WIDTH/2, 32, lcd::Justification_CENTER);
+}
+
+void Gui::displayClipName(char* name, uint8_t length)
+{
+    lcd.clearArea(0, 40, 83, 47);
+    if (length > 14)
+    {
+        name[13] = '.'; // shorten the name
+        name[14] = '\0';
+    }
+    lcd.print(name, lcd::WIDTH/2, 40, lcd::Justification_CENTER);
 }
 
 void Gui::displayUsbLogo()
@@ -40,7 +66,7 @@ void Gui::displayUsbLogo()
 void Gui::displayStatusBar()
 {
     lcd.clearArea(0, 0, 83, 7);
-    lcd.print( "L95", 0, 0 );
+    lcd.print( "L95", lcd::WIDTH/2, 0, lcd::Justification_CENTER );
     lcd.displayImage(63, 0, lcd::usbSymbolSmall);
 
     statusBarActive = true;

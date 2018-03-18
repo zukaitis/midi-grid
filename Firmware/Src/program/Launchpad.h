@@ -91,6 +91,19 @@ enum Launchpad95Mode
     Launchpad95Mode_UNKNOWN
 };
 
+enum Launchpad95Submode
+{
+    Launchpad95Submode_DEFAULT = 0,
+    Launchpad95Submode_SCALE, // Instrument and Drum step sequencer
+    Launchpad95Submode_VOLUME, // Mixer
+    Launchpad95Submode_PAN, // Mixer
+    Launchpad95Submode_SEND_A, // Mixer
+    Launchpad95Submode_SEND_B, // Mixer
+    Launchpad95Submode_LENGTH, // Melodic step sequencer
+    Launchpad95Submode_OCTAVE, // Melodic step sequencer
+    Launchpad95Submode_VELOCITY // Melodic step sequencer
+};
+
 class Launchpad
 {
 public:
@@ -98,12 +111,14 @@ public:
 
     void runProgram();
     Launchpad95Mode getLaunchpad95Mode();
+    Launchpad95Submode getLaunchpad95Submode();
 private:
     void setCurrentLayout(uint8_t layout);
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
     void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket* packet );
     void processSystemExclusiveMessage(uint8_t *message, uint8_t length);
+    void processDawInfoMessage( char* message, uint8_t length );
 
     void printMidiMessage(midi::MidiPacket* packet);
     void printSysExMessage(uint8_t *message, uint8_t length);
