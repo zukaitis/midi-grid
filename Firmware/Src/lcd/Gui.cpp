@@ -18,44 +18,91 @@ Gui::Gui() : lcd( lcd::Lcd::getInstance() )
 Gui::~Gui()
 {}
 
-void Gui::displayLaunchpad95Mode( launchpad::Launchpad95Mode mode )
+void Gui::setLaunchpad95Mode( launchpad::Launchpad95Mode mode )
+{
+    launchpad95Mode = mode;
+    displayLaunchpad95Info();
+}
+
+void Gui::displayLaunchpad95Mode()
 {
     lcd.clearArea(0, 8, 83, 15);
-    if (launchpad::Launchpad95Mode_UNKNOWN != mode)
+    if (launchpad::Launchpad95Mode_UNKNOWN != launchpad95Mode)
     {
-        lcd.print(launchpad95ModeString[mode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
+        lcd.print(launchpad95ModeString[launchpad95Mode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
     }
 }
 
-void Gui::displayLaunchpad95Submode( launchpad::Launchpad95Submode submode )
+void Gui::setLaunchpad95Submode( launchpad::Launchpad95Submode submode )
 {
-    if (launchpad::Launchpad95Submode_DEFAULT != submode)
-    {
-        lcd.clearArea(0, 8, 83, 15);
-        lcd.print(launchpad95SubmodeString[submode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
-    }
+    launchpad95Submode = submode;
+    displayLaunchpad95Info();
 }
 
-void Gui::displayTrackName(char* name, uint8_t length)
+void Gui::displayLaunchpad95Submode()
 {
-    lcd.clearArea(0, 32, 83, 39);
+    lcd.clearArea(0, 8, 83, 15);
+    lcd.print(launchpad95SubmodeString[launchpad95Submode], lcd::WIDTH/2, 8, lcd::Justification_CENTER);
+}
+
+void Gui::setTrackName(char* name, uint8_t length)
+{
     if (length > 14)
     {
-        name[13] = '.'; // shorten the name
-        name[14] = '\0';
+        strncpy(trackName, name, 14);
+        trackName[14] = '\0'; // shorten the name
     }
-    lcd.print(name, lcd::WIDTH/2, 32, lcd::Justification_CENTER);
+    else
+    {
+        strcpy(trackName, name);
+    }
+
+    displayLaunchpad95Info();
 }
 
-void Gui::displayClipName(char* name, uint8_t length)
+void Gui::displayTrackName()
 {
-    lcd.clearArea(0, 40, 83, 47);
+    lcd.print(trackName, lcd::WIDTH/2, 32, lcd::Justification_CENTER);
+}
+
+void Gui::setClipName(char* name, uint8_t length)
+{
     if (length > 14)
     {
-        name[13] = '.'; // shorten the name
-        name[14] = '\0';
+        strncpy(clipName, name, 14);
+        clipName[14] = '\0'; // shorten the name
     }
-    lcd.print(name, lcd::WIDTH/2, 40, lcd::Justification_CENTER);
+    else
+    {
+        strcpy(clipName, name);
+    }
+
+    displayLaunchpad95Info();
+}
+
+void Gui::displayClipName()
+{
+    lcd.print(clipName, lcd::WIDTH/2, 40, lcd::Justification_CENTER);
+}
+
+void Gui::setDeviceName(char* name, uint8_t length)
+{
+    if (length > 14)
+    {
+        strncpy(deviceName, name, 14);
+        deviceName[14] = '\0'; // shorten the name
+    }
+    else
+    {
+        strcpy(deviceName, name);
+    }
+
+    displayLaunchpad95Info();
+}
+
+void Gui::displayDeviceName()
+{
+    lcd.print(deviceName, lcd::WIDTH/2, 40, lcd::Justification_CENTER);
 }
 
 void Gui::displayUsbLogo()
@@ -82,7 +129,39 @@ void Gui::refresh()
     lcd.refresh();
 }
 
+void Gui::displayLaunchpad95Info()
+{
+    if (launchpad::Launchpad95Submode_DEFAULT == launchpad95Submode)
+    {
+        displayLaunchpad95Mode();
+    }
+    else
+    {
+        displayLaunchpad95Submode();
+    }
 
+    lcd.clearArea(0, 32, 83, 47);
+    switch (launchpad95Mode)
+    {
+        case launchpad::Launchpad95Mode_INSTRUMENT:
+        case launchpad::Launchpad95Mode_DRUM_STEP_SEQUENCER:
+        case launchpad::Launchpad95Mode_MELODIC_SEQUENCER:
+            displayTrackName();
+            displayClipName();
+            break;
+        case launchpad::Launchpad95Mode_DEVICE_CONTROLLER:
+            displayTrackName();
+            displayDeviceName();
+            break;
+        case launchpad::Launchpad95Mode_SESSION:
+        case launchpad::Launchpad95Mode_MIXER:
+        case launchpad::Launchpad95Mode_USER1:
+        case launchpad::Launchpad95Mode_USER2:
+        default:
+            //don't display anything for now
+            break;
+    }
+}
 
 void Gui::refreshStatusBar()
 {

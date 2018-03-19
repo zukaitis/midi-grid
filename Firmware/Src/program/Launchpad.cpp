@@ -149,15 +149,7 @@ void Launchpad::processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t 
             if (8 == ledPositionX)
             {
                 // possible submode change
-                Launchpad95Submode submode = getLaunchpad95Submode();
-                if (Launchpad95Submode_DEFAULT == submode)
-                {
-                    gui.displayLaunchpad95Mode( currentLaunchpad95Mode );
-                }
-                else
-                {
-                    gui.displayLaunchpad95Submode( submode );
-                }
+                gui.setLaunchpad95Submode( getLaunchpad95Submode() );
             }
 #if 1 // debug
             char str[4];
@@ -182,15 +174,15 @@ void Launchpad::processChangeControlMidiMessage(uint8_t channel, uint8_t control
         if (ledPositionY <= 3)
         {
             currentLaunchpad95Mode = getLaunchpad95Mode();
-            gui.displayLaunchpad95Mode( currentLaunchpad95Mode );
+            gui.setLaunchpad95Mode( currentLaunchpad95Mode );
             if (Launchpad95Mode_MELODIC_SEQUENCER == currentLaunchpad95Mode)
             {
                 // only melodic step sequencer can stay in submode between mode changes
-                Launchpad95Submode submode = getLaunchpad95Submode();
-                if (Launchpad95Submode_DEFAULT != submode)
-                {
-                    gui.displayLaunchpad95Submode( submode );
-                }
+                gui.setLaunchpad95Submode( getLaunchpad95Submode() );
+            }
+            else
+            {
+                gui.setLaunchpad95Submode( Launchpad95Submode_DEFAULT );
             }
         }
     }
@@ -306,10 +298,14 @@ void Launchpad::processDawInfoMessage( char* message, uint8_t length )
     switch (message[0])
     {
         case 't':
-            gui.displayTrackName(&message[1], length-1);
+            gui.setTrackName(&message[1], length-1);
             break;
         case 'c':
-            gui.displayClipName(&message[1], length-1);
+            gui.setClipName(&message[1], length-1);
+            break;
+        case 'd':
+            gui.setDeviceName(&message[1], length-1);
+            break;
         default:
             break;
     }

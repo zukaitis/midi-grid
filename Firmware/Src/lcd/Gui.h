@@ -38,7 +38,7 @@ static const char launchpad95ModeString[8][16] = {
         "Mixer\0"
 };
 
-static const char launchpad95SubmodeString[9][16] = {
+static const char launchpad95SubmodeString[9][15] = {
         " \0",
         "Scale\0",
         "Volume\0",
@@ -56,10 +56,11 @@ public:
     Gui();
     ~Gui();
 
-    void displayLaunchpad95Mode( launchpad::Launchpad95Mode mode );
-    void displayLaunchpad95Submode( launchpad::Launchpad95Submode submode );
-    void displayTrackName(char* name, uint8_t length);
-    void displayClipName(char* name, uint8_t length);
+    void setLaunchpad95Mode( launchpad::Launchpad95Mode mode );
+    void setLaunchpad95Submode( launchpad::Launchpad95Submode submode );
+    void setTrackName(char* name, uint8_t length);
+    void setClipName(char* name, uint8_t length);
+    void setDeviceName(char* name, uint8_t length);
     void displayUsbLogo();
     void displayStatusBar();
 
@@ -71,8 +72,25 @@ public:
     void registerMidiExternalActivity();
 
 private:
+    void displayLaunchpad95Info();
+
+    void displayLaunchpad95Mode();
+    void displayLaunchpad95Submode();
+
+    void displayTrackName();
+    void displayClipName();
+    void displayDeviceName();
+
+
     lcd::Lcd& lcd;
     bool statusBarActive = false;
+
+    launchpad::Launchpad95Mode launchpad95Mode = launchpad::Launchpad95Mode_UNKNOWN;
+    launchpad::Launchpad95Submode launchpad95Submode = launchpad::Launchpad95Submode_DEFAULT;
+
+    char trackName[15] = " \0";
+    char clipName[15] = " \0";
+    char deviceName[15] = " \0";
 
     uint16_t midiInputTimeout = 0;
     uint16_t midiOutputTimeout = 0;
