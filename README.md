@@ -1,4 +1,21 @@
 # midi-grid
-DIY RGB MIDI grid controller, will have more info soon
+DIY RGB MIDI grid controller
 
 [![Video](https://img.youtube.com/vi/7otjcxH8tro/0.jpg)](https://youtu.be/7otjcxH8tro "Demo video")
+
+midi-grid is an open source MIDI controller, main part of witch is 8x8 LED iluminated button grid.
+
+Main features of the device:
+- 8x8 RGB LED illuminated button matrix
+- 16 additional MIDI control buttons, most of them paired with LED indicator
+- 2 buttons for internal control of the device
+- 2 rotary encoders, functionality yet to be specified
+- Monochrome LCD display
+- Physical MIDI input and output ports
+
+Currently device is developed to work with [Ableton Live](https://www.ableton.com/en/live/), specifically with modified [Launchpad95](http://motscousus.com/stuff/2011-07_Novation_Launchpad_Ableton_Live_Scripts/) MIDI remote script - [Launchpad95g](https://github.com/zukaitis/Launchpad95g). Additional functionality, like stand-alone modes, or compatibility with other DAWs may be implemented later.
+
+## Thanks to
+@mimuz - for sharing [STM32 USB MIDI library](https://github.com/mimuz/mimuz-tuch)
+@pidcodes - for providing USB VID/PID pair for this application
+@hdavid - for making an amazing Ableton Live extension - [Launchpad95](https://github.com/hdavid/Launchpad95)
