@@ -32,10 +32,12 @@ static uint16_t MIDI_DataRx(uint8_t *msg, uint16_t length)
     uint16_t cnt;
     uint16_t msgs = length / 4;
     uint16_t chk = length % 4;
+    volatile uint32_t value;
     if(chk == 0)
     {
         for(cnt = 0;cnt < msgs;cnt ++)
         {
+            value = *(((uint32_t *)msg)+cnt);
             b4arrq_push(&rxq,((uint32_t *)msg)+cnt);
         }
     }

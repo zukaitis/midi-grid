@@ -100,6 +100,27 @@ void Gui::setDeviceName(char* name, uint8_t length)
     displayLaunchpad95Info();
 }
 
+void Gui::setStatus(const bool isPlaying, const bool isRecording, const bool isSessionRecording)
+{
+    isPlaying_ = isPlaying;
+    isRecording_ = isRecording;
+    isSessionRecording_ = isSessionRecording;
+
+    displayLaunchpad95Info();
+}
+
+void Gui::setTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
+        const bool nudgeDown, const bool nudgeUp )
+{
+    tempo_ = tempo;
+    signatureNumerator_ = signatureNumerator;
+    signatureDenominator_ = signatureDenominator;
+    nudgeDownActive_ = nudgeDown;
+    nudgeUpActive_ = nudgeUp;
+
+    displayLaunchpad95Info();
+}
+
 void Gui::displayDeviceName()
 {
     lcd.print(deviceName, lcd::WIDTH/2, 40, lcd::Justification_CENTER);
@@ -140,6 +161,9 @@ void Gui::displayLaunchpad95Info()
         displayLaunchpad95Submode();
     }
 
+    lcd.clearArea(0, 16, 83, 31);
+    displayStatus();
+
     lcd.clearArea(0, 32, 83, 47);
     switch (launchpad95Mode)
     {
@@ -158,9 +182,46 @@ void Gui::displayLaunchpad95Info()
         case launchpad::Launchpad95Mode_USER1:
         case launchpad::Launchpad95Mode_USER2:
         default:
-            //don't display anything for now
+            displayTimingStatus();
             break;
     }
+}
+
+void Gui::displayStatus()
+{
+    uint8_t numberOfDisplayedSymbols = (isPlaying_ ? 1 : 0);
+    numberOfDisplayedSymbols += (isRecording_ ? 1 : 0);
+    numberOfDisplayedSymbols += (isSessionRecording_ ? 1 : 0);
+
+    switch (numberOfDisplayedSymbols)
+    {
+        case 1:
+            lcd.displayImage(32, 16, lcd::play);
+            break;
+        case 2:
+            lcd.displayImage(23, 16, lcd::play);
+            lcd.displayImage(43, 16, (isRecording_ ? lcd::recordingOn : lcd::sessionRecordingOn));
+            break;
+        case 3:
+            lcd.displayImage(12, 16, lcd::play);
+            lcd.displayImage(32, 16, lcd::recordingOn);
+            lcd.displayImage(52, 16, lcd::sessionRecordingOn);
+            break;
+        default:
+            break;
+    }
+}
+
+void Gui::displayTimingStatus()
+{
+    char signatureString[6], tempoString[7];
+    sprintf(signatureString, "%d/%d", signatureNumerator_, signatureDenominator_);
+    sprintf(tempoString, "%dbpm", tempo_);
+    lcd.print(signatureString, 0, 32);
+    lcd.print(tempoString, 42, 32);
+
+    lcd.displayImage(0, 40, (nudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive));
+    lcd.displayImage(10, 40, (nudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive));
 }
 
 void Gui::refreshStatusBar()
@@ -207,11 +268,6 @@ void Gui::registerMidiInputActivity()
 void Gui::registerMidiOutputActivity()
 {
     midiOutputTimeout = MIDI_TIMEOUT;
-}
-
-void Gui::registerMidiExternalActivity()
-{
-    midiExternalTimeout = MIDI_TIMEOUT;
 }
 
 } // namespace

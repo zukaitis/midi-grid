@@ -73,7 +73,7 @@ void Lcd::putChar(const uint8_t x, const uint8_t y, const char c)
  */
 void Lcd::print(const char *string, uint8_t x, const uint8_t y)
 {
-    if ((x < WIDTH)&&(y < HEIGHT))
+    if (y < HEIGHT) // width is checked in putChar
     {
         while(*string)
         {
@@ -82,6 +82,38 @@ void Lcd::print(const char *string, uint8_t x, const uint8_t y)
         }
     }
     updateRequired = true;
+}
+
+void Lcd::printNumberInBigDigits(const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification)
+{
+    uint8_t numberOfDigits = 5; // 5 digit numbers max
+    uint16_t divisor = 10000;
+    while (divisor > 1)
+    {
+        if (0 != (number / divisor))
+        {
+            break;
+        }
+        --numberOfDigits;
+        divisor /= 10;
+    }
+
+    switch (justification)
+    {
+        case Justification_LEFT:
+        default:
+            break;
+    }
+}
+
+void Lcd::printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
+{
+    for (uint8_t i = numberOfDigits; i > 0; i--)
+    {
+        x -= digitBig[0].width;
+        displayImage(x, y, digitBig[number%10]);
+        number /= 10;
+    }
 }
 
 void Lcd::print(const char *string, const uint8_t x, const uint8_t y, const Justification justification)
@@ -125,12 +157,12 @@ void Lcd::displayImage(const uint8_t x, const uint8_t y, const Image image)
             else
             {
                 lcdBuffer[j+y/8][x+i] &= ~(0xFF << (y % 8));
-                lcdBuffer[j+y/8][x+i] |= image.image[j*WIDTH + i] << (y % 8);
+                lcdBuffer[j+y/8][x+i] |= image.image[j*image.width + i] << (y % 8);
 
                 if (((j*8 + y) < (HEIGHT - 8)) && (0 != (y % 8)))
                 {
                     lcdBuffer[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
-                    lcdBuffer[j+y/8+1][x+i] |= image.image[j*WIDTH + i] >> (8 - y % 8);
+                    lcdBuffer[j+y/8+1][x+i] |= image.image[j*image.width + i] >> (8 - y % 8);
                 }
             }
         }

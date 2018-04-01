@@ -61,6 +61,9 @@ public:
     void setTrackName(char* name, uint8_t length);
     void setClipName(char* name, uint8_t length);
     void setDeviceName(char* name, uint8_t length);
+    void setStatus(const bool isPlaying, const bool isRecording, const bool isSessionRecording);
+    void setTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
+            const bool nudgeDown, const bool nudgeUp );
     void displayUsbLogo();
     void displayStatusBar();
 
@@ -69,7 +72,6 @@ public:
 
     void registerMidiInputActivity();
     void registerMidiOutputActivity();
-    void registerMidiExternalActivity();
 
 private:
     void displayLaunchpad95Info();
@@ -80,6 +82,8 @@ private:
     void displayTrackName();
     void displayClipName();
     void displayDeviceName();
+    void displayStatus();
+    void displayTimingStatus();
 
 
     lcd::Lcd& lcd;
@@ -88,14 +92,22 @@ private:
     launchpad::Launchpad95Mode launchpad95Mode = launchpad::Launchpad95Mode_UNKNOWN;
     launchpad::Launchpad95Submode launchpad95Submode = launchpad::Launchpad95Submode_DEFAULT;
 
+    bool isPlaying_ = false;
+    bool isRecording_ = false;
+    bool isSessionRecording_ = false;
+
+    uint16_t tempo_ = 0;
+    uint8_t signatureNumerator_ = 0;
+    uint8_t signatureDenominator_ = 0;
+    bool nudgeDownActive_ = false;
+    bool nudgeUpActive_ = false;
+
     char trackName[15] = " \0";
     char clipName[15] = " \0";
     char deviceName[15] = " \0";
 
     uint16_t midiInputTimeout = 0;
     uint16_t midiOutputTimeout = 0;
-    uint16_t midiExternalTimeout = 0;
-
 };
 
 } // namespace

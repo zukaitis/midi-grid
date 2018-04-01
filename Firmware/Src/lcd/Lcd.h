@@ -83,6 +83,20 @@ static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
 static const Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
 static const Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
 
+static const Image play = { playArray, 36, 18, 16 };
+static const Image recordingOn = { recordingOnArray, 36, 18, 16 };
+static const Image sessionRecordingOn = { sessionRecordingOnArray, 36, 18, 16 };
+static const Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 10, 8};
+static const Image nudgeDownActive = { nudgeDownActiveArray, 10, 10, 8};
+static const Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 10, 8};
+static const Image nudgeUpActive = { nudgeUpActiveArray, 10, 10, 8};
+
+static const Image digitBig[10] = {
+        { DIGITS_BIG[0], 24, 12, 16 }, { DIGITS_BIG[1], 24, 12, 16 }, { DIGITS_BIG[2], 24, 12, 16 }, { DIGITS_BIG[3], 24, 12, 16 },
+        { DIGITS_BIG[4], 24, 12, 16 }, { DIGITS_BIG[5], 24, 12, 16 }, { DIGITS_BIG[6], 24, 12, 16 }, { DIGITS_BIG[7], 24, 12, 16 },
+        { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
+};
+
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
 static const uint8_t NUMBER_OF_LINES = 6;
@@ -96,6 +110,8 @@ public:
     void refresh();
     void print(const char *string, const uint8_t x, const uint8_t y, const Justification justification);
     void print(const char *string, uint8_t x, const uint8_t y);
+    void printNumberInBigDigits(const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification);
+    void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void displayImage(const uint8_t x, const uint8_t y, const Image image);
 
     void initialize();

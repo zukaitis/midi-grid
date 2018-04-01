@@ -151,7 +151,7 @@ void Launchpad::processNoteOnMidiMessage(uint8_t channel, uint8_t note, uint8_t 
                 // possible submode change
                 gui.setLaunchpad95Submode( getLaunchpad95Submode() );
             }
-#if 1 // debug
+#if 0 // debug
             char str[4];
             sprintf(str, "%03i", velocity);
             if (89 == note)
@@ -298,13 +298,25 @@ void Launchpad::processDawInfoMessage( char* message, uint8_t length )
     switch (message[0])
     {
         case 't':
-            gui.setTrackName(&message[1], length-1);
+            gui.setTrackName( &message[1], length-1 );
             break;
         case 'c':
-            gui.setClipName(&message[1], length-1);
+            gui.setClipName( &message[1], length-1 );
             break;
         case 'd':
-            gui.setDeviceName(&message[1], length-1);
+            gui.setDeviceName( &message[1], length-1 );
+            break;
+        case 's':
+            gui.setStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );
+            break;
+        case 'T':
+            {
+                uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
+                uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
+                uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
+                gui.setTimingValues( tempo, signatureNumerator, signatureDenominator,
+                        ('D' == message[8]), ('U' == message[8]) );
+            }
             break;
         default:
             break;

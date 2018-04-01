@@ -14,7 +14,7 @@
 extern "C"{
 #endif 
 
-#define B4QUEUE_SIZE 64
+#define B4QUEUE_SIZE 256 // increased queue size
 
 typedef struct{
   uint32_t top;
