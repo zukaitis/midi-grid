@@ -83,9 +83,9 @@ static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
 static const Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
 static const Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
 
-static const Image play = { playArray, 36, 18, 16 };
-static const Image recordingOn = { recordingOnArray, 36, 18, 16 };
-static const Image sessionRecordingOn = { sessionRecordingOnArray, 36, 18, 16 };
+static const Image play = { playArray, 32, 16, 16 };
+static const Image recordingOn = { recordingOnArray, 32, 16, 16 };
+static const Image sessionRecordingOn = { sessionRecordingOnArray, 32, 16, 16 };
 static const Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 10, 8};
 static const Image nudgeDownActive = { nudgeDownActiveArray, 10, 10, 8};
 static const Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 10, 8};

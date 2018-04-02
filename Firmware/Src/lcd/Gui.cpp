@@ -214,14 +214,19 @@ void Gui::displayStatus()
 
 void Gui::displayTimingStatus()
 {
-    char signatureString[6], tempoString[7];
-    sprintf(signatureString, "%d/%d", signatureNumerator_, signatureDenominator_);
-    sprintf(tempoString, "%dbpm", tempo_);
-    lcd.print(signatureString, 0, 32);
-    lcd.print(tempoString, 42, 32);
+    if (0 != tempo_) // tempo of 0 means there's no info, so no need to display it
+    {
+        char signatureString[6];
 
-    lcd.displayImage(0, 40, (nudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive));
-    lcd.displayImage(10, 40, (nudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive));
+        lcd.displayImage( 0, 40, (nudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive) );
+        lcd.displayImage( 10, 40, (nudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive) );
+
+        lcd.printNumberInBigDigits( tempo_, 65, 32, lcd::Justification_RIGHT );
+        lcd.print( "bpm", 66, 32 );
+
+        sprintf( signatureString, "%d/%d", signatureNumerator_, signatureDenominator_ );
+        lcd.print( signatureString, 0, 32 );
+    }
 }
 
 void Gui::refreshStatusBar()

@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
 
 namespace lcd
 {
@@ -98,21 +99,42 @@ void Lcd::printNumberInBigDigits(const uint16_t number, const uint8_t x, const u
         divisor /= 10;
     }
 
+    uint8_t textWidth = numberOfDigits * digitBig[0].width;
+
     switch (justification)
     {
+        case Justification_RIGHT:
+            if (textWidth < x)
+            {
+                printNumberInBigDigits( number, (x - textWidth), y, numberOfDigits );
+            }
+            break;
+        case Justification_CENTER:
+            textWidth = textWidth / 2;
+            if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
+            {
+                printNumberInBigDigits( number, (x - textWidth), y, numberOfDigits );
+            }
+            break;
         case Justification_LEFT:
         default:
+            if (textWidth < (WIDTH - x))
+            {
+                printNumberInBigDigits(number, x, y, numberOfDigits);
+            }
             break;
     }
 }
 
 void Lcd::printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
 {
-    for (uint8_t i = numberOfDigits; i > 0; i--)
+    uint16_t divisor = pow(10, numberOfDigits);
+    while (divisor > 1)
     {
-        x -= digitBig[0].width;
-        displayImage(x, y, digitBig[number%10]);
-        number /= 10;
+        number %= divisor;
+        divisor /= 10;
+        displayImage(x, y, digitBig[number/divisor]);
+        x += digitBig[0].width;
     }
 }
 
@@ -120,27 +142,28 @@ void Lcd::print(const char *string, const uint8_t x, const uint8_t y, const Just
 {
     uint8_t textWidth = strlen(string) * FONT_WIDTH;
 
-    if (Justification_RIGHT ==  justification)
+    switch (justification)
     {
-        if (textWidth < x)
-        {
-            print(string, (x - textWidth), y);
-        }
-    }
-    else if (Justification_CENTER ==  justification)
-    {
-        textWidth = textWidth / 2;
-        if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
-        {
-            print(string, (x - textWidth), y);
-        }
-    }
-    else // (Justification_LEFT ==  justification)
-    {
-        if (textWidth < (WIDTH - x))
-        {
-            print(string, x, y);
-        }
+        case Justification_RIGHT:
+            if (textWidth < x)
+            {
+                print(string, (x - textWidth), y);
+            }
+            break;
+        case Justification_CENTER:
+            textWidth = textWidth / 2;
+            if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
+            {
+                print(string, (x - textWidth), y);
+            }
+            break;
+        case Justification_LEFT:
+        default:
+            if (textWidth < (WIDTH - x))
+            {
+                print(string, x, y);
+            }
+            break;
     }
 }
 
