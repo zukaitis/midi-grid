@@ -33,46 +33,6 @@ static const LedPwmOutput LED_PASSIVE = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_C
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
 
-class GridControl
-{
-public:
-
-    // singleton, because class uses interrupt
-    static GridControl& getInstance()
-    {
-        static GridControl instance;
-        return instance;
-    }
-
-    ~GridControl();
-
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
-    void turnAllLedsOff();
-    void initializeBaseInterruptTimer();
-    void initializeGpio();
-    void initializePwmOutputs();
-    void startTimers();
-
-    bool isGridColumnInputStable(const uint8_t column);
-    uint8_t getGridColumnInput(const uint8_t column);
-
-    void interruptServiceRoutine();
-
-    bool buttonInputUpdated = false;
-
-private:
-    GridControl();
-
-    TIM_HandleTypeDef pwmTimerRed;
-    TIM_HandleTypeDef pwmTimerGreen;
-    TIM_HandleTypeDef pwmTimerBlue;
-    TIM_HandleTypeDef baseInterruptTimer;
-
-    LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
-
-};
-
 static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
 static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
 static const uint16_t BUTTON_IN2_Pin = GPIO_PIN_10;
@@ -142,6 +102,88 @@ static const uint16_t columnSelectValue[NUMBER_OF_COLUMNS] = {  0xF8DF, 0xF9DF, 
                                                                 0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
                                                                 0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
                                                                 0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
+
+class GridControl
+{
+public:
+
+    // singleton, because class uses interrupt
+    static GridControl& getInstance()
+    {
+        static GridControl instance;
+        return instance;
+    }
+
+    ~GridControl();
+
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
+    void turnAllLedsOff();
+    void initializeBaseInterruptTimer();
+    void initializeGpio();
+    void initializePwmOutputs();
+    void startTimers();
+
+    bool isGridColumnInputStable(const uint8_t column);
+    uint8_t getGridColumnInput(const uint8_t column);
+
+    // Grid base interrupt, speed is the factor here, so all operations are performed directly with registers
+    inline void interruptServiceRoutine()
+    {
+        static uint8_t currentColumnNumber = 0;
+        static uint8_t currentColumnDebouncingIndex = 0;
+        // Clear interrupt flag
+        BASE_INTERRUPT_TIMER->SR = ~TIM_FLAG_UPDATE;
+
+        buttonInput[currentColumnNumber][currentColumnDebouncingIndex] = GRID_BUTTON_IN_GPIO_PORT->IDR;
+
+        ++currentColumnNumber;
+        if (NUMBER_OF_COLUMNS == currentColumnNumber)
+        {
+            currentColumnDebouncingIndex ^= 0x01; // switch debouncing index between 0 and 1
+            currentColumnNumber = 0;
+            gridInputUpdated = true;
+            switchInputUpdated = true;
+        }
+
+        GRID_COLUMN_CONTROL_GPIO_PORT->ODR = columnSelectValue[currentColumnNumber];
+
+        // CCR values set at interrupt are only compared after update (at the next period)
+        PWM_TIMER_RED->CCR1 = ledOutput[currentColumnNumber][0].Red;
+        PWM_TIMER_RED->CCR2 = ledOutput[currentColumnNumber][1].Red;
+        PWM_TIMER_RED->CCR3 = ledOutput[currentColumnNumber][2].Red;
+        PWM_TIMER_RED->CCR4 = ledOutput[currentColumnNumber][3].Red;
+
+        PWM_TIMER_GREEN->CCR1 = ledOutput[currentColumnNumber][0].Green;
+        PWM_TIMER_GREEN->CCR2 = ledOutput[currentColumnNumber][1].Green;
+        PWM_TIMER_GREEN->CCR3 = ledOutput[currentColumnNumber][2].Green;
+        PWM_TIMER_GREEN->CCR4 = ledOutput[currentColumnNumber][3].Green;
+
+        PWM_TIMER_BLUE->CCR1 = ledOutput[currentColumnNumber][0].Blue;
+        PWM_TIMER_BLUE->CCR2 = ledOutput[currentColumnNumber][1].Blue;
+        PWM_TIMER_BLUE->CCR3 = ledOutput[currentColumnNumber][2].Blue;
+        PWM_TIMER_BLUE->CCR4 = ledOutput[currentColumnNumber][3].Blue;
+
+        // this should be done automatically through slave reset
+        PWM_TIMER_RED->CNT = 0;
+        PWM_TIMER_GREEN->CNT = 0;
+        PWM_TIMER_BLUE->CNT = 0;
+    }
+
+    bool gridInputUpdated = false;
+    bool switchInputUpdated = false;
+
+private:
+    GridControl();
+
+    TIM_HandleTypeDef pwmTimerRed;
+    TIM_HandleTypeDef pwmTimerGreen;
+    TIM_HandleTypeDef pwmTimerBlue;
+    TIM_HandleTypeDef baseInterruptTimer;
+
+    LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
+
+};
 
 } // namespace
 #endif /* GRID_BUTTONS_GRIDCONTROL_HPP_ */

@@ -33,10 +33,10 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
     uint8_t buttonColumnChanges, buttonInput;
     static bool buttonChangeDetected = false;
 
-    if (gridControl.buttonInputUpdated || buttonChangeDetected)
+    if (gridControl.gridInputUpdated || buttonChangeDetected)
     {
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
-        gridControl.buttonInputUpdated = false;
+        gridControl.gridInputUpdated = false;
         for (x=0; x<grid_control::NUMBER_OF_COLUMNS; x++)
         {
             if (gridControl.isGridColumnInputStable(x))

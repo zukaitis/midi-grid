@@ -263,48 +263,6 @@ void GridControl::startTimers()
     HAL_TIM_Base_Start_IT(&baseInterruptTimer);
 }
 
-// Grid base interrupt, speed is the factor here, so all operations are performed directly with registers
-void GridControl::interruptServiceRoutine()
-{
-    static uint8_t currentColumnNumber = 0;
-    static uint8_t currentColumnDebouncingIndex = 0;
-    // Clear interrupt flag
-    BASE_INTERRUPT_TIMER->SR = ~TIM_FLAG_UPDATE;
-
-    buttonInput[currentColumnNumber][currentColumnDebouncingIndex] = GRID_BUTTON_IN_GPIO_PORT->IDR;
-
-    ++currentColumnNumber;
-    if (NUMBER_OF_COLUMNS == currentColumnNumber)
-    {
-        currentColumnDebouncingIndex ^= 0x01; // switch debouncing index between 0 and 1
-        currentColumnNumber = 0;
-        buttonInputUpdated = true;
-    }
-
-    GRID_COLUMN_CONTROL_GPIO_PORT->ODR = columnSelectValue[currentColumnNumber];
-
-    // CCR values set at interrupt are only compared after update (at the next period)
-    PWM_TIMER_RED->CCR1 = ledOutput[currentColumnNumber][0].Red;
-    PWM_TIMER_RED->CCR2 = ledOutput[currentColumnNumber][1].Red;
-    PWM_TIMER_RED->CCR3 = ledOutput[currentColumnNumber][2].Red;
-    PWM_TIMER_RED->CCR4 = ledOutput[currentColumnNumber][3].Red;
-
-    PWM_TIMER_GREEN->CCR1 = ledOutput[currentColumnNumber][0].Green;
-    PWM_TIMER_GREEN->CCR2 = ledOutput[currentColumnNumber][1].Green;
-    PWM_TIMER_GREEN->CCR3 = ledOutput[currentColumnNumber][2].Green;
-    PWM_TIMER_GREEN->CCR4 = ledOutput[currentColumnNumber][3].Green;
-
-    PWM_TIMER_BLUE->CCR1 = ledOutput[currentColumnNumber][0].Blue;
-    PWM_TIMER_BLUE->CCR2 = ledOutput[currentColumnNumber][1].Blue;
-    PWM_TIMER_BLUE->CCR3 = ledOutput[currentColumnNumber][2].Blue;
-    PWM_TIMER_BLUE->CCR4 = ledOutput[currentColumnNumber][3].Blue;
-
-    // this should be done automatically through slave reset
-    PWM_TIMER_RED->CNT = 0;
-    PWM_TIMER_GREEN->CNT = 0;
-    PWM_TIMER_BLUE->CNT = 0;
-}
-
 extern "C" void TIM1_UP_TIM10_IRQHandler()
 {
     static GridControl& gridControl_ = GridControl::getInstance();
