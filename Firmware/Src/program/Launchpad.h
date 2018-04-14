@@ -7,13 +7,17 @@
 #ifndef PROGRAM_LAUNCHPAD_H_
 #define PROGRAM_LAUNCHPAD_H_
 
-#include <stdint.h>
 #include "Types.h"
 #include "usb/UsbMidi.h"
 
 namespace grid
 {
     class Grid;
+}
+
+namespace switches
+{
+    class Switches;
 }
 
 namespace gui
@@ -107,7 +111,7 @@ enum Launchpad95Submode
 class Launchpad
 {
 public:
-    Launchpad( grid::Grid& grid_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
+    Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
 
     void runProgram();
     Launchpad95Mode getLaunchpad95Mode();
@@ -124,8 +128,10 @@ private:
     void printSysExMessage(uint8_t *message, uint8_t length);
 
     grid::Grid& grid;
+    switches::Switches& switches;
     gui::Gui& gui;
     midi::UsbMidi& usbMidi;
+
 
     uint8_t currentLayout = Layout_SESSION;
 
@@ -133,6 +139,8 @@ private:
 
     uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
     uint8_t systemExclusiveInputMessageLength = 0;
+
+    uint8_t rotaryControlValue[2] = {63, 63};
 
     //midi::MidiInput midiInput;
 };

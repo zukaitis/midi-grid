@@ -8,6 +8,7 @@
 #include "program/launchpad.h"
 
 #include "grid/Grid.h"
+#include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 
@@ -23,8 +24,9 @@ extern "C" {
 namespace launchpad
 {
 
-Launchpad::Launchpad( grid::Grid& grid_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
+Launchpad::Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
         grid( grid_ ),
+        switches( switches_ ),
         gui( gui_ ),
         usbMidi( usbMidi_ )
 {};
@@ -32,7 +34,8 @@ Launchpad::Launchpad( grid::Grid& grid_, gui::Gui& gui_, midi::UsbMidi& usbMidi_
 void Launchpad::runProgram()
 {
     uint8_t buttonX, buttonY, velocity;
-    grid::ButtonEvent event;
+    int8_t rotaryStep;
+    ButtonEvent event;
     uint8_t codeIndexNumber;
     midi::MidiPacket inputPacket;
     while (1)
@@ -69,7 +72,7 @@ void Launchpad::runProgram()
 
         if (grid.getButtonEvent(&buttonX, &buttonY, &event))
         {
-            velocity = (grid::ButtonEvent_PRESSED == event) ? 127 : 0;
+            velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
             {
                 usbMidi.sendControlChange( 0,sessionLayout[buttonX][buttonY],velocity );
@@ -94,6 +97,15 @@ void Launchpad::runProgram()
             }
             gui.registerMidiOutputActivity();
         }
+
+        if (switches.getRotaryEncoderEvent(&buttonX, &rotaryStep))
+        {
+            char str[8];
+            rotaryControlValue[buttonX] += rotaryStep;
+            sprintf(str, "%03i %03i", rotaryControlValue[0], rotaryControlValue[1]);
+            lcd::Lcd::getInstance().print(str,10, 20);
+        }
+
         grid.refreshLeds();
         gui.refresh();
     }

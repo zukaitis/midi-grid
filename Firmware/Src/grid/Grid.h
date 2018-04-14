@@ -14,12 +14,6 @@ namespace grid_control
 namespace grid
 {
 
-enum ButtonEvent
-{
-    ButtonEvent_RELEASED = 0,
-    ButtonEvent_PRESSED
-};
-
 enum LedLightingType
 {
     LedLightingType_LIGHT = 0,

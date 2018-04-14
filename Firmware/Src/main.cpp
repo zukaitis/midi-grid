@@ -116,9 +116,10 @@ int main(void)
 
 ApplicationMain::ApplicationMain() :
         grid( grid::Grid() ),
+        switches( switches::Switches() ),
         gui( gui::Gui() ),
         usbMidi( midi::UsbMidi() ),
-        launchpad( launchpad::Launchpad(grid, gui, usbMidi) ),
+        launchpad( launchpad::Launchpad(grid, switches, gui, usbMidi) ),
         lcd_(lcd::Lcd::getInstance())
 {}
 
@@ -159,7 +160,7 @@ void ApplicationMain::run()
 {
     volatile uint32_t i=0;
     uint8_t buttonX, buttonY, velocity;
-    grid::ButtonEvent event;
+    ButtonEvent event;
 
     while (!usbMidi.isPacketAvailable())
     {

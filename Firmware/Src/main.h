@@ -54,6 +54,7 @@
 //#include "lcd/Lcd.h"
 #include "program/Launchpad.h"
 #include "grid/Grid.h"
+#include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "usb/UsbMidi.h"
 
@@ -98,6 +99,7 @@ private:
     ApplicationMain();
 
     grid::Grid grid;
+    switches::Switches switches;
     gui::Gui gui;
     midi::UsbMidi usbMidi;
     launchpad::Launchpad launchpad;

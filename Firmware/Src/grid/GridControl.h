@@ -32,6 +32,9 @@ static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 500; // 500us
 static const LedPwmOutput LED_PASSIVE = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
+static const uint16_t BUTTON_MASK[2] = {0x2000, 0x0400};
+static const uint16_t ROTARY_ENCODER_MASK[2] = {0xC000, 0x1800};
+static const uint16_t ROTARY_ENCODER_SHIFT[2] = {14, 11};
 
 static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
 static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
@@ -123,23 +126,26 @@ public:
     void initializePwmOutputs();
     void startTimers();
 
-    bool isGridColumnInputStable(const uint8_t column);
-    uint8_t getGridColumnInput(const uint8_t column);
+    bool isGridColumnInputStable(const uint8_t column) const;
+    uint8_t getGridColumnInput(const uint8_t column) const;
+    bool isButtonInputStable(const uint8_t button) const;
+    bool getButtonInput(const uint8_t button) const;
+    bool isRotaryEncodersInputStable(const uint8_t encoder, uint8_t step) const;
+    uint8_t getRotaryEncodersInput(const uint8_t encoder, uint8_t step) const;
 
     // Grid base interrupt, speed is the factor here, so all operations are performed directly with registers
     inline void interruptServiceRoutine()
     {
         static uint8_t currentColumnNumber = 0;
-        static uint8_t currentColumnDebouncingIndex = 0;
         // Clear interrupt flag
         BASE_INTERRUPT_TIMER->SR = ~TIM_FLAG_UPDATE;
 
-        buttonInput[currentColumnNumber][currentColumnDebouncingIndex] = GRID_BUTTON_IN_GPIO_PORT->IDR;
+        buttonInput[currentColumnNumber][currentColumnDebouncingIndex_] = GRID_BUTTON_IN_GPIO_PORT->IDR;
 
         ++currentColumnNumber;
         if (NUMBER_OF_COLUMNS == currentColumnNumber)
         {
-            currentColumnDebouncingIndex ^= 0x01; // switch debouncing index between 0 and 1
+            currentColumnDebouncingIndex_ ^= 0x01; // switch debouncing index between 0 and 1
             currentColumnNumber = 0;
             gridInputUpdated = true;
             switchInputUpdated = true;
@@ -183,6 +189,7 @@ private:
     LedPwmOutput ledOutput[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
     uint16_t buttonInput[NUMBER_OF_COLUMNS][NUMBER_OF_BUTTON_DEBOUNCING_CYCLES];
 
+    uint8_t currentColumnDebouncingIndex_ = 0;
 };
 
 } // namespace

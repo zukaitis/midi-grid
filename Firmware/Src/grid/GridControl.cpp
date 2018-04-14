@@ -64,14 +64,31 @@ void GridControl::turnAllLedsOff()
     }
 }
 
-bool GridControl::isGridColumnInputStable(const uint8_t column)
+bool GridControl::isGridColumnInputStable(const uint8_t column) const
 {
     return (0 == (GRID_BUTTON_MASK & (buttonInput[column][0] ^ buttonInput[column][1])));
 }
 
-uint8_t GridControl::getGridColumnInput(const uint8_t column)
+uint8_t GridControl::getGridColumnInput(const uint8_t column) const
 {
     return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput[column][0]);
+}
+
+bool GridControl::isButtonInputStable(const uint8_t button) const
+{
+    return (0 == (BUTTON_MASK[button] & (buttonInput[0][0] ^ buttonInput[0][1])));
+}
+
+bool GridControl::getButtonInput(const uint8_t button) const
+{
+    return (0 != (BUTTON_MASK[button] & buttonInput[0][0]));
+}
+
+uint8_t GridControl::getRotaryEncodersInput(const uint8_t encoder, uint8_t step) const
+{
+    uint8_t debouncingIndex = currentColumnDebouncingIndex_ ^ 0x01;
+    step = step*2;//step * 5 + 4;
+    return (ROTARY_ENCODER_MASK[encoder] & buttonInput[step][debouncingIndex])>>ROTARY_ENCODER_SHIFT[encoder];
 }
 
 void GridControl::initializeBaseInterruptTimer()
