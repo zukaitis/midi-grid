@@ -27,6 +27,8 @@ namespace gui
 static const uint16_t MIDI_TIMEOUT_STEP = 250; // ms
 static const uint16_t MIDI_TIMEOUT = 1250; // ms
 
+static const uint16_t ROTARY_CONTROL_TIMEOUT = 2000;
+
 static const char launchpad95ModeString[8][16] = {
         "Session\0",
         "Instrument\0",
@@ -66,6 +68,7 @@ public:
             const bool nudgeDown, const bool nudgeUp );
     void displayUsbLogo();
     void displayStatusBar();
+    void displayRotaryControlValues(const uint8_t value1, const uint8_t value2);
 
     void refresh();
     void refreshStatusBar();
@@ -84,7 +87,6 @@ private:
     void displayDeviceName();
     void displayStatus();
     void displayTimingStatus();
-
 
     lcd::Lcd& lcd;
     bool statusBarActive = false;

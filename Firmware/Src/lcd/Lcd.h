@@ -55,6 +55,7 @@
 
 #include "lcd/font.h"
 #include "lcd/images.h"
+#include "lcd/progressArc.h"
 
 #include "lcd/LcdControl.h"
 
@@ -100,6 +101,7 @@ static const Image digitBig[10] = {
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
 static const uint8_t NUMBER_OF_LINES = 6;
+static const uint8_t NUMBER_OF_PROGRESS_ARC_POSITIONS = NUMBER_OF_ARC_POSITIONS;
 
 class Lcd
 {
@@ -113,6 +115,7 @@ public:
     void printNumberInBigDigits(const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification);
     void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void displayImage(const uint8_t x, const uint8_t y, const Image image);
+    void displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position );
 
     void initialize();
 

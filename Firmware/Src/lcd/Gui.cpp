@@ -275,4 +275,18 @@ void Gui::registerMidiOutputActivity()
     midiOutputTimeout = MIDI_TIMEOUT;
 }
 
+void Gui::displayRotaryControlValues(const uint8_t value1, const uint8_t value2)
+{
+    char str[4];
+    lcd.clearArea(0, 16, 83, 47);
+
+    lcd.displayProgressArc(0, 20, (value1*(lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1))/127);
+    sprintf(str, "%d", value1);
+    lcd.print( str, 18, 32, lcd::Justification_CENTER );
+
+    lcd.displayProgressArc(45, 20, (value2*(lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1))/127);
+    sprintf(str, "%d", value2);
+    lcd.print( str, 63, 32, lcd::Justification_CENTER );
+}
+
 } // namespace

@@ -193,6 +193,12 @@ void Lcd::displayImage(const uint8_t x, const uint8_t y, const Image image)
     updateRequired = true;
 }
 
+void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
+{
+    const Image arc = { progressArcArray[position], 152, 38, 32 };
+    displayImage( x, y, arc );
+}
+
 void Lcd::clearArea(const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2)
 {
     for (uint8_t j = 0; j <= ((y2-y1)/8); j++)

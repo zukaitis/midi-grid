@@ -100,10 +100,16 @@ void Launchpad::runProgram()
 
         if (switches.getRotaryEncoderEvent(&buttonX, &rotaryStep))
         {
-            char str[8];
             rotaryControlValue[buttonX] += rotaryStep;
-            sprintf(str, "%03i %03i", rotaryControlValue[0], rotaryControlValue[1]);
-            lcd::Lcd::getInstance().print(str,10, 20);
+            if (rotaryControlValue[buttonX] > 127)
+            {
+                rotaryControlValue[buttonX] = 127;
+            }
+            else if (rotaryControlValue[buttonX] < 0)
+            {
+                rotaryControlValue[buttonX] = 0;
+            }
+            gui.displayRotaryControlValues(rotaryControlValue[0], rotaryControlValue[1]);
         }
 
         grid.refreshLeds();

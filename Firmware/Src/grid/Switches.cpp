@@ -14,7 +14,7 @@ Switches::~Switches()
 // call this method after checking buttons, because it resets flag in GridControl
 bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* steps )
 {
-    static const int8_t encoderStates[16] = {0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0};
+    static const int8_t encoderStates[16] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0};
     static bool encoderChangeDetected = false;
     static uint8_t previousEncoderValue[2] = {0, 0};
     int8_t timeStep;
