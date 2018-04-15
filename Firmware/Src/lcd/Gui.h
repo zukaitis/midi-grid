@@ -24,10 +24,10 @@ namespace launchpad
 namespace gui
 {
 
-static const uint16_t MIDI_TIMEOUT_STEP = 250; // ms
-static const uint16_t MIDI_TIMEOUT = 1250; // ms
+static const uint16_t TIMEOUT_CHECK_STEP = 250; // ms
 
-static const uint16_t ROTARY_CONTROL_TIMEOUT = 2000;
+static const uint16_t MIDI_TIMEOUT = 1250; // ms
+static const uint16_t ROTARY_CONTROL_TIMEOUT = 1250; // ms
 
 static const char launchpad95ModeString[8][16] = {
         "Session\0",
@@ -72,6 +72,7 @@ public:
 
     void refresh();
     void refreshStatusBar();
+    void refreshMainArea();
 
     void registerMidiInputActivity();
     void registerMidiOutputActivity();
@@ -108,8 +109,10 @@ private:
     char clipName[15] = " \0";
     char deviceName[15] = " \0";
 
-    uint16_t midiInputTimeout = 0;
-    uint16_t midiOutputTimeout = 0;
+    uint16_t midiInputTimeout_ = 0;
+    uint16_t midiOutputTimeout_ = 0;
+
+    uint16_t rotaryControlDisplayTimeout_ = 0;
 };
 
 } // namespace

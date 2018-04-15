@@ -147,6 +147,8 @@ void Gui::refresh()
         refreshStatusBar();
     }
 
+    refreshMainArea();
+
     lcd.refresh();
 }
 
@@ -161,29 +163,33 @@ void Gui::displayLaunchpad95Info()
         displayLaunchpad95Submode();
     }
 
-    lcd.clearArea(0, 16, 83, 31);
-    displayStatus();
-
-    lcd.clearArea(0, 32, 83, 47);
-    switch (launchpad95Mode)
+    // only display other info when rotary control display timer runs out
+    if (0 == rotaryControlDisplayTimeout_)
     {
-        case launchpad::Launchpad95Mode_INSTRUMENT:
-        case launchpad::Launchpad95Mode_DRUM_STEP_SEQUENCER:
-        case launchpad::Launchpad95Mode_MELODIC_SEQUENCER:
-            displayTrackName();
-            displayClipName();
-            break;
-        case launchpad::Launchpad95Mode_DEVICE_CONTROLLER:
-            displayTrackName();
-            displayDeviceName();
-            break;
-        case launchpad::Launchpad95Mode_SESSION:
-        case launchpad::Launchpad95Mode_MIXER:
-        case launchpad::Launchpad95Mode_USER1:
-        case launchpad::Launchpad95Mode_USER2:
-        default:
-            displayTimingStatus();
-            break;
+        lcd.clearArea(0, 16, 83, 31);
+        displayStatus();
+
+        lcd.clearArea(0, 32, 83, 47);
+        switch (launchpad95Mode)
+        {
+            case launchpad::Launchpad95Mode_INSTRUMENT:
+            case launchpad::Launchpad95Mode_DRUM_STEP_SEQUENCER:
+            case launchpad::Launchpad95Mode_MELODIC_SEQUENCER:
+                displayTrackName();
+                displayClipName();
+                break;
+            case launchpad::Launchpad95Mode_DEVICE_CONTROLLER:
+                displayTrackName();
+                displayDeviceName();
+                break;
+            case launchpad::Launchpad95Mode_SESSION:
+            case launchpad::Launchpad95Mode_MIXER:
+            case launchpad::Launchpad95Mode_USER1:
+            case launchpad::Launchpad95Mode_USER2:
+            default:
+                displayTimingStatus();
+                break;
+        }
     }
 }
 
@@ -235,10 +241,10 @@ void Gui::refreshStatusBar()
 
     if (HAL_GetTick() >= refreshCheckTime)
     {
-        if (midiInputTimeout > 0)
+        if (midiInputTimeout_ > 0)
         {
-            midiInputTimeout -= MIDI_TIMEOUT_STEP;
-            if (midiInputTimeout > 0)
+            midiInputTimeout_ -= TIMEOUT_CHECK_STEP;
+            if (midiInputTimeout_ > 0)
             {
                 lcd.displayImage(73, 0, lcd::arrowSmallDown);
             }
@@ -248,10 +254,10 @@ void Gui::refreshStatusBar()
             }
         }
 
-        if (midiOutputTimeout > 0)
+        if (midiOutputTimeout_ > 0)
         {
-            midiOutputTimeout -= MIDI_TIMEOUT_STEP;
-            if (midiOutputTimeout > 0)
+            midiOutputTimeout_ -= TIMEOUT_CHECK_STEP;
+            if (midiOutputTimeout_ > 0)
             {
                 lcd.displayImage(78, 0, lcd::arrowSmallUp);
             }
@@ -261,18 +267,38 @@ void Gui::refreshStatusBar()
             }
         }
 
-        refreshCheckTime = HAL_GetTick() + MIDI_TIMEOUT_STEP; // check every 250ms
+        refreshCheckTime = HAL_GetTick() + TIMEOUT_CHECK_STEP; // check every 250ms
+    }
+}
+
+void Gui::refreshMainArea()
+{
+    static uint32_t checkTime = 0;
+
+    if (HAL_GetTick() >= checkTime)
+    {
+        if (rotaryControlDisplayTimeout_ > 0)
+        {
+            rotaryControlDisplayTimeout_ -= TIMEOUT_CHECK_STEP;
+            if (0  == rotaryControlDisplayTimeout_)
+            {
+                // time ran out, back to showing info
+                displayLaunchpad95Info();
+            }
+        }
+
+        checkTime = HAL_GetTick() + TIMEOUT_CHECK_STEP; // check every 250ms
     }
 }
 
 void Gui::registerMidiInputActivity()
 {
-    midiInputTimeout = MIDI_TIMEOUT;
+    midiInputTimeout_ = MIDI_TIMEOUT;
 }
 
 void Gui::registerMidiOutputActivity()
 {
-    midiOutputTimeout = MIDI_TIMEOUT;
+    midiOutputTimeout_ = MIDI_TIMEOUT;
 }
 
 void Gui::displayRotaryControlValues(const uint8_t value1, const uint8_t value2)
@@ -287,6 +313,8 @@ void Gui::displayRotaryControlValues(const uint8_t value1, const uint8_t value2)
     lcd.displayProgressArc(45, 20, (value2*(lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1))/127);
     sprintf(str, "%d", value2);
     lcd.print( str, 63, 32, lcd::Justification_CENTER );
+
+    rotaryControlDisplayTimeout_ = ROTARY_CONTROL_TIMEOUT;
 }
 
 } // namespace

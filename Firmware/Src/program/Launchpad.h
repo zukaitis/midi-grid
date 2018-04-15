@@ -140,7 +140,7 @@ private:
     uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
     uint8_t systemExclusiveInputMessageLength = 0;
 
-    int16_t rotaryControlValue[2] = {63, 63};
+    int16_t rotaryControlValue[2] = {64, 64};
 
     //midi::MidiInput midiInput;
 };

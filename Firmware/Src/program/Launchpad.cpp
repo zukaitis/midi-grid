@@ -109,6 +109,8 @@ void Launchpad::runProgram()
             {
                 rotaryControlValue[buttonX] = 0;
             }
+            usbMidi.sendControlChange(5, buttonX, rotaryControlValue[buttonX]); // randomly selected channel and control values
+            gui.registerMidiOutputActivity();
             gui.displayRotaryControlValues(rotaryControlValue[0], rotaryControlValue[1]);
         }
 
