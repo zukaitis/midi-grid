@@ -116,6 +116,7 @@ public:
     void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void displayImage(const uint8_t x, const uint8_t y, const Image image);
     void displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position );
+    void setBacklightIntensity(const uint8_t intensity);
 
     void initialize();
 
@@ -134,7 +135,10 @@ private:
     lcd_control::LcdControl lcdControl;
 
     void putChar( const uint8_t x, const uint8_t y, const char c );
-    bool updateRequired = false;
+    bool updateRequired_ = false;
+
+    uint8_t currentBacklightIntensity_ = 0;
+    uint8_t appointedBacklightIntensity_ = 0;
 
     uint8_t lcdBuffer[NUMBER_OF_LINES][WIDTH];
 };

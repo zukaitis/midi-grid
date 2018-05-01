@@ -26,7 +26,7 @@ void Lcd::initialize()
 void Lcd::clear()
 {
     memset(&lcdBuffer[0][0], 0x00, lcdControl.LCD_BUFFER_SIZE);
-    updateRequired = true;
+    updateRequired_ = true;
 }
 
 void Lcd::refresh()
@@ -34,12 +34,25 @@ void Lcd::refresh()
     static uint32_t refreshCheckTime = 0;
     if (HAL_GetTick() >= refreshCheckTime)
     {
-        if (updateRequired)
+        if (updateRequired_)
         {
             lcdControl.update(&lcdBuffer[0][0]);
-            updateRequired = false;
+            updateRequired_ = false;
         }
-        refreshCheckTime = HAL_GetTick() + 10; // check every 10ms
+
+        if (currentBacklightIntensity_ != appointedBacklightIntensity_)
+        {
+            if (currentBacklightIntensity_ > appointedBacklightIntensity_)
+            {
+                lcdControl.setBacklightIntensity( --currentBacklightIntensity_ );
+            }
+            else
+            {
+                lcdControl.setBacklightIntensity( ++currentBacklightIntensity_ );
+            }
+        }
+
+        refreshCheckTime = HAL_GetTick() + 20; // check every 20ms
     }
 }
 
@@ -82,7 +95,7 @@ void Lcd::print(const char *string, uint8_t x, const uint8_t y)
             x += 6;
         }
     }
-    updateRequired = true;
+    updateRequired_ = true;
 }
 
 void Lcd::printNumberInBigDigits(const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification)
@@ -190,7 +203,7 @@ void Lcd::displayImage(const uint8_t x, const uint8_t y, const Image image)
             }
         }
     }
-    updateRequired = true;
+    updateRequired_ = true;
 }
 
 void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
@@ -219,7 +232,12 @@ void Lcd::clearArea(const uint8_t x1, const uint8_t y1, const uint8_t x2, const 
             }
         }
     }
-    updateRequired = true;
+    updateRequired_ = true;
+}
+
+void Lcd::setBacklightIntensity(const uint8_t intensity)
+{
+    appointedBacklightIntensity_ = intensity;
 }
 
 } // namespace

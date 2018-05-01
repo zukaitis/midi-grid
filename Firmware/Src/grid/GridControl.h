@@ -76,7 +76,7 @@ static const uint16_t PWM_BLUE3_Pin = GPIO_PIN_0;
 static const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
 
 static TIM_TypeDef* const PWM_TIMER_RED = TIM2;
-static TIM_TypeDef* const PWM_TIMER_GREEN =TIM4;
+static TIM_TypeDef* const PWM_TIMER_GREEN = TIM4;
 static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
 static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM10;
 

@@ -22,6 +22,18 @@ static const uint16_t LCD_SCK_Pin = GPIO_PIN_13;
 static const uint16_t LCD_LIGHT_Pin = GPIO_PIN_14;
 static const uint16_t LCD_MOSI_Pin = GPIO_PIN_15;
 
+static TIM_TypeDef* const BACKLIGHT_TIMER = TIM1;
+
+static const uint8_t NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS = 65;
+
+static const uint16_t backlightIntensity[NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS] = {
+        0, 1, 6, 17, 37, 67, 110, 167, 239, 328, 436, 564, 714, 886, 1082, 1304,
+        1552, 1828, 2133, 2468, 2835, 3234, 3667, 4135, 4638, 5179, 5757, 6375, 7033, 7731, 8473, 9257,
+        10085, 10959, 11879, 12846, 13861, 14926, 16040, 17205, 18423, 19693, 21017, 22395, 23829, 25320, 26868, 28474,
+        30140, 31865, 33652, 35500, 37411, 39385, 41424, 43528, 45698, 47935, 50239, 52612, 55055, 57568, 60151, 62807,
+        65535
+};
+
 class LcdControl
 {
 public:
@@ -30,6 +42,8 @@ public:
 
     void initialize();
     void update(uint8_t* buffer);
+
+    void setBacklightIntensity( uint8_t intensity );
 
     const uint16_t LCD_BUFFER_SIZE = 504;
 

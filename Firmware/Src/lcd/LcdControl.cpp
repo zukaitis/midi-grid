@@ -120,11 +120,10 @@ void LcdControl::initializeSpi()
     lcdSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
     lcdSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
     lcdSpi.Init.NSS = SPI_NSS_HARD_OUTPUT;
-    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16; // 6MBbit?
+    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32; // 3MBbit?
     lcdSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
     lcdSpi.Init.TIMode = SPI_TIMODE_DISABLE;
     lcdSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-    //lcdSpi.Init.CRCPolynomial = 10;
     HAL_SPI_Init(&lcdSpi);
 }
 
@@ -139,7 +138,7 @@ void LcdControl::initialize()
     writeCommand( 0x21 ); //LCD extended commands.
     writeCommand( 0xB8 ); //set LCD Vop(Contrast).
     writeCommand( 0x04 ); //set temp coefficent.
-    writeCommand( 0x14 ); //LCD bias mode 1:40.
+    writeCommand( 0x15 ); //LCD bias mode 1:65. used to be 0x14 - 1:40
     writeCommand( 0x20 ); //LCD basic commands.
     writeCommand( 0x0C ); //LCD normal.
 }
@@ -152,8 +151,8 @@ void LcdControl::initializeBacklightPwm()
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     // prescaler and period of PWM timer are calculated based on period of base timer
-    lcdBacklightPwmTimer.Instance = TIM1;
-    lcdBacklightPwmTimer.Init.Prescaler = 16 - 1; //~100Hz
+    lcdBacklightPwmTimer.Instance = BACKLIGHT_TIMER;
+    lcdBacklightPwmTimer.Init.Prescaler = 16 - 1; // ~100Hz
     lcdBacklightPwmTimer.Init.CounterMode = TIM_COUNTERMODE_UP;
     lcdBacklightPwmTimer.Init.Period = 65535 - 1;
     lcdBacklightPwmTimer.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -165,13 +164,23 @@ void LcdControl::initializeBacklightPwm()
     HAL_TIM_PWM_Init(&lcdBacklightPwmTimer);
 
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
-    timerOutputCompareConfiguration.Pulse = 25000;
+    timerOutputCompareConfiguration.Pulse = 0;
     timerOutputCompareConfiguration.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
     HAL_TIM_PWM_ConfigChannel(&lcdBacklightPwmTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_2);
 
     HAL_TIMEx_PWMN_Start(&lcdBacklightPwmTimer, TIM_CHANNEL_2);
+}
+
+void LcdControl::setBacklightIntensity( uint8_t intensity )
+{
+    if (intensity > NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS)
+    {
+        intensity = NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS - 1;
+    }
+
+    BACKLIGHT_TIMER->CCR2 = backlightIntensity[intensity];
 }
 
 extern "C" void DMA1_Stream4_IRQHandler(void)
