@@ -38,13 +38,20 @@ void Launchpad::runProgram()
     ButtonEvent event;
     uint8_t codeIndexNumber;
     midi::MidiPacket inputPacket;
+
+    grid.discardAllPendingButtonEvents();
+    grid.turnAllLedsOff();
+    switches.discardAllPendingEvents();
+
+    usbMidi.sendControlChange( 0, 111, 127 ); // always send control to put device into mixer mode, when entering launchpad mode
+    gui.registerMidiOutputActivity();
+
+    gui.enterLaunchpad95Mode(); // replace with enter l95 mode
+
     while (1)
     {
-        // led flash message - 0x15519109 (Hex)
-
         if (usbMidi.getPacket(inputPacket))
         {
-            //midiInput.input = *b4arrq_pop(&rxq);
             codeIndexNumber = inputPacket.header & 0x0F;
             switch (codeIndexNumber)
             {
@@ -70,12 +77,12 @@ void Launchpad::runProgram()
             gui.registerMidiInputActivity();
         }
 
-        if (grid.getButtonEvent(&buttonX, &buttonY, &event))
+        if (grid.getButtonEvent( &buttonX, &buttonY, &event ))
         {
             velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
             {
-                usbMidi.sendControlChange( 0,sessionLayout[buttonX][buttonY],velocity );
+                usbMidi.sendControlChange( 0, sessionLayout[buttonX][buttonY], velocity );
             }
             else
             {
@@ -85,10 +92,10 @@ void Launchpad::runProgram()
                         usbMidi.sendNoteOn( 0, sessionLayout[buttonX][buttonY], velocity );
                         break;
                     case Layout_USER1:
-                        usbMidi.sendNoteOn( 7, drumLayout[buttonX][buttonY],velocity ); // can select channel between 6, 7 and 8
+                        usbMidi.sendNoteOn( 7, drumLayout[buttonX][buttonY], velocity ); // can select channel between 6, 7 and 8
                         break;
                     case Layout_USER2:
-                        usbMidi.sendNoteOn( 15, sessionLayout[buttonX][buttonY],velocity ); // can select channel between 14, 15 and 16
+                        usbMidi.sendNoteOn( 15, sessionLayout[buttonX][buttonY], velocity ); // can select channel between 14, 15 and 16
                         break;
                     default:
                         usbMidi.sendNoteOn( 0, sessionLayout[buttonX][buttonY], velocity );
@@ -96,6 +103,20 @@ void Launchpad::runProgram()
                 }
             }
             gui.registerMidiOutputActivity();
+        }
+
+        if (switches.getButtonEvent(&buttonX,  &event))
+        {
+            if (0 == buttonX) // only send note on the event of black button
+            {
+                velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
+                usbMidi.sendNoteOn( 5, 55, velocity );
+                gui.registerMidiOutputActivity();
+            }
+            else if ((1 == buttonX) && event)
+            {
+                break; // break launchpad mode loop, enter internal menu
+            }
         }
 
         if (switches.getRotaryEncoderEvent(&buttonX, &rotaryStep))

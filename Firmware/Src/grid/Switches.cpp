@@ -98,4 +98,30 @@ bool Switches::getButtonEvent( uint8_t* buttonNumber, ButtonEvent* buttonEvent )
     return false;
 }
 
+void Switches::discardAllPendingEvents()
+{
+    uint8_t unusedUnsignedChar;
+    int8_t unusedSignedChar;
+    ButtonEvent unusedEvent;
+
+    // call methods while they have pending events
+    while (getButtonEvent(&unusedUnsignedChar, &unusedEvent))
+    {
+    }
+
+    while (getRotaryEncoderEvent(&unusedUnsignedChar, &unusedSignedChar))
+    {
+    }
+}
+
+bool Switches::isButtonPressed( uint8_t buttonNumber )
+{
+    bool isPressed = false;
+    if (buttonNumber < NUMBER_OF_BUTTONS)
+    {
+        isPressed = !registeredButtonInput_[buttonNumber];
+    }
+    return isPressed;
+}
+
 }

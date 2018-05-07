@@ -55,6 +55,7 @@ public:
 
     void enable();
     bool getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent);
+    void discardAllPendingButtonEvents();
     void initialize();
     void refreshLeds() const;
 

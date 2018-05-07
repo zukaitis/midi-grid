@@ -148,7 +148,6 @@ void ApplicationMain::initialize()
 //    lcd_.print("abcdefgh", lcd::WIDTH/2, 0, lcd::Justification_CENTER);
 //    lcd_.print("ijklmnop", lcd::WIDTH/2, 9, lcd::Justification_CENTER);
 //    lcd_.print("qrstuvwxyz", lcd::WIDTH/2, 18, lcd::Justification_CENTER);
-    gui.displayStatusBar();
 
     //runBrigthnessTest();
     #ifdef USE_SEMIHOSTING
@@ -163,28 +162,82 @@ void ApplicationMain::run()
     uint8_t buttonX, buttonY, velocity;
     ButtonEvent event;
 
-    while (!usbMidi.isPacketAvailable())
-    {
-        //randomLightAnimation();
-        if (grid.getButtonEvent(&buttonX, &buttonY, &event))
-        {
-            if (isUsbConnected())
-            {
-                velocity = (event) ? 127 : 0;
-                usbMidi.sendNoteOn(0,launchpad::sessionLayout[buttonX][buttonY],velocity);
-            }
-            break;
-        }
-    }
+    gui.displayConnectingImage();
 
     while (!isUsbConnected())
     {
-        i++;
+        gui.refresh();
     }
+
+    gui.displayWaitingForMidi();
+
+    while (!usbMidi.isPacketAvailable())
+    {
+        randomLightAnimation();
+        if (grid.getButtonEvent(&buttonX, &buttonY, &event))
+        {
+            break;
+        }
+        gui.refresh();
+    }
+
     #ifdef USE_SEMIHOSTING
     printf("Printing unacknowledged MIDI messages:\n");
     #endif
-    launchpad.runProgram();
+
+    while (1)
+    {
+        launchpad.runProgram();
+        // program only returns here when red button is pressed
+        if (switches.isButtonPressed( 1 ))
+        {
+            runInternalMenu();
+        }
+    }
+}
+
+void ApplicationMain::runInternalMenu()
+{
+    uint8_t buttonX, buttonY;
+    int8_t rotaryStep;
+    ButtonEvent event;
+    midi::MidiPacket unusedInputPacket;
+
+    grid.discardAllPendingButtonEvents();
+    switches.discardAllPendingEvents();
+
+    gui.enterInternalMenu();
+
+    grid.turnAllLedsOff();
+    const Colour red = {64U, 0U, 0U};
+    grid.setLed(7, 7, red);
+
+    while (1)
+    {
+        usbMidi.getPacket(unusedInputPacket); // check for incoming packets and discard them
+
+        if (grid.getButtonEvent( &buttonX, &buttonY, &event ))
+        {
+            if ((7 == buttonX) && (7 == buttonY))
+            {
+                // reset into DFU bootloader
+
+            }
+        }
+
+        if (switches.getButtonEvent(&buttonX,  &event))
+        {
+            if ((1 == buttonX) && (!event))
+            {
+                break; // break internal menu loop, get back to launchpad mode
+            }
+        }
+
+        switches.getRotaryEncoderEvent(&buttonX, &rotaryStep); // unused atm
+
+        //grid.refreshLeds();
+        gui.refresh();
+    }
 }
 
 void ApplicationMain::randomLightAnimation()

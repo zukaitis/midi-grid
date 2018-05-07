@@ -69,6 +69,17 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
     return false;
 }
 
+void Grid::discardAllPendingButtonEvents()
+{
+    uint8_t unusedUnsignedChar;
+    ButtonEvent unusedEvent;
+
+    // call method while it has pending events
+    while (getButtonEvent(&unusedUnsignedChar, &unusedUnsignedChar, &unusedEvent))
+    {
+    }
+}
+
 void Grid::initialize()
 {
     gridControl.initializeGpio();

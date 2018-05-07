@@ -131,13 +131,15 @@ void Gui::displayUsbLogo()
     lcd.displayImage(0, 0, lcd::usbLogo);
 }
 
-void Gui::displayStatusBar()
+void Gui::enterLaunchpad95Mode()
 {
-    lcd.clearArea(0, 0, 83, 7);
+    lcd.clear();
     lcd.print( "L95", lcd::WIDTH/2, 0, lcd::Justification_CENTER );
     lcd.displayImage(63, 0, lcd::usbSymbolSmall);
 
     statusBarActive = true;
+
+    displayLaunchpad95Info();
 }
 
 void Gui::refresh()
@@ -315,6 +317,28 @@ void Gui::displayRotaryControlValues(const uint8_t value1, const uint8_t value2)
     lcd.print( str, 63, 32, lcd::Justification_CENTER );
 
     rotaryControlDisplayTimeout_ = ROTARY_CONTROL_TIMEOUT;
+}
+
+void Gui::enterInternalMenu()
+{
+    lcd.clear();
+    lcd.print( "Internal Menu", lcd::WIDTH/2, 16, lcd::Justification_CENTER );
+    lcd.print( "Active", lcd::WIDTH/2, 24, lcd::Justification_CENTER );
+    statusBarActive = false;
+}
+
+void Gui::displayConnectingImage()
+{
+    lcd.clear();
+    lcd.displayImage(0, 0, lcd::usbLogo);
+    lcd.print( "USB Connecting", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+}
+
+void Gui::displayWaitingForMidi()
+{
+    lcd.clear();
+    lcd.displayImage(0, 0, lcd::usbLogo);
+    lcd.print( "Awaiting MIDI", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 } // namespace

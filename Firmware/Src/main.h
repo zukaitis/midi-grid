@@ -93,6 +93,7 @@ public:
 
     void initialize();
     void run();
+    void runInternalMenu();
     void randomLightAnimation();
 
 private:

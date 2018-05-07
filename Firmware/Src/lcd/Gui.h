@@ -67,8 +67,12 @@ public:
     void setTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
             const bool nudgeDown, const bool nudgeUp );
     void displayUsbLogo();
-    void displayStatusBar();
+    void enterLaunchpad95Mode();
     void displayRotaryControlValues(const uint8_t value1, const uint8_t value2);
+    void displayConnectingImage();
+    void displayWaitingForMidi();
+
+    void enterInternalMenu();
 
     void refresh();
     void refreshStatusBar();
