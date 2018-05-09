@@ -221,7 +221,7 @@ void ApplicationMain::runInternalMenu()
             if ((7 == buttonX) && (7 == buttonY))
             {
                 // reset into DFU bootloader
-
+                resetIntoBootloader();
             }
         }
 
@@ -238,6 +238,15 @@ void ApplicationMain::runInternalMenu()
         //grid.refreshLeds();
         gui.refresh();
     }
+}
+
+void ApplicationMain::resetIntoBootloader()
+{
+    // write these bytes into the end of RAM, so processor would jump into bootloader after reset
+    // (there is condition in system_stm32f4xx.c that checks for this value at the beginning of a program)
+    *((unsigned long *)0x2001FFF0) = 0xDEADBEEF;
+    // Reset the processor
+    NVIC_SystemReset();
 }
 
 void ApplicationMain::randomLightAnimation()

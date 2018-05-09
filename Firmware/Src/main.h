@@ -94,6 +94,7 @@ public:
     void initialize();
     void run();
     void runInternalMenu();
+    void resetIntoBootloader();
     void randomLightAnimation();
 
 private:

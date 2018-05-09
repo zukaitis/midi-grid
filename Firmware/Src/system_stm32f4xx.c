@@ -156,6 +156,9 @@ const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};
   * @{
   */
 
+// Define our function pointer
+void (*SysMemBootJump)(void);
+
 /**
   * @brief  Setup the microcontroller system
   *         Initialize the FPU setting, vector table location and External memory 
@@ -165,6 +168,15 @@ const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};
   */
 void SystemInit(void)
 {
+    if (*((unsigned long *)0x2001FFF0) == 0xDEADBEEF)
+    {
+        *((unsigned long *)0x2001FFF0) =  0x00000000; // Reset our trigger
+        __set_MSP(0x20020000); // 0x1FFF0000 is "System Memory" start address for STM32 F411
+        SysMemBootJump = (void (*)(void)) (*((uint32_t *) 0x1FFF0004)); // Point the PC to the System Memory reset vector (+4)
+        SysMemBootJump();
+        while (1);
+    }
+
   /* FPU settings ------------------------------------------------------------*/
   #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
