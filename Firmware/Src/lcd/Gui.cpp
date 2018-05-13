@@ -330,14 +330,14 @@ void Gui::enterInternalMenu()
 void Gui::displayConnectingImage()
 {
     lcd.clear();
-    lcd.displayImage(0, 0, lcd::usbLogo);
+    lcd.displayImage(12, 8, lcd::usbLogo);
     lcd.print( "USB Connecting", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayWaitingForMidi()
 {
     lcd.clear();
-    lcd.displayImage(0, 0, lcd::usbLogo);
+    lcd.displayImage(12, 8, lcd::usbLogo);
     lcd.print( "Awaiting MIDI", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 

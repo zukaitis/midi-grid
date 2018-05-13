@@ -77,7 +77,7 @@ struct Image
     uint8_t height;
 };
 
-static const Image usbLogo = {usbLogoArray, 336, 84, 32};
+static const Image usbLogo = {usbLogoArray, 180, 60, 24};
 
 static const Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
 static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };

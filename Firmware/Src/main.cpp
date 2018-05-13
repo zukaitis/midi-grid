@@ -158,8 +158,7 @@ void ApplicationMain::initialize()
 
 void ApplicationMain::run()
 {
-    volatile uint32_t i=0;
-    uint8_t buttonX, buttonY, velocity;
+    uint8_t buttonX, buttonY;
     ButtonEvent event;
 
     gui.displayConnectingImage();
