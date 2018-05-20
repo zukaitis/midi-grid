@@ -63,21 +63,6 @@ namespace lcd
     class Lcd;
 }
 
-//namespace gui
-//{
-//    class Gui;
-//}
-//
-//namespace grid
-//{
-//    class Grid;
-//}
-//
-//namespace launchpad
-//{
-//    class Launchpad;
-//}
-
 class ApplicationMain
 {
 public:
@@ -96,6 +81,8 @@ public:
     void runInternalMenu();
     void resetIntoBootloader();
     void randomLightAnimation();
+    void configureSystemClock();
+    void configureNvicPriorities();
 
 private:
     ApplicationMain();

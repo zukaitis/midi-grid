@@ -175,7 +175,7 @@ void LcdControl::initializeBacklightPwm()
 
 void LcdControl::setBacklightIntensity( uint8_t intensity )
 {
-    if (intensity > NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS)
+    if (intensity >= NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS)
     {
         intensity = NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS - 1;
     }
