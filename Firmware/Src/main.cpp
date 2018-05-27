@@ -85,6 +85,10 @@ void ApplicationMain::initialize()
     configureNvicPriorities();
     configureSystemClock();
 
+    uint32_t i = 0; // remove this shite before commiting
+    while(i++ < 2000000)
+    {}
+
     MX_USB_DEVICE_Init();
 
     #ifdef USE_SEMIHOSTING

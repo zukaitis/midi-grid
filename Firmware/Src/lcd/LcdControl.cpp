@@ -35,7 +35,7 @@ void LcdControl::writeCommand( const uint8_t command )
     }
 
     HAL_GPIO_WritePin( LCD_GPIO_Port, LCD_DC_Pin, GPIO_PIN_RESET ); //command mode
-    HAL_SPI_Transmit_DMA(&lcdSpi, &commandToWrite, 1);
+    HAL_SPI_Transmit_DMA( &lcdSpi, &commandToWrite, 1 );
 }
 
 void LcdControl::update(uint8_t* buffer)
@@ -53,8 +53,8 @@ void LcdControl::update(uint8_t* buffer)
 
 void LcdControl::setCursor( const uint8_t x, const uint8_t y )
 {
-    writeCommand(0x80 | x); // column.
-    writeCommand(0x40 | y); // row.
+    writeCommand( 0x80 | x ); // column.
+    writeCommand( 0x40 | y ); // row.
 }
 
 void LcdControl::initializeDma()
@@ -72,14 +72,14 @@ void LcdControl::initializeDma()
     lcdSpiDma.Init.Mode = DMA_NORMAL;
     lcdSpiDma.Init.Priority = DMA_PRIORITY_LOW;
     lcdSpiDma.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-    HAL_DMA_Init(&lcdSpiDma);
+    HAL_DMA_Init( &lcdSpiDma );
 
     __HAL_LINKDMA( &lcdSpi, hdmatx, lcdSpiDma );
 
     /* DMA interrupt init */
     /* DMA1_Stream4_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
+    HAL_NVIC_SetPriority( DMA1_Stream4_IRQn, 0, 0 );
+    HAL_NVIC_EnableIRQ( DMA1_Stream4_IRQn );
 }
 
 void LcdControl::initializeGpio()
@@ -132,7 +132,7 @@ void LcdControl::initialize()
     initializeGpio();
     initializeSpi();
     initializeDma();
-    initializeBacklightPwm(); //Timer();
+    //initializeBacklightPwm();
 
     resetController();
     writeCommand( 0x21 ); //LCD extended commands.
@@ -180,7 +180,7 @@ void LcdControl::setBacklightIntensity( uint8_t intensity )
         intensity = NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS - 1;
     }
 
-    BACKLIGHT_TIMER->CCR2 = backlightIntensity[intensity];
+    BACKLIGHT_TIMER->CCR2 = backlightIntensity[intensity]; // would be appropriate to use hal function here
 }
 
 extern "C" void DMA1_Stream4_IRQHandler(void)

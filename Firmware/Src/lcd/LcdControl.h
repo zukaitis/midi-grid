@@ -22,7 +22,7 @@ static const uint16_t LCD_SCK_Pin = GPIO_PIN_13;
 static const uint16_t LCD_LIGHT_Pin = GPIO_PIN_14;
 static const uint16_t LCD_MOSI_Pin = GPIO_PIN_15;
 
-static TIM_TypeDef* const BACKLIGHT_TIMER = TIM1;
+static TIM_TypeDef* const BACKLIGHT_TIMER = TIM10; //TIM1;
 
 static const uint8_t NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS = 65;
 
