@@ -120,11 +120,10 @@ public:
 
     ~GridControl();
 
+    void initialize();
     void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
     void turnAllLedsOff();
-    void initializeBaseInterruptTimer();
-    void initializeGpio();
-    void initializePwmOutputs();
+
     void startTimers();
 
     bool isGridColumnInputStable(const uint8_t column) const;
@@ -153,6 +152,11 @@ public:
 
 private:
     GridControl();
+
+    void initializeBaseTimer();
+    void initializeDma();
+    void initializeGpio();
+    void initializePwmOutputs();
 
     TIM_HandleTypeDef pwmTimerRed;
     TIM_HandleTypeDef pwmTimerGreen;

@@ -82,9 +82,7 @@ void Grid::discardAllPendingButtonEvents()
 
 void Grid::initialize()
 {
-    gridControl.initializeGpio();
-    gridControl.initializePwmOutputs();
-    gridControl.initializeBaseInterruptTimer();
+    gridControl.initialize();
     initialized = true;
 }
 

@@ -10,11 +10,7 @@
 namespace grid_control
 {
 
-static DMA_HandleTypeDef gridDmaRed;
-static DMA_HandleTypeDef gridDmaGreen;
-static DMA_HandleTypeDef gridDmaBlue;
-static DMA_HandleTypeDef gridDmaColumnMultiplexerOutput;
-static DMA_HandleTypeDef gridDmaColumnInput;
+static DMA_HandleTypeDef buttonInputDmaConfiguration;
 
 GridControl::GridControl()
 {
@@ -27,14 +23,14 @@ GridControl::~GridControl()
 
 extern "C" void inputReadoutToMemory0CompleteCallbackWrapper(__DMA_HandleTypeDef * hdma)
 {
-    static GridControl& gridControl_ = GridControl::getInstance();
-    gridControl_.inputReadoutToMemory0CompleteCallback();
+    static GridControl& gridControl = GridControl::getInstance();
+    gridControl.inputReadoutToMemory0CompleteCallback();
 }
 
 extern "C" void inputReadoutToMemory1CompleteCallbackWrapper(__DMA_HandleTypeDef * hdma)
 {
-    static GridControl& gridControl_ = GridControl::getInstance();
-    gridControl_.inputReadoutToMemory1CompleteCallback();
+    static GridControl& gridControl = GridControl::getInstance();
+    gridControl.inputReadoutToMemory1CompleteCallback();
 }
 
 extern "C" void dmaErrorCallback(__DMA_HandleTypeDef * hdma) // unused
@@ -99,11 +95,18 @@ uint8_t GridControl::getRotaryEncodersInput(const uint8_t encoder, uint8_t step)
     return (ROTARY_ENCODER_MASK[encoder] & buttonInput[currentlyStableInputBuffer_][step])>>ROTARY_ENCODER_SHIFT[encoder];
 }
 
-void GridControl::initializeBaseInterruptTimer()
+void GridControl::initialize()
+{
+    initializeGpio();
+    initializePwmOutputs();
+    initializeBaseTimer();
+    initializeDma();
+}
+
+void GridControl::initializeBaseTimer()
 {
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
     TIM_MasterConfigTypeDef timerMasterConfiguration;
-    DMA_InitTypeDef ledOutputDmaInitConfiguration;
 
     __HAL_RCC_TIM1_CLK_ENABLE(); //__HAL_RCC_TIM10_CLK_ENABLE();
 
@@ -142,26 +145,34 @@ void GridControl::initializeBaseInterruptTimer()
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC3 );
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC4 );
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_UPDATE );
+}
+
+void GridControl::initializeDma()
+{
+    DMA_InitTypeDef ledOutputDmaInitConfiguration;
+
+    static DMA_HandleTypeDef pwmOutputRedDmaConfiguration;
+    static DMA_HandleTypeDef pwmOutputGreenDmaConfiguration;
+    static DMA_HandleTypeDef pwmOutputBlueDmaConfiguration;
+    static DMA_HandleTypeDef columnSelectDmaConfiguration;
 
     __HAL_RCC_DMA2_CLK_ENABLE();
-    /* SPI2 DMA Init */
-    /* SPI2_TX Init */
 
-    gridDmaColumnMultiplexerOutput.Instance = DMA2_Stream1;
-    gridDmaColumnMultiplexerOutput.Init.Channel = DMA_CHANNEL_6;
-    gridDmaColumnMultiplexerOutput.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    gridDmaColumnMultiplexerOutput.Init.PeriphInc = DMA_PINC_DISABLE;
-    gridDmaColumnMultiplexerOutput.Init.MemInc = DMA_MINC_ENABLE;
-    gridDmaColumnMultiplexerOutput.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    gridDmaColumnMultiplexerOutput.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    gridDmaColumnMultiplexerOutput.Init.Mode = DMA_CIRCULAR; //DMA_NORMAL;
-    gridDmaColumnMultiplexerOutput.Init.Priority = DMA_PRIORITY_HIGH;
-    gridDmaColumnMultiplexerOutput.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    gridDmaColumnMultiplexerOutput.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
-    gridDmaColumnMultiplexerOutput.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    HAL_DMA_Init( &gridDmaColumnMultiplexerOutput );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], gridDmaColumnMultiplexerOutput );
-    HAL_DMA_Start( &gridDmaColumnMultiplexerOutput,
+    columnSelectDmaConfiguration.Instance = DMA2_Stream1;
+    columnSelectDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
+    columnSelectDmaConfiguration.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    columnSelectDmaConfiguration.Init.PeriphInc = DMA_PINC_DISABLE;
+    columnSelectDmaConfiguration.Init.MemInc = DMA_MINC_ENABLE;
+    columnSelectDmaConfiguration.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    columnSelectDmaConfiguration.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    columnSelectDmaConfiguration.Init.Mode = DMA_CIRCULAR;
+    columnSelectDmaConfiguration.Init.Priority = DMA_PRIORITY_HIGH;
+    columnSelectDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+    columnSelectDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
+    columnSelectDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    HAL_DMA_Init( &columnSelectDmaConfiguration );
+    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration );
+    HAL_DMA_Start( &columnSelectDmaConfiguration,
             reinterpret_cast<uint32_t>( &columnSelectValue[0] ),
             reinterpret_cast<uint32_t>( &GRID_COLUMN_CONTROL_GPIO_PORT->ODR ),
             20 );
@@ -178,60 +189,59 @@ void GridControl::initializeBaseInterruptTimer()
     ledOutputDmaInitConfiguration.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
     ledOutputDmaInitConfiguration.PeriphBurst = DMA_PBURST_INC4;
 
-    gridDmaRed.Instance = DMA2_Stream2;
-    gridDmaRed.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init( &gridDmaRed );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC2], gridDmaRed );
-    HAL_DMA_Start( &gridDmaRed,
+    pwmOutputRedDmaConfiguration.Instance = DMA2_Stream2;
+    pwmOutputRedDmaConfiguration.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init( &pwmOutputRedDmaConfiguration );
+    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC2], pwmOutputRedDmaConfiguration );
+    HAL_DMA_Start( &pwmOutputRedDmaConfiguration,
             reinterpret_cast<uint32_t>(&ledOutput.Red[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
             80 );
 
-    gridDmaGreen.Instance = DMA2_Stream6;
-    gridDmaGreen.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init(&gridDmaGreen);
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC3], gridDmaGreen );
-    HAL_DMA_Start( &gridDmaGreen,
+    pwmOutputGreenDmaConfiguration.Instance = DMA2_Stream6;
+    pwmOutputGreenDmaConfiguration.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init(&pwmOutputGreenDmaConfiguration);
+    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC3], pwmOutputGreenDmaConfiguration );
+    HAL_DMA_Start( &pwmOutputGreenDmaConfiguration,
             reinterpret_cast<uint32_t>(&ledOutput.Green[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
             80 );
 
-    gridDmaBlue.Instance = DMA2_Stream4;
-    gridDmaBlue.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init( &gridDmaBlue );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC4], gridDmaBlue );
-    HAL_DMA_Start( &gridDmaBlue,
+    pwmOutputBlueDmaConfiguration.Instance = DMA2_Stream4;
+    pwmOutputBlueDmaConfiguration.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init( &pwmOutputBlueDmaConfiguration );
+    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC4], pwmOutputBlueDmaConfiguration );
+    HAL_DMA_Start( &pwmOutputBlueDmaConfiguration,
             reinterpret_cast<uint32_t>(&ledOutput.Blue[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
             80 );
 
-    gridDmaColumnInput.Instance = DMA2_Stream5;
-    gridDmaColumnInput.Init.Channel = DMA_CHANNEL_6;
-    gridDmaColumnInput.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    gridDmaColumnInput.Init.PeriphInc = DMA_PINC_DISABLE;
-    gridDmaColumnInput.Init.MemInc = DMA_MINC_ENABLE;
-    gridDmaColumnInput.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    gridDmaColumnInput.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    gridDmaColumnInput.Init.Mode = DMA_CIRCULAR; //DMA_NORMAL;
-    gridDmaColumnInput.Init.Priority = DMA_PRIORITY_HIGH;
-    gridDmaColumnInput.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    gridDmaColumnInput.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
-    gridDmaColumnInput.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    gridDmaColumnInput.XferCpltCallback = &inputReadoutToMemory0CompleteCallbackWrapper;
-    gridDmaColumnInput.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallbackWrapper;
-    gridDmaColumnInput.XferErrorCallback = &dmaErrorCallback;
-    HAL_DMA_Init( &gridDmaColumnInput );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], gridDmaColumnInput );
+    buttonInputDmaConfiguration.Instance = DMA2_Stream5;
+    buttonInputDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
+    buttonInputDmaConfiguration.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    buttonInputDmaConfiguration.Init.PeriphInc = DMA_PINC_DISABLE;
+    buttonInputDmaConfiguration.Init.MemInc = DMA_MINC_ENABLE;
+    buttonInputDmaConfiguration.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    buttonInputDmaConfiguration.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    buttonInputDmaConfiguration.Init.Mode = DMA_CIRCULAR;
+    buttonInputDmaConfiguration.Init.Priority = DMA_PRIORITY_HIGH;
+    buttonInputDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+    buttonInputDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
+    buttonInputDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutToMemory0CompleteCallbackWrapper;
+    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallbackWrapper;
+    buttonInputDmaConfiguration.XferErrorCallback = &dmaErrorCallback;
+    HAL_DMA_Init( &buttonInputDmaConfiguration );
+    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
 
     HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 0, 0 );
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
-    HAL_DMAEx_MultiBufferStart_IT( &gridDmaColumnInput,
+    HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
             reinterpret_cast<uint32_t>( &GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput[1][0]),
             20 );
-
 }
 
 void GridControl::initializeGpio()
@@ -406,7 +416,7 @@ void GridControl::startTimers()
 
 extern "C" void DMA2_Stream5_IRQHandler()
 {
-    HAL_DMA_IRQHandler(&gridDmaColumnInput);
+    HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
 }
 
 } // namespace
