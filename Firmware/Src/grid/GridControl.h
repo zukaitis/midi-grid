@@ -1,12 +1,5 @@
-/*
- * GridControl.hpp
- *
- *  Created on: 2018-03-06
- *      Author: Gedas
- */
-
-#ifndef GRID_BUTTONS_GRIDCONTROL_HPP_
-#define GRID_BUTTONS_GRIDCONTROL_HPP_
+#ifndef GRID_BUTTONS_GRIDCONTROL_H_
+#define GRID_BUTTONS_GRIDCONTROL_H_
 
 #include "stm32f4xx_hal.h"
 #include "Types.h"
@@ -19,18 +12,9 @@ static const uint8_t NUMBER_OF_COLUMNS = 20;
 static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
 static const uint8_t TIMER_FRAME_OFFSET = 1;
 
-struct LedPwmOutput
-{
-    uint32_t Red[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t Green[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t Blue[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-};
-
 static const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
 static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 96; // 1us
 static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 500; // 500us
-
-//static const LedPwmOutput LED_PASSIVE = {.Red = PWM_CLOCK_PERIOD, .Green = PWM_CLOCK_PERIOD, .Blue = PWM_CLOCK_PERIOD};
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
 static const uint16_t BUTTON_MASK[2] = {0x2000, 0x0400};
@@ -79,7 +63,7 @@ static const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
 static TIM_TypeDef* const PWM_TIMER_RED = TIM2;
 static TIM_TypeDef* const PWM_TIMER_GREEN = TIM4;
 static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
-static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM1; //TIM10;
+static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM1;
 
 static const uint16_t brightnessPad[65] = {
         47000, 46662, 46365, 46057, 45727, 45373, 44999, 44607,
@@ -101,18 +85,19 @@ static const uint16_t brightnessDirect[65] = {
         38217, 37979, 37735, 37500, 37247, 37005, 36767, 36511,
         36263, 36011, 35787, 35511, 35271, 35013, 34797, 34520, 34259 };
 
-static const uint32_t columnSelectValue[NUMBER_OF_COLUMNS] = {  0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
-                                                                0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
-                                                                0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
-                                                                0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
-                                                                0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
+static const uint32_t columnSelectValue[NUMBER_OF_COLUMNS] = {
+        0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
+        0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
+        0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
+        0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
+        0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
 
 class GridControl
 {
 public:
 
-    // singleton, because class uses interrupt
-    static GridControl& getInstance()
+    // singleton, because class uses an interrupt
+    static inline GridControl& getInstance()
     {
         static GridControl instance;
         return instance;
@@ -120,18 +105,10 @@ public:
 
     ~GridControl();
 
+    bool getButtonInput( const uint8_t button ) const;
+    uint8_t getGridButtonInput( const uint8_t column ) const;
+    uint8_t getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const;
     void initialize();
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
-    void turnAllLedsOff();
-
-    void startTimers();
-
-    bool isGridColumnInputStable(const uint8_t column) const;
-    uint8_t getGridColumnInput(const uint8_t column) const;
-    bool isButtonInputStable(const uint8_t button) const;
-    bool getButtonInput(const uint8_t button) const;
-    bool isRotaryEncodersInputStable(const uint8_t encoder, uint8_t step) const;
-    uint8_t getRotaryEncodersInput(const uint8_t encoder, uint8_t step) const;
 
     inline void inputReadoutToMemory0CompleteCallback()
     {
@@ -147,6 +124,13 @@ public:
         switchInputUpdated = true;
     }
 
+    bool isButtonInputStable( const uint8_t button ) const;
+    bool isGridColumnInputStable( const uint8_t column ) const;
+
+    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
+    void startTimers();
+    void turnAllLedsOff();
+
     bool gridInputUpdated = false;
     bool switchInputUpdated = false;
 
@@ -158,16 +142,22 @@ private:
     void initializeGpio();
     void initializePwmOutputs();
 
-    TIM_HandleTypeDef pwmTimerRed;
-    TIM_HandleTypeDef pwmTimerGreen;
-    TIM_HandleTypeDef pwmTimerBlue;
-    TIM_HandleTypeDef baseInterruptTimer;
-
-    LedPwmOutput ledOutput; //[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t buttonInput[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
-
     uint8_t currentlyStableInputBuffer_ = 0;
+
+    uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    uint32_t pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
+
+    TIM_HandleTypeDef pwmTimerRed_;
+    TIM_HandleTypeDef pwmTimerGreen_;
+    TIM_HandleTypeDef pwmTimerBlue_;
+    TIM_HandleTypeDef baseInterruptTimer_;
+    DMA_HandleTypeDef pwmOutputRedDmaConfiguration_;
+    DMA_HandleTypeDef pwmOutputGreenDmaConfiguration_;
+    DMA_HandleTypeDef pwmOutputBlueDmaConfiguration_;
+    DMA_HandleTypeDef columnSelectDmaConfiguration_;
 };
 
 } // namespace
-#endif /* GRID_BUTTONS_GRIDCONTROL_HPP_ */
+#endif /* GRID_BUTTONS_GRIDCONTROL_H_ */

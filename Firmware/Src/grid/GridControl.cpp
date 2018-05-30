@@ -12,12 +12,12 @@ namespace grid_control
 
 static DMA_HandleTypeDef buttonInputDmaConfiguration;
 
-GridControl::GridControl()
+extern "C" void DMA2_Stream5_IRQHandler()
 {
-    turnAllLedsOff();
+    HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
 }
 
-GridControl::~GridControl()
+extern "C" void dmaErrorCallback(__DMA_HandleTypeDef * hdma) // unused
 {
 }
 
@@ -33,66 +33,29 @@ extern "C" void inputReadoutToMemory1CompleteCallbackWrapper(__DMA_HandleTypeDef
     gridControl.inputReadoutToMemory1CompleteCallback();
 }
 
-extern "C" void dmaErrorCallback(__DMA_HandleTypeDef * hdma) // unused
+GridControl::GridControl()
 {
+    turnAllLedsOff();
 }
 
-void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour )
+GridControl::~GridControl()
 {
-    ledPositionX = (ledPositionX + NUMBER_OF_COLUMNS - TIMER_FRAME_OFFSET) % NUMBER_OF_COLUMNS;
-
-    if (directLed)
-    {
-        ledOutput.Red[ledPositionX][ledPositionY] = brightnessDirect[colour.Red];
-        ledOutput.Green[ledPositionX][ledPositionY] = brightnessDirect[colour.Green];
-        ledOutput.Blue[ledPositionX][ledPositionY] = brightnessDirect[colour.Blue];
-    }
-    else
-    {
-        ledOutput.Red[ledPositionX][ledPositionY] = brightnessPad[colour.Red];
-        ledOutput.Green[ledPositionX][ledPositionY] = brightnessPad[colour.Green];
-        ledOutput.Blue[ledPositionX][ledPositionY] = brightnessPad[colour.Blue];
-    }
-}
-
-void GridControl::turnAllLedsOff()
-{
-    uint8_t x, y;
-    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
-    {
-        for (y = 0; y < NUMBER_OF_ROWS; y++)
-        {
-            ledOutput.Red[x][y] = PWM_CLOCK_PERIOD; //LED_PASSIVE;
-            ledOutput.Green[x][y] = PWM_CLOCK_PERIOD;
-            ledOutput.Blue[x][y] = PWM_CLOCK_PERIOD;
-        }
-    }
-}
-
-bool GridControl::isGridColumnInputStable(const uint8_t column) const
-{
-    return (0 == (GRID_BUTTON_MASK & (buttonInput[0][column] ^ buttonInput[1][column])));
-}
-
-uint8_t GridControl::getGridColumnInput(const uint8_t column) const
-{
-    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput[currentlyStableInputBuffer_][column]);
-}
-
-bool GridControl::isButtonInputStable(const uint8_t button) const
-{
-    return (0 == (BUTTON_MASK[button] & (buttonInput[0][0] ^ buttonInput[1][0])));
 }
 
 bool GridControl::getButtonInput(const uint8_t button) const
 {
-    return (0 != (BUTTON_MASK[button] & buttonInput[currentlyStableInputBuffer_][0]));
+    return (0 != (BUTTON_MASK[button] & buttonInput_[currentlyStableInputBuffer_][0]));
+}
+
+uint8_t GridControl::getGridButtonInput(const uint8_t column) const
+{
+    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput_[currentlyStableInputBuffer_][column]);
 }
 
 uint8_t GridControl::getRotaryEncodersInput(const uint8_t encoder, uint8_t step) const
 {
     step *= 2;
-    return (ROTARY_ENCODER_MASK[encoder] & buttonInput[currentlyStableInputBuffer_][step])>>ROTARY_ENCODER_SHIFT[encoder];
+    return (ROTARY_ENCODER_MASK[encoder] & buttonInput_[currentlyStableInputBuffer_][step])>>ROTARY_ENCODER_SHIFT[encoder];
 }
 
 void GridControl::initialize()
@@ -103,6 +66,75 @@ void GridControl::initialize()
     initializeDma();
 }
 
+bool GridControl::isButtonInputStable(const uint8_t button) const
+{
+    return (0 == (BUTTON_MASK[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
+}
+
+bool GridControl::isGridColumnInputStable(const uint8_t column) const
+{
+    return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][column] ^ buttonInput_[1][column])));
+}
+
+void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour )
+{
+    ledPositionX = (ledPositionX + NUMBER_OF_COLUMNS - TIMER_FRAME_OFFSET) % NUMBER_OF_COLUMNS;
+
+    if (directLed)
+    {
+        pwmOutputRed_[ledPositionX][ledPositionY] = brightnessDirect[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = brightnessDirect[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = brightnessDirect[colour.Blue];
+    }
+    else
+    {
+        pwmOutputRed_[ledPositionX][ledPositionY] = brightnessPad[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = brightnessPad[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = brightnessPad[colour.Blue];
+    }
+}
+
+void GridControl::startTimers()
+{
+    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
+    __HAL_TIM_ENABLE(&pwmTimerRed_);
+
+    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
+    __HAL_TIM_ENABLE(&pwmTimerGreen_);
+
+    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
+    __HAL_TIM_ENABLE(&pwmTimerBlue_);
+
+    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
+    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
+    HAL_TIM_Base_Start(&baseInterruptTimer_);
+}
+
+void GridControl::turnAllLedsOff()
+{
+    uint8_t x, y;
+    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
+    {
+        for (y = 0; y < NUMBER_OF_ROWS; y++)
+        {
+            pwmOutputRed_[x][y] = PWM_CLOCK_PERIOD; //LED_PASSIVE;
+            pwmOutputGreen_[x][y] = PWM_CLOCK_PERIOD;
+            pwmOutputBlue_[x][y] = PWM_CLOCK_PERIOD;
+        }
+    }
+}
+
 void GridControl::initializeBaseTimer()
 {
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
@@ -110,71 +142,66 @@ void GridControl::initializeBaseTimer()
 
     __HAL_RCC_TIM1_CLK_ENABLE(); //__HAL_RCC_TIM10_CLK_ENABLE();
 
-    baseInterruptTimer.Instance = BASE_INTERRUPT_TIMER;
-    baseInterruptTimer.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1; // 1us is the desired timer step
-    baseInterruptTimer.Init.CounterMode = TIM_COUNTERMODE_UP;
-    baseInterruptTimer.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;  // 1s / (20*100) = 500us
-    baseInterruptTimer.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &baseInterruptTimer );
+    baseInterruptTimer_.Instance = BASE_INTERRUPT_TIMER;
+    baseInterruptTimer_.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1; // 1us is the desired timer step
+    baseInterruptTimer_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    baseInterruptTimer_.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;  // 1s / (20*100) = 500us
+    baseInterruptTimer_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_Base_Init( &baseInterruptTimer_ );
 
     timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    HAL_TIM_ConfigClockSource( &baseInterruptTimer, &timerClockSourceConfiguration );
+    HAL_TIM_ConfigClockSource( &baseInterruptTimer_, &timerClockSourceConfiguration );
 
     timerMasterConfiguration.MasterOutputTrigger = TIM_TRGO_UPDATE;
     timerMasterConfiguration.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-    HAL_TIMEx_MasterConfigSynchronization( &baseInterruptTimer, &timerMasterConfiguration );
+    HAL_TIMEx_MasterConfigSynchronization( &baseInterruptTimer_, &timerMasterConfiguration );
 
     // experimental shit
     TIM_OC_InitTypeDef timerOutputCompareConfiguration;
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_ACTIVE;
 
     timerOutputCompareConfiguration.Pulse = 1;
-    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
 
     timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 7) / 10;
-    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
 
     timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 8) / 10;
-    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
 
     timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 9) / 10;
-    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
 
-    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC1 );
-    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC2 );
-    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC3 );
-    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_CC4 );
-    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_UPDATE );
+    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_CC1 );
+    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_CC2 );
+    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_CC3 );
+    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_CC4 );
+    __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_UPDATE );
 }
 
 void GridControl::initializeDma()
 {
     DMA_InitTypeDef ledOutputDmaInitConfiguration;
 
-    static DMA_HandleTypeDef pwmOutputRedDmaConfiguration;
-    static DMA_HandleTypeDef pwmOutputGreenDmaConfiguration;
-    static DMA_HandleTypeDef pwmOutputBlueDmaConfiguration;
-    static DMA_HandleTypeDef columnSelectDmaConfiguration;
-
     __HAL_RCC_DMA2_CLK_ENABLE();
 
-    columnSelectDmaConfiguration.Instance = DMA2_Stream1;
-    columnSelectDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
-    columnSelectDmaConfiguration.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    columnSelectDmaConfiguration.Init.PeriphInc = DMA_PINC_DISABLE;
-    columnSelectDmaConfiguration.Init.MemInc = DMA_MINC_ENABLE;
-    columnSelectDmaConfiguration.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    columnSelectDmaConfiguration.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    columnSelectDmaConfiguration.Init.Mode = DMA_CIRCULAR;
-    columnSelectDmaConfiguration.Init.Priority = DMA_PRIORITY_HIGH;
-    columnSelectDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    columnSelectDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
-    columnSelectDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    HAL_DMA_Init( &columnSelectDmaConfiguration );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration );
-    HAL_DMA_Start( &columnSelectDmaConfiguration,
-            reinterpret_cast<uint32_t>( &columnSelectValue[0] ),
-            reinterpret_cast<uint32_t>( &GRID_COLUMN_CONTROL_GPIO_PORT->ODR ),
+    columnSelectDmaConfiguration_.Instance = DMA2_Stream1;
+    columnSelectDmaConfiguration_.Init.Channel = DMA_CHANNEL_6;
+    columnSelectDmaConfiguration_.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    columnSelectDmaConfiguration_.Init.PeriphInc = DMA_PINC_DISABLE;
+    columnSelectDmaConfiguration_.Init.MemInc = DMA_MINC_ENABLE;
+    columnSelectDmaConfiguration_.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    columnSelectDmaConfiguration_.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    columnSelectDmaConfiguration_.Init.Mode = DMA_CIRCULAR;
+    columnSelectDmaConfiguration_.Init.Priority = DMA_PRIORITY_HIGH;
+    columnSelectDmaConfiguration_.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+    columnSelectDmaConfiguration_.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
+    columnSelectDmaConfiguration_.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    HAL_DMA_Init( &columnSelectDmaConfiguration_ );
+    __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration_ );
+    HAL_DMA_Start( &columnSelectDmaConfiguration_,
+            reinterpret_cast<uint32_t>(&columnSelectValue[0]),
+            reinterpret_cast<uint32_t>(&GRID_COLUMN_CONTROL_GPIO_PORT->ODR),
             20 );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
@@ -189,30 +216,30 @@ void GridControl::initializeDma()
     ledOutputDmaInitConfiguration.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
     ledOutputDmaInitConfiguration.PeriphBurst = DMA_PBURST_INC4;
 
-    pwmOutputRedDmaConfiguration.Instance = DMA2_Stream2;
-    pwmOutputRedDmaConfiguration.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init( &pwmOutputRedDmaConfiguration );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC2], pwmOutputRedDmaConfiguration );
-    HAL_DMA_Start( &pwmOutputRedDmaConfiguration,
-            reinterpret_cast<uint32_t>(&ledOutput.Red[0][0]),
+    pwmOutputRedDmaConfiguration_.Instance = DMA2_Stream2;
+    pwmOutputRedDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init( &pwmOutputRedDmaConfiguration_ );
+    __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC2], pwmOutputRedDmaConfiguration_ );
+    HAL_DMA_Start( &pwmOutputRedDmaConfiguration_,
+            reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
             80 );
 
-    pwmOutputGreenDmaConfiguration.Instance = DMA2_Stream6;
-    pwmOutputGreenDmaConfiguration.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init(&pwmOutputGreenDmaConfiguration);
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC3], pwmOutputGreenDmaConfiguration );
-    HAL_DMA_Start( &pwmOutputGreenDmaConfiguration,
-            reinterpret_cast<uint32_t>(&ledOutput.Green[0][0]),
+    pwmOutputGreenDmaConfiguration_.Instance = DMA2_Stream6;
+    pwmOutputGreenDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init(&pwmOutputGreenDmaConfiguration_);
+    __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC3], pwmOutputGreenDmaConfiguration_ );
+    HAL_DMA_Start( &pwmOutputGreenDmaConfiguration_,
+            reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
             80 );
 
-    pwmOutputBlueDmaConfiguration.Instance = DMA2_Stream4;
-    pwmOutputBlueDmaConfiguration.Init = ledOutputDmaInitConfiguration;
-    HAL_DMA_Init( &pwmOutputBlueDmaConfiguration );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC4], pwmOutputBlueDmaConfiguration );
-    HAL_DMA_Start( &pwmOutputBlueDmaConfiguration,
-            reinterpret_cast<uint32_t>(&ledOutput.Blue[0][0]),
+    pwmOutputBlueDmaConfiguration_.Instance = DMA2_Stream4;
+    pwmOutputBlueDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
+    HAL_DMA_Init( &pwmOutputBlueDmaConfiguration_ );
+    __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC4], pwmOutputBlueDmaConfiguration_ );
+    HAL_DMA_Start( &pwmOutputBlueDmaConfiguration_,
+            reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
             80 );
 
@@ -232,15 +259,15 @@ void GridControl::initializeDma()
     buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallbackWrapper;
     buttonInputDmaConfiguration.XferErrorCallback = &dmaErrorCallback;
     HAL_DMA_Init( &buttonInputDmaConfiguration );
-    __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
+    __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
 
     HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 0, 0 );
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
-            reinterpret_cast<uint32_t>( &GRID_BUTTON_IN_GPIO_PORT->IDR),
-            reinterpret_cast<uint32_t>(&buttonInput[0][0]),
-            reinterpret_cast<uint32_t>(&buttonInput[1][0]),
+            reinterpret_cast<uint32_t>(&GRID_BUTTON_IN_GPIO_PORT->IDR),
+            reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
+            reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
             20 );
 }
 
@@ -254,8 +281,8 @@ void GridControl::initializeGpio()
 
       // Configure GPIO pin Output Level
       HAL_GPIO_WritePin( GRID_COLUMN_CONTROL_GPIO_PORT,
-              GRID_COLUMN_OUT1_Pin | GRID_COLUMN_OUT2_Pin | GRID_COLUMN_OUT3_Pin |
-              GRID_COLUMN_OUT4_Pin |GRID_COLUMN_OUT5_Pin | GRID_COLUMN_OUT6_Pin,
+              GRID_COLUMN_OUT1_Pin | GRID_COLUMN_OUT2_Pin | GRID_COLUMN_OUT3_Pin |GRID_COLUMN_OUT4_Pin |GRID_COLUMN_OUT5_Pin |
+                      GRID_COLUMN_OUT6_Pin,
               GPIO_PIN_SET );
 
       gpioConfiguration.Pin = BUTTON_IN1_Pin | BUTTON_IN2_Pin | ROTARY1_A_Pin | ROTARY1_B_Pin | ROTARY2_A_Pin| ROTARY2_B_Pin;
@@ -299,65 +326,65 @@ void GridControl::initializePwmOutputs()
     timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
 
     // Red PWM output configuration
-    pwmTimerRed.Instance = PWM_TIMER_RED;
-    pwmTimerRed.Init.Prescaler = 0;
-    pwmTimerRed.Init.CounterMode = TIM_COUNTERMODE_UP;
-    pwmTimerRed.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerRed.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerRed );
+    pwmTimerRed_.Instance = PWM_TIMER_RED;
+    pwmTimerRed_.Init.Prescaler = 0;
+    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerRed_.Init.Period = PWM_CLOCK_PERIOD - 1;
+    pwmTimerRed_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_Base_Init( &pwmTimerRed_ );
 
-    HAL_TIM_ConfigClockSource( &pwmTimerRed, &timerClockSourceConfiguration );
+    HAL_TIM_ConfigClockSource( &pwmTimerRed_, &timerClockSourceConfiguration );
 
-    HAL_TIM_PWM_Init( &pwmTimerRed );
+    HAL_TIM_PWM_Init( &pwmTimerRed_ );
 
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerRed, &timerSlaveConfiguration );
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerRed_, &timerSlaveConfiguration );
 
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_RED->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Green PWM output configuration
-    pwmTimerGreen.Instance = PWM_TIMER_GREEN;
-    pwmTimerGreen.Init.Prescaler = 0;
-    pwmTimerGreen.Init.CounterMode = TIM_COUNTERMODE_UP;
-    pwmTimerGreen.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerGreen.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerGreen );
+    pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
+    pwmTimerGreen_.Init.Prescaler = 0;
+    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerGreen_.Init.Period = PWM_CLOCK_PERIOD - 1;
+    pwmTimerGreen_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_Base_Init( &pwmTimerGreen_ );
 
-    HAL_TIM_ConfigClockSource( &pwmTimerGreen, &timerClockSourceConfiguration );
+    HAL_TIM_ConfigClockSource( &pwmTimerGreen_, &timerClockSourceConfiguration );
 
-    HAL_TIM_PWM_Init( &pwmTimerGreen );
+    HAL_TIM_PWM_Init( &pwmTimerGreen_ );
 
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerGreen, &timerSlaveConfiguration );
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerGreen_, &timerSlaveConfiguration );
 
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_GREEN->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Blue PWM output configuration
-    pwmTimerBlue.Instance = PWM_TIMER_BLUE;
-    pwmTimerBlue.Init.Prescaler = 0;
-    pwmTimerBlue.Init.CounterMode = TIM_COUNTERMODE_UP;
-    pwmTimerBlue.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerBlue.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerBlue );
+    pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
+    pwmTimerBlue_.Init.Prescaler = 0;
+    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerBlue_.Init.Period = PWM_CLOCK_PERIOD - 1;
+    pwmTimerBlue_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_Base_Init( &pwmTimerBlue_ );
 
-    HAL_TIM_ConfigClockSource( &pwmTimerBlue, &timerClockSourceConfiguration );
+    HAL_TIM_ConfigClockSource( &pwmTimerBlue_, &timerClockSourceConfiguration );
 
-    HAL_TIM_PWM_Init( &pwmTimerBlue );
+    HAL_TIM_PWM_Init( &pwmTimerBlue_ );
 
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerBlue, &timerSlaveConfiguration );
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerBlue_, &timerSlaveConfiguration );
 
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
@@ -385,38 +412,6 @@ void GridControl::initializePwmOutputs()
     gpioConfiguration.Pin = PWM_GREEN1_Pin|PWM_GREEN2_Pin|PWM_GREEN3_Pin|PWM_GREEN4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM4;
     HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
-}
-
-void GridControl::startTimers()
-{
-    TIM_CCxChannelCmd(pwmTimerRed.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerRed);
-
-    TIM_CCxChannelCmd(pwmTimerGreen.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerGreen);
-
-    TIM_CCxChannelCmd(pwmTimerBlue.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerBlue);
-
-    TIM_CCxChannelCmd(baseInterruptTimer.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    HAL_TIM_Base_Start(&baseInterruptTimer);
-}
-
-extern "C" void DMA2_Stream5_IRQHandler()
-{
-    HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
 }
 
 } // namespace
