@@ -1,9 +1,3 @@
-/*
- * grid_buttons.c
- *
- *  Created on: 2018-01-29
- *      Author: Gedas
- */
 #include "grid/Grid.h"
 
 //#include "lcd/Lcd.h" // for debugging

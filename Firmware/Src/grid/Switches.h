@@ -25,21 +25,18 @@ public:
     Switches();
     ~Switches();
 
+    void discardAllPendingEvents();
+
     bool getButtonEvent(uint8_t* buttonNumber, ButtonEvent* buttonEvent);
     bool getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* steps );
 
     bool isButtonPressed( uint8_t buttonNumber );
-
-    void discardAllPendingEvents();
 
 private:
     grid_control::GridControl& gridControl;
 
     bool registeredButtonInput_[NUMBER_OF_BUTTONS] = {true, true}; // active low
 };
-
-
-
 
 } // namespace
 

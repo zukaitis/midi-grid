@@ -11,6 +11,22 @@ Switches::~Switches()
 {
 }
 
+void Switches::discardAllPendingEvents()
+{
+    uint8_t unusedUnsignedChar;
+    int8_t unusedSignedChar;
+    ButtonEvent unusedEvent;
+
+    // call methods while they have pending events
+    while (getButtonEvent(&unusedUnsignedChar, &unusedEvent))
+    {
+    }
+
+    while (getRotaryEncoderEvent(&unusedUnsignedChar, &unusedSignedChar))
+    {
+    }
+}
+
 // call this method after checking buttons, because it resets flag in GridControl
 bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* steps )
 {
@@ -96,22 +112,6 @@ bool Switches::getButtonEvent( uint8_t* buttonNumber, ButtonEvent* buttonEvent )
         }
     }
     return false;
-}
-
-void Switches::discardAllPendingEvents()
-{
-    uint8_t unusedUnsignedChar;
-    int8_t unusedSignedChar;
-    ButtonEvent unusedEvent;
-
-    // call methods while they have pending events
-    while (getButtonEvent(&unusedUnsignedChar, &unusedEvent))
-    {
-    }
-
-    while (getRotaryEncoderEvent(&unusedUnsignedChar, &unusedSignedChar))
-    {
-    }
 }
 
 bool Switches::isButtonPressed( uint8_t buttonNumber )

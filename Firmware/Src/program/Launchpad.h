@@ -45,8 +45,8 @@ enum Layout
 
 static const uint8_t SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH = 64;
 
-static const uint8_t challengeResponse[10] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7};
-static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = {0xF0, 0x00, 0x20, 0x29, 0x02, 0x18};
+static const uint8_t challengeResponse[10] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
+static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
 
 static const uint8_t sessionLayout[10][8] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
@@ -114,35 +114,34 @@ public:
     Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
 
     void runProgram();
+
+private:
     Launchpad95Mode getLaunchpad95Mode();
     Launchpad95Submode getLaunchpad95Submode();
-private:
-    void setCurrentLayout(uint8_t layout);
-    void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
-    void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
-    void processSystemExclusiveMidiPacket( const midi::MidiPacket* packet );
-    void processSystemExclusiveMessage(uint8_t *message, uint8_t length);
-    void processDawInfoMessage( char* message, uint8_t length );
 
-    void printMidiMessage(midi::MidiPacket* packet);
-    void printSysExMessage(uint8_t *message, uint8_t length);
+    void processDawInfoMessage( char* message, uint8_t length );
+    void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
+    void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
+    void processSystemExclusiveMessage( uint8_t *message, uint8_t length );
+    void processSystemExclusiveMidiPacket( const midi::MidiPacket* packet );
+
+    void printMidiMessage( midi::MidiPacket* packet );
+    void printSysExMessage( uint8_t *message, uint8_t length );
+
+    void setCurrentLayout( uint8_t layout );
 
     grid::Grid& grid;
-    switches::Switches& switches;
     gui::Gui& gui;
+    switches::Switches& switches;
     midi::UsbMidi& usbMidi;
 
+    Launchpad95Mode currentLaunchpad95Mode_ = Launchpad95Mode_UNKNOWN; // used only to identify submode
+    Layout currentLayout_ = Layout_SESSION;
 
-    uint8_t currentLayout = Layout_SESSION;
+    uint8_t systemExclusiveInputMessage_[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
+    uint8_t systemExclusiveInputMessageLength_ = 0;
 
-    Launchpad95Mode currentLaunchpad95Mode = Launchpad95Mode_UNKNOWN; // used only to identify submode
-
-    uint8_t systemExclusiveInputMessage[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
-    uint8_t systemExclusiveInputMessageLength = 0;
-
-    int16_t rotaryControlValue[2] = {64, 64};
-
-    //midi::MidiInput midiInput;
+    int16_t rotaryControlValue_[2] = { 64, 64 };
 };
 
 } // namespace

@@ -136,9 +136,6 @@ void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t len
                 buffer[2] = 0;
                 buffer[3] = 0;
                 break;
-//            case 0:
-//                // should be impossible
-//                break;
             default: // more than 3 bytes left
                 buffer[0] = 0x04;
                 buffer[1] = data[i++];

@@ -1,14 +1,6 @@
-/*
- * LcdConfiguration.hpp
- *
- *  Created on: 2018-03-04
- *      Author: Gedas
- */
+#ifndef LCD_LCDCONTROL_H_
+#define LCD_LCDCONTROL_H_
 
-#ifndef LCD_LCDCONTROL_HPP_
-#define LCD_LCDCONTROL_HPP_
-
-//#include <stdint.h>
 #include "stm32f4xx_hal.h"
 
 namespace lcd_control
@@ -23,6 +15,8 @@ static const uint16_t LCD_LIGHT_Pin = GPIO_PIN_14;
 static const uint16_t LCD_MOSI_Pin = GPIO_PIN_15;
 
 static TIM_TypeDef* const BACKLIGHT_TIMER = TIM10; //TIM1;
+
+static const uint16_t LCD_BUFFER_SIZE = 504;
 
 static const uint8_t NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS = 65;
 
@@ -41,30 +35,23 @@ public:
     ~LcdControl();
 
     void initialize();
-    void update(uint8_t* buffer);
-
     void setBacklightIntensity( uint8_t intensity );
-
-    const uint16_t LCD_BUFFER_SIZE = 504;
+    void update( uint8_t* buffer );
 
 private:
+    void initializeBacklight();
+    void initializeDma();
+    void initializeGpio();
+    void initializeSpi();
 
     void resetController();
+    void setCursor( const uint8_t x, const uint8_t y );
     void writeCommand( const uint8_t command );
 
-    void initializeDma();
-
-    void setCursor( const uint8_t x, const uint8_t y );
-    void initializeGpio();
-
-    void initializeSpi();
-    void LCD_init();
-    void initializeBacklightPwm();
-
-    TIM_HandleTypeDef lcdBacklightPwmTimer;
-    SPI_HandleTypeDef lcdSpi;
+    TIM_HandleTypeDef lcdBacklightPwmTimer_;
+    SPI_HandleTypeDef lcdSpi_;
 };
 
 } // namespace
 
-#endif /* LCD_LCDCONTROL_HPP_ */
+#endif // LCD_LCDCONTROL_H_
