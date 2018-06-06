@@ -16,7 +16,7 @@ Lcd::~Lcd()
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcdControl.LCD_BUFFER_SIZE );
+    memset( &lcdBuffer_[0][0], 0x00, lcd_control::BUFFER_SIZE );
     updateRequired_ = true;
 }
 
@@ -183,7 +183,7 @@ void Lcd::refresh()
     {
         if (updateRequired_)
         {
-            lcdControl.update( &lcdBuffer_[0][0] );
+            lcdControl.transmit( &lcdBuffer_[0][0] );
             updateRequired_ = false;
         }
 

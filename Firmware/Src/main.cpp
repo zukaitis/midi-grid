@@ -55,7 +55,6 @@ extern "C" {
 #include "usb/queue32.h"
 }
 
-
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void); // semihosting
 #endif

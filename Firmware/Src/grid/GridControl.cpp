@@ -202,7 +202,7 @@ void GridControl::initializeDma()
     ledOutputDmaInitConfiguration.MemInc = DMA_MINC_ENABLE;
     ledOutputDmaInitConfiguration.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     ledOutputDmaInitConfiguration.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    ledOutputDmaInitConfiguration.Mode = DMA_CIRCULAR; //DMA_NORMAL;
+    ledOutputDmaInitConfiguration.Mode = DMA_CIRCULAR;
     ledOutputDmaInitConfiguration.Priority = DMA_PRIORITY_HIGH;
     ledOutputDmaInitConfiguration.FIFOMode = DMA_FIFOMODE_ENABLE;
     ledOutputDmaInitConfiguration.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
