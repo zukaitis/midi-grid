@@ -13,7 +13,7 @@ Grid::~Grid()
 {
 }
 
-bool Grid::areColoursEqual(const Colour& colour1, const Colour& colour2) const
+bool Grid::areColoursEqual( const Colour& colour1, const Colour& colour2 ) const
 {
     bool equal = true;
     equal &= (colour1.Red == colour2.Red);
@@ -41,7 +41,7 @@ void Grid::enable()
     }
 }
 
-bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent)
+bool Grid::getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent )
 {
     int8_t x, y;
     uint8_t buttonColumnChanges, buttonInput;
@@ -53,9 +53,9 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
         gridControl.gridInputUpdated = false;
         for (x=0; x<grid_control::NUMBER_OF_COLUMNS; x++)
         {
-            if (gridControl.isGridColumnInputStable(x))
+            if (gridControl.isGridColumnInputStable( x ))
             {
-                buttonInput = gridControl.getGridButtonInput(x);
+                buttonInput = gridControl.getGridButtonInput( x );
                 buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
@@ -83,7 +83,7 @@ bool Grid::getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, Bu
     return false;
 }
 
-Colour Grid::getLedColour(uint8_t ledPositionX, uint8_t ledPositionY) const
+Colour Grid::getLedColour( uint8_t ledPositionX, uint8_t ledPositionY ) const
 {
     return led_[ledPositionX][ledPositionY].colour;
 }
@@ -140,18 +140,18 @@ void Grid::refreshLeds() const
                 dimmedColour.Green = (dimmedColour.Green * (19 - ledPulseStepNumber)) / 16;
                 dimmedColour.Blue = (dimmedColour.Blue * (19 - ledPulseStepNumber)) / 16;
             }
-            setLedColour(pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour);
+            setLedColour( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour );
         }
         ledPulseCheckTime = HAL_GetTick() + LED_PULSE_STEP_PERIOD_MS;
     }
 }
 
-void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour)
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour )
 {
-    setLed(ledPositionX, ledPositionY, colour, LedLightingType_LIGHT);
+    setLed( ledPositionX, ledPositionY, colour, LedLightingType_LIGHT );
 }
 
-void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType)
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType )
 {
     uint8_t i;
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
@@ -159,7 +159,7 @@ void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const 
     {
         for (i=0; i<numberOfFlashingLeds_; i++)
         {
-            if ((ledPositionX == flashingLed_[i].positionX)&&(ledPositionY == flashingLed_[i].positionY))
+            if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
             {
                 flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1]; // move last element into the place of element that is being removed
                 numberOfFlashingLeds_--;
@@ -185,7 +185,7 @@ void Grid::setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const 
         case LedLightingType_LIGHT:
             led_[ledPositionX][ledPositionY].colour = colour;
             led_[ledPositionX][ledPositionY].lightingType = LedLightingType_LIGHT;
-            setLedColour(ledPositionX, ledPositionY, colour);
+            setLedColour( ledPositionX, ledPositionY, colour );
             break;
         case LedLightingType_FLASH:
             flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;

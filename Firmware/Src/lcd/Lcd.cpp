@@ -16,7 +16,7 @@ Lcd::~Lcd()
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcd_control::LCD_BUFFER_SIZE );
+    memset( &lcdBuffer_[0][0], 0x00, lcdControl.LCD_BUFFER_SIZE );
     updateRequired_ = true;
 }
 
@@ -87,7 +87,7 @@ void Lcd::print( const char *string, uint8_t x, const uint8_t y )
     {
         while (*string)
         {
-            putChar(x, y, *string++);
+            putChar( x, y, *string++ );
             x += 6;
         }
     }
@@ -103,21 +103,21 @@ void Lcd::print( const char *string, const uint8_t x, const uint8_t y, const Jus
         case Justification_RIGHT:
             if (textWidth < x)
             {
-                print(string, (x - textWidth), y);
+                print( string, (x - textWidth), y );
             }
             break;
         case Justification_CENTER:
             textWidth = textWidth / 2;
             if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
             {
-                print(string, (x - textWidth), y);
+                print( string, (x - textWidth), y );
             }
             break;
         case Justification_LEFT:
         default:
             if (textWidth < (WIDTH - x))
             {
-                print(string, x, y);
+                print( string, x, y );
             }
             break;
     }
@@ -125,12 +125,12 @@ void Lcd::print( const char *string, const uint8_t x, const uint8_t y, const Jus
 
 void Lcd::printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
 {
-    uint16_t divisor = pow(10, numberOfDigits);
+    uint16_t divisor = pow( 10, numberOfDigits );
     while (divisor > 1)
     {
         number %= divisor;
         divisor /= 10;
-        displayImage(x, y, digitBig[number/divisor]);
+        displayImage( x, y, digitBig[number/divisor] );
         x += digitBig[0].width;
     }
 }

@@ -1,22 +1,15 @@
-/*
- * Switches.h
- *
- *  Created on: 2018-04-08
- *      Author: Gedas
- */
-
 #ifndef GRID_SWITCHES_H_
 #define GRID_SWITCHES_H_
 
-#include "Types.h"
 #include "grid/GridControl.h"
+#include "Types.h"
 
 namespace switches
 {
 
 static const uint8_t NUMBER_OF_BUTTONS = 2;
 static const uint8_t NUMBER_OF_ROTARY_ENCODERS = 2;
-static const uint8_t NUMBER_OF_ROTARY_ENCODER_STEPS = 4;
+static const uint8_t NUMBER_OF_ROTARY_ENCODER_TIME_STEPS = 10;
 
 // class used to acquire values from two additional buttons and rotary encoders
 class Switches
@@ -40,4 +33,4 @@ private:
 
 } // namespace
 
-#endif /* GRID_SWITCHES_H_ */
+#endif // GRID_SWITCHES_H_

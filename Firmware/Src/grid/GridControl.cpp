@@ -1,10 +1,3 @@
-/*
- * GridControl.cpp
- *
- *  Created on: 2018-03-06
- *      Author: Gedas
- */
-
 #include "grid/GridControl.h"
 
 namespace grid_control
@@ -21,13 +14,13 @@ extern "C" void dmaErrorCallback(__DMA_HandleTypeDef * hdma) // unused
 {
 }
 
-extern "C" void inputReadoutToMemory0CompleteCallbackWrapper(__DMA_HandleTypeDef * hdma)
+extern "C" void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
 {
     static GridControl& gridControl = GridControl::getInstance();
     gridControl.inputReadoutToMemory0CompleteCallback();
 }
 
-extern "C" void inputReadoutToMemory1CompleteCallbackWrapper(__DMA_HandleTypeDef * hdma)
+extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
 {
     static GridControl& gridControl = GridControl::getInstance();
     gridControl.inputReadoutToMemory1CompleteCallback();
@@ -42,17 +35,17 @@ GridControl::~GridControl()
 {
 }
 
-bool GridControl::getButtonInput(const uint8_t button) const
+bool GridControl::getButtonInput( const uint8_t button ) const
 {
     return (0 != (BUTTON_MASK[button] & buttonInput_[currentlyStableInputBuffer_][0]));
 }
 
-uint8_t GridControl::getGridButtonInput(const uint8_t column) const
+uint8_t GridControl::getGridButtonInput( const uint8_t column ) const
 {
     return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput_[currentlyStableInputBuffer_][column]);
 }
 
-uint8_t GridControl::getRotaryEncodersInput(const uint8_t encoder, uint8_t step) const
+uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const
 {
     step *= 2;
     return (ROTARY_ENCODER_MASK[encoder] & buttonInput_[currentlyStableInputBuffer_][step])>>ROTARY_ENCODER_SHIFT[encoder];
@@ -66,17 +59,17 @@ void GridControl::initialize()
     initializeDma();
 }
 
-bool GridControl::isButtonInputStable(const uint8_t button) const
+bool GridControl::isButtonInputStable( const uint8_t button ) const
 {
     return (0 == (BUTTON_MASK[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
 }
 
-bool GridControl::isGridColumnInputStable(const uint8_t column) const
+bool GridControl::isGridColumnInputStable( const uint8_t column ) const
 {
     return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][column] ^ buttonInput_[1][column])));
 }
 
-void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour )
+void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
 {
     ledPositionX = (ledPositionX + NUMBER_OF_COLUMNS - TIMER_FRAME_OFFSET) % NUMBER_OF_COLUMNS;
 
@@ -96,37 +89,36 @@ void GridControl::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool
 
 void GridControl::startTimers()
 {
-    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerRed_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerRed_);
+    TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE );
+    __HAL_TIM_ENABLE( &pwmTimerRed_);
 
-    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerGreen_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerGreen_);
+    TIM_CCxChannelCmd( pwmTimerGreen_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerGreen_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerGreen_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerGreen_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE );
+    __HAL_TIM_ENABLE( &pwmTimerGreen_ );
 
-    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(pwmTimerBlue_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    __HAL_TIM_ENABLE(&pwmTimerBlue_);
+    TIM_CCxChannelCmd( pwmTimerBlue_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerBlue_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerBlue_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( pwmTimerBlue_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE );
+    __HAL_TIM_ENABLE( &pwmTimerBlue_ );
 
-    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE);
-    TIM_CCxChannelCmd(baseInterruptTimer_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE);
-    HAL_TIM_Base_Start(&baseInterruptTimer_);
+    TIM_CCxChannelCmd( baseInterruptTimer_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( baseInterruptTimer_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( baseInterruptTimer_.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE );
+    TIM_CCxChannelCmd( baseInterruptTimer_.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE );
+    HAL_TIM_Base_Start( &baseInterruptTimer_ );
 }
 
 void GridControl::turnAllLedsOff()
 {
-    uint8_t x, y;
-    for (x = 0; x < NUMBER_OF_COLUMNS; x++)
+    for (uint8_t x = 0; x < NUMBER_OF_COLUMNS; x++)
     {
-        for (y = 0; y < NUMBER_OF_ROWS; y++)
+        for (uint8_t y = 0; y < NUMBER_OF_ROWS; y++)
         {
             pwmOutputRed_[x][y] = PWM_CLOCK_PERIOD; //LED_PASSIVE;
             pwmOutputGreen_[x][y] = PWM_CLOCK_PERIOD;
@@ -140,7 +132,7 @@ void GridControl::initializeBaseTimer()
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
     TIM_MasterConfigTypeDef timerMasterConfiguration;
 
-    __HAL_RCC_TIM1_CLK_ENABLE(); //__HAL_RCC_TIM10_CLK_ENABLE();
+    __HAL_RCC_TIM1_CLK_ENABLE();
 
     baseInterruptTimer_.Instance = BASE_INTERRUPT_TIMER;
     baseInterruptTimer_.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1; // 1us is the desired timer step

@@ -519,4 +519,4 @@ static const uint8_t progressArcArray[NUMBER_OF_ARC_POSITIONS][152] = {
         0x03, 0x07, 0x07, 0x03, 0x01, 0x00, 0x00, 0x00,  },
 };
 } // namespace
-#endif
+#endif // LCD_PROGRESS_ARC_H_

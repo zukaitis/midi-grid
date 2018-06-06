@@ -1,8 +1,8 @@
 #ifndef GRID_BUTTONS_GRIDCONTROL_H_
 #define GRID_BUTTONS_GRIDCONTROL_H_
 
-#include "stm32f4xx_hal.h"
 #include "Types.h"
+#include "stm32f4xx_hal.h"
 
 namespace grid_control
 {
@@ -127,7 +127,7 @@ public:
     bool isButtonInputStable( const uint8_t button ) const;
     bool isGridColumnInputStable( const uint8_t column ) const;
 
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, bool directLed, const Colour colour );
+    void setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour );
     void startTimers();
     void turnAllLedsOff();
 
@@ -160,4 +160,4 @@ private:
 };
 
 } // namespace
-#endif /* GRID_BUTTONS_GRIDCONTROL_H_ */
+#endif // GRID_BUTTONS_GRIDCONTROL_H_

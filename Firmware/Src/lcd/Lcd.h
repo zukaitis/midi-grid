@@ -27,7 +27,7 @@ struct Image
     uint8_t height;
 };
 
-static const Image usbLogo = {usbLogoArray, 180, 60, 24};
+static const Image usbLogo = { usbLogoArray, 180, 60, 24 };
 
 static const Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
 static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
@@ -51,6 +51,7 @@ static const Image digitBig[10] = {
 static const uint8_t WIDTH = 84;
 static const uint8_t HEIGHT = 48;
 static const uint8_t NUMBER_OF_LINES = 6;
+static const uint8_t NUMBER_OF_CHARACTERS_IN_LINE = 14;
 static const uint8_t NUMBER_OF_PROGRESS_ARC_POSITIONS = NUMBER_OF_ARC_POSITIONS;
 
 class Lcd
@@ -75,7 +76,7 @@ public:
     void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification );
     void refresh();
-    void setBacklightIntensity(const uint8_t intensity);
+    void setBacklightIntensity( const uint8_t intensity );
 
 private:
     Lcd();

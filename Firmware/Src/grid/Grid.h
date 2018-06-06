@@ -1,4 +1,3 @@
-
 #ifndef GRID_BUTTONS_H_
 #define GRID_BUTTONS_H_
 
@@ -53,17 +52,17 @@ public:
     Grid();
     ~Grid();
 
-    bool areColoursEqual(const Colour& colour1, const Colour& colour2) const;
+    bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
 
     void discardAllPendingButtonEvents();
     void enable();
-    bool getButtonEvent(uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent);
-    Colour getLedColour(uint8_t ledPositionX, uint8_t ledPositionY) const;
+    bool getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent );
+    Colour getLedColour( uint8_t ledPositionX, uint8_t ledPositionY ) const;
     void initialize();
     void refreshLeds() const;
 
-    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour);
-    void setLed(const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType);
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour );
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType );
 
     void turnAllLedsOff();
 
@@ -84,5 +83,5 @@ private:
     uint8_t numberOfPulsingLeds_ = 0;
 };
 
-} //namespace
-#endif /* GRID_BUTTONS_H_ */
+} // namespace
+#endif // GRID_BUTTONS_H_

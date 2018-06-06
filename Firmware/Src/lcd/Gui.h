@@ -1,14 +1,6 @@
-/*
- * gui.h
- *
- *  Created on: 2018-02-27
- *      Author: Gedas
- */
-
 #ifndef LCD_GUI_H_
 #define LCD_GUI_H_
 
-//#include "lcd/Lcd.h"
 #include "program/Launchpad.h"
 
 namespace lcd
@@ -58,65 +50,55 @@ public:
     Gui();
     ~Gui();
 
-    void setLaunchpad95Mode( launchpad::Launchpad95Mode mode );
-    void setLaunchpad95Submode( launchpad::Launchpad95Submode submode );
-    void setTrackName(char* name, uint8_t length);
-    void setClipName(char* name, uint8_t length);
-    void setDeviceName(char* name, uint8_t length);
-    void setStatus(const bool isPlaying, const bool isRecording, const bool isSessionRecording);
-    void setTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
-            const bool nudgeDown, const bool nudgeUp );
-    void displayUsbLogo();
-    void enterLaunchpad95Mode();
-    void displayRotaryControlValues(const uint8_t value1, const uint8_t value2);
     void displayConnectingImage();
+    void displayRotaryControlValues( const uint8_t value1, const uint8_t value2 );
     void displayWaitingForMidi();
-
+    void enterLaunchpad95Mode();
     void enterInternalMenu();
-
+    void registerMidiInputActivity();
+    void registerMidiOutputActivity();
     void refresh();
     void refreshStatusBar();
     void refreshMainArea();
-
-    void registerMidiInputActivity();
-    void registerMidiOutputActivity();
+    void setDawClipName( const char* const name, const uint8_t length );
+    void setDawDeviceName( const char* const name, const uint8_t length );
+    void setDawStatus( const bool isPlaying, const bool isRecording, const bool isSessionRecording );
+    void setDawTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
+            const bool nudgeDown, const bool nudgeUp );
+    void setDawTrackName( const char* const name, const uint8_t length );
+    void setLaunchpad95Mode( const launchpad::Launchpad95Mode mode );
+    void setLaunchpad95Submode( const launchpad::Launchpad95Submode submode );
 
 private:
-    void displayLaunchpad95Info();
-
-    void displayLaunchpad95Mode();
-    void displayLaunchpad95Submode();
-
-    void displayTrackName();
     void displayClipName();
     void displayDeviceName();
+    void displayLaunchpad95Info();
+    void displayLaunchpad95Mode();
+    void displayLaunchpad95Submode();
     void displayStatus();
     void displayTimingStatus();
+    void displayTrackName();
 
     lcd::Lcd& lcd;
-    bool statusBarActive = false;
 
-    launchpad::Launchpad95Mode launchpad95Mode = launchpad::Launchpad95Mode_UNKNOWN;
-    launchpad::Launchpad95Submode launchpad95Submode = launchpad::Launchpad95Submode_DEFAULT;
+    char dawClipName_[15] = " \0";
+    char dawDeviceName_[15] = " \0";
+    char dawTrackName_[15] = " \0";
+    bool dawIsPlaying_ = false;
+    bool dawIsRecording_ = false;
+    bool dawIsSessionRecording_ = false;
+    bool dawNudgeDownActive_ = false;
+    bool dawNudgeUpActive_ = false;
+    uint16_t dawTempo_ = 0;
+    uint8_t dawSignatureNumerator_ = 0;
+    uint8_t dawSignatureDenominator_ = 0;
 
-    bool isPlaying_ = false;
-    bool isRecording_ = false;
-    bool isSessionRecording_ = false;
-
-    uint16_t tempo_ = 0;
-    uint8_t signatureNumerator_ = 0;
-    uint8_t signatureDenominator_ = 0;
-    bool nudgeDownActive_ = false;
-    bool nudgeUpActive_ = false;
-
-    char trackName[15] = " \0";
-    char clipName[15] = " \0";
-    char deviceName[15] = " \0";
-
+    launchpad::Launchpad95Mode launchpad95Mode_ = launchpad::Launchpad95Mode_UNKNOWN;
+    launchpad::Launchpad95Submode launchpad95Submode_ = launchpad::Launchpad95Submode_DEFAULT;
     uint16_t midiInputTimeout_ = 0;
     uint16_t midiOutputTimeout_ = 0;
-
     uint16_t rotaryControlDisplayTimeout_ = 0;
+    bool statusBarActive_ = false;
 };
 
 } // namespace
