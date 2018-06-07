@@ -20,8 +20,8 @@ public:
 
     void discardAllPendingEvents();
 
-    bool getButtonEvent(uint8_t* buttonNumber, ButtonEvent* buttonEvent);
-    bool getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* steps );
+    bool getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent );
+    bool getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps );
 
     bool isButtonPressed( uint8_t buttonNumber );
 

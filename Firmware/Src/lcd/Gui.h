@@ -60,12 +60,12 @@ public:
     void refresh();
     void refreshStatusBar();
     void refreshMainArea();
-    void setDawClipName( const char* const name, const uint8_t length );
-    void setDawDeviceName( const char* const name, const uint8_t length );
+    void setDawClipName( const char& name, const uint8_t length );
+    void setDawDeviceName( const char& name, const uint8_t length );
     void setDawStatus( const bool isPlaying, const bool isRecording, const bool isSessionRecording );
     void setDawTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
             const bool nudgeDown, const bool nudgeUp );
-    void setDawTrackName( const char* const name, const uint8_t length );
+    void setDawTrackName( const char& name, const uint8_t length );
     void setLaunchpad95Mode( const launchpad::Launchpad95Mode mode );
     void setLaunchpad95Submode( const launchpad::Launchpad95Submode submode );
 

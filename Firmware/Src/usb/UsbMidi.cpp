@@ -1,14 +1,3 @@
-/**
-  ******************************************************************************
-  * @file           : usbd_midi_if.c
-  * @brief          :
-  ******************************************************************************
-
-    (CC at)2016 by D.F.Mac. @TripArts Music
-
-*/
-
-/* Includes ------------------------------------------------------------------*/
 #include "usb/UsbMidi.h"
 
 #include "stm32f4xx_hal.h"
@@ -29,13 +18,12 @@ USBD_MIDI_ItfTypeDef USBD_Interface_fops_FS =
 
 static uint16_t MIDI_DataRx(uint8_t *msg, uint16_t length)
 {
-    uint16_t cnt;
     uint16_t msgs = length / 4;
     uint16_t chk = length % 4;
     volatile uint32_t value;
     if(chk == 0)
     {
-        for(cnt = 0;cnt < msgs;cnt ++)
+        for(uint16_t cnt = 0;cnt < msgs;cnt ++)
         {
             value = *(((uint32_t *)msg)+cnt);
             b4arrq_push(&rxq,((uint32_t *)msg)+cnt);
@@ -71,6 +59,36 @@ UsbMidi::~UsbMidi()
 {
 }
 
+bool UsbMidi::getPacket( MidiPacket& packet)
+{
+    MidiInput midiInput;
+    bool packetAvailable = false;
+    if (0 != rxq.num)
+    {
+        midiInput.input = *b4arrq_pop(&rxq);
+        packet = midiInput.packet;
+        packetAvailable = true;
+    }
+    return packetAvailable;
+}
+
+bool UsbMidi::isPacketAvailable()
+{
+    return (0 != rxq.num);
+}
+
+void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )
+{
+    uint8_t buffer[4];
+    buffer[0] = 0x0B;
+    buffer[1] = 0xB0 | channel;
+    buffer[2] = 0x7F & control;
+    buffer[3] = 0x7F & value;
+
+    MIDI_DataTx(buffer,4);
+    USBD_MIDI_SendPacket();
+}
+
 void UsbMidi::sendNoteOn( const uint8_t channel, const uint8_t note, const uint8_t velocity )
 {
     uint8_t buffer[4];
@@ -94,19 +112,6 @@ void UsbMidi::sendNoteOff( const uint8_t channel, const uint8_t note )
     MIDI_DataTx(buffer,4);
     USBD_MIDI_SendPacket();
 }
-
-void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )
-{
-    uint8_t buffer[4];
-    buffer[0] = 0x0B;
-    buffer[1] = 0xB0 | channel;
-    buffer[2] = 0x7F & control;
-    buffer[3] = 0x7F & value;
-
-    MIDI_DataTx(buffer,4);
-    USBD_MIDI_SendPacket();
-}
-
 
 void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t length )
 {
@@ -146,24 +151,6 @@ void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t len
         MIDI_DataTx(buffer,4);
         USBD_MIDI_SendPacket();
     }
-}
-
-bool UsbMidi::getPacket( MidiPacket& packet)
-{
-    MidiInput midiInput;
-    bool packetAvailable = false;
-    if (0 != rxq.num)
-    {
-        midiInput.input = *b4arrq_pop(&rxq);
-        packet = midiInput.packet;
-        packetAvailable = true;
-    }
-    return packetAvailable;
-}
-
-bool UsbMidi::isPacketAvailable()
-{
-    return (0 != rxq.num);
 }
 
 } // namespace

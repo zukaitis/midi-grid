@@ -18,17 +18,17 @@ void Switches::discardAllPendingEvents()
     ButtonEvent unusedEvent;
 
     // call methods while they have pending events
-    while (getButtonEvent(&unusedUnsignedChar, &unusedEvent))
+    while (getButtonEvent( unusedUnsignedChar, unusedEvent ))
     {
     }
 
-    while (getRotaryEncoderEvent(&unusedUnsignedChar, &unusedSignedChar))
+    while (getRotaryEncoderEvent( unusedUnsignedChar, unusedSignedChar ))
     {
     }
 }
 
 // call this method after checking buttons, because it resets flag in GridControl
-bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* steps )
+bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps )
 {
     static const int8_t encoderStates[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
     static int8_t microstep[2] = {0, 0};
@@ -44,7 +44,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* step
         gridControl.switchInputUpdated = false;
         for (uint8_t encoder = 0; encoder < NUMBER_OF_ROTARY_ENCODERS; encoder++)
         {
-            for (int8_t timeStep = 0; timeStep < NUMBER_OF_ROTARY_ENCODER_TIME_STEPS; timeStep++)
+            for (uint8_t timeStep = 0; timeStep < NUMBER_OF_ROTARY_ENCODER_TIME_STEPS; timeStep++)
             {
                 previousEncoderValue[encoder] <<= 2;
                 previousEncoderValue[encoder] |= gridControl.getRotaryEncodersInput( encoder, timeStep );
@@ -74,8 +74,8 @@ bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* step
                 }
 
                 previousEventTime[encoder] = HAL_GetTick();
-                *rotaryEncoderNumber = encoder;
-                *steps = ((microstep[encoder] > 0) ? 1 * velocityMultiplier : -1 * velocityMultiplier);
+                rotaryEncoderNumber = encoder;
+                steps = ((microstep[encoder] > 0) ? 1 * velocityMultiplier : -1 * velocityMultiplier);
                 microstep[encoder] %= 4;
                 return true;
             }
@@ -84,7 +84,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t* rotaryEncoderNumber, int8_t* step
     return false;
 }
 
-bool Switches::getButtonEvent( uint8_t* buttonNumber, ButtonEvent* buttonEvent )
+bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 {
     static bool buttonChangeDetected = false;
     bool buttonInput;
@@ -92,16 +92,16 @@ bool Switches::getButtonEvent( uint8_t* buttonNumber, ButtonEvent* buttonEvent )
     if (gridControl.switchInputUpdated || buttonChangeDetected)
     {
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
-        for (int8_t button = 0; button < NUMBER_OF_BUTTONS; button++)
+        for (uint8_t button = 0; button < NUMBER_OF_BUTTONS; button++)
         {
             if (gridControl.isButtonInputStable(button))
             {
                 buttonInput = gridControl.getButtonInput(button);
                 if (registeredButtonInput_[button] != buttonInput)
                 {
-                    *buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
+                    buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
                     registeredButtonInput_[button] = buttonInput;
-                    *buttonNumber = button;
+                    buttonNumber = button;
                     buttonChangeDetected = true;
                     return true;
                 }

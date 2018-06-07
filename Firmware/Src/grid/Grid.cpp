@@ -28,7 +28,7 @@ void Grid::discardAllPendingButtonEvents()
     ButtonEvent unusedEvent;
 
     // call method while it has pending events
-    while (getButtonEvent(&unusedUnsignedChar, &unusedUnsignedChar, &unusedEvent))
+    while (getButtonEvent( unusedUnsignedChar, unusedUnsignedChar, unusedEvent ))
     {
     }
 }
@@ -41,9 +41,8 @@ void Grid::enable()
     }
 }
 
-bool Grid::getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent )
+bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent )
 {
-    int8_t x, y;
     uint8_t buttonColumnChanges, buttonInput;
     static bool buttonChangeDetected = false;
 
@@ -51,7 +50,7 @@ bool Grid::getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, B
     {
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
         gridControl.gridInputUpdated = false;
-        for (x=0; x<grid_control::NUMBER_OF_COLUMNS; x++)
+        for (int8_t x = 0; x < grid_control::NUMBER_OF_COLUMNS; x++)
         {
             if (gridControl.isGridColumnInputStable( x ))
             {
@@ -59,19 +58,19 @@ bool Grid::getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, B
                 buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
-                    for (y=0; y<grid_control::NUMBER_OF_ROWS; y++)
+                    for (int8_t y = 0; y < grid_control::NUMBER_OF_ROWS; y++)
                     {
                         if (0 != ((buttonColumnChanges >> y) & 0x0001))
                         {
-                            *buttonEvent = static_cast<ButtonEvent>((buttonInput >> y) & 0x01);
+                            buttonEvent = static_cast<ButtonEvent>((buttonInput >> y) & 0x01);
                             registeredButtonInput_[x] ^= (1 << y); // toggle bit that was registered
                             if (x >= NUMBER_OF_COLUMNS)
                             {
                                 x -= NUMBER_OF_COLUMNS;
                                 y += grid_control::NUMBER_OF_ROWS;
                             }
-                            *buttonPositionX = x;
-                            *buttonPositionY = y;
+                            buttonPositionX = x;
+                            buttonPositionY = y;
                             buttonChangeDetected = true;
                             return true;
                         }
@@ -96,7 +95,6 @@ void Grid::initialize()
 
 void Grid::refreshLeds() const
 {
-    uint8_t i;
     static uint32_t ledFlashCheckTime = 0;
     static uint32_t ledPulseCheckTime = 0;
     static uint8_t ledPulseStepNumber = 0;
@@ -105,7 +103,7 @@ void Grid::refreshLeds() const
 
     if (HAL_GetTick() >= ledFlashCheckTime)
     {
-        for (i=0; i<numberOfFlashingLeds_; i++)
+        for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
         {
             setLedColour(
                     flashingLed_[i].positionX,
@@ -125,7 +123,7 @@ void Grid::refreshLeds() const
             ledPulseStepNumber = 0;
         }
 
-        for (i=0; i<numberOfPulsingLeds_; i++)
+        for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
         {
             dimmedColour = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].colour;
             if (3 >= ledPulseStepNumber)
@@ -153,11 +151,10 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
 
 void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType )
 {
-    uint8_t i;
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
     if (LedLightingType_FLASH == led_[ledPositionX][ledPositionY].lightingType)
     {
-        for (i=0; i<numberOfFlashingLeds_; i++)
+        for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
         {
             if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
             {
@@ -169,7 +166,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     }
     else if (LedLightingType_PULSE == led_[ledPositionX][ledPositionY].lightingType)
     {
-        for (i=0; i<numberOfPulsingLeds_; i++)
+        for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
         {
             if ((ledPositionX == pulsingLed_[i].positionX)&&(ledPositionY == pulsingLed_[i].positionY))
             {

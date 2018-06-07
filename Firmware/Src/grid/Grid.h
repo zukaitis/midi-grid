@@ -56,7 +56,7 @@ public:
 
     void discardAllPendingButtonEvents();
     void enable();
-    bool getButtonEvent( uint8_t* buttonPositionX, uint8_t* buttonPositionY, ButtonEvent* buttonEvent );
+    bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent );
     Colour getLedColour( uint8_t ledPositionX, uint8_t ledPositionY ) const;
     void initialize();
     void refreshLeds() const;

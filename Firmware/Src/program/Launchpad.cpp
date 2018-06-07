@@ -71,7 +71,7 @@ void Launchpad::runProgram()
             gui.registerMidiInputActivity();
         }
 
-        if (grid.getButtonEvent( &buttonX, &buttonY, &event ))
+        if (grid.getButtonEvent( buttonX, buttonY, event ))
         {
             velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
@@ -99,7 +99,7 @@ void Launchpad::runProgram()
             gui.registerMidiOutputActivity();
         }
 
-        if (switches.getButtonEvent( &buttonX,  &event ))
+        if (switches.getButtonEvent( buttonX,  event ))
         {
             if (0 == buttonX) // only send note on the event of black button
             {
@@ -113,7 +113,7 @@ void Launchpad::runProgram()
             }
         }
 
-        if (switches.getRotaryEncoderEvent( &buttonX, &rotaryStep ))
+        if (switches.getRotaryEncoderEvent( buttonX, rotaryStep ))
         {
             rotaryControlValue_[buttonX] += rotaryStep;
             if (rotaryControlValue_[buttonX] > 127)
@@ -276,13 +276,13 @@ void Launchpad::processDawInfoMessage( char* message, uint8_t length )
     switch (message[0])
     {
         case 't':
-            gui.setDawTrackName( &message[1], length-1 );
+            gui.setDawTrackName( message[1], length - 1 );
             break;
         case 'c':
-            gui.setDawClipName( &message[1], length-1 );
+            gui.setDawClipName( message[1], length - 1 );
             break;
         case 'd':
-            gui.setDawDeviceName( &message[1], length-1 );
+            gui.setDawDeviceName( message[1], length - 1 );
             break;
         case 's':
             gui.setDawStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );

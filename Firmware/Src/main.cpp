@@ -118,7 +118,7 @@ void ApplicationMain::run()
     while (!usbMidi.isPacketAvailable())
     {
         randomLightAnimation();
-        if (grid.getButtonEvent(&buttonX, &buttonY, &event))
+        if (grid.getButtonEvent( buttonX, buttonY, event ))
         {
             break;
         }
@@ -160,7 +160,7 @@ void ApplicationMain::runInternalMenu()
     {
         usbMidi.getPacket(unusedInputPacket); // check for incoming packets and discard them
 
-        if (grid.getButtonEvent( &buttonX, &buttonY, &event ))
+        if (grid.getButtonEvent( buttonX, buttonY, event ))
         {
             if ((7 == buttonX) && (0 == buttonY))
             {
@@ -169,7 +169,7 @@ void ApplicationMain::runInternalMenu()
             }
         }
 
-        if (switches.getButtonEvent(&buttonX,  &event))
+        if (switches.getButtonEvent( buttonX,  event ))
         {
             if ((1 == buttonX) && (!event))
             {
@@ -177,7 +177,7 @@ void ApplicationMain::runInternalMenu()
             }
         }
 
-        switches.getRotaryEncoderEvent(&buttonX, &rotaryStep); // unused atm
+        switches.getRotaryEncoderEvent( buttonX, rotaryStep ); // unused atm
 
         //grid.refreshLeds();
         gui.refresh();
@@ -199,27 +199,53 @@ void ApplicationMain::randomLightAnimation()
     static uint8_t ledsChanged = 0;
     uint8_t ledPositionX, ledPositionY;
     uint8_t fullyLitColour;
+    int8_t partlyLitColour1, partlyLitColour2;
     Colour colour;
     if (HAL_GetTick() >= newLightTime)
     {
         ledPositionX = rand() % 8;
         ledPositionY = rand() % 8;
-        fullyLitColour = rand() % 3;
+        fullyLitColour = rand() % 6;
+        partlyLitColour1 = (rand() % 97) - 32;
+        if (partlyLitColour1 < 0)
+        {
+            partlyLitColour1 = 0;
+        }
+        partlyLitColour2 = (rand() % 97) - 32;
+        if (partlyLitColour2 < 0)
+        {
+            partlyLitColour2 = 0;
+        }
         switch (fullyLitColour)
         {
             case 0:
                 colour.Red = 64;
-                colour.Green = rand() % 65;
-                colour.Blue = rand() % 65;
+                colour.Green = static_cast<uint8_t>(partlyLitColour1);
+                colour.Blue = static_cast<uint8_t>(partlyLitColour2);
                 break;
             case 1:
-                colour.Red = rand() % 65;
+                colour.Red = static_cast<uint8_t>(partlyLitColour1);
                 colour.Green = 64;
-                colour.Blue = rand() % 65;
+                colour.Blue = static_cast<uint8_t>(partlyLitColour2);
                 break;
             case 2:
-                colour.Red = rand() % 65;
-                colour.Green = rand() % 65;
+                colour.Red = static_cast<uint8_t>(partlyLitColour1);
+                colour.Green = static_cast<uint8_t>(partlyLitColour2);
+                colour.Blue = 64;
+                break;
+            case 3:
+                colour.Red = 64;
+                colour.Green = 64;
+                colour.Blue = static_cast<uint8_t>(partlyLitColour1);
+                break;
+            case 4:
+                colour.Red = 64;
+                colour.Green = static_cast<uint8_t>(partlyLitColour1);
+                colour.Blue = 64;
+                break;
+            case 5:
+                colour.Red = static_cast<uint8_t>(partlyLitColour1);
+                colour.Green = 64;
                 colour.Blue = 64;
                 break;
             default:
