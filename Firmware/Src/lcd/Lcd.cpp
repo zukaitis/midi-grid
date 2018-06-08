@@ -81,7 +81,7 @@ void Lcd::initialize()
     clear();
 }
 
-void Lcd::print( const char *string, uint8_t x, const uint8_t y )
+void Lcd::print( const char* string, uint8_t x, const uint8_t y )
 {
     if (y < HEIGHT) // width is checked in putChar
     {
@@ -94,7 +94,7 @@ void Lcd::print( const char *string, uint8_t x, const uint8_t y )
     updateRequired_ = true;
 }
 
-void Lcd::print( const char *string, const uint8_t x, const uint8_t y, const Justification justification )
+void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification )
 {
     uint8_t textWidth = strlen( string ) * FONT_WIDTH;
 
@@ -179,6 +179,7 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
 void Lcd::refresh()
 {
     static uint32_t refreshCheckTime = 0;
+
     if (HAL_GetTick() >= refreshCheckTime)
     {
         if (updateRequired_)

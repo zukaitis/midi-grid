@@ -34,7 +34,7 @@ public:
 
     void initialize();
     void setBacklightIntensity( uint8_t intensity );
-    void transmit( uint8_t* buffer );
+    void transmit( uint8_t* const buffer );
 
 private:
 

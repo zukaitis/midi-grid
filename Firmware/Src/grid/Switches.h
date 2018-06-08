@@ -11,6 +11,8 @@ static const uint8_t NUMBER_OF_BUTTONS = 2;
 static const uint8_t NUMBER_OF_ROTARY_ENCODERS = 2;
 static const uint8_t NUMBER_OF_ROTARY_ENCODER_TIME_STEPS = 10;
 
+static const int8_t ENCODER_STATES[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
+
 // class used to acquire values from two additional buttons and rotary encoders
 class Switches
 {
@@ -23,7 +25,7 @@ public:
     bool getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent );
     bool getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps );
 
-    bool isButtonPressed( uint8_t buttonNumber );
+    bool isButtonPressed( const uint8_t buttonNumber );
 
 private:
     grid_control::GridControl& gridControl;

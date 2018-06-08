@@ -30,13 +30,10 @@ void Switches::discardAllPendingEvents()
 // call this method after checking buttons, because it resets flag in GridControl
 bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps )
 {
-    static const int8_t encoderStates[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
     static int8_t microstep[2] = {0, 0};
     static uint32_t previousEventTime[2] = {0, 0};
     static bool encoderChangeDetected = false;
     static uint8_t previousEncoderValue[2] = {0, 0};
-    int8_t velocityMultiplier;
-    uint32_t interval;
 
     if (gridControl.switchInputUpdated || encoderChangeDetected)
     {
@@ -49,13 +46,15 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                 previousEncoderValue[encoder] <<= 2;
                 previousEncoderValue[encoder] |= gridControl.getRotaryEncodersInput( encoder, timeStep );
                 previousEncoderValue[encoder] &= 0x0F;
-                microstep[encoder] += encoderStates[previousEncoderValue[encoder]];
+                microstep[encoder] += ENCODER_STATES[previousEncoderValue[encoder]];
             }
 
             if ((microstep[encoder] >= 4) || (microstep[encoder] <= -4))
             {
+                int8_t velocityMultiplier;
                 // only respond every 4 microsteps (1 physical step)
-                interval = HAL_GetTick() - previousEventTime[encoder];
+                const uint32_t interval = HAL_GetTick() - previousEventTime[encoder];
+
                 if (interval >= 500)
                 {
                     velocityMultiplier = 1;
@@ -87,7 +86,6 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
 bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 {
     static bool buttonChangeDetected = false;
-    bool buttonInput;
 
     if (gridControl.switchInputUpdated || buttonChangeDetected)
     {
@@ -96,7 +94,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
         {
             if (gridControl.isButtonInputStable(button))
             {
-                buttonInput = gridControl.getButtonInput(button);
+                const bool buttonInput = gridControl.getButtonInput(button);
                 if (registeredButtonInput_[button] != buttonInput)
                 {
                     buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
@@ -111,7 +109,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
     return false;
 }
 
-bool Switches::isButtonPressed( uint8_t buttonNumber )
+bool Switches::isButtonPressed( const uint8_t buttonNumber )
 {
     bool isPressed = false;
     if (buttonNumber < NUMBER_OF_BUTTONS)

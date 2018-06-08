@@ -1,10 +1,3 @@
-/*
- * launchpad.c
- *
- *  Created on: 2018-02-21
- *      Author: Gedas
- */
-
 #include "program/launchpad.h"
 
 #include "grid/Grid.h"
@@ -27,10 +20,9 @@ Launchpad::Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui
 
 void Launchpad::runProgram()
 {
-    uint8_t buttonX, buttonY, velocity;
+    uint8_t buttonX, buttonY;
     int8_t rotaryStep;
     ButtonEvent event;
-    uint8_t codeIndexNumber;
     midi::MidiPacket inputPacket;
 
     grid.discardAllPendingButtonEvents();
@@ -40,13 +32,13 @@ void Launchpad::runProgram()
     usbMidi.sendControlChange( 0, 111, 127 ); // always send control to put device into mixer mode, when entering launchpad mode
     gui.registerMidiOutputActivity();
 
-    gui.enterLaunchpad95Mode(); // replace with enter l95 mode
+    gui.enterLaunchpad95Mode();
 
     while (1)
     {
         if (usbMidi.getPacket( inputPacket ))
         {
-            codeIndexNumber = inputPacket.header & 0x0F;
+            const uint8_t codeIndexNumber = inputPacket.header & 0x0F;
             switch (codeIndexNumber)
             {
                 case 0x09: // note on
@@ -62,10 +54,10 @@ void Launchpad::runProgram()
                 case 0x05:
                 case 0x06:
                 case 0x07:
-                    processSystemExclusiveMidiPacket( &inputPacket );
+                    processSystemExclusiveMidiPacket( inputPacket );
                     break;
                 default:
-                    printMidiMessage( &inputPacket );
+                    printMidiMessage( inputPacket );
                     break;
             }
             gui.registerMidiInputActivity();
@@ -73,7 +65,7 @@ void Launchpad::runProgram()
 
         if (grid.getButtonEvent( buttonX, buttonY, event ))
         {
-            velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
+            const uint8_t velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
             if (9 == buttonX) // control row
             {
                 usbMidi.sendControlChange( 0, sessionLayout[buttonX][buttonY], velocity );
@@ -103,7 +95,7 @@ void Launchpad::runProgram()
         {
             if (0 == buttonX) // only send note on the event of black button
             {
-                velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
+                const uint8_t velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
                 usbMidi.sendNoteOn( 5, 55, velocity );
                 gui.registerMidiOutputActivity();
             }
@@ -136,7 +128,7 @@ void Launchpad::runProgram()
 
 Launchpad95Mode Launchpad::getLaunchpad95Mode()
 {
-    enum Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
+    Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
     Colour colour;
 
     do
@@ -271,27 +263,27 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
     return submode;
 }
 
-void Launchpad::processDawInfoMessage( char* message, uint8_t length )
+void Launchpad::processDawInfoMessage( const char* const message, uint8_t length )
 {
     switch (message[0])
     {
         case 't':
-            gui.setDawTrackName( message[1], length - 1 );
+            gui.setDawTrackName( &message[1], length - 1 );
             break;
         case 'c':
-            gui.setDawClipName( message[1], length - 1 );
+            gui.setDawClipName( &message[1], length - 1 );
             break;
         case 'd':
-            gui.setDawDeviceName( message[1], length - 1 );
+            gui.setDawDeviceName( &message[1], length - 1 );
             break;
         case 's':
             gui.setDawStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );
             break;
         case 'T':
             {
-                uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
-                uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
-                uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
+                const uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
+                const uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
+                const uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
                 gui.setDawTimingValues( tempo, signatureNumerator, signatureDenominator,
                         ('D' == message[8]), ('U' == message[8]) );
             }
@@ -303,11 +295,10 @@ void Launchpad::processDawInfoMessage( char* message, uint8_t length )
 
 void Launchpad::processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value )
 {
-    uint8_t ledPositionX, ledPositionY;
     if ((control >= 104) && (control <= 111))
     {
-        ledPositionX = 9;
-        ledPositionY = topRowControllerNumbers[control - 104];
+        const uint8_t ledPositionX = 9;
+        const uint8_t ledPositionY = topRowControllerNumbers[control - 104];
         grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[value], static_cast<grid::LedLightingType>(channel) );
         if (ledPositionY <= 3)
         {
@@ -326,7 +317,7 @@ void Launchpad::processChangeControlMidiMessage( uint8_t channel, uint8_t contro
     }
 }
 
-void Launchpad::processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity )
+void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, const uint8_t velocity )
 {
     uint8_t ledPositionX, ledPositionY;
     if (Layout_USER1 == currentLayout_)
@@ -355,7 +346,10 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t
                 channel = 0;
             }
 
-            grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+            if (velocity < LAUNCHPAD_COLOUR_PALETTE_SIZE)
+            {
+                grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+            }
         }
     }
     else
@@ -371,7 +365,10 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t
                 channel = 0;
             }
 
-            grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+            if (velocity < LAUNCHPAD_COLOUR_PALETTE_SIZE)
+            {
+                grid.setLed( ledPositionX, ledPositionY, launchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+            }
 
             if (8 == ledPositionX)
             {
@@ -390,7 +387,7 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t
     }
 }
 
-void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length )
+void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t length )
 {
     if (length > 7)
     {
@@ -407,7 +404,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length 
                     break;
                 case 0x14: // text scroll
                     message[length-1] = 0; // put string terminator at the end
-                    processDawInfoMessage((char*)&message[7], length-7-1);
+                    processDawInfoMessage( reinterpret_cast<char*>(&message[7]), length - 7 - 1 );
                     break;
                 default:
                     printSysExMessage( message, length );
@@ -425,38 +422,40 @@ void Launchpad::processSystemExclusiveMessage( uint8_t *message, uint8_t length 
     }
 }
 
-void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket* packet )
+void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet )
 {
-    uint8_t codeIndexNumber = packet->header & 0x0F;
-    if (0x4 == codeIndexNumber) // start or continuation of SysEx message
+    const uint8_t codeIndexNumber = packet.header & 0x0F;
+
+    if (systemExclusiveInputMessageLength_ >= (SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH - 3))
     {
-        systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[0];
-        systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[1];
-        systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[2];
-        if (systemExclusiveInputMessageLength_ >= SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH)
-        {
-            systemExclusiveInputMessageLength_ = 0; // discard this message, as it is too long
-        }
+        systemExclusiveInputMessageLength_ = 0; // discard this message, as it is too long
     }
-    else // end of SysEx
+    else
     {
-        if (0x5 == codeIndexNumber)
+        switch (codeIndexNumber)
         {
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[0];
+            case 0x04:
+            case 0x07:
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[2];
+                break;
+            case 0x05:
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
+                break;
+            case 0x06:
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
+                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
+                break;
+            default:
+                break;
         }
-        else if (0x6 == codeIndexNumber)
+
+        if ((0x05 == codeIndexNumber) || (0x06 == codeIndexNumber) || (0x07 == codeIndexNumber))
         {
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[0];
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[1];
+            processSystemExclusiveMessage( &systemExclusiveInputMessage_[0], systemExclusiveInputMessageLength_ );
+            systemExclusiveInputMessageLength_ = 0; // reset message length
         }
-        else
-        {
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[0];
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[1];
-            systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet->data[2];
-        }
-        processSystemExclusiveMessage( &systemExclusiveInputMessage_[0], systemExclusiveInputMessageLength_ );
-        systemExclusiveInputMessageLength_ = 0; // reset message length
     }
 }
 
@@ -468,7 +467,7 @@ void Launchpad::setCurrentLayout( uint8_t layout )
     }
 }
 
-void Launchpad::printMidiMessage( midi::MidiPacket* packet )
+void Launchpad::printMidiMessage( midi::MidiPacket& packet )
 {
 #ifdef USE_SEMIHOSTING
     uint8_t channel;
@@ -505,7 +504,7 @@ void Launchpad::printMidiMessage( midi::MidiPacket* packet )
 #endif
 }
 
-void Launchpad::printSysExMessage( uint8_t *message, uint8_t length )
+void Launchpad::printSysExMessage( const uint8_t* const message, uint8_t length )
 {
 #ifdef USE_SEMIHOSTING
     printf("SysEx:");

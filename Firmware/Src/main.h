@@ -78,11 +78,12 @@ public:
 
     void initialize();
     void run();
-    void runInternalMenu();
-    void resetIntoBootloader();
-    void randomLightAnimation();
-    void configureSystemClock();
+
     void configureNvicPriorities();
+    void configureSystemClock();
+    void randomLightAnimation();
+    void resetIntoBootloader();
+    void runInternalMenu();
 
 private:
     ApplicationMain();
@@ -93,7 +94,6 @@ private:
     midi::UsbMidi usbMidi;
     launchpad::Launchpad launchpad;
     lcd::Lcd& lcd_;
-
 };
 
 #endif /* __MAIN_H__ */

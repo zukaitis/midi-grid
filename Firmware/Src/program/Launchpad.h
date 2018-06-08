@@ -1,9 +1,3 @@
-/*
- * launchpad.h
- *
- *  Created on: 2018-02-21
- *      Author: Gedas
- */
 #ifndef PROGRAM_LAUNCHPAD_H_
 #define PROGRAM_LAUNCHPAD_H_
 
@@ -62,7 +56,9 @@ static const uint8_t drumLayout[10][8] = {
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const struct Colour launchpadColourPalette[128] = {
+static const uint8_t LAUNCHPAD_COLOUR_PALETTE_SIZE = 128;
+
+static const Colour launchpadColourPalette[LAUNCHPAD_COLOUR_PALETTE_SIZE] = {
         {0, 0, 0}, {8, 8, 8}, {32, 32, 32}, {64, 64, 64}, {64, 20, 18}, {64, 3, 0}, {23, 1, 0}, {7, 0, 0},
         {64, 48, 25}, {64, 22, 0}, {23, 8, 0}, {10, 7, 0}, {64, 64, 9}, {64, 64, 0}, {23, 23, 0}, {6, 6, 0},
         {33, 64, 11}, {17, 64, 0}, {6, 23, 0}, {5, 11, 0}, {14, 64, 11}, {0, 64, 0}, {0, 23, 0}, {0, 7, 0},
@@ -119,14 +115,14 @@ private:
     Launchpad95Mode getLaunchpad95Mode();
     Launchpad95Submode getLaunchpad95Submode();
 
-    void processDawInfoMessage( char* message, uint8_t length );
+    void processDawInfoMessage( const char* const message, uint8_t length );
     void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
-    void processSystemExclusiveMessage( uint8_t *message, uint8_t length );
-    void processSystemExclusiveMidiPacket( const midi::MidiPacket* packet );
+    void processSystemExclusiveMessage( uint8_t* const message, uint8_t length );
+    void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
-    void printMidiMessage( midi::MidiPacket* packet );
-    void printSysExMessage( uint8_t *message, uint8_t length );
+    void printMidiMessage( midi::MidiPacket& packet );
+    void printSysExMessage( const uint8_t* const message, uint8_t length );
 
     void setCurrentLayout( uint8_t layout );
 
@@ -138,7 +134,7 @@ private:
     Launchpad95Mode currentLaunchpad95Mode_ = Launchpad95Mode_UNKNOWN; // used only to identify submode
     Layout currentLayout_ = Layout_SESSION;
 
-    uint8_t systemExclusiveInputMessage_[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH + 3];
+    uint8_t systemExclusiveInputMessage_[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH];
     uint8_t systemExclusiveInputMessageLength_ = 0;
 
     int16_t rotaryControlValue_[2] = { 64, 64 };
@@ -146,4 +142,4 @@ private:
 
 } // namespace
 
-#endif /* PROGRAM_LAUNCHPAD_H_ */
+#endif // PROGRAM_LAUNCHPAD_H_

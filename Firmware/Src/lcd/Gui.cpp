@@ -139,31 +139,31 @@ void Gui::refreshMainArea()
 }
 
 
-void Gui::setDawClipName( const char& name, const uint8_t length )
+void Gui::setDawClipName( const char* const name, const uint8_t length )
 {
     if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
     {
-        strncpy( dawClipName_, &name, lcd::NUMBER_OF_CHARACTERS_IN_LINE );
+        strncpy( dawClipName_, &name[0], lcd::NUMBER_OF_CHARACTERS_IN_LINE );
         dawClipName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
     }
     else
     {
-        strcpy( dawClipName_, &name );
+        strcpy( dawClipName_, &name[0] );
     }
 
     displayLaunchpad95Info();
 }
 
-void Gui::setDawDeviceName( const char& name, const uint8_t length )
+void Gui::setDawDeviceName( const char* const name, const uint8_t length )
 {
     if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
     {
-        strncpy( dawDeviceName_, &name, lcd::NUMBER_OF_CHARACTERS_IN_LINE );
+        strncpy( dawDeviceName_, &name[0], lcd::NUMBER_OF_CHARACTERS_IN_LINE );
         dawDeviceName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
     }
     else
     {
-        strcpy( dawDeviceName_, &name );
+        strcpy( dawDeviceName_, &name[0] );
     }
 
     displayLaunchpad95Info();
@@ -190,16 +190,16 @@ void Gui::setDawTimingValues( const uint16_t tempo, const uint8_t signatureNumer
     displayLaunchpad95Info();
 }
 
-void Gui::setDawTrackName( const char& name, const uint8_t length )
+void Gui::setDawTrackName( const char* const name, const uint8_t length )
 {
     if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
     {
-        strncpy( dawTrackName_, &name, lcd::NUMBER_OF_CHARACTERS_IN_LINE );
+        strncpy( dawTrackName_, name, lcd::NUMBER_OF_CHARACTERS_IN_LINE );
         dawTrackName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
     }
     else
     {
-        strcpy( dawTrackName_, &name );
+        strcpy( dawTrackName_, name );
     }
 
     displayLaunchpad95Info();

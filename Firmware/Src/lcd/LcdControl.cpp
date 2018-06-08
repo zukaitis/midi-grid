@@ -23,7 +23,7 @@ void LcdControl::initialize()
     initializeGpio();
     initializeSpi();
     initializeDma();
-    //initializeBacklightPwm();
+    //initializeBackligh();
 
     resetController();
     writeCommand( 0x21 ); // LCD extended commands.
@@ -44,7 +44,7 @@ void LcdControl::setBacklightIntensity( uint8_t intensity )
     BACKLIGHT_TIMER->CCR2 = backlightIntensity[intensity]; // would be appropriate to use hal function here
 }
 
-void LcdControl::transmit( uint8_t* buffer )
+void LcdControl::transmit( uint8_t* const buffer )
 {
     setCursor( 0, 0 );
 
@@ -54,7 +54,7 @@ void LcdControl::transmit( uint8_t* buffer )
     }
 
     HAL_GPIO_WritePin( LCD_GPIO_Port, DC_Pin, GPIO_PIN_SET );  //data mode
-    HAL_SPI_Transmit_DMA( &lcdSpi_, buffer, BUFFER_SIZE );
+    HAL_SPI_Transmit_DMA( &lcdSpi_, &buffer[0], BUFFER_SIZE );
 }
 
 void LcdControl::initializeBacklight()

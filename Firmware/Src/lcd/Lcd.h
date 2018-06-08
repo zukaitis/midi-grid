@@ -71,8 +71,8 @@ public:
     void displayImage( const uint8_t x, const uint8_t y, const Image image);
     void displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position );
     void initialize();
-    void print( const char *string, uint8_t x, const uint8_t y );
-    void print( const char *string, const uint8_t x, const uint8_t y, const Justification justification );
+    void print( const char* string, uint8_t x, const uint8_t y );
+    void print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification );
     void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification );
     void refresh();

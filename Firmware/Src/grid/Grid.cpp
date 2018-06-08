@@ -43,7 +43,6 @@ void Grid::enable()
 
 bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent )
 {
-    uint8_t buttonColumnChanges, buttonInput;
     static bool buttonChangeDetected = false;
 
     if (gridControl.gridInputUpdated || buttonChangeDetected)
@@ -54,8 +53,8 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
         {
             if (gridControl.isGridColumnInputStable( x ))
             {
-                buttonInput = gridControl.getGridButtonInput( x );
-                buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
+                const uint8_t buttonInput = gridControl.getGridButtonInput( x );
+                const uint8_t buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
                     for (int8_t y = 0; y < grid_control::NUMBER_OF_ROWS; y++)
@@ -82,7 +81,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
     return false;
 }
 
-Colour Grid::getLedColour( uint8_t ledPositionX, uint8_t ledPositionY ) const
+Colour Grid::getLedColour( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
 {
     return led_[ledPositionX][ledPositionY].colour;
 }
@@ -100,7 +99,6 @@ void Grid::refreshLeds() const
     static uint8_t ledPulseStepNumber = 0;
     static uint8_t flashColourIndex = 0;
 
-
     if (HAL_GetTick() >= ledFlashCheckTime)
     {
         for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
@@ -116,7 +114,7 @@ void Grid::refreshLeds() const
 
     if (HAL_GetTick() >= ledPulseCheckTime)
     {
-        struct Colour dimmedColour;
+        Colour dimmedColour;
         ++ledPulseStepNumber;
         if (LED_PULSE_STEP_COUNT <= ledPulseStepNumber)
         {
@@ -212,7 +210,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
 void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
-    bool directLed = (ledPositionX > 7);
+    const bool directLed = (ledPositionX > 7);
 
     if (ledPositionY >= grid_control::NUMBER_OF_ROWS)
     {
