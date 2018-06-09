@@ -11,19 +11,19 @@ static const uint16_t RESET_Pin = GPIO_PIN_2;
 static const uint16_t DC_Pin = GPIO_PIN_10;
 static const uint16_t CS_Pin = GPIO_PIN_12;
 static const uint16_t SCK_Pin = GPIO_PIN_13;
-static const uint16_t LIGHT_Pin = GPIO_PIN_14;
+static const uint16_t LIGHT_Pin = GPIO_PIN_5;
 static const uint16_t MOSI_Pin = GPIO_PIN_15;
 
-static TIM_TypeDef* const BACKLIGHT_TIMER = TIM10; //TIM1;
+static const uint32_t BACKLIGHT_OUTPUT_BUFFER_SIZE = 128; // 10 bit resolution
 static const uint8_t NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS = 65;
 static const uint16_t BUFFER_SIZE = 504;
 
-static const uint16_t backlightIntensity[NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS] = {
-        0, 1, 6, 17, 37, 67, 110, 167, 239, 328, 436, 564, 714, 886, 1082, 1304,
-        1552, 1828, 2133, 2468, 2835, 3234, 3667, 4135, 4638, 5179, 5757, 6375, 7033, 7731, 8473, 9257,
-        10085, 10959, 11879, 12846, 13861, 14926, 16040, 17205, 18423, 19693, 21017, 22395, 23829, 25320, 26868, 28474,
-        30140, 31865, 33652, 35500, 37411, 39385, 41424, 43528, 45698, 47935, 50239, 52612, 55055, 57568, 60151, 62807,
-        65535
+static const uint16_t BACKLIGHT_INTENSITY[NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS] = {
+        0, 1, 2, 3, 5, 8, 11, 15, 20, 25, 30, 36, 43, 50, 57, 65,
+        74, 82, 92, 102, 112, 123, 135, 147, 159, 172, 185, 199, 213, 228, 243, 258,
+        274, 291, 308, 325, 343, 362, 380, 400, 419, 439, 460, 481, 502, 524, 547, 570,
+        593, 616, 641, 665, 690, 716, 741, 768, 795, 822, 849, 877, 906, 935, 964, 994,
+        1024
 };
 
 class LcdControl
@@ -47,7 +47,10 @@ private:
     void setCursor( const uint8_t x, const uint8_t y );
     void writeCommand( const uint8_t command );
 
-    TIM_HandleTypeDef lcdBacklightPwmTimer_;
+    uint8_t backlightOutputBuffer_[BACKLIGHT_OUTPUT_BUFFER_SIZE];
+
+    DMA_HandleTypeDef backlightDmaConfiguration_;
+    SPI_HandleTypeDef backlightSpi_;
     SPI_HandleTypeDef lcdSpi_;
 };
 

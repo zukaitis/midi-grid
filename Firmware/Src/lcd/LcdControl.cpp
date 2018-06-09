@@ -1,5 +1,7 @@
 #include "lcd/LcdControl.h"
 
+#include <string.h>
+
 namespace lcd_control
 {
 
@@ -23,7 +25,7 @@ void LcdControl::initialize()
     initializeGpio();
     initializeSpi();
     initializeDma();
-    //initializeBackligh();
+    initializeBacklight();
 
     resetController();
     writeCommand( 0x21 ); // LCD extended commands.
@@ -41,7 +43,23 @@ void LcdControl::setBacklightIntensity( uint8_t intensity )
         intensity = NUMBER_OF_BACKLIGHT_INTENSITY_LEVELS - 1;
     }
 
-    BACKLIGHT_TIMER->CCR2 = backlightIntensity[intensity]; // would be appropriate to use hal function here
+    const uint16_t numberOfFullySetBytes = BACKLIGHT_INTENSITY[intensity] / 8;
+    const int16_t numberOfFullyResetBytes = BACKLIGHT_OUTPUT_BUFFER_SIZE - numberOfFullySetBytes - 1; // -1 is for manually set byte
+
+    if (numberOfFullySetBytes > 0)
+    {
+        memset( &backlightOutputBuffer_[0], 0xFF, numberOfFullySetBytes );
+    }
+
+    if (numberOfFullySetBytes < BACKLIGHT_OUTPUT_BUFFER_SIZE)
+    {
+        backlightOutputBuffer_[numberOfFullySetBytes] = static_cast<uint8_t>(0xFF << (8 - (BACKLIGHT_INTENSITY[intensity] % 8)));
+    }
+
+    if (numberOfFullyResetBytes > 0)
+    {
+        memset( &backlightOutputBuffer_[numberOfFullySetBytes+1], 0x00, static_cast<uint16_t>(numberOfFullyResetBytes) );
+    }
 }
 
 void LcdControl::transmit( uint8_t* const buffer )
@@ -59,32 +77,45 @@ void LcdControl::transmit( uint8_t* const buffer )
 
 void LcdControl::initializeBacklight()
 {
-    TIM_ClockConfigTypeDef timerClockSourceConfiguration;
-    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
+    __HAL_RCC_SPI3_CLK_ENABLE();
 
-    __HAL_RCC_TIM1_CLK_ENABLE();
+    backlightSpi_.Instance = SPI3;
+    backlightSpi_.Init.Mode = SPI_MODE_MASTER;
+    backlightSpi_.Init.Direction = SPI_DIRECTION_2LINES;
+    backlightSpi_.Init.DataSize = SPI_DATASIZE_8BIT;
+    backlightSpi_.Init.CLKPolarity = SPI_POLARITY_LOW;
+    backlightSpi_.Init.CLKPhase = SPI_PHASE_1EDGE;
+    backlightSpi_.Init.NSS = SPI_NSS_SOFT;
+    backlightSpi_.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // 100Mhz / 128[BACKLIGHT_OUTPUT_BUFFER_SIZE] / 256 = ~3kHz
+    backlightSpi_.Init.FirstBit = SPI_FIRSTBIT_MSB;
+    backlightSpi_.Init.TIMode = SPI_TIMODE_DISABLE;
+    backlightSpi_.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+    HAL_SPI_Init( &backlightSpi_ );
+    SET_BIT(backlightSpi_.Instance->CR2, SPI_CR2_TXDMAEN); // enable TX dma control bit
 
-    // prescaler and period of PWM timer are calculated based on period of base timer
-    lcdBacklightPwmTimer_.Instance = BACKLIGHT_TIMER;
-    lcdBacklightPwmTimer_.Init.Prescaler = 16 - 1; // ~100Hz
-    lcdBacklightPwmTimer_.Init.CounterMode = TIM_COUNTERMODE_UP;
-    lcdBacklightPwmTimer_.Init.Period = 65535 - 1;
-    lcdBacklightPwmTimer_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &lcdBacklightPwmTimer_ );
+    __HAL_RCC_DMA1_CLK_ENABLE();
 
-    timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-    HAL_TIM_ConfigClockSource( &lcdBacklightPwmTimer_, &timerClockSourceConfiguration );
+    backlightDmaConfiguration_.Instance = DMA1_Stream5;
+    backlightDmaConfiguration_.Init.Channel = DMA_CHANNEL_0;
+    backlightDmaConfiguration_.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    backlightDmaConfiguration_.Init.PeriphInc = DMA_PINC_DISABLE;
+    backlightDmaConfiguration_.Init.MemInc = DMA_MINC_ENABLE;
+    backlightDmaConfiguration_.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    backlightDmaConfiguration_.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    backlightDmaConfiguration_.Init.Mode = DMA_CIRCULAR;
+    backlightDmaConfiguration_.Init.Priority = DMA_PRIORITY_MEDIUM;
+//    backlightDmaConfiguration_.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+//    backlightDmaConfiguration_.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
+    backlightDmaConfiguration_.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    HAL_DMA_Init( &backlightDmaConfiguration_ );
+    __HAL_LINKDMA( &backlightSpi_, hdmatx, backlightDmaConfiguration_ );
 
-    HAL_TIM_PWM_Init( &lcdBacklightPwmTimer_ );
+    HAL_DMA_Start( &backlightDmaConfiguration_,
+            reinterpret_cast<uint32_t>(&backlightOutputBuffer_[0]),
+            reinterpret_cast<uint32_t>(&backlightSpi_.Instance->DR),
+            BACKLIGHT_OUTPUT_BUFFER_SIZE );
 
-    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
-    timerOutputCompareConfiguration.Pulse = 0;
-    timerOutputCompareConfiguration.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    timerOutputCompareConfiguration.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
-    HAL_TIM_PWM_ConfigChannel( &lcdBacklightPwmTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-
-    HAL_TIMEx_PWMN_Start( &lcdBacklightPwmTimer_, TIM_CHANNEL_2 );
+    __HAL_SPI_ENABLE(&backlightSpi_);
 }
 
 void LcdControl::initializeDma()
@@ -131,7 +162,7 @@ void LcdControl::initializeGpio()
     HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
 
     gpioConfiguration.Pin = LIGHT_Pin;
-    gpioConfiguration.Alternate = GPIO_AF1_TIM1;
+    gpioConfiguration.Alternate = GPIO_AF6_SPI3;
     HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
 }
 
