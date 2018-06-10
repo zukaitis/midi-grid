@@ -3,15 +3,15 @@
 
 #include "program/Launchpad.h"
 
-namespace lcd
-{
-    class Lcd;
-}
-
 namespace launchpad
 {
     class Launchpad;
 }
+
+namespace lcd
+{
+
+class Lcd;
 
 namespace gui
 {
@@ -101,6 +101,7 @@ private:
     bool statusBarActive_ = false;
 };
 
-} // namespace
+} // namespace gui
+} // namespace lcd
 
 #endif /* LCD_GUI_H_ */

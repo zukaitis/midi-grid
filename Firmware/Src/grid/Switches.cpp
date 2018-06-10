@@ -1,5 +1,7 @@
 #include "grid/Switches.h"
 
+namespace grid
+{
 namespace switches
 {
 
@@ -119,4 +121,5 @@ bool Switches::isButtonPressed( const uint8_t buttonNumber )
     return isPressed;
 }
 
-}
+} // namespace switches
+} // namespace grid

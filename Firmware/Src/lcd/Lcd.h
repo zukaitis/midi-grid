@@ -5,6 +5,7 @@
 #include "lcd/images.h"
 #include "lcd/progressArc.h"
 
+#include "lcd/Backlight.h"
 #include "lcd/LcdControl.h"
 
 #include "stm32f4xx_hal.h"
@@ -83,6 +84,7 @@ private:
 
     void putChar( const uint8_t x, const uint8_t y, const char c );
 
+    backlight::Backlight backlight;
     lcd_control::LcdControl lcdControl;
 
     uint8_t appointedBacklightIntensity_ = 0;

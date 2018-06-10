@@ -3,6 +3,8 @@
 
 #include "stm32f4xx_hal.h"
 
+namespace lcd
+{
 namespace gui
 {
 
@@ -330,4 +332,5 @@ void Gui::displayTrackName()
     lcd.print( dawTrackName_, lcd::WIDTH/2, 32, lcd::Justification_CENTER );
 }
 
-} // namespace
+} // namespace gui
+} // namespace lcd

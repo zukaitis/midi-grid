@@ -1,10 +1,3 @@
-/*
- * Types.h
- *
- *  Created on: 2018-03-10
- *      Author: Gedas
- */
-
 #ifndef TYPES_H_
 #define TYPES_H_
 
@@ -23,4 +16,4 @@ enum ButtonEvent
     ButtonEvent_PRESSED
 };
 
-#endif /* TYPES_H_ */
+#endif // TYPES_H_

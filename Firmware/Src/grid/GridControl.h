@@ -4,6 +4,8 @@
 #include "Types.h"
 #include "stm32f4xx_hal.h"
 
+namespace grid
+{
 namespace grid_control
 {
 
@@ -159,5 +161,6 @@ private:
     DMA_HandleTypeDef columnSelectDmaConfiguration_;
 };
 
-} // namespace
+} // namespace grid_control
+} // namespace grid
 #endif // GRID_BUTTONS_GRIDCONTROL_H_

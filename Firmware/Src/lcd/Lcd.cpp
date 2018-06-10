@@ -78,6 +78,7 @@ void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t po
 void Lcd::initialize()
 {
     lcdControl.initialize();
+    backlight.initialize();
     clear();
 }
 
@@ -192,11 +193,11 @@ void Lcd::refresh()
         {
             if (currentBacklightIntensity_ > appointedBacklightIntensity_)
             {
-                lcdControl.setBacklightIntensity( --currentBacklightIntensity_ );
+                backlight.setIntensity( --currentBacklightIntensity_ );
             }
             else
             {
-                lcdControl.setBacklightIntensity( ++currentBacklightIntensity_ );
+                backlight.setIntensity( ++currentBacklightIntensity_ );
             }
         }
 

@@ -11,10 +11,10 @@
 namespace launchpad
 {
 
-Launchpad::Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
+Launchpad::Launchpad( grid::Grid& grid_, grid::switches::Switches& switches_, lcd::gui::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
         grid( grid_ ),
-        gui( gui_ ),
         switches( switches_ ),
+        gui( gui_ ),
         usbMidi( usbMidi_ )
 {};
 

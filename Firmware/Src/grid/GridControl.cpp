@@ -1,5 +1,7 @@
 #include "grid/GridControl.h"
 
+namespace grid
+{
 namespace grid_control
 {
 
@@ -406,4 +408,5 @@ void GridControl::initializePwmOutputs()
     HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
 }
 
-} // namespace
+} // namespace grid_control
+} // namespace grid

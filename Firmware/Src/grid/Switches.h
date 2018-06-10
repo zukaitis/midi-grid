@@ -4,6 +4,8 @@
 #include "grid/GridControl.h"
 #include "Types.h"
 
+namespace grid
+{
 namespace switches
 {
 
@@ -28,11 +30,12 @@ public:
     bool isButtonPressed( const uint8_t buttonNumber );
 
 private:
-    grid_control::GridControl& gridControl;
+    grid::grid_control::GridControl& gridControl;
 
     bool registeredButtonInput_[NUMBER_OF_BUTTONS] = {true, true}; // active low
 };
 
-} // namespace
+} // namespace switches
+} // namespace grid
 
 #endif // GRID_SWITCHES_H_

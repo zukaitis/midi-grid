@@ -7,16 +7,19 @@
 namespace grid
 {
     class Grid;
+
+    namespace switches
+    {
+        class Switches;
+    }
 }
 
-namespace switches
+namespace lcd
 {
-    class Switches;
-}
-
-namespace gui
-{
-    class Gui;
+    namespace gui
+    {
+        class Gui;
+    }
 }
 
 namespace midi
@@ -107,7 +110,7 @@ enum Launchpad95Submode
 class Launchpad
 {
 public:
-    Launchpad( grid::Grid& grid_, switches::Switches& switches_, gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
+    Launchpad( grid::Grid& grid_, grid::switches::Switches& switches_, lcd::gui::Gui& gui_, midi::UsbMidi& usbMidi_ );
 
     void runProgram();
 
@@ -127,8 +130,8 @@ private:
     void setCurrentLayout( uint8_t layout );
 
     grid::Grid& grid;
-    gui::Gui& gui;
-    switches::Switches& switches;
+    grid::switches::Switches& switches;
+    lcd::gui::Gui& gui;
     midi::UsbMidi& usbMidi;
 
     Launchpad95Mode currentLaunchpad95Mode_ = Launchpad95Mode_UNKNOWN; // used only to identify submode
