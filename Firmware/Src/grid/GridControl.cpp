@@ -28,9 +28,15 @@ extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDe
     gridControl.inputReadoutToMemory1CompleteCallback();
 }
 
-GridControl::GridControl()
+GridControl::GridControl() :
+        currentlyStableInputBuffer_( 1 )
 {
     turnAllLedsOff();
+    for (uint8_t i = 0; i < NUMBER_OF_COLUMNS; i++)
+    {
+        buttonInput_[0][i] = 0x0000;
+        buttonInput_[1][i] = 0x0000;
+    }
 }
 
 GridControl::~GridControl()

@@ -32,7 +32,7 @@ public:
 private:
     grid::grid_control::GridControl& gridControl;
 
-    bool registeredButtonInput_[NUMBER_OF_BUTTONS] = {true, true}; // active low
+    bool registeredButtonInput_[NUMBER_OF_BUTTONS];
 };
 
 } // namespace switches

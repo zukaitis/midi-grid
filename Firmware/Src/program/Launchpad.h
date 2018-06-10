@@ -134,13 +134,13 @@ private:
     lcd::gui::Gui& gui;
     midi::UsbMidi& usbMidi;
 
-    Launchpad95Mode currentLaunchpad95Mode_ = Launchpad95Mode_UNKNOWN; // used only to identify submode
-    Layout currentLayout_ = Layout_SESSION;
+    Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
+    Layout currentLayout_;
 
     uint8_t systemExclusiveInputMessage_[SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH];
-    uint8_t systemExclusiveInputMessageLength_ = 0;
+    uint8_t systemExclusiveInputMessageLength_;
 
-    int16_t rotaryControlValue_[2] = { 64, 64 };
+    int16_t rotaryControlValue_[2];
 };
 
 } // namespace

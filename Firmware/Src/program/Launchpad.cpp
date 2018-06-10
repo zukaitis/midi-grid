@@ -15,8 +15,14 @@ Launchpad::Launchpad( grid::Grid& grid_, grid::switches::Switches& switches_, lc
         grid( grid_ ),
         switches( switches_ ),
         gui( gui_ ),
-        usbMidi( usbMidi_ )
-{};
+        usbMidi( usbMidi_ ),
+        currentLaunchpad95Mode_( Launchpad95Mode_UNKNOWN ),
+        currentLayout_( Layout_SESSION ),
+        systemExclusiveInputMessageLength_( 0 )
+{
+    rotaryControlValue_[0] = 64;
+    rotaryControlValue_[1] = 64;
+}
 
 void Launchpad::runProgram()
 {

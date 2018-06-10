@@ -8,11 +8,31 @@ namespace lcd
 namespace gui
 {
 
-Gui::Gui() : lcd( lcd::Lcd::getInstance() )
-{}
+Gui::Gui() :
+        lcd( lcd::Lcd::getInstance() ),
+        dawClipName_( " \0" ),
+        dawDeviceName_( " \0" ),
+        dawTrackName_( " \0" ),
+        dawIsPlaying_( false ),
+        dawIsRecording_( false ),
+        dawIsSessionRecording_( false ),
+        dawNudgeDownActive_( false ),
+        dawNudgeUpActive_( false ),
+        dawTempo_( 0 ),
+        dawSignatureNumerator_( 0 ),
+        dawSignatureDenominator_( 0 ),
+        launchpad95Mode_( launchpad::Launchpad95Mode_UNKNOWN ),
+        launchpad95Submode_( launchpad::Launchpad95Submode_DEFAULT ),
+        midiInputTimeout_( 0 ),
+        midiOutputTimeout_( 0 ),
+        rotaryControlDisplayTimeout_( 0 ),
+        statusBarActive_( false )
+{
+}
 
 Gui::~Gui()
-{}
+{
+}
 
 void Gui::displayConnectingImage()
 {

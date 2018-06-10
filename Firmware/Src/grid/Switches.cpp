@@ -5,8 +5,12 @@ namespace grid
 namespace switches
 {
 
-Switches::Switches() : gridControl( grid_control::GridControl::getInstance() )
+Switches::Switches() :
+        gridControl( grid_control::GridControl::getInstance() )
 {
+    // active low
+    registeredButtonInput_[0] = true;
+    registeredButtonInput_[1] = true;
 }
 
 Switches::~Switches()

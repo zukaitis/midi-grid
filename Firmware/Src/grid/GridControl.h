@@ -144,7 +144,7 @@ private:
     void initializeGpio();
     void initializePwmOutputs();
 
-    uint8_t currentlyStableInputBuffer_ = 0;
+    uint8_t currentlyStableInputBuffer_;
 
     uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
     uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];

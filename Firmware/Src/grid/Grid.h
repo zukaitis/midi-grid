@@ -41,6 +41,7 @@ struct Led
 
 static const uint8_t NUMBER_OF_ROWS = 8;
 static const uint8_t NUMBER_OF_COLUMNS = 10;
+static const uint8_t NUMBER_OF_LEDS = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
 
 static const uint32_t LED_FLASH_PERIOD_MS = 250; // 120bpm - default flashing rate
 static const uint32_t LED_PULSE_STEP_PERIOD_MS = 67; // 1000ms / 15 = 66.6... ms
@@ -70,17 +71,17 @@ private:
     void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
     grid_control::GridControl& gridControl;
-    bool initialized_ = false;
+    bool initialized_;
 
-    Led led_[10][8];
+    Led led_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
 
     uint16_t registeredButtonInput_[grid_control::NUMBER_OF_COLUMNS];
 
-    FlashingLed flashingLed_[64];
-    uint8_t numberOfFlashingLeds_ = 0;
+    FlashingLed flashingLed_[NUMBER_OF_LEDS];
+    uint8_t numberOfFlashingLeds_;
 
-    PulsingLed pulsingLed_[64];
-    uint8_t numberOfPulsingLeds_ = 0;
+    PulsingLed pulsingLed_[NUMBER_OF_LEDS];
+    uint8_t numberOfPulsingLeds_;
 };
 
 } // namespace

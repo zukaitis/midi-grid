@@ -1,12 +1,20 @@
 #include "grid/Grid.h"
 
-//#include "lcd/Lcd.h" // for debugging
+//#include "lcd/Lcd.h" // for debugging, to be removed
 
 namespace grid
 {
 
-Grid::Grid() : gridControl( grid_control::GridControl::getInstance() )
+Grid::Grid() :
+        gridControl( grid_control::GridControl::getInstance() ),
+        initialized_( false ),
+        numberOfFlashingLeds_( 0 ),
+        numberOfPulsingLeds_( 0 )
 {
+    for (uint8_t i = 0; i < grid_control::NUMBER_OF_COLUMNS; i++)
+    {
+        registeredButtonInput_[i] = 0x0000;
+    }
 }
 
 Grid::~Grid()

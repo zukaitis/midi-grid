@@ -81,24 +81,24 @@ private:
 
     lcd::Lcd& lcd;
 
-    char dawClipName_[15] = " \0";
-    char dawDeviceName_[15] = " \0";
-    char dawTrackName_[15] = " \0";
-    bool dawIsPlaying_ = false;
-    bool dawIsRecording_ = false;
-    bool dawIsSessionRecording_ = false;
-    bool dawNudgeDownActive_ = false;
-    bool dawNudgeUpActive_ = false;
-    uint16_t dawTempo_ = 0;
-    uint8_t dawSignatureNumerator_ = 0;
-    uint8_t dawSignatureDenominator_ = 0;
+    char dawClipName_[15];
+    char dawDeviceName_[15];
+    char dawTrackName_[15];
+    bool dawIsPlaying_;
+    bool dawIsRecording_;
+    bool dawIsSessionRecording_;
+    bool dawNudgeDownActive_;
+    bool dawNudgeUpActive_;
+    uint16_t dawTempo_;
+    uint8_t dawSignatureNumerator_;
+    uint8_t dawSignatureDenominator_;
 
-    launchpad::Launchpad95Mode launchpad95Mode_ = launchpad::Launchpad95Mode_UNKNOWN;
-    launchpad::Launchpad95Submode launchpad95Submode_ = launchpad::Launchpad95Submode_DEFAULT;
-    uint16_t midiInputTimeout_ = 0;
-    uint16_t midiOutputTimeout_ = 0;
-    uint16_t rotaryControlDisplayTimeout_ = 0;
-    bool statusBarActive_ = false;
+    launchpad::Launchpad95Mode launchpad95Mode_;
+    launchpad::Launchpad95Submode launchpad95Submode_;
+    uint16_t midiInputTimeout_;
+    uint16_t midiOutputTimeout_;
+    uint16_t rotaryControlDisplayTimeout_;
+    bool statusBarActive_;
 };
 
 } // namespace gui

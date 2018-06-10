@@ -10,6 +10,7 @@ namespace backlight
 
 Backlight::Backlight()
 {
+    setIntensity( 0 );
 }
 
 Backlight::~Backlight()
