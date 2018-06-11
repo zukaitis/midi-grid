@@ -1,3 +1,4 @@
 v1.1 - not yet fabricated
 Changes:
 - switched microcontroller pins LCD_DC and LCD_CS, so that hardware chip select of microcontroller could be used
+- connected LCD_LIGHT output to PB5 GPIO pin (used to be TP3)
