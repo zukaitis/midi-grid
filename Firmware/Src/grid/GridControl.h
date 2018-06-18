@@ -14,9 +14,10 @@ static const uint8_t NUMBER_OF_COLUMNS = 20;
 static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
 static const uint8_t TIMER_FRAME_OFFSET = 1;
 
+static const uint32_t PWM_CLOCK_PRESCALER = 1; // 96; // 1us
 static const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
-static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 96; // 1us
-static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 500; // 500us
+static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 1; // 96; // 1us
+static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 48000; // 500; // 500us
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
 static const uint16_t BUTTON_MASK[2] = {0x2000, 0x0400};
@@ -67,25 +68,25 @@ static TIM_TypeDef* const PWM_TIMER_GREEN = TIM4;
 static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
 static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM1;
 
-static const uint16_t brightnessPad[65] = {
-        47000, 46662, 46365, 46057, 45727, 45373, 44999, 44607,
-        44195, 43763, 43317, 42851, 42373, 41879, 41359, 40843,
-        40287, 39741, 39177, 38600, 37993, 37397, 36771, 36144,
-        35499, 34851, 34185, 33501, 32796, 32108, 31429, 30721,
-        29973, 29231, 28494, 27733, 26952, 26156, 25383, 24564,
-        23781, 22934, 22103, 21275, 20401, 19570, 18699, 17802,
-        16959, 16053, 15165, 14210, 13317, 12399, 11433, 10421,
-        9485, 8522, 7585, 6597, 5642, 4627, 3641, 2591, 1001 };
+static const uint16_t BRIGHTNESS_THROUGH_PAD[65] = {
+        0, 338, 635, 943, 1273, 1627, 2001, 2393,
+        2805, 3237, 3683, 4149, 4627, 5121, 5641, 6157,
+        6713, 7259, 7823, 8400, 9007, 9603, 10229, 10856,
+        11501, 12149, 12815, 13499, 14204, 14892, 15571, 16279,
+        17027, 17769, 18506, 19267, 20048, 20844, 21617, 22436,
+        23219, 24066, 24897, 25725, 26599, 27430, 28301, 29198,
+        30041, 30947, 31835, 32790, 33683, 34601, 35567, 36579,
+        37515, 38478, 39415, 40403, 41358, 42373, 43359, 44409, 46000 };
 
-static const uint16_t brightnessDirect[65] = {
-        47000, 46777, 46692, 46603, 46506, 46402, 46291, 46175,
-        46053, 45925, 45792, 45652, 45509, 45361, 45207, 45050,
-        44887, 44721, 44552, 44379, 44198, 44019, 43836, 43646,
-        43458, 43262, 43069, 42867, 42663, 42458, 42252, 42048,
-        41834, 41618, 41409, 41191, 40968, 40741, 40527, 40301,
-        40078, 39845, 39615, 39393, 39144, 38921, 38681, 38449,
-        38217, 37979, 37735, 37500, 37247, 37005, 36767, 36511,
-        36263, 36011, 35787, 35511, 35271, 35013, 34797, 34520, 34259 };
+static const uint16_t BRIGHTNESS_DIRECT[65] = {
+        0, 223, 308, 397, 494, 598, 709, 825,
+        947, 1075, 1208, 1348, 1491, 1639, 1793, 1950,
+        2113, 2279, 2448, 2621, 2802, 2981, 3164, 3354,
+        3542, 3738, 3931, 4133, 4337, 4542, 4748, 4952,
+        5166, 5382, 5591, 5809, 6032, 6259, 6473, 6699,
+        6922, 7155, 7385, 7607, 7856, 8079, 8319, 8551,
+        8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
+        10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
 
 static const uint32_t columnSelectValue[NUMBER_OF_COLUMNS] = {
         0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
@@ -143,6 +144,8 @@ private:
     void initializeDma();
     void initializeGpio();
     void initializePwmOutputs();
+
+    void initPwmGpio();
 
     uint8_t currentlyStableInputBuffer_;
 

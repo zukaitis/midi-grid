@@ -63,6 +63,7 @@ void GridControl::initialize()
 {
     initializeGpio();
     initializePwmOutputs();
+    //initPwmGpio();
     initializeBaseTimer();
     initializeDma();
 }
@@ -83,15 +84,15 @@ void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY
 
     if (directLed)
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = brightnessDirect[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = brightnessDirect[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = brightnessDirect[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Blue];
     }
     else
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = brightnessPad[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = brightnessPad[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = brightnessPad[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Blue];
     }
 }
 
@@ -128,9 +129,9 @@ void GridControl::turnAllLedsOff()
     {
         for (uint8_t y = 0; y < NUMBER_OF_ROWS; y++)
         {
-            pwmOutputRed_[x][y] = PWM_CLOCK_PERIOD; //LED_PASSIVE;
-            pwmOutputGreen_[x][y] = PWM_CLOCK_PERIOD;
-            pwmOutputBlue_[x][y] = PWM_CLOCK_PERIOD;
+            pwmOutputRed_[x][y] = BRIGHTNESS_DIRECT[0];
+            pwmOutputGreen_[x][y] = BRIGHTNESS_DIRECT[0];
+            pwmOutputBlue_[x][y] = BRIGHTNESS_DIRECT[0];
         }
     }
 }
@@ -156,11 +157,10 @@ void GridControl::initializeBaseTimer()
     timerMasterConfiguration.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     HAL_TIMEx_MasterConfigSynchronization( &baseInterruptTimer_, &timerMasterConfiguration );
 
-    // experimental shit
     TIM_OC_InitTypeDef timerOutputCompareConfiguration;
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_ACTIVE;
 
-    timerOutputCompareConfiguration.Pulse = 1;
+    timerOutputCompareConfiguration.Pulse = 1; // update as early as possible
     HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
 
     timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 7) / 10;
@@ -305,7 +305,6 @@ void GridControl::initializeGpio()
 
 void GridControl::initializePwmOutputs()
 {
-    GPIO_InitTypeDef gpioConfiguration;
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
     TIM_SlaveConfigTypeDef timerSlaveConfiguration;
     TIM_OC_InitTypeDef timerOutputCompareConfiguration;
@@ -318,7 +317,7 @@ void GridControl::initializePwmOutputs()
     timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
     timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
 
-    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM2;
+    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1; //2;
     timerOutputCompareConfiguration.Pulse = PWM_CLOCK_PERIOD; // start with passive output
     timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
@@ -327,8 +326,8 @@ void GridControl::initializePwmOutputs()
 
     // Red PWM output configuration
     pwmTimerRed_.Instance = PWM_TIMER_RED;
-    pwmTimerRed_.Init.Prescaler = 0;
-    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerRed_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
+    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
     pwmTimerRed_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerRed_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerRed_ );
@@ -348,8 +347,8 @@ void GridControl::initializePwmOutputs()
 
     // Green PWM output configuration
     pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
-    pwmTimerGreen_.Init.Prescaler = 0;
-    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerGreen_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
+    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
     pwmTimerGreen_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerGreen_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerGreen_ );
@@ -369,8 +368,8 @@ void GridControl::initializePwmOutputs()
 
     // Blue PWM output configuration
     pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
-    pwmTimerBlue_.Init.Prescaler = 0;
-    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_UP;
+    pwmTimerBlue_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
+    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
     pwmTimerBlue_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerBlue_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerBlue_ );
@@ -387,6 +386,11 @@ void GridControl::initializePwmOutputs()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+//}
+//
+//void GridControl::initPwmGpio()
+//{
+    GPIO_InitTypeDef gpioConfiguration;
 
     // Timer GPIO configuration
     __HAL_RCC_GPIOC_CLK_ENABLE();
