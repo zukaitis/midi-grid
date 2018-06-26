@@ -104,11 +104,11 @@ void Grid::refreshLeds() const
 {
     static uint32_t ledFlashCheckTime = 0;
     static uint32_t ledPulseCheckTime = 0;
-    static uint8_t ledPulseStepNumber = 0;
-    static uint8_t flashColourIndex = 0;
 
     if (HAL_GetTick() >= ledFlashCheckTime)
     {
+        static uint8_t flashColourIndex = 0;
+
         for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
         {
             setLedColour(
@@ -122,6 +122,7 @@ void Grid::refreshLeds() const
 
     if (HAL_GetTick() >= ledPulseCheckTime)
     {
+        static uint8_t ledPulseStepNumber = 0;
         Colour dimmedColour;
         ++ledPulseStepNumber;
         if (LED_PULSE_STEP_COUNT <= ledPulseStepNumber)

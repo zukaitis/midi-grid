@@ -202,7 +202,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &columnSelectDmaConfiguration_,
             reinterpret_cast<uint32_t>(&columnSelectValue[0]),
             reinterpret_cast<uint32_t>(&GRID_COLUMN_CONTROL_GPIO_PORT->ODR),
-            20 );
+            NUMBER_OF_COLUMNS );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
     ledOutputDmaInitConfiguration.Direction = DMA_MEMORY_TO_PERIPH;
@@ -223,7 +223,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputRedDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
-            80 );
+            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
 
     pwmOutputGreenDmaConfiguration_.Instance = DMA2_Stream6;
     pwmOutputGreenDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -232,7 +232,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputGreenDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
-            80 );
+            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
 
     pwmOutputBlueDmaConfiguration_.Instance = DMA2_Stream4;
     pwmOutputBlueDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -241,7 +241,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputBlueDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
-            80 );
+            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
 
     buttonInputDmaConfiguration.Instance = DMA2_Stream5;
     buttonInputDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
@@ -268,7 +268,7 @@ void GridControl::initializeDma()
             reinterpret_cast<uint32_t>(&GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
-            20 );
+            NUMBER_OF_COLUMNS );
 }
 
 void GridControl::initializeGpio()
@@ -317,8 +317,8 @@ void GridControl::initializePwmOutputs()
     timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
     timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
 
-    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1; //2;
-    timerOutputCompareConfiguration.Pulse = PWM_CLOCK_PERIOD; // start with passive output
+    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
+    timerOutputCompareConfiguration.Pulse = BRIGHTNESS_DIRECT[0]; // start with passive output
     timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
 
@@ -327,7 +327,7 @@ void GridControl::initializePwmOutputs()
     // Red PWM output configuration
     pwmTimerRed_.Instance = PWM_TIMER_RED;
     pwmTimerRed_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
+    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
     pwmTimerRed_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerRed_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerRed_ );
@@ -348,7 +348,7 @@ void GridControl::initializePwmOutputs()
     // Green PWM output configuration
     pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
     pwmTimerGreen_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
+    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
     pwmTimerGreen_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerGreen_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerGreen_ );
@@ -369,7 +369,7 @@ void GridControl::initializePwmOutputs()
     // Blue PWM output configuration
     pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
     pwmTimerBlue_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_DOWN; //UP;
+    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
     pwmTimerBlue_.Init.Period = PWM_CLOCK_PERIOD - 1;
     pwmTimerBlue_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &pwmTimerBlue_ );

@@ -114,11 +114,10 @@ void UsbMidi::sendNoteOff( const uint8_t channel, const uint8_t note )
 void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t length )
 {
     static uint8_t buffer[4];
-    uint8_t bytesRemaining;
     uint8_t dataIndex = 0;
     while (dataIndex < length)
     {
-        bytesRemaining = length - dataIndex;
+        const uint8_t bytesRemaining = length - dataIndex;
         switch (bytesRemaining)
         {
             case 3:

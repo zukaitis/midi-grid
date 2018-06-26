@@ -67,9 +67,18 @@ void ApplicationMain::run()
 
     gui.displayWaitingForMidi();
 
+    for (uint8_t x=0; x<8; x++)
+    {
+        for (uint8_t y=0; y<8; y++)
+        {
+            Colour colour = {static_cast<uint8_t>(x*8+y+1), 0, 0};
+            grid.setLed(x, y, colour);
+        }
+    }
+
     while (!usbMidi.isPacketAvailable())
     {
-        randomLightAnimation();
+        //randomLightAnimation();
         if (grid.getButtonEvent( buttonX, buttonY, event ))
         {
             break;
@@ -156,10 +165,10 @@ void ApplicationMain::configureSystemClock()
 void ApplicationMain::randomLightAnimation()
 {
     static uint32_t newLightTime = 0;
-    static uint8_t ledsChanged = 0;
 
     if (HAL_GetTick() >= newLightTime)
     {
+        static uint8_t ledsChanged = 0;
         int8_t partlyLitColour1, partlyLitColour2;
         Colour colour;
         const uint8_t ledPositionX = rand() % 8;

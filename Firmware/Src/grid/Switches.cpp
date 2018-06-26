@@ -36,10 +36,10 @@ void Switches::discardAllPendingEvents()
 // call this method after checking buttons, because it resets flag in GridControl
 bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps )
 {
-    static int8_t microstep[2] = {0, 0};
-    static uint32_t previousEventTime[2] = {0, 0};
+
+
     static bool encoderChangeDetected = false;
-    static uint8_t previousEncoderValue[2] = {0, 0};
+
 
     if (gridControl.switchInputUpdated || encoderChangeDetected)
     {
@@ -47,6 +47,9 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
         gridControl.switchInputUpdated = false;
         for (uint8_t encoder = 0; encoder < NUMBER_OF_ROTARY_ENCODERS; encoder++)
         {
+            static int8_t microstep[2] = {0, 0};
+            static uint8_t previousEncoderValue[2] = {0, 0};
+
             for (uint8_t timeStep = 0; timeStep < NUMBER_OF_ROTARY_ENCODER_TIME_STEPS; timeStep++)
             {
                 previousEncoderValue[encoder] <<= 2;
@@ -57,6 +60,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
 
             if ((microstep[encoder] >= 4) || (microstep[encoder] <= -4))
             {
+                static uint32_t previousEventTime[2] = {0, 0};
                 int8_t velocityMultiplier;
                 // only respond every 4 microsteps (1 physical step)
                 const uint32_t interval = HAL_GetTick() - previousEventTime[encoder];
