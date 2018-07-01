@@ -12,6 +12,7 @@ namespace switches
 static const uint8_t NUMBER_OF_BUTTONS = 2;
 static const uint8_t NUMBER_OF_ROTARY_ENCODERS = 2;
 static const uint8_t NUMBER_OF_ROTARY_ENCODER_TIME_STEPS = 10;
+static const int8_t NUMBER_OF_MICROSTEPS_IN_STEP = 4;
 
 static const int8_t ENCODER_STATES[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 

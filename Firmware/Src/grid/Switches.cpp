@@ -58,7 +58,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                 microstep[encoder] += ENCODER_STATES[previousEncoderValue[encoder]];
             }
 
-            if ((microstep[encoder] >= 4) || (microstep[encoder] <= -4))
+            if ((microstep[encoder] >= NUMBER_OF_MICROSTEPS_IN_STEP) || (microstep[encoder] <= -NUMBER_OF_MICROSTEPS_IN_STEP))
             {
                 static uint32_t previousEventTime[2] = {0, 0};
                 int8_t velocityMultiplier;

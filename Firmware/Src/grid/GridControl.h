@@ -14,10 +14,10 @@ static const uint8_t NUMBER_OF_COLUMNS = 20;
 static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
 static const uint8_t TIMER_FRAME_OFFSET = 1;
 
-static const uint32_t PWM_CLOCK_PRESCALER = 1; // 96; // 1us
+static const uint32_t PWM_CLOCK_PRESCALER = 1;
 static const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
-static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 1; // 96; // 1us
-static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 48000; // 500; // 500us
+static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 1;
+static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 48000; // 500us
 
 static const uint16_t GRID_BUTTON_MASK = 0x000F;
 static const uint16_t BUTTON_MASK[2] = {0x2000, 0x0400};

@@ -63,7 +63,6 @@ void GridControl::initialize()
 {
     initializeGpio();
     initializePwmOutputs();
-    //initPwmGpio();
     initializeBaseTimer();
     initializeDma();
 }
@@ -144,9 +143,9 @@ void GridControl::initializeBaseTimer()
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     baseInterruptTimer_.Instance = BASE_INTERRUPT_TIMER;
-    baseInterruptTimer_.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1; // 1us is the desired timer step
+    baseInterruptTimer_.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1;
     baseInterruptTimer_.Init.CounterMode = TIM_COUNTERMODE_UP;
-    baseInterruptTimer_.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;  // 1s / (20*100) = 500us
+    baseInterruptTimer_.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;
     baseInterruptTimer_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &baseInterruptTimer_ );
 
@@ -386,10 +385,8 @@ void GridControl::initializePwmOutputs()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-//}
-//
-//void GridControl::initPwmGpio()
-//{
+
+    // initialize GPIO
     GPIO_InitTypeDef gpioConfiguration;
 
     // Timer GPIO configuration

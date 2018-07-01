@@ -116,7 +116,7 @@ void Grid::refreshLeds() const
                     flashingLed_[i].positionY,
                     flashingLed_[i].colour[flashColourIndex] );
         }
-        flashColourIndex ^= 0x01;
+        flashColourIndex = (flashColourIndex + 1) % LED_FLASHING_NUMBER_OF_COLOURS;
         ledFlashCheckTime = HAL_GetTick() + LED_FLASH_PERIOD_MS; //250ms
     }
 
@@ -135,12 +135,14 @@ void Grid::refreshLeds() const
             dimmedColour = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].colour;
             if (3 >= ledPulseStepNumber)
             {
+                // y = x / 4
                 dimmedColour.Red = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
                 dimmedColour.Green = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
                 dimmedColour.Blue = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
             }
             else
             {
+                // y = -x / 16
                 dimmedColour.Red = (dimmedColour.Red * (19 - ledPulseStepNumber)) / 16;
                 dimmedColour.Green = (dimmedColour.Green * (19 - ledPulseStepNumber)) / 16;
                 dimmedColour.Blue = (dimmedColour.Blue * (19 - ledPulseStepNumber)) / 16;
@@ -165,7 +167,8 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
         {
             if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
             {
-                flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1]; // move last element into the place of element that is being removed
+                // move last element into the place of element that is being removed
+                flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1];
                 numberOfFlashingLeds_--;
                 break;
             }
@@ -177,7 +180,8 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
         {
             if ((ledPositionX == pulsingLed_[i].positionX)&&(ledPositionY == pulsingLed_[i].positionY))
             {
-                pulsingLed_[i] = pulsingLed_[numberOfPulsingLeds_ - 1]; // move last element into the place of element that is being removed
+                // move last element into the place of element that is being removed
+                pulsingLed_[i] = pulsingLed_[numberOfPulsingLeds_ - 1];
                 numberOfPulsingLeds_--;
                 break;
             }
@@ -219,7 +223,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
 void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
-    const bool directLed = (ledPositionX > 7);
+    const bool directLed = (ledPositionX >= NUMBER_OF_PAD_COLUMNS);
 
     if (ledPositionY >= grid_control::NUMBER_OF_ROWS)
     {

@@ -7,10 +7,10 @@ midi-grid is an open source MIDI controller, main part of which is 8x8 LED ilumi
 
 Main features of the device:
 - 8x8 RGB LED illuminated button matrix
-- 16 additional MIDI control buttons, most of them paired with RGB LED indicator
-- 2 buttons for internal control of the device
-- 2 rotary encoders, functionality yet to be specified
-- Monochrome LCD display
+- 17 additional MIDI control buttons, most of them paired with RGB LED indicator
+- 1 internal menu button
+- 2 rotary encoders, acting as MIDI controls
+- Monochrome LCD display with adjustable backlight
 - Physical MIDI input and output ports
 
 Currently device is developed to work with [Ableton Live](https://www.ableton.com/en/live/), specifically with modified [Launchpad95](http://motscousus.com/stuff/2011-07_Novation_Launchpad_Ableton_Live_Scripts/) MIDI remote script - [Launchpad95g](https://github.com/zukaitis/Launchpad95g). Additional functionality, like stand-alone modes, or compatibility with other DAWs may be implemented later.

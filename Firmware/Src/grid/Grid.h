@@ -13,6 +13,16 @@ namespace grid_control
 namespace grid
 {
 
+static const uint8_t NUMBER_OF_ROWS = 8;
+static const uint8_t NUMBER_OF_COLUMNS = 10;
+static const uint8_t NUMBER_OF_PAD_COLUMNS = 8;
+static const uint8_t NUMBER_OF_LEDS = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
+
+static const uint32_t LED_FLASH_PERIOD_MS = 250; // 120bpm - default flashing rate
+static const uint8_t LED_FLASHING_NUMBER_OF_COLOURS = 2;
+static const uint32_t LED_PULSE_STEP_PERIOD_MS = 67; // 1000ms / 15 = 66.6... ms
+static const uint8_t LED_PULSE_STEP_COUNT = 15;
+
 enum LedLightingType
 {
     LedLightingType_LIGHT = 0,
@@ -24,7 +34,7 @@ struct FlashingLed
 {
     uint8_t positionX;
     uint8_t positionY;
-    Colour colour[2];
+    Colour colour[LED_FLASHING_NUMBER_OF_COLOURS];
 };
 
 struct PulsingLed
@@ -38,14 +48,6 @@ struct Led
     Colour colour;
     LedLightingType lightingType; // light?flash?pulse
 };
-
-static const uint8_t NUMBER_OF_ROWS = 8;
-static const uint8_t NUMBER_OF_COLUMNS = 10;
-static const uint8_t NUMBER_OF_LEDS = NUMBER_OF_ROWS * NUMBER_OF_COLUMNS;
-
-static const uint32_t LED_FLASH_PERIOD_MS = 250; // 120bpm - default flashing rate
-static const uint32_t LED_PULSE_STEP_PERIOD_MS = 67; // 1000ms / 15 = 66.6... ms
-static const uint8_t LED_PULSE_STEP_COUNT = 15;
 
 class Grid
 {
