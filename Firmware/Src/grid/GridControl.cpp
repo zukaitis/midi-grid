@@ -29,14 +29,16 @@ extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDe
 }
 
 GridControl::GridControl() :
-        currentlyStableInputBuffer_( 1 )
+        currentlyStableInputBuffer_( 1 ),
+        gridInputUpdated_(false),
+        switchInputUpdated_(false)
 {
-    turnAllLedsOff();
     for (uint8_t i = 0; i < NUMBER_OF_COLUMNS; i++)
     {
         buttonInput_[0][i] = 0x0000;
         buttonInput_[1][i] = 0x0000;
     }
+    turnAllLedsOff();
 }
 
 GridControl::~GridControl()
@@ -62,7 +64,8 @@ uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, uint8_t step
 void GridControl::initialize()
 {
     initializeGpio();
-    initializePwmOutputs();
+    initializePwmTimers();
+    initializePwmGpio();
     initializeBaseTimer();
     initializeDma();
 }
@@ -75,6 +78,30 @@ bool GridControl::isButtonInputStable( const uint8_t button ) const
 bool GridControl::isGridColumnInputStable( const uint8_t column ) const
 {
     return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][column] ^ buttonInput_[1][column])));
+}
+
+bool GridControl::isGridInputUpdated() const
+{
+    return gridInputUpdated_;
+}
+
+bool GridControl::isSwitchInputUpdated() const
+{
+    return switchInputUpdated_;
+}
+
+void GridControl::resetGridInputUpdatedFlag()
+{
+    //__disable_irq(); // disable interrupts, so variables wouldn't be changed during reading
+    gridInputUpdated_ = false;
+    //__enable_irq();
+}
+
+void GridControl::resetSwitchInputUpdatedFlag()
+{
+    //__disable_irq(); // disable interrupts, so variables wouldn't be changed during reading
+    switchInputUpdated_ = false;
+    //__enable_irq();
 }
 
 void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
@@ -302,92 +329,11 @@ void GridControl::initializeGpio()
       HAL_GPIO_Init( GRID_COLUMN_CONTROL_GPIO_PORT, &gpioConfiguration );
 }
 
-void GridControl::initializePwmOutputs()
+void GridControl::initializePwmGpio()
 {
-    TIM_ClockConfigTypeDef timerClockSourceConfiguration;
-    TIM_SlaveConfigTypeDef timerSlaveConfiguration;
-    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
-
-    __HAL_RCC_TIM2_CLK_ENABLE();
-    __HAL_RCC_TIM3_CLK_ENABLE();
-    __HAL_RCC_TIM4_CLK_ENABLE();
-
-    // Same configuration for all three channels
-    timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
-    timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
-
-    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
-    timerOutputCompareConfiguration.Pulse = BRIGHTNESS_DIRECT[0]; // start with passive output
-    timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
-    timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
-
-    timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-
-    // Red PWM output configuration
-    pwmTimerRed_.Instance = PWM_TIMER_RED;
-    pwmTimerRed_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerRed_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-    pwmTimerRed_.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerRed_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerRed_ );
-
-    HAL_TIM_ConfigClockSource( &pwmTimerRed_, &timerClockSourceConfiguration );
-
-    HAL_TIM_PWM_Init( &pwmTimerRed_ );
-
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerRed_, &timerSlaveConfiguration );
-
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
-    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_RED->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-
-    // Green PWM output configuration
-    pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
-    pwmTimerGreen_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerGreen_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-    pwmTimerGreen_.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerGreen_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerGreen_ );
-
-    HAL_TIM_ConfigClockSource( &pwmTimerGreen_, &timerClockSourceConfiguration );
-
-    HAL_TIM_PWM_Init( &pwmTimerGreen_ );
-
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerGreen_, &timerSlaveConfiguration );
-
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
-    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_GREEN->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-
-    // Blue PWM output configuration
-    pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
-    pwmTimerBlue_.Init.Prescaler = PWM_CLOCK_PRESCALER - 1;
-    pwmTimerBlue_.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-    pwmTimerBlue_.Init.Period = PWM_CLOCK_PERIOD - 1;
-    pwmTimerBlue_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    HAL_TIM_Base_Init( &pwmTimerBlue_ );
-
-    HAL_TIM_ConfigClockSource( &pwmTimerBlue_, &timerClockSourceConfiguration );
-
-    HAL_TIM_PWM_Init( &pwmTimerBlue_ );
-
-    HAL_TIM_SlaveConfigSynchronization( &pwmTimerBlue_, &timerSlaveConfiguration );
-
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
-    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
-    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-
     // initialize GPIO
-    GPIO_InitTypeDef gpioConfiguration;
+    // making this structure static magically fixes the issues, but it's probably not the source of those issues
+    static GPIO_InitTypeDef gpioConfiguration;
 
     // Timer GPIO configuration
     __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -413,6 +359,89 @@ void GridControl::initializePwmOutputs()
     gpioConfiguration.Pin = PWM_GREEN1_Pin|PWM_GREEN2_Pin|PWM_GREEN3_Pin|PWM_GREEN4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM4;
     HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
+}
+
+void GridControl::initializePwmTimers()
+{
+    TIM_Base_InitTypeDef timerBaseInitConfiguration;
+    TIM_ClockConfigTypeDef timerClockSourceConfiguration;
+    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
+    TIM_SlaveConfigTypeDef timerSlaveConfiguration;
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    __HAL_RCC_TIM3_CLK_ENABLE();
+    __HAL_RCC_TIM4_CLK_ENABLE();
+
+    // Same configuration for all three channels
+    timerSlaveConfiguration.SlaveMode = TIM_SLAVEMODE_RESET;
+    timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
+
+    timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
+    timerOutputCompareConfiguration.Pulse = BRIGHTNESS_DIRECT[0]; // start with passive output
+    timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
+    timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
+
+    timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+
+    timerBaseInitConfiguration.Prescaler = PWM_CLOCK_PRESCALER - 1;
+    timerBaseInitConfiguration.CounterMode = TIM_COUNTERMODE_DOWN;
+    timerBaseInitConfiguration.Period = PWM_CLOCK_PERIOD - 1;
+    timerBaseInitConfiguration.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+
+    // Red PWM output configuration
+    pwmTimerRed_.Instance = PWM_TIMER_RED;
+    pwmTimerRed_.Init = timerBaseInitConfiguration;
+    HAL_TIM_Base_Init( &pwmTimerRed_ );
+
+    HAL_TIM_ConfigClockSource( &pwmTimerRed_, &timerClockSourceConfiguration );
+
+    HAL_TIM_PWM_Init( &pwmTimerRed_ );
+
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerRed_, &timerSlaveConfiguration );
+
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
+    PWM_TIMER_RED->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+
+    // Green PWM output configuration
+    pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
+    pwmTimerGreen_.Init = timerBaseInitConfiguration;
+    HAL_TIM_Base_Init( &pwmTimerGreen_ );
+
+    HAL_TIM_ConfigClockSource( &pwmTimerGreen_, &timerClockSourceConfiguration );
+
+    HAL_TIM_PWM_Init( &pwmTimerGreen_ );
+
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerGreen_, &timerSlaveConfiguration );
+
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
+    PWM_TIMER_GREEN->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+
+    // Blue PWM output configuration
+    pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
+    pwmTimerBlue_.Init = timerBaseInitConfiguration;
+    HAL_TIM_Base_Init( &pwmTimerBlue_ );
+
+    HAL_TIM_ConfigClockSource( &pwmTimerBlue_, &timerClockSourceConfiguration );
+
+    HAL_TIM_PWM_Init( &pwmTimerBlue_ );
+
+    HAL_TIM_SlaveConfigSynchronization( &pwmTimerBlue_, &timerSlaveConfiguration );
+
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
+    HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
+    // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
+    PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+
 }
 
 } // namespace grid_control

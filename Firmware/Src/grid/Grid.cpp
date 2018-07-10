@@ -53,10 +53,11 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
 {
     static bool buttonChangeDetected = false;
 
-    if (gridControl.gridInputUpdated || buttonChangeDetected)
+    if (gridControl.isGridInputUpdated() || buttonChangeDetected)
     {
+        __disable_irq();
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
-        gridControl.gridInputUpdated = false;
+        gridControl.resetGridInputUpdatedFlag();
         for (int8_t x = 0; x < grid_control::NUMBER_OF_COLUMNS; x++)
         {
             if (gridControl.isGridColumnInputStable( x ))
@@ -79,6 +80,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                             buttonPositionX = x;
                             buttonPositionY = y;
                             buttonChangeDetected = true;
+                            __enable_irq();
                             return true;
                         }
                     }
@@ -86,6 +88,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
             }
         }
     }
+    __enable_irq();
     return false;
 }
 

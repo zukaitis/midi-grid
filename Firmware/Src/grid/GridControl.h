@@ -124,26 +124,28 @@ public:
     inline void inputReadoutToMemory0CompleteCallback()
     {
         currentlyStableInputBuffer_ = 0;
-        gridInputUpdated = true;
-        switchInputUpdated = true;
+        gridInputUpdated_ = true;
+        switchInputUpdated_ = true;
     }
 
     inline void inputReadoutToMemory1CompleteCallback()
     {
         currentlyStableInputBuffer_ = 1;
-        gridInputUpdated = true;
-        switchInputUpdated = true;
+        gridInputUpdated_ = true;
+        switchInputUpdated_ = true;
     }
 
     bool isButtonInputStable( const uint8_t button ) const;
     bool isGridColumnInputStable( const uint8_t column ) const;
 
+    bool isGridInputUpdated() const;
+    bool isSwitchInputUpdated() const;
+    void resetGridInputUpdatedFlag();
+    void resetSwitchInputUpdatedFlag();
+
     void setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour );
     void startTimers();
     void turnAllLedsOff();
-
-    bool gridInputUpdated = false;
-    bool switchInputUpdated = false;
 
 private:
     GridControl();
@@ -151,16 +153,18 @@ private:
     void initializeBaseTimer();
     void initializeDma();
     void initializeGpio();
-    void initializePwmOutputs();
-
-    void initPwmGpio();
+    void initializePwmGpio();
+    void initializePwmTimers();
 
     uint8_t currentlyStableInputBuffer_;
 
+    bool gridInputUpdated_;
+    bool switchInputUpdated_;
+
+    uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
     uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
     uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
     uint32_t pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
 
     TIM_HandleTypeDef pwmTimerRed_;
     TIM_HandleTypeDef pwmTimerGreen_;

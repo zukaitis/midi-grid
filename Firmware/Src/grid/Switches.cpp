@@ -41,10 +41,10 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
     static bool encoderChangeDetected = false;
 
 
-    if (gridControl.switchInputUpdated || encoderChangeDetected)
+    if (gridControl.isSwitchInputUpdated() || encoderChangeDetected)
     {
         encoderChangeDetected = false;
-        gridControl.switchInputUpdated = false;
+        gridControl.resetSwitchInputUpdatedFlag();
         for (uint8_t encoder = 0; encoder < NUMBER_OF_ROTARY_ENCODERS; encoder++)
         {
             static int8_t microstep[2] = {0, 0};
@@ -97,9 +97,9 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 {
     static bool buttonChangeDetected = false;
 
-    if (gridControl.switchInputUpdated || buttonChangeDetected)
+    if (gridControl.isSwitchInputUpdated() || buttonChangeDetected)
     {
-        buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
+        buttonChangeDetected = false; // reset this variable every time, it will be set back if necessary
         for (uint8_t button = 0; button < NUMBER_OF_BUTTONS; button++)
         {
             if (gridControl.isButtonInputStable(button))
