@@ -19,11 +19,12 @@ int main(void)
 }
 
 ApplicationMain::ApplicationMain() :
-        grid( grid::Grid() ),
-        switches( grid::switches::Switches() ),
-        gui( lcd::gui::Gui() ),
-        usbMidi( midi::UsbMidi() ),
-        launchpad( launchpad::Launchpad(grid, switches, gui, usbMidi) ),
+        gridControl_( grid::grid_control::GridControl() ),
+        grid_( grid::Grid( gridControl_ ) ),
+        switches_( grid::switches::Switches( gridControl_ ) ),
+        gui_( lcd::gui::Gui() ),
+        usbMidi_( midi::UsbMidi() ),
+        launchpad_( launchpad::Launchpad(grid_, switches_, gui_, usbMidi_) ),
         lcd_( lcd::Lcd::getInstance() )
 {}
 
@@ -42,8 +43,8 @@ void ApplicationMain::initialize()
     initialise_monitor_handles(); // enable semihosting
     #endif
 
-    grid.initialize();
-    grid.enable();
+    grid_.initialize();
+    grid_.enable();
 
     lcd_.initialize();
     lcd_.setBacklightIntensity( 55 );
@@ -58,32 +59,32 @@ void ApplicationMain::run()
     uint8_t buttonX, buttonY;
     ButtonEvent event;
 
-    gui.displayConnectingImage();
+    gui_.displayConnectingImage();
 
     while (!isUsbConnected())
     {
-        gui.refresh();
+        gui_.refresh();
     }
 
-    gui.displayWaitingForMidi();
+    gui_.displayWaitingForMidi();
 
     for (uint8_t x=0; x<8; x++)
     {
         for (uint8_t y=0; y<8; y++)
         {
             Colour colour = {static_cast<uint8_t>(x*8+y+1), 0, 0};
-            grid.setLed(x, y, colour);
+            grid_.setLed(x, y, colour);
         }
     }
 
-    while (!usbMidi.isPacketAvailable())
+    while (!usbMidi_.isPacketAvailable())
     {
         //randomLightAnimation();
-        if (grid.getButtonEvent( buttonX, buttonY, event ))
+        if (grid_.getButtonEvent( buttonX, buttonY, event ))
         {
             break;
         }
-        gui.refresh();
+        gui_.refresh();
     }
 
     #ifdef USE_SEMIHOSTING
@@ -92,9 +93,9 @@ void ApplicationMain::run()
 
     while (1)
     {
-        launchpad.runProgram();
+        launchpad_.runProgram();
         // program only returns here when red button is pressed
-        if (switches.isButtonPressed( 1 ))
+        if (switches_.isButtonPressed( 1 ))
         {
             runInternalMenu();
         }
@@ -220,12 +221,12 @@ void ApplicationMain::randomLightAnimation()
                 break;
         }
 
-        grid.setLed(ledPositionX, ledPositionY, colour);
+        grid_.setLed(ledPositionX, ledPositionY, colour);
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
         {
-            grid.turnAllLedsOff();
+            grid_.turnAllLedsOff();
             ledsChanged = 0;
         }
     }
@@ -247,20 +248,20 @@ void ApplicationMain::runInternalMenu()
     ButtonEvent event;
     midi::MidiPacket unusedInputPacket;
 
-    grid.discardAllPendingButtonEvents();
-    switches.discardAllPendingEvents();
+    grid_.discardAllPendingButtonEvents();
+    switches_.discardAllPendingEvents();
 
-    gui.enterInternalMenu();
+    gui_.enterInternalMenu();
 
-    grid.turnAllLedsOff();
+    grid_.turnAllLedsOff();
     const Colour red = {64U, 0U, 0U};
-    grid.setLed(7, 0, red);
+    grid_.setLed(7, 0, red);
 
     while (1)
     {
-        usbMidi.getPacket(unusedInputPacket); // check for incoming packets and discard them
+        usbMidi_.getPacket(unusedInputPacket); // check for incoming packets and discard them
 
-        if (grid.getButtonEvent( buttonX, buttonY, event ))
+        if (grid_.getButtonEvent( buttonX, buttonY, event ))
         {
             if ((7 == buttonX) && (0 == buttonY))
             {
@@ -269,7 +270,7 @@ void ApplicationMain::runInternalMenu()
             }
         }
 
-        if (switches.getButtonEvent( buttonX,  event ))
+        if (switches_.getButtonEvent( buttonX,  event ))
         {
             if ((1 == buttonX) && (!event))
             {
@@ -277,9 +278,9 @@ void ApplicationMain::runInternalMenu()
             }
         }
 
-        switches.getRotaryEncoderEvent( buttonX, rotaryStep ); // unused atm
+        switches_.getRotaryEncoderEvent( buttonX, rotaryStep ); // unused atm
 
         //grid.refreshLeds();
-        gui.refresh();
+        gui_.refresh();
     }
 }

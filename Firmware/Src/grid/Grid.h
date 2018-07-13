@@ -52,7 +52,7 @@ struct Led
 class Grid
 {
 public:
-    Grid();
+    Grid( grid_control::GridControl& gridControl );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -72,7 +72,7 @@ public:
 private:
     void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
-    grid_control::GridControl& gridControl;
+    grid_control::GridControl& gridControl_;
     bool initialized_;
 
     Led led_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];

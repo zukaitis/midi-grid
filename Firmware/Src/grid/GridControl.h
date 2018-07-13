@@ -107,13 +107,7 @@ class GridControl
 {
 public:
 
-    // singleton, because class uses an interrupt
-    static inline GridControl& getInstance()
-    {
-        static GridControl instance;
-        return instance;
-    }
-
+    GridControl();
     ~GridControl();
 
     bool getButtonInput( const uint8_t button ) const;
@@ -121,18 +115,22 @@ public:
     uint8_t getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const;
     void initialize();
 
-    inline void inputReadoutToMemory0CompleteCallback()
+    static inline void inputReadoutToMemory0CompleteCallback( __DMA_HandleTypeDef* hdma )//()
     {
         currentlyStableInputBuffer_ = 0;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
     }
 
-    inline void inputReadoutToMemory1CompleteCallback()
+    static inline void inputReadoutToMemory1CompleteCallback( __DMA_HandleTypeDef* hdma )//()
     {
         currentlyStableInputBuffer_ = 1;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
+    }
+
+    static void dmaErrorCallback( __DMA_HandleTypeDef* hdma ) // unused
+    {
     }
 
     bool isButtonInputStable( const uint8_t button ) const;
@@ -144,11 +142,12 @@ public:
     void resetSwitchInputUpdatedFlag();
 
     void setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour );
-    void startTimers();
+    void start();
     void turnAllLedsOff();
 
+    static DMA_HandleTypeDef buttonInputDmaConfiguration;
+
 private:
-    GridControl();
 
     void initializeBaseTimer();
     void initializeDma();
@@ -156,10 +155,9 @@ private:
     void initializePwmGpio();
     void initializePwmTimers();
 
-    uint8_t currentlyStableInputBuffer_;
-
-    bool gridInputUpdated_;
-    bool switchInputUpdated_;
+    static uint8_t currentlyStableInputBuffer_;
+    static bool gridInputUpdated_;
+    static bool switchInputUpdated_;
 
     uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
     uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];

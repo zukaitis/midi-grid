@@ -5,33 +5,33 @@ namespace grid
 namespace grid_control
 {
 
-static DMA_HandleTypeDef buttonInputDmaConfiguration;
+uint8_t GridControl::currentlyStableInputBuffer_ = 1;
+bool GridControl::gridInputUpdated_ = false;
+bool GridControl::switchInputUpdated_ = false;
+
+DMA_HandleTypeDef GridControl::buttonInputDmaConfiguration;
 
 extern "C" void DMA2_Stream5_IRQHandler()
 {
-    HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
+    HAL_DMA_IRQHandler(&GridControl::buttonInputDmaConfiguration);
 }
 
-extern "C" void dmaErrorCallback(__DMA_HandleTypeDef * hdma) // unused
-{
-}
+//extern "C" void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
+//{
+//    static GridControl& gridControl = GridControl::getInstance();
+//    gridControl.inputReadoutToMemory0CompleteCallback();
+//}
+//
+//extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
+//{
+//    static GridControl& gridControl = GridControl::getInstance();
+//    gridControl.inputReadoutToMemory1CompleteCallback();
+//}
 
-extern "C" void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
-{
-    static GridControl& gridControl = GridControl::getInstance();
-    gridControl.inputReadoutToMemory0CompleteCallback();
-}
-
-extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
-{
-    static GridControl& gridControl = GridControl::getInstance();
-    gridControl.inputReadoutToMemory1CompleteCallback();
-}
-
-GridControl::GridControl() :
-        currentlyStableInputBuffer_( 1 ),
-        gridInputUpdated_(false),
-        switchInputUpdated_(false)
+GridControl::GridControl() //:
+//        currentlyStableInputBuffer_( 1 ),
+//        gridInputUpdated_(false),
+//        switchInputUpdated_(false)
 {
     for (uint8_t i = 0; i < NUMBER_OF_COLUMNS; i++)
     {
@@ -92,16 +92,12 @@ bool GridControl::isSwitchInputUpdated() const
 
 void GridControl::resetGridInputUpdatedFlag()
 {
-    //__disable_irq(); // disable interrupts, so variables wouldn't be changed during reading
     gridInputUpdated_ = false;
-    //__enable_irq();
 }
 
 void GridControl::resetSwitchInputUpdatedFlag()
 {
-    //__disable_irq(); // disable interrupts, so variables wouldn't be changed during reading
     switchInputUpdated_ = false;
-    //__enable_irq();
 }
 
 void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
@@ -122,7 +118,7 @@ void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY
     }
 }
 
-void GridControl::startTimers()
+void GridControl::start()
 {
     TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
     TIM_CCxChannelCmd( pwmTimerRed_.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
@@ -281,8 +277,8 @@ void GridControl::initializeDma()
     buttonInputDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     buttonInputDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
     buttonInputDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutToMemory0CompleteCallbackWrapper;
-    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallbackWrapper;
+    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutToMemory0CompleteCallback; //&inputReadoutToMemory0CompleteCallbackWrapper;
+    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallback; //&inputReadoutToMemory1CompleteCallbackWrapper;
     buttonInputDmaConfiguration.XferErrorCallback = &dmaErrorCallback;
     HAL_DMA_Init( &buttonInputDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
@@ -332,7 +328,7 @@ void GridControl::initializeGpio()
 void GridControl::initializePwmGpio()
 {
     // initialize GPIO
-    // making this structure static magically fixes the issues, but it's probably not the source of those issues
+    // making this structure static magically fixes the issues, but it's probably not the source of these issues
     static GPIO_InitTypeDef gpioConfiguration;
 
     // Timer GPIO configuration
@@ -348,6 +344,10 @@ void GridControl::initializePwmGpio()
     gpioConfiguration.Alternate = GPIO_AF1_TIM2;
     HAL_GPIO_Init( PWM_RED_GPIO_PORT, &gpioConfiguration );
 
+    gpioConfiguration.Pin = PWM_GREEN1_Pin|PWM_GREEN2_Pin|PWM_GREEN3_Pin|PWM_GREEN4_Pin;
+    gpioConfiguration.Alternate = GPIO_AF2_TIM4;
+    HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
+
     gpioConfiguration.Pin = PWM_BLUE1_Pin|PWM_BLUE2_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init( PWM_BLUE1_2_GPIO_PORT, &gpioConfiguration );
@@ -355,10 +355,6 @@ void GridControl::initializePwmGpio()
     gpioConfiguration.Pin = PWM_BLUE3_Pin|PWM_BLUE4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init( PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
-
-    gpioConfiguration.Pin = PWM_GREEN1_Pin|PWM_GREEN2_Pin|PWM_GREEN3_Pin|PWM_GREEN4_Pin;
-    gpioConfiguration.Alternate = GPIO_AF2_TIM4;
-    HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
 }
 
 void GridControl::initializePwmTimers()
@@ -441,7 +437,6 @@ void GridControl::initializePwmTimers()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-
 }
 
 } // namespace grid_control

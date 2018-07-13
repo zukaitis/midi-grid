@@ -20,7 +20,7 @@ static const int8_t ENCODER_STATES[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1
 class Switches
 {
 public:
-    Switches();
+    Switches( grid_control::GridControl& gridControl );
     ~Switches();
 
     void discardAllPendingEvents();
@@ -31,7 +31,7 @@ public:
     bool isButtonPressed( const uint8_t buttonNumber );
 
 private:
-    grid::grid_control::GridControl& gridControl;
+    grid_control::GridControl& gridControl_;
 
     bool registeredButtonInput_[NUMBER_OF_BUTTONS];
 };

@@ -2,10 +2,19 @@
 #define __MAIN_H__
 
 #include "grid/Grid.h"
+#include "grid/GridControl.h"
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "program/Launchpad.h"
 #include "usb/UsbMidi.h"
+
+//namespace grid
+//{
+//    namespace grid_control
+//    {
+//        class GridControl;
+//    }
+//}
 
 namespace lcd
 {
@@ -37,11 +46,12 @@ public:
 private:
     ApplicationMain();
 
-    grid::Grid grid;
-    grid::switches::Switches switches;
-    lcd::gui::Gui gui;
-    midi::UsbMidi usbMidi;
-    launchpad::Launchpad launchpad;
+    grid::grid_control::GridControl gridControl_;
+    grid::Grid grid_;
+    grid::switches::Switches switches_;
+    lcd::gui::Gui gui_;
+    midi::UsbMidi usbMidi_;
+    launchpad::Launchpad launchpad_;
     lcd::Lcd& lcd_; // to be removed
 };
 

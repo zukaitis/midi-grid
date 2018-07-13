@@ -5,8 +5,8 @@
 namespace grid
 {
 
-Grid::Grid() :
-        gridControl( grid_control::GridControl::getInstance() ),
+Grid::Grid( grid_control::GridControl& gridControl ) :
+        gridControl_( gridControl ),
         initialized_( false ),
         numberOfFlashingLeds_( 0 ),
         numberOfPulsingLeds_( 0 )
@@ -45,7 +45,7 @@ void Grid::enable()
 {
     if (initialized_)
     {
-        gridControl.startTimers();
+        gridControl_.start();
     }
 }
 
@@ -53,16 +53,16 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
 {
     static bool buttonChangeDetected = false;
 
-    if (gridControl.isGridInputUpdated() || buttonChangeDetected)
+    if (gridControl_.isGridInputUpdated() || buttonChangeDetected)
     {
         __disable_irq();
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
-        gridControl.resetGridInputUpdatedFlag();
+        gridControl_.resetGridInputUpdatedFlag();
         for (int8_t x = 0; x < grid_control::NUMBER_OF_COLUMNS; x++)
         {
-            if (gridControl.isGridColumnInputStable( x ))
+            if (gridControl_.isGridColumnInputStable( x ))
             {
-                const uint8_t buttonInput = gridControl.getGridButtonInput( x );
+                const uint8_t buttonInput = gridControl_.getGridButtonInput( x );
                 const uint8_t buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
@@ -99,7 +99,7 @@ Colour Grid::getLedColour( const uint8_t ledPositionX, const uint8_t ledPosition
 
 void Grid::initialize()
 {
-    gridControl.initialize();
+    gridControl_.initialize();
     initialized_ = true;
 }
 
@@ -234,13 +234,13 @@ void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
         ledPositionY = ledPositionY % grid_control::NUMBER_OF_ROWS;
     }
 
-    gridControl.setLedColour( ledPositionX, ledPositionY, directLed, colour );
+    gridControl_.setLedColour( ledPositionX, ledPositionY, directLed, colour );
 
 }
 
 void Grid::turnAllLedsOff()
 {
-    gridControl.turnAllLedsOff();
+    gridControl_.turnAllLedsOff();
 
     // todo: also remove flashing, pulsing leds and reset colours to zeros
 }

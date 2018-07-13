@@ -5,8 +5,8 @@ namespace grid
 namespace switches
 {
 
-Switches::Switches() :
-        gridControl( grid_control::GridControl::getInstance() )
+Switches::Switches( grid_control::GridControl& gridControl ) :
+        gridControl_( gridControl )
 {
     // active low
     registeredButtonInput_[0] = true;
@@ -41,10 +41,10 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
     static bool encoderChangeDetected = false;
 
 
-    if (gridControl.isSwitchInputUpdated() || encoderChangeDetected)
+    if (gridControl_.isSwitchInputUpdated() || encoderChangeDetected)
     {
         encoderChangeDetected = false;
-        gridControl.resetSwitchInputUpdatedFlag();
+        gridControl_.resetSwitchInputUpdatedFlag();
         for (uint8_t encoder = 0; encoder < NUMBER_OF_ROTARY_ENCODERS; encoder++)
         {
             static int8_t microstep[2] = {0, 0};
@@ -53,7 +53,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
             for (uint8_t timeStep = 0; timeStep < NUMBER_OF_ROTARY_ENCODER_TIME_STEPS; timeStep++)
             {
                 previousEncoderValue[encoder] <<= 2;
-                previousEncoderValue[encoder] |= gridControl.getRotaryEncodersInput( encoder, timeStep );
+                previousEncoderValue[encoder] |= gridControl_.getRotaryEncodersInput( encoder, timeStep );
                 previousEncoderValue[encoder] &= 0x0F;
                 microstep[encoder] += ENCODER_STATES[previousEncoderValue[encoder]];
             }
@@ -97,14 +97,14 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 {
     static bool buttonChangeDetected = false;
 
-    if (gridControl.isSwitchInputUpdated() || buttonChangeDetected)
+    if (gridControl_.isSwitchInputUpdated() || buttonChangeDetected)
     {
         buttonChangeDetected = false; // reset this variable every time, it will be set back if necessary
         for (uint8_t button = 0; button < NUMBER_OF_BUTTONS; button++)
         {
-            if (gridControl.isButtonInputStable(button))
+            if (gridControl_.isButtonInputStable(button))
             {
-                const bool buttonInput = gridControl.getButtonInput(button);
+                const bool buttonInput = gridControl_.getButtonInput(button);
                 if (registeredButtonInput_[button] != buttonInput)
                 {
                     buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
