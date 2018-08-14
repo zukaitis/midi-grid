@@ -13,7 +13,13 @@ Main features of the device:
 - Monochrome LCD display with adjustable backlight
 - Physical MIDI input and output ports
 
-Currently device is developed to work with [Ableton Live](https://www.ableton.com/en/live/), specifically with modified [Launchpad95](http://motscousus.com/stuff/2011-07_Novation_Launchpad_Ableton_Live_Scripts/) MIDI remote script - [Launchpad95g](https://github.com/zukaitis/Launchpad95g). Additional functionality, like stand-alone modes, or compatibility with other DAWs may be implemented later.
+Currently device is developed to work with [Ableton Live](https://www.ableton.com/en/live/),
+specifically with modified [Launchpad95](http://motscousus.com/stuff/2011-07_Novation_Launchpad_Ableton_Live_Scripts/)
+MIDI remote script - [Launchpad95g](https://github.com/zukaitis/Launchpad95g). Additional functionality, like stand-alone modes,
+or compatibility with other DAWs may be implemented later.
+
+More thorough information, regarding design and implementation, is available in READMEs of [Firmware](https://github.com/zukaitis/midi-grid/tree/master/Firmware)
+and [Hardware](https://github.com/zukaitis/midi-grid/tree/master/Hardware).
 
 ## Thanks to
 - [@mimuz](https://github.com/mimuz) - for sharing [STM32 USB MIDI library](https://github.com/mimuz/mimuz-tuch)
