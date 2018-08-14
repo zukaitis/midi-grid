@@ -5,4 +5,6 @@ PCB of design version v1.0 was assembled and tested. Changes, made for version 1
 
 As far as it was tested, 10k resistors connected to gates of MOSFETs are not required, and can be left unassembled. Required values of resistors R25-R28, R33-R36 and R41-R44 will vary depending on the LEDs used, so, calculating/measuring appropriate resistor values to use with particular LEDs is advised here.
 
+![Block diagram](https://github.com/zukaitis/midi-grid/blob/master/Images/hardware_block_diagram.png)
+
 ![3D render](https://github.com/zukaitis/midi-grid/blob/master/Images/pcb_3d_render_front.png)
