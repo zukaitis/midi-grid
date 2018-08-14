@@ -9,6 +9,20 @@ uint8_t GridControl::currentlyStableInputBuffer_ = 1;
 bool GridControl::gridInputUpdated_ = false;
 bool GridControl::switchInputUpdated_ = false;
 
+uint32_t GridControl::buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
+uint32_t GridControl::pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+uint32_t GridControl::pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+uint32_t GridControl::pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+
+TIM_HandleTypeDef GridControl::pwmTimerRed_;
+TIM_HandleTypeDef GridControl::pwmTimerGreen_;
+TIM_HandleTypeDef GridControl::pwmTimerBlue_;
+TIM_HandleTypeDef GridControl::baseInterruptTimer_;
+DMA_HandleTypeDef GridControl::pwmOutputRedDmaConfiguration_;
+DMA_HandleTypeDef GridControl::pwmOutputGreenDmaConfiguration_;
+DMA_HandleTypeDef GridControl::pwmOutputBlueDmaConfiguration_;
+DMA_HandleTypeDef GridControl::columnSelectDmaConfiguration_;
+
 DMA_HandleTypeDef GridControl::buttonInputDmaConfiguration;
 
 extern "C" void DMA2_Stream5_IRQHandler()
@@ -16,22 +30,7 @@ extern "C" void DMA2_Stream5_IRQHandler()
     HAL_DMA_IRQHandler(&GridControl::buttonInputDmaConfiguration);
 }
 
-//extern "C" void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
-//{
-//    static GridControl& gridControl = GridControl::getInstance();
-//    gridControl.inputReadoutToMemory0CompleteCallback();
-//}
-//
-//extern "C" void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef * hdma )
-//{
-//    static GridControl& gridControl = GridControl::getInstance();
-//    gridControl.inputReadoutToMemory1CompleteCallback();
-//}
-
-GridControl::GridControl() //:
-//        currentlyStableInputBuffer_( 1 ),
-//        gridInputUpdated_(false),
-//        switchInputUpdated_(false)
+GridControl::GridControl()
 {
     for (uint8_t i = 0; i < NUMBER_OF_COLUMNS; i++)
     {
@@ -295,7 +294,7 @@ void GridControl::initializeDma()
 
 void GridControl::initializeGpio()
 {
-      GPIO_InitTypeDef gpioConfiguration;
+      static GPIO_InitTypeDef gpioConfiguration;
 
       // GPIO Ports Clock Enable
       __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -388,11 +387,8 @@ void GridControl::initializePwmTimers()
     pwmTimerRed_.Instance = PWM_TIMER_RED;
     pwmTimerRed_.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerRed_ );
-
     HAL_TIM_ConfigClockSource( &pwmTimerRed_, &timerClockSourceConfiguration );
-
     HAL_TIM_PWM_Init( &pwmTimerRed_ );
-
     HAL_TIM_SlaveConfigSynchronization( &pwmTimerRed_, &timerSlaveConfiguration );
 
     HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
@@ -400,17 +396,14 @@ void GridControl::initializePwmTimers()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
     HAL_TIM_PWM_ConfigChannel( &pwmTimerRed_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_RED->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+    pwmTimerRed_.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Green PWM output configuration
     pwmTimerGreen_.Instance = PWM_TIMER_GREEN;
     pwmTimerGreen_.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerGreen_ );
-
     HAL_TIM_ConfigClockSource( &pwmTimerGreen_, &timerClockSourceConfiguration );
-
     HAL_TIM_PWM_Init( &pwmTimerGreen_ );
-
     HAL_TIM_SlaveConfigSynchronization( &pwmTimerGreen_, &timerSlaveConfiguration );
 
     HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
@@ -418,17 +411,14 @@ void GridControl::initializePwmTimers()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
     HAL_TIM_PWM_ConfigChannel( &pwmTimerGreen_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_GREEN->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+    pwmTimerGreen_.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Blue PWM output configuration
     pwmTimerBlue_.Instance = PWM_TIMER_BLUE;
     pwmTimerBlue_.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerBlue_ );
-
     HAL_TIM_ConfigClockSource( &pwmTimerBlue_, &timerClockSourceConfiguration );
-
     HAL_TIM_PWM_Init( &pwmTimerBlue_ );
-
     HAL_TIM_SlaveConfigSynchronization( &pwmTimerBlue_, &timerSlaveConfiguration );
 
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
@@ -436,7 +426,7 @@ void GridControl::initializePwmTimers()
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
-    PWM_TIMER_BLUE->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
+    pwmTimerBlue_.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 }
 
 } // namespace grid_control

@@ -7,7 +7,6 @@ namespace grid
 
 Grid::Grid( grid_control::GridControl& gridControl ) :
         gridControl_( gridControl ),
-        initialized_( false ),
         numberOfFlashingLeds_( 0 ),
         numberOfPulsingLeds_( 0 )
 {
@@ -43,10 +42,7 @@ void Grid::discardAllPendingButtonEvents()
 
 void Grid::enable()
 {
-    if (initialized_)
-    {
-        gridControl_.start();
-    }
+    gridControl_.start();
 }
 
 bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent )
@@ -100,7 +96,6 @@ Colour Grid::getLedColour( const uint8_t ledPositionX, const uint8_t ledPosition
 void Grid::initialize()
 {
     gridControl_.initialize();
-    initialized_ = true;
 }
 
 void Grid::refreshLeds() const
@@ -114,7 +109,7 @@ void Grid::refreshLeds() const
 
         for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
         {
-            setLedColour(
+            setLedOutput(
                     flashingLed_[i].positionX,
                     flashingLed_[i].positionY,
                     flashingLed_[i].colour[flashColourIndex] );
@@ -126,17 +121,13 @@ void Grid::refreshLeds() const
     if (HAL_GetTick() >= ledPulseCheckTime)
     {
         static uint8_t ledPulseStepNumber = 0;
-        Colour dimmedColour;
-        ++ledPulseStepNumber;
-        if (LED_PULSE_STEP_COUNT <= ledPulseStepNumber)
-        {
-            ledPulseStepNumber = 0;
-        }
+
+        ledPulseStepNumber = (ledPulseStepNumber + 1) % LED_PULSE_STEP_COUNT;
 
         for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
         {
-            dimmedColour = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].colour;
-            if (3 >= ledPulseStepNumber)
+            Colour dimmedColour = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].colour;
+            if (ledPulseStepNumber <= 3)
             {
                 // y = x / 4
                 dimmedColour.Red = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
@@ -150,7 +141,7 @@ void Grid::refreshLeds() const
                 dimmedColour.Green = (dimmedColour.Green * (19 - ledPulseStepNumber)) / 16;
                 dimmedColour.Blue = (dimmedColour.Blue * (19 - ledPulseStepNumber)) / 16;
             }
-            setLedColour( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour );
+            setLedOutput( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour );
         }
         ledPulseCheckTime = HAL_GetTick() + LED_PULSE_STEP_PERIOD_MS;
     }
@@ -196,7 +187,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
         case LedLightingType_LIGHT:
             led_[ledPositionX][ledPositionY].colour = colour;
             led_[ledPositionX][ledPositionY].lightingType = LedLightingType_LIGHT;
-            setLedColour( ledPositionX, ledPositionY, colour );
+            setLedOutput( ledPositionX, ledPositionY, colour );
             break;
         case LedLightingType_FLASH:
             flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;
@@ -223,7 +214,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     }
 }
 
-void Grid::setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
+void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= NUMBER_OF_PAD_COLUMNS);

@@ -159,19 +159,19 @@ private:
     static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 
-    uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
-    uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    uint32_t pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    static uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
+    static uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    static uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    static uint32_t pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
 
-    TIM_HandleTypeDef pwmTimerRed_;
-    TIM_HandleTypeDef pwmTimerGreen_;
-    TIM_HandleTypeDef pwmTimerBlue_;
-    TIM_HandleTypeDef baseInterruptTimer_;
-    DMA_HandleTypeDef pwmOutputRedDmaConfiguration_;
-    DMA_HandleTypeDef pwmOutputGreenDmaConfiguration_;
-    DMA_HandleTypeDef pwmOutputBlueDmaConfiguration_;
-    DMA_HandleTypeDef columnSelectDmaConfiguration_;
+    static TIM_HandleTypeDef pwmTimerRed_;
+    static TIM_HandleTypeDef pwmTimerGreen_;
+    static TIM_HandleTypeDef pwmTimerBlue_;
+    static TIM_HandleTypeDef baseInterruptTimer_;
+    static DMA_HandleTypeDef pwmOutputRedDmaConfiguration_;
+    static DMA_HandleTypeDef pwmOutputGreenDmaConfiguration_;
+    static DMA_HandleTypeDef pwmOutputBlueDmaConfiguration_;
+    static DMA_HandleTypeDef columnSelectDmaConfiguration_;
 };
 
 } // namespace grid_control

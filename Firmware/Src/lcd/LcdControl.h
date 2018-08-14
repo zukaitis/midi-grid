@@ -28,6 +28,8 @@ public:
     void initialize();
     void transmit( uint8_t* const buffer );
 
+    static DMA_HandleTypeDef lcdSpiDma_;
+
 private:
     void initializeDma();
     void initializeGpio();
@@ -37,7 +39,7 @@ private:
     void setCursor( const uint8_t x, const uint8_t y );
     void writeCommand( const uint8_t command );
 
-    SPI_HandleTypeDef lcdSpi_;
+    static SPI_HandleTypeDef lcdSpi_;
 };
 
 } // namespace lcd_control

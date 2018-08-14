@@ -70,10 +70,9 @@ public:
     void turnAllLedsOff();
 
 private:
-    void setLedColour( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
+    void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
     grid_control::GridControl& gridControl_;
-    bool initialized_;
 
     Led led_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
 

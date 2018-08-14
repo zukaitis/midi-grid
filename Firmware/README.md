@@ -6,17 +6,19 @@ command line tool, it can be downloaded from [here](https://community.st.com/thr
 
 ## Implementation
 ### Grid
-Whole control of the grid - LED refreshing and button state acquisition - is performed by specifically configured DMA. During one cycle DMA latches column selection outputs,
+Whole control of the grid - LED refreshing and button state acquisition - is performed by a specifically configured DMA. During one cycle DMA latches column selection outputs,
 loads timers with desired PWM output values, and reads button input values. After updating all the matrix, DMA generates interrupt, which indicates, that button input values
 should be checked for changes. Using DMA significantly reduces CPU load, as it does not have to be interrupted every 500us to acquire input values and update outputs.
 
-## LCD
+![Block diagram](https://github.com/zukaitis/midi-grid/blob/master/Images/matrix_control_diagram.png)
+
+### LCD
 LCD is interfaced through SPI, using DMA. LCD backlight is connected on MOSI output of another SPI peripheral, and brightness of backlight is regulated by changing the data, that
 is constantly transmitted by backlight SPI controller - this imitates an independent PWM output and does not use processor resources.
 
-## Program
+### Program
 Currently there is only one operating mode, which is used to work with Ableton and Launchpad95g script. In this mode, LED colours are set according to MIDI messages received from
 DAW, and corresponding MIDI messages are sent to PC, when any of the buttons is pressed or released.
 
-## USB
+### USB
 Microcontroller is configured as a MIDI USB device, and interfaced using relatively simple MIDI messages.

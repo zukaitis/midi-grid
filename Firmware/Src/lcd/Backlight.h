@@ -36,10 +36,10 @@ private:
     void initializeGpio();
     void initializeSpi();
 
-    uint32_t outputBuffer_[OUTPUT_BUFFER_SIZE];
+    static uint32_t outputBuffer_[OUTPUT_BUFFER_SIZE];
 
-    DMA_HandleTypeDef dmaConfiguration_;
-    SPI_HandleTypeDef spiConfiguration_;
+    static DMA_HandleTypeDef dmaConfiguration_;
+    static SPI_HandleTypeDef spiConfiguration_;
 };
 
 } // namespace backlight

@@ -5,11 +5,12 @@ namespace lcd
 namespace lcd_control
 {
 
-static DMA_HandleTypeDef lcdSpiDma;
+DMA_HandleTypeDef LcdControl::lcdSpiDma_;
+SPI_HandleTypeDef LcdControl::lcdSpi_;
 
 extern "C" void DMA1_Stream4_IRQHandler()
 {
-    HAL_DMA_IRQHandler(&lcdSpiDma);
+    HAL_DMA_IRQHandler(&LcdControl::lcdSpiDma_);
 }
 
 LcdControl::LcdControl()
@@ -39,7 +40,7 @@ void LcdControl::transmit( uint8_t* const buffer )
 {
     setCursor( 0, 0 );
 
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
+    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma_ ))
     {
         // wait until previous transfer is done
     }
@@ -54,19 +55,19 @@ void LcdControl::initializeDma()
 
     // SPI2 DMA Init
     // SPI2_TX Init
-    lcdSpiDma.Instance = DMA1_Stream4;
-    lcdSpiDma.Init.Channel = DMA_CHANNEL_0;
-    lcdSpiDma.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    lcdSpiDma.Init.PeriphInc = DMA_PINC_DISABLE;
-    lcdSpiDma.Init.MemInc = DMA_MINC_ENABLE;
-    lcdSpiDma.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    lcdSpiDma.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    lcdSpiDma.Init.Mode = DMA_NORMAL;
-    lcdSpiDma.Init.Priority = DMA_PRIORITY_LOW;
-    lcdSpiDma.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-    HAL_DMA_Init( &lcdSpiDma );
+    lcdSpiDma_.Instance = DMA1_Stream4;
+    lcdSpiDma_.Init.Channel = DMA_CHANNEL_0;
+    lcdSpiDma_.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    lcdSpiDma_.Init.PeriphInc = DMA_PINC_DISABLE;
+    lcdSpiDma_.Init.MemInc = DMA_MINC_ENABLE;
+    lcdSpiDma_.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    lcdSpiDma_.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    lcdSpiDma_.Init.Mode = DMA_NORMAL;
+    lcdSpiDma_.Init.Priority = DMA_PRIORITY_LOW;
+    lcdSpiDma_.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    HAL_DMA_Init( &lcdSpiDma_ );
 
-    __HAL_LINKDMA( &lcdSpi_, hdmatx, lcdSpiDma );
+    __HAL_LINKDMA( &lcdSpi_, hdmatx, lcdSpiDma_ );
 
     // DMA interrupt init
     // DMA1_Stream4_IRQn interrupt configuration
@@ -76,7 +77,7 @@ void LcdControl::initializeDma()
 
 void LcdControl::initializeGpio()
 {
-    GPIO_InitTypeDef gpioConfiguration;
+    static GPIO_InitTypeDef gpioConfiguration;
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -127,7 +128,7 @@ void LcdControl::writeCommand( const uint8_t command )
 {
     uint8_t commandToWrite = command;
 
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
+    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma_ ))
     {
         // wait until previous transfer is done
     }

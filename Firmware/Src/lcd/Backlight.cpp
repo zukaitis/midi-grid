@@ -8,6 +8,10 @@ namespace lcd
 namespace backlight
 {
 
+uint32_t Backlight::outputBuffer_[OUTPUT_BUFFER_SIZE];
+DMA_HandleTypeDef Backlight::dmaConfiguration_;
+SPI_HandleTypeDef Backlight::spiConfiguration_;
+
 Backlight::Backlight()
 {
     setIntensity( 0 );
@@ -81,7 +85,7 @@ void Backlight::initializeDma()
 
 void Backlight::initializeGpio()
 {
-    GPIO_InitTypeDef gpioConfiguration;
+    static GPIO_InitTypeDef gpioConfiguration;
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
