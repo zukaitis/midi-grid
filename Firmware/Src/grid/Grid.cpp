@@ -10,7 +10,7 @@ Grid::Grid( grid_control::GridControl& gridControl ) :
         numberOfFlashingLeds_( 0 ),
         numberOfPulsingLeds_( 0 )
 {
-    for (uint8_t i = 0; i < grid_control::NUMBER_OF_COLUMNS; i++)
+    for (uint8_t i = 0; i < grid_control::NUMBER_OF_VERTICAL_SEGMENTS; i++)
     {
         registeredButtonInput_[i] = 0x0000;
     }
@@ -54,7 +54,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
         __disable_irq();
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
         gridControl_.resetGridInputUpdatedFlag();
-        for (int8_t x = 0; x < grid_control::NUMBER_OF_COLUMNS; x++)
+        for (int8_t x = 0; x < grid_control::NUMBER_OF_VERTICAL_SEGMENTS; x++)
         {
             if (gridControl_.isGridColumnInputStable( x ))
             {
@@ -62,7 +62,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                 const uint8_t buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
-                    for (int8_t y = 0; y < grid_control::NUMBER_OF_ROWS; y++)
+                    for (int8_t y = 0; y < grid_control::NUMBER_OF_HORIZONTAL_SEGMENTS; y++)
                     {
                         if (0 != ((buttonColumnChanges >> y) & 0x0001))
                         {
@@ -71,7 +71,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                             if (x >= NUMBER_OF_COLUMNS)
                             {
                                 x -= NUMBER_OF_COLUMNS;
-                                y += grid_control::NUMBER_OF_ROWS;
+                                y += grid_control::NUMBER_OF_HORIZONTAL_SEGMENTS;
                             }
                             buttonPositionX = x;
                             buttonPositionY = y;
@@ -219,10 +219,10 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= NUMBER_OF_PAD_COLUMNS);
 
-    if (ledPositionY >= grid_control::NUMBER_OF_ROWS)
+    if (ledPositionY >= grid_control::NUMBER_OF_HORIZONTAL_SEGMENTS)
     {
         ledPositionX += NUMBER_OF_COLUMNS;
-        ledPositionY = ledPositionY % grid_control::NUMBER_OF_ROWS;
+        ledPositionY = ledPositionY % grid_control::NUMBER_OF_HORIZONTAL_SEGMENTS;
     }
 
     gridControl_.setLedColour( ledPositionX, ledPositionY, directLed, colour );

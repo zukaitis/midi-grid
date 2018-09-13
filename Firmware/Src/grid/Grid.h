@@ -76,7 +76,7 @@ private:
 
     Led led_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
 
-    uint16_t registeredButtonInput_[grid_control::NUMBER_OF_COLUMNS];
+    uint16_t registeredButtonInput_[grid_control::NUMBER_OF_VERTICAL_SEGMENTS];
 
     FlashingLed flashingLed_[NUMBER_OF_LEDS];
     uint8_t numberOfFlashingLeds_;

@@ -1,4 +1,4 @@
-#include "program/launchpad.h"
+#include "program/Launchpad.h"
 
 #include "grid/Grid.h"
 #include "grid/Switches.h"

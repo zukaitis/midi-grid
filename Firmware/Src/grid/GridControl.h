@@ -9,8 +9,8 @@ namespace grid
 namespace grid_control
 {
 
-static const uint8_t NUMBER_OF_ROWS = 4;
-static const uint8_t NUMBER_OF_COLUMNS = 20;
+static const uint8_t NUMBER_OF_HORIZONTAL_SEGMENTS = 4;
+static const uint8_t NUMBER_OF_VERTICAL_SEGMENTS = 20;
 static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
 static const uint8_t TIMER_FRAME_OFFSET = 1;
 
@@ -96,7 +96,7 @@ static const uint16_t BRIGHTNESS_DIRECT[65] = {
         8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
         10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
 
-static const uint32_t columnSelectValue[NUMBER_OF_COLUMNS] = {
+static const uint32_t columnSelectValue[NUMBER_OF_VERTICAL_SEGMENTS] = {
         0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
         0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
         0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
@@ -159,10 +159,10 @@ private:
     static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 
-    static uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
-    static uint32_t pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    static uint32_t pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-    static uint32_t pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+    static uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_VERTICAL_SEGMENTS];
+    static uint32_t pwmOutputRed_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+    static uint32_t pwmOutputGreen_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+    static uint32_t pwmOutputBlue_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
 
     static TIM_HandleTypeDef pwmTimerRed_;
     static TIM_HandleTypeDef pwmTimerGreen_;

@@ -9,10 +9,10 @@ uint8_t GridControl::currentlyStableInputBuffer_ = 1;
 bool GridControl::gridInputUpdated_ = false;
 bool GridControl::switchInputUpdated_ = false;
 
-uint32_t GridControl::buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_COLUMNS];
-uint32_t GridControl::pwmOutputRed_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-uint32_t GridControl::pwmOutputGreen_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
-uint32_t GridControl::pwmOutputBlue_[NUMBER_OF_COLUMNS][NUMBER_OF_ROWS];
+uint32_t GridControl::buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_VERTICAL_SEGMENTS];
+uint32_t GridControl::pwmOutputRed_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+uint32_t GridControl::pwmOutputGreen_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+uint32_t GridControl::pwmOutputBlue_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
 
 TIM_HandleTypeDef GridControl::pwmTimerRed_;
 TIM_HandleTypeDef GridControl::pwmTimerGreen_;
@@ -32,7 +32,7 @@ extern "C" void DMA2_Stream5_IRQHandler()
 
 GridControl::GridControl()
 {
-    for (uint8_t i = 0; i < NUMBER_OF_COLUMNS; i++)
+    for (uint8_t i = 0; i < NUMBER_OF_VERTICAL_SEGMENTS; i++)
     {
         buttonInput_[0][i] = 0x0000;
         buttonInput_[1][i] = 0x0000;
@@ -101,7 +101,7 @@ void GridControl::resetSwitchInputUpdatedFlag()
 
 void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
 {
-    ledPositionX = (ledPositionX + NUMBER_OF_COLUMNS - TIMER_FRAME_OFFSET) % NUMBER_OF_COLUMNS;
+    ledPositionX = (ledPositionX + NUMBER_OF_VERTICAL_SEGMENTS - TIMER_FRAME_OFFSET) % NUMBER_OF_VERTICAL_SEGMENTS;
 
     if (directLed)
     {
@@ -146,9 +146,9 @@ void GridControl::start()
 
 void GridControl::turnAllLedsOff()
 {
-    for (uint8_t x = 0; x < NUMBER_OF_COLUMNS; x++)
+    for (uint8_t x = 0; x < NUMBER_OF_VERTICAL_SEGMENTS; x++)
     {
-        for (uint8_t y = 0; y < NUMBER_OF_ROWS; y++)
+        for (uint8_t y = 0; y < NUMBER_OF_HORIZONTAL_SEGMENTS; y++)
         {
             pwmOutputRed_[x][y] = BRIGHTNESS_DIRECT[0];
             pwmOutputGreen_[x][y] = BRIGHTNESS_DIRECT[0];
@@ -223,7 +223,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &columnSelectDmaConfiguration_,
             reinterpret_cast<uint32_t>(&columnSelectValue[0]),
             reinterpret_cast<uint32_t>(&GRID_COLUMN_CONTROL_GPIO_PORT->ODR),
-            NUMBER_OF_COLUMNS );
+            NUMBER_OF_VERTICAL_SEGMENTS );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
     ledOutputDmaInitConfiguration.Direction = DMA_MEMORY_TO_PERIPH;
@@ -244,7 +244,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputRedDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
-            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
+            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
 
     pwmOutputGreenDmaConfiguration_.Instance = DMA2_Stream6;
     pwmOutputGreenDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -253,7 +253,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputGreenDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
-            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
+            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
 
     pwmOutputBlueDmaConfiguration_.Instance = DMA2_Stream4;
     pwmOutputBlueDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -262,7 +262,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputBlueDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
-            NUMBER_OF_COLUMNS * NUMBER_OF_ROWS );
+            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
 
     buttonInputDmaConfiguration.Instance = DMA2_Stream5;
     buttonInputDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
@@ -289,7 +289,7 @@ void GridControl::initializeDma()
             reinterpret_cast<uint32_t>(&GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
-            NUMBER_OF_COLUMNS );
+            NUMBER_OF_VERTICAL_SEGMENTS );
 }
 
 void GridControl::initializeGpio()
