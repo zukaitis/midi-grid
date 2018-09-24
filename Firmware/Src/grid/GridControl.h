@@ -36,13 +36,13 @@ static const uint16_t GRID_BUTTON_IN2_Pin = GPIO_PIN_1;
 static const uint16_t GRID_BUTTON_IN3_Pin = GPIO_PIN_2;
 static const uint16_t GRID_BUTTON_IN4_Pin = GPIO_PIN_3;
 
-static GPIO_TypeDef* const GRID_COLUMN_CONTROL_GPIO_PORT = GPIOA;
-static const uint16_t GRID_COLUMN_OUT1_Pin = GPIO_PIN_8;
-static const uint16_t GRID_COLUMN_OUT2_Pin = GPIO_PIN_9;
-static const uint16_t GRID_COLUMN_OUT3_Pin = GPIO_PIN_10;
-static const uint16_t GRID_COLUMN_OUT4_Pin = GPIO_PIN_5;
-static const uint16_t GRID_COLUMN_OUT5_Pin = GPIO_PIN_4;
-static const uint16_t GRID_COLUMN_OUT6_Pin = GPIO_PIN_15;
+static GPIO_TypeDef* const verticalSegmentControlGpioPort = GPIOA;
+static const uint16_t COLUMN_OUT1_Pin = GPIO_PIN_8;
+static const uint16_t COLUMN_OUT2_Pin = GPIO_PIN_9;
+static const uint16_t COLUMN_OUT3_Pin = GPIO_PIN_10;
+static const uint16_t COLUMN_OUT4_Pin = GPIO_PIN_5;
+static const uint16_t COLUMN_OUT5_Pin = GPIO_PIN_4;
+static const uint16_t COLUMN_OUT6_Pin = GPIO_PIN_15;
 
 static GPIO_TypeDef* const PWM_RED_GPIO_PORT = GPIOA;
 static const uint16_t PWM_RED1_Pin = GPIO_PIN_0;
@@ -117,14 +117,14 @@ public:
 
     static inline void inputReadoutToMemory0CompleteCallback( __DMA_HandleTypeDef* hdma )//()
     {
-        currentlyStableInputBuffer_ = 0;
+        currentlyStableInputBufferIndex_ = 0;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
     }
 
     static inline void inputReadoutToMemory1CompleteCallback( __DMA_HandleTypeDef* hdma )//()
     {
-        currentlyStableInputBuffer_ = 1;
+        currentlyStableInputBufferIndex_ = 1;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
     }
@@ -134,7 +134,7 @@ public:
     }
 
     bool isButtonInputStable( const uint8_t button ) const;
-    bool isGridColumnInputStable( const uint8_t column ) const;
+    bool isGridVerticalSegmentInputStable( const uint8_t column ) const;
 
     bool isGridInputUpdated() const;
     bool isSwitchInputUpdated() const;
@@ -155,7 +155,7 @@ private:
     void initializePwmGpio();
     void initializePwmTimers();
 
-    static uint8_t currentlyStableInputBuffer_;
+    static uint8_t currentlyStableInputBufferIndex_;
     static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 

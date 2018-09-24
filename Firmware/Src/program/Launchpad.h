@@ -42,8 +42,11 @@ enum Layout
 
 static const uint8_t SYSTEM_EXCLUSIVE_MESSAGE_MAXIMUM_LENGTH = 64;
 
-static const uint8_t challengeResponse[10] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
-static const uint8_t launchpad_standartSystemExclusiveMessageHeader[6] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
+static const int16_t MIDI_CONTROL_MINIMUM_VALUE = 0;
+static const int16_t MIDI_CONTROL_MAXIMUM_VALUE = 127;
+
+static const uint8_t CHALLENGE_RESPONSE[10] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
+static const uint8_t STANDARD_SYSTEM_EXCLUSIVE_MESSAGE_HEADER[6] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
 
 static const uint8_t sessionLayout[10][8] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},

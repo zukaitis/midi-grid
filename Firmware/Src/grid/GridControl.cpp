@@ -5,7 +5,7 @@ namespace grid
 namespace grid_control
 {
 
-uint8_t GridControl::currentlyStableInputBuffer_ = 1;
+uint8_t GridControl::currentlyStableInputBufferIndex_ = 1;
 bool GridControl::gridInputUpdated_ = false;
 bool GridControl::switchInputUpdated_ = false;
 
@@ -32,10 +32,10 @@ extern "C" void DMA2_Stream5_IRQHandler()
 
 GridControl::GridControl()
 {
-    for (uint8_t i = 0; i < NUMBER_OF_VERTICAL_SEGMENTS; i++)
+    for (uint8_t segment = 0; segment < NUMBER_OF_VERTICAL_SEGMENTS; segment++)
     {
-        buttonInput_[0][i] = 0x0000;
-        buttonInput_[1][i] = 0x0000;
+        buttonInput_[0][segment] = 0x0000;
+        buttonInput_[1][segment] = 0x0000;
     }
     turnAllLedsOff();
 }
@@ -46,18 +46,18 @@ GridControl::~GridControl()
 
 bool GridControl::getButtonInput( const uint8_t button ) const
 {
-    return (0 != (BUTTON_MASK[button] & buttonInput_[currentlyStableInputBuffer_][0]));
+    return (0 != (BUTTON_MASK[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
 }
 
 uint8_t GridControl::getGridButtonInput( const uint8_t column ) const
 {
-    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput_[currentlyStableInputBuffer_][column]);
+    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput_[currentlyStableInputBufferIndex_][column]);
 }
 
 uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const
 {
     step *= 2;
-    return (ROTARY_ENCODER_MASK[encoder] & buttonInput_[currentlyStableInputBuffer_][step])>>ROTARY_ENCODER_SHIFT[encoder];
+    return (ROTARY_ENCODER_MASK[encoder] & buttonInput_[currentlyStableInputBufferIndex_][step])>>ROTARY_ENCODER_SHIFT[encoder];
 }
 
 void GridControl::initialize()
@@ -74,9 +74,9 @@ bool GridControl::isButtonInputStable( const uint8_t button ) const
     return (0 == (BUTTON_MASK[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
 }
 
-bool GridControl::isGridColumnInputStable( const uint8_t column ) const
+bool GridControl::isGridVerticalSegmentInputStable( const uint8_t segment ) const
 {
-    return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][column] ^ buttonInput_[1][column])));
+    return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
 }
 
 bool GridControl::isGridInputUpdated() const
@@ -222,7 +222,7 @@ void GridControl::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration_ );
     HAL_DMA_Start( &columnSelectDmaConfiguration_,
             reinterpret_cast<uint32_t>(&columnSelectValue[0]),
-            reinterpret_cast<uint32_t>(&GRID_COLUMN_CONTROL_GPIO_PORT->ODR),
+            reinterpret_cast<uint32_t>(&verticalSegmentControlGpioPort->ODR),
             NUMBER_OF_VERTICAL_SEGMENTS );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
@@ -301,9 +301,9 @@ void GridControl::initializeGpio()
       __HAL_RCC_GPIOA_CLK_ENABLE();
 
       // Configure GPIO pin Output Level
-      HAL_GPIO_WritePin( GRID_COLUMN_CONTROL_GPIO_PORT,
-              GRID_COLUMN_OUT1_Pin | GRID_COLUMN_OUT2_Pin | GRID_COLUMN_OUT3_Pin |GRID_COLUMN_OUT4_Pin |GRID_COLUMN_OUT5_Pin |
-                      GRID_COLUMN_OUT6_Pin,
+      HAL_GPIO_WritePin( verticalSegmentControlGpioPort,
+              COLUMN_OUT1_Pin | COLUMN_OUT2_Pin | COLUMN_OUT3_Pin |COLUMN_OUT4_Pin |COLUMN_OUT5_Pin |
+                      COLUMN_OUT6_Pin,
               GPIO_PIN_SET );
 
       gpioConfiguration.Pin = BUTTON_IN1_Pin | BUTTON_IN2_Pin | ROTARY1_A_Pin | ROTARY1_B_Pin | ROTARY2_A_Pin| ROTARY2_B_Pin;
@@ -316,12 +316,12 @@ void GridControl::initializeGpio()
       gpioConfiguration.Pull = GPIO_PULLDOWN;
       HAL_GPIO_Init( GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
 
-      gpioConfiguration.Pin = GRID_COLUMN_OUT1_Pin | GRID_COLUMN_OUT2_Pin | GRID_COLUMN_OUT3_Pin | GRID_COLUMN_OUT4_Pin |
-              GRID_COLUMN_OUT5_Pin | GRID_COLUMN_OUT6_Pin;
+      gpioConfiguration.Pin = COLUMN_OUT1_Pin | COLUMN_OUT2_Pin | COLUMN_OUT3_Pin | COLUMN_OUT4_Pin |
+              COLUMN_OUT5_Pin | COLUMN_OUT6_Pin;
       gpioConfiguration.Mode = GPIO_MODE_OUTPUT_OD;
       gpioConfiguration.Pull = GPIO_NOPULL;
       gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-      HAL_GPIO_Init( GRID_COLUMN_CONTROL_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( verticalSegmentControlGpioPort, &gpioConfiguration );
 }
 
 void GridControl::initializePwmGpio()

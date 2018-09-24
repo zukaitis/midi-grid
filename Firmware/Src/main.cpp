@@ -56,9 +56,6 @@ void ApplicationMain::initialize()
 
 void ApplicationMain::run()
 {
-    uint8_t buttonX, buttonY;
-    ButtonEvent event;
-
     gui_.displayConnectingImage();
 
     while (!isUsbConnected())
@@ -68,22 +65,31 @@ void ApplicationMain::run()
 
     gui_.displayWaitingForMidi();
 
+#ifdef DISPLAY_BRIGHTNESS_LEVELS
     for (uint8_t x=0; x<8; x++)
     {
         for (uint8_t y=0; y<8; y++)
         {
             Colour colour = {static_cast<uint8_t>(x*8+y+1), 0, 0};
-            grid_.setLed(x, y, colour);
+            grid_.setLed( x, y, colour );
         }
     }
+#endif
+
+    uint8_t buttonX, buttonY;
+    ButtonEvent event;
 
     while (!usbMidi_.isPacketAvailable())
     {
+    	if (switches_.getButtonEvent( buttonX, event ))
+		{
+    	    if (ButtonEvent_PRESSED == event)
+    	    {
+    	        runInternalMenu();
+    	    }
+		}
         //randomLightAnimation();
-        if (grid_.getButtonEvent( buttonX, buttonY, event ))
-        {
-            break;
-        }
+    	runGridInputTest();
         gui_.refresh();
     }
 
@@ -163,6 +169,61 @@ void ApplicationMain::configureSystemClock()
     HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
+Colour ApplicationMain::getRandomColour()
+{
+	Colour colour = { 0, 0, 0 };
+
+	const uint8_t fullyLitColour = rand() % 6;
+	int8_t partlyLitColour1 = (rand() % 97) - 32;
+	if (partlyLitColour1 < 0)
+	{
+		partlyLitColour1 = 0;
+	}
+	int8_t partlyLitColour2 = (rand() % 97) - 32;
+	if (partlyLitColour2 < 0)
+	{
+		partlyLitColour2 = 0;
+	}
+
+	switch (fullyLitColour)
+	{
+		case 0:
+			colour.Red = 64;
+			colour.Green = static_cast<uint8_t>(partlyLitColour1);
+			colour.Blue = static_cast<uint8_t>(partlyLitColour2);
+			break;
+		case 1:
+			colour.Red = static_cast<uint8_t>(partlyLitColour1);
+			colour.Green = 64;
+			colour.Blue = static_cast<uint8_t>(partlyLitColour2);
+			break;
+		case 2:
+			colour.Red = static_cast<uint8_t>(partlyLitColour1);
+			colour.Green = static_cast<uint8_t>(partlyLitColour2);
+			colour.Blue = 64;
+			break;
+		case 3:
+			colour.Red = 64;
+			colour.Green = 64;
+			colour.Blue = static_cast<uint8_t>(partlyLitColour1);
+			break;
+		case 4:
+			colour.Red = 64;
+			colour.Green = static_cast<uint8_t>(partlyLitColour1);
+			colour.Blue = 64;
+			break;
+		case 5:
+			colour.Red = static_cast<uint8_t>(partlyLitColour1);
+			colour.Green = 64;
+			colour.Blue = 64;
+			break;
+		default:
+			break;
+	}
+
+	return colour;
+}
+
 void ApplicationMain::randomLightAnimation()
 {
     static uint32_t newLightTime = 0;
@@ -170,58 +231,11 @@ void ApplicationMain::randomLightAnimation()
     if (HAL_GetTick() >= newLightTime)
     {
         static uint8_t ledsChanged = 0;
-        int8_t partlyLitColour1, partlyLitColour2;
-        Colour colour;
+
         const uint8_t ledPositionX = rand() % 8;
         const uint8_t ledPositionY = rand() % 8;
-        const uint8_t fullyLitColour = rand() % 6;
-        partlyLitColour1 = (rand() % 97) - 32;
-        if (partlyLitColour1 < 0)
-        {
-            partlyLitColour1 = 0;
-        }
-        partlyLitColour2 = (rand() % 97) - 32;
-        if (partlyLitColour2 < 0)
-        {
-            partlyLitColour2 = 0;
-        }
-        switch (fullyLitColour)
-        {
-            case 0:
-                colour.Red = 64;
-                colour.Green = static_cast<uint8_t>(partlyLitColour1);
-                colour.Blue = static_cast<uint8_t>(partlyLitColour2);
-                break;
-            case 1:
-                colour.Red = static_cast<uint8_t>(partlyLitColour1);
-                colour.Green = 64;
-                colour.Blue = static_cast<uint8_t>(partlyLitColour2);
-                break;
-            case 2:
-                colour.Red = static_cast<uint8_t>(partlyLitColour1);
-                colour.Green = static_cast<uint8_t>(partlyLitColour2);
-                colour.Blue = 64;
-                break;
-            case 3:
-                colour.Red = 64;
-                colour.Green = 64;
-                colour.Blue = static_cast<uint8_t>(partlyLitColour1);
-                break;
-            case 4:
-                colour.Red = 64;
-                colour.Green = static_cast<uint8_t>(partlyLitColour1);
-                colour.Blue = 64;
-                break;
-            case 5:
-                colour.Red = static_cast<uint8_t>(partlyLitColour1);
-                colour.Green = 64;
-                colour.Blue = 64;
-                break;
-            default:
-                break;
-        }
 
-        grid_.setLed(ledPositionX, ledPositionY, colour);
+        grid_.setLed(ledPositionX, ledPositionY, getRandomColour());
         newLightTime = HAL_GetTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
@@ -239,6 +253,22 @@ void ApplicationMain::resetIntoBootloader()
     *((unsigned long *)0x2001FFF0) = 0xDEADBEEF;
     // Reset the processor
     NVIC_SystemReset();
+}
+
+void ApplicationMain::runGridInputTest()
+{
+	uint8_t buttonX, buttonY;
+	ButtonEvent event;
+
+	if (grid_.getButtonEvent( buttonX, buttonY, event ))
+	{
+	    Colour colour = { 0, 0, 0 };
+		if (ButtonEvent_PRESSED == event)
+		{
+			colour = getRandomColour();
+		}
+		grid_.setLed( buttonX, buttonY, colour );
+	}
 }
 
 void ApplicationMain::runInternalMenu()

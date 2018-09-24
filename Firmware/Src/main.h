@@ -39,8 +39,10 @@ public:
 
     void configureNvicPriorities();
     void configureSystemClock();
+    Colour getRandomColour();
     void randomLightAnimation();
     void resetIntoBootloader();
+    void runGridInputTest();
     void runInternalMenu();
 
 private:

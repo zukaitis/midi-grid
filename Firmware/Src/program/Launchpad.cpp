@@ -114,13 +114,13 @@ void Launchpad::runProgram()
         if (switches.getRotaryEncoderEvent( buttonX, rotaryStep ))
         {
             rotaryControlValue_[buttonX] += rotaryStep;
-            if (rotaryControlValue_[buttonX] > 127)
+            if (rotaryControlValue_[buttonX] > MIDI_CONTROL_MAXIMUM_VALUE)
             {
-                rotaryControlValue_[buttonX] = 127;
+                rotaryControlValue_[buttonX] = MIDI_CONTROL_MAXIMUM_VALUE;
             }
-            else if (rotaryControlValue_[buttonX] < 0)
+            else if (rotaryControlValue_[buttonX] < MIDI_CONTROL_MINIMUM_VALUE)
             {
-                rotaryControlValue_[buttonX] = 0;
+                rotaryControlValue_[buttonX] = MIDI_CONTROL_MINIMUM_VALUE;
             }
             usbMidi.sendControlChange( 5, buttonX, rotaryControlValue_[buttonX] ); // randomly selected channel and control values
             gui.registerMidiOutputActivity();
@@ -397,7 +397,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
 {
     if (length > 7)
     {
-        if (0 == memcmp( message, launchpad_standartSystemExclusiveMessageHeader, 6 ))
+        if (0 == memcmp( message, STANDARD_SYSTEM_EXCLUSIVE_MESSAGE_HEADER, 6 ))
         {
             switch(message[6])
             {
@@ -405,7 +405,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
                     setCurrentLayout( message[7] );
                     break;
                 case 0x40:
-                    usbMidi.sendSystemExclussive( &challengeResponse[0], 10 ); // always return zeros as challenge response
+                    usbMidi.sendSystemExclussive( &CHALLENGE_RESPONSE[0], 10 ); // always return zeros as challenge response
                     gui.registerMidiOutputActivity();
                     break;
                 case 0x14: // text scroll

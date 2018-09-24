@@ -56,7 +56,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
         gridControl_.resetGridInputUpdatedFlag();
         for (int8_t x = 0; x < grid_control::NUMBER_OF_VERTICAL_SEGMENTS; x++)
         {
-            if (gridControl_.isGridColumnInputStable( x ))
+            if (gridControl_.isGridVerticalSegmentInputStable( x ))
             {
                 const uint8_t buttonInput = gridControl_.getGridButtonInput( x );
                 const uint8_t buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
