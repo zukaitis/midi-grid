@@ -9,12 +9,18 @@ namespace grid
 namespace switches
 {
 
-static const uint8_t NUMBER_OF_BUTTONS = 2;
-static const uint8_t NUMBER_OF_ROTARY_ENCODERS = 2;
-static const uint8_t NUMBER_OF_ROTARY_ENCODER_TIME_STEPS = 10;
-static const int8_t NUMBER_OF_MICROSTEPS_IN_STEP = 4;
+enum Buttons
+{
+    kUndefinedButton = 0U,
+    kInternalMenuButton = 1U,
+};
 
-static const int8_t ENCODER_STATES[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
+static const uint8_t kNumberOfButtons = 2;
+static const uint8_t kNumberOfRotaryEncoders = 2;
+static const uint8_t kNumberOfRotaryEncoderTimeSteps = 10;
+static const int8_t kNumberOfRotaryEncoderMicrostepsInStep = 4;
+
+static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
 // class used to acquire values from two additional buttons and rotary encoders
 class Switches
@@ -33,7 +39,7 @@ public:
 private:
     grid_control::GridControl& gridControl_;
 
-    bool registeredButtonInput_[NUMBER_OF_BUTTONS];
+    bool registeredButtonInput_[kNumberOfButtons];
 };
 
 } // namespace switches

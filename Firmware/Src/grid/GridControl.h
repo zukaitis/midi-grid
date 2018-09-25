@@ -9,20 +9,24 @@ namespace grid
 namespace grid_control
 {
 
-static const uint8_t NUMBER_OF_HORIZONTAL_SEGMENTS = 4;
-static const uint8_t NUMBER_OF_VERTICAL_SEGMENTS = 20;
-static const uint8_t NUMBER_OF_BUTTON_DEBOUNCING_CYCLES = 2;
-static const uint8_t TIMER_FRAME_OFFSET = 1;
+static const uint8_t kNumberOfHorizontalSegments = 4;
+static const uint8_t kNumberOfVerticalSegments = 20;
+static const uint8_t NkNumberOfButtonDebouncingCycles = 2;
+static const uint8_t kTimerFrameOffset = 1;
 
-static const uint32_t PWM_CLOCK_PRESCALER = 1;
-static const uint16_t PWM_CLOCK_PERIOD = 47000; // <500us - has to be shorter than base period
-static const uint32_t BASE_INTERRUPT_CLOCK_PRESCALER = 1;
-static const uint32_t BASE_INTERRUPT_CLOCK_PERIOD = 48000; // 500us
+static const uint32_t kBaseInterruptClockPrescaler = 1;
+static const uint32_t kBaseInterruptClockPeriod = 48000; // 500us
+static const uint32_t kPwmClockPrescaler = 1;
+static const uint16_t kPwmClockPeriod = 47000; // <500us - has to be shorter than base period
 
-static const uint16_t GRID_BUTTON_MASK = 0x000F;
-static const uint16_t BUTTON_MASK[2] = {0x2000, 0x0400};
-static const uint16_t ROTARY_ENCODER_MASK[2] = {0xC000, 0x1800};
-static const uint16_t ROTARY_ENCODER_SHIFT[2] = {14, 11};
+static const uint16_t kGridButtonMask = 0x000F;
+static const uint16_t kNonGridButtonMask[2] = {0x2000, 0x0400};
+static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
+static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
+
+static const uint8_t kNumberOfLedColourIntensityLevels = 65;
+static const uint8_t kLedColourIntensityMaximum = 64;
+static const uint8_t kLedColourIntensityOff = 0;
 
 static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
 static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
@@ -68,7 +72,7 @@ static TIM_TypeDef* const PWM_TIMER_GREEN = TIM4;
 static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
 static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM1;
 
-static const uint16_t BRIGHTNESS_THROUGH_PAD[65] = {
+static const uint16_t BRIGHTNESS_THROUGH_PAD[kNumberOfLedColourIntensityLevels] = {
         0, 338, 635, 943, 1273, 1627, 2001, 2393,
         2805, 3237, 3683, 4149, 4627, 5121, 5641, 6157,
         6713, 7259, 7823, 8400, 9007, 9603, 10229, 10856,
@@ -86,7 +90,7 @@ static const uint16_t BRIGHTNESS_THROUGH_PAD[65] = {
 //        21338, 22540, 23785, 25072, 26404, 27779, 29200, 30666,
 //        32178, 33737, 35342, 36996, 38698, 40449, 42249, 44099, 46000 };
 
-static const uint16_t BRIGHTNESS_DIRECT[65] = {
+static const uint16_t BRIGHTNESS_DIRECT[kNumberOfLedColourIntensityLevels] = {
         0, 223, 308, 397, 494, 598, 709, 825,
         947, 1075, 1208, 1348, 1491, 1639, 1793, 1950,
         2113, 2279, 2448, 2621, 2802, 2981, 3164, 3354,
@@ -96,7 +100,7 @@ static const uint16_t BRIGHTNESS_DIRECT[65] = {
         8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
         10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
 
-static const uint32_t columnSelectValue[NUMBER_OF_VERTICAL_SEGMENTS] = {
+static const uint32_t kColumnSelectValue[kNumberOfVerticalSegments] = {
         0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
         0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
         0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
@@ -112,7 +116,7 @@ public:
 
     bool getButtonInput( const uint8_t button ) const;
     uint8_t getGridButtonInput( const uint8_t column ) const;
-    uint8_t getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const;
+    uint8_t getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const;
     void initialize();
 
     static inline void inputReadoutToMemory0CompleteCallback( __DMA_HandleTypeDef* hdma )//()
@@ -159,10 +163,10 @@ private:
     static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 
-    static uint32_t buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_VERTICAL_SEGMENTS];
-    static uint32_t pwmOutputRed_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
-    static uint32_t pwmOutputGreen_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
-    static uint32_t pwmOutputBlue_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+    static uint32_t buttonInput_[NkNumberOfButtonDebouncingCycles][kNumberOfVerticalSegments];
+    static uint32_t pwmOutputRed_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
+    static uint32_t pwmOutputGreen_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
+    static uint32_t pwmOutputBlue_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
 
     static TIM_HandleTypeDef pwmTimerRed_;
     static TIM_HandleTypeDef pwmTimerGreen_;

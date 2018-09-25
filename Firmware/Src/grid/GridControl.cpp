@@ -9,10 +9,10 @@ uint8_t GridControl::currentlyStableInputBufferIndex_ = 1;
 bool GridControl::gridInputUpdated_ = false;
 bool GridControl::switchInputUpdated_ = false;
 
-uint32_t GridControl::buttonInput_[NUMBER_OF_BUTTON_DEBOUNCING_CYCLES][NUMBER_OF_VERTICAL_SEGMENTS];
-uint32_t GridControl::pwmOutputRed_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
-uint32_t GridControl::pwmOutputGreen_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
-uint32_t GridControl::pwmOutputBlue_[NUMBER_OF_VERTICAL_SEGMENTS][NUMBER_OF_HORIZONTAL_SEGMENTS];
+uint32_t GridControl::buttonInput_[NkNumberOfButtonDebouncingCycles][kNumberOfVerticalSegments];
+uint32_t GridControl::pwmOutputRed_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
+uint32_t GridControl::pwmOutputGreen_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
+uint32_t GridControl::pwmOutputBlue_[kNumberOfVerticalSegments][kNumberOfHorizontalSegments];
 
 TIM_HandleTypeDef GridControl::pwmTimerRed_;
 TIM_HandleTypeDef GridControl::pwmTimerGreen_;
@@ -32,7 +32,7 @@ extern "C" void DMA2_Stream5_IRQHandler()
 
 GridControl::GridControl()
 {
-    for (uint8_t segment = 0; segment < NUMBER_OF_VERTICAL_SEGMENTS; segment++)
+    for (uint8_t segment = 0; segment < kNumberOfVerticalSegments; segment++)
     {
         buttonInput_[0][segment] = 0x0000;
         buttonInput_[1][segment] = 0x0000;
@@ -46,18 +46,18 @@ GridControl::~GridControl()
 
 bool GridControl::getButtonInput( const uint8_t button ) const
 {
-    return (0 != (BUTTON_MASK[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
+    return (0 != (kNonGridButtonMask[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
 }
 
 uint8_t GridControl::getGridButtonInput( const uint8_t column ) const
 {
-    return static_cast<uint8_t>(GRID_BUTTON_MASK & buttonInput_[currentlyStableInputBufferIndex_][column]);
+    return static_cast<uint8_t>(kGridButtonMask & buttonInput_[currentlyStableInputBufferIndex_][column]);
 }
 
-uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, uint8_t step ) const
+uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
 {
-    step *= 2;
-    return (ROTARY_ENCODER_MASK[encoder] & buttonInput_[currentlyStableInputBufferIndex_][step])>>ROTARY_ENCODER_SHIFT[encoder];
+    const uint8_t index = timeStep * 2;
+    return (kRotaryEncoderMask[encoder] & buttonInput_[currentlyStableInputBufferIndex_][index])>>kRotaryEncoderBitShift[encoder];
 }
 
 void GridControl::initialize()
@@ -71,12 +71,12 @@ void GridControl::initialize()
 
 bool GridControl::isButtonInputStable( const uint8_t button ) const
 {
-    return (0 == (BUTTON_MASK[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
+    return (0 == (kNonGridButtonMask[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
 }
 
 bool GridControl::isGridVerticalSegmentInputStable( const uint8_t segment ) const
 {
-    return (0 == (GRID_BUTTON_MASK & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
+    return (0 == (kGridButtonMask & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
 }
 
 bool GridControl::isGridInputUpdated() const
@@ -101,7 +101,7 @@ void GridControl::resetSwitchInputUpdatedFlag()
 
 void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
 {
-    ledPositionX = (ledPositionX + NUMBER_OF_VERTICAL_SEGMENTS - TIMER_FRAME_OFFSET) % NUMBER_OF_VERTICAL_SEGMENTS;
+    ledPositionX = (ledPositionX + kNumberOfVerticalSegments - kTimerFrameOffset) % kNumberOfVerticalSegments;
 
     if (directLed)
     {
@@ -146,9 +146,9 @@ void GridControl::start()
 
 void GridControl::turnAllLedsOff()
 {
-    for (uint8_t x = 0; x < NUMBER_OF_VERTICAL_SEGMENTS; x++)
+    for (uint8_t x = 0; x < kNumberOfVerticalSegments; x++)
     {
-        for (uint8_t y = 0; y < NUMBER_OF_HORIZONTAL_SEGMENTS; y++)
+        for (uint8_t y = 0; y < kNumberOfHorizontalSegments; y++)
         {
             pwmOutputRed_[x][y] = BRIGHTNESS_DIRECT[0];
             pwmOutputGreen_[x][y] = BRIGHTNESS_DIRECT[0];
@@ -165,9 +165,9 @@ void GridControl::initializeBaseTimer()
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     baseInterruptTimer_.Instance = BASE_INTERRUPT_TIMER;
-    baseInterruptTimer_.Init.Prescaler = BASE_INTERRUPT_CLOCK_PRESCALER - 1;
+    baseInterruptTimer_.Init.Prescaler = kBaseInterruptClockPrescaler - 1;
     baseInterruptTimer_.Init.CounterMode = TIM_COUNTERMODE_UP;
-    baseInterruptTimer_.Init.Period = BASE_INTERRUPT_CLOCK_PERIOD - 1;
+    baseInterruptTimer_.Init.Period = kBaseInterruptClockPeriod - 1;
     baseInterruptTimer_.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init( &baseInterruptTimer_ );
 
@@ -184,13 +184,13 @@ void GridControl::initializeBaseTimer()
     timerOutputCompareConfiguration.Pulse = 1; // update as early as possible
     HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_1 );
 
-    timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 7) / 10;
+    timerOutputCompareConfiguration.Pulse = (kBaseInterruptClockPeriod * 7) / 10;
     HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_2 );
 
-    timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 8) / 10;
+    timerOutputCompareConfiguration.Pulse = (kBaseInterruptClockPeriod * 8) / 10;
     HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_3 );
 
-    timerOutputCompareConfiguration.Pulse = (BASE_INTERRUPT_CLOCK_PERIOD * 9) / 10;
+    timerOutputCompareConfiguration.Pulse = (kBaseInterruptClockPeriod * 9) / 10;
     HAL_TIM_OC_ConfigChannel( &baseInterruptTimer_, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
 
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer_, TIM_DMA_CC1 );
@@ -221,9 +221,9 @@ void GridControl::initializeDma()
     HAL_DMA_Init( &columnSelectDmaConfiguration_ );
     __HAL_LINKDMA( &baseInterruptTimer_, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration_ );
     HAL_DMA_Start( &columnSelectDmaConfiguration_,
-            reinterpret_cast<uint32_t>(&columnSelectValue[0]),
+            reinterpret_cast<uint32_t>(&kColumnSelectValue[0]),
             reinterpret_cast<uint32_t>(&verticalSegmentControlGpioPort->ODR),
-            NUMBER_OF_VERTICAL_SEGMENTS );
+            kNumberOfVerticalSegments );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
     ledOutputDmaInitConfiguration.Direction = DMA_MEMORY_TO_PERIPH;
@@ -244,7 +244,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputRedDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
-            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
+            kNumberOfVerticalSegments * kNumberOfHorizontalSegments );
 
     pwmOutputGreenDmaConfiguration_.Instance = DMA2_Stream6;
     pwmOutputGreenDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -253,7 +253,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputGreenDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
-            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
+            kNumberOfVerticalSegments * kNumberOfHorizontalSegments );
 
     pwmOutputBlueDmaConfiguration_.Instance = DMA2_Stream4;
     pwmOutputBlueDmaConfiguration_.Init = ledOutputDmaInitConfiguration;
@@ -262,7 +262,7 @@ void GridControl::initializeDma()
     HAL_DMA_Start( &pwmOutputBlueDmaConfiguration_,
             reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
             reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
-            NUMBER_OF_VERTICAL_SEGMENTS * NUMBER_OF_HORIZONTAL_SEGMENTS );
+            kNumberOfVerticalSegments * kNumberOfHorizontalSegments );
 
     buttonInputDmaConfiguration.Instance = DMA2_Stream5;
     buttonInputDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
@@ -289,7 +289,7 @@ void GridControl::initializeDma()
             reinterpret_cast<uint32_t>(&GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
-            NUMBER_OF_VERTICAL_SEGMENTS );
+            kNumberOfVerticalSegments );
 }
 
 void GridControl::initializeGpio()
@@ -378,9 +378,9 @@ void GridControl::initializePwmTimers()
 
     timerClockSourceConfiguration.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
 
-    timerBaseInitConfiguration.Prescaler = PWM_CLOCK_PRESCALER - 1;
+    timerBaseInitConfiguration.Prescaler = kPwmClockPrescaler - 1;
     timerBaseInitConfiguration.CounterMode = TIM_COUNTERMODE_DOWN;
-    timerBaseInitConfiguration.Period = PWM_CLOCK_PERIOD - 1;
+    timerBaseInitConfiguration.Period = kPwmClockPeriod - 1;
     timerBaseInitConfiguration.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
     // Red PWM output configuration

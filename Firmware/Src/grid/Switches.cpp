@@ -45,20 +45,20 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
     {
         encoderChangeDetected = false;
         gridControl_.resetSwitchInputUpdatedFlag();
-        for (uint8_t encoder = 0; encoder < NUMBER_OF_ROTARY_ENCODERS; encoder++)
+        for (uint8_t encoder = 0; encoder < kNumberOfRotaryEncoders; encoder++)
         {
             static int8_t microstep[2] = {0, 0};
             static uint8_t previousEncoderValue[2] = {0, 0};
 
-            for (uint8_t timeStep = 0; timeStep < NUMBER_OF_ROTARY_ENCODER_TIME_STEPS; timeStep++)
+            for (uint8_t timeStep = 0; timeStep < kNumberOfRotaryEncoderTimeSteps; timeStep++)
             {
                 previousEncoderValue[encoder] <<= 2;
                 previousEncoderValue[encoder] |= gridControl_.getRotaryEncodersInput( encoder, timeStep );
                 previousEncoderValue[encoder] &= 0x0F;
-                microstep[encoder] += ENCODER_STATES[previousEncoderValue[encoder]];
+                microstep[encoder] += kEncoderState[previousEncoderValue[encoder]];
             }
 
-            if ((microstep[encoder] >= NUMBER_OF_MICROSTEPS_IN_STEP) || (microstep[encoder] <= -NUMBER_OF_MICROSTEPS_IN_STEP))
+            if ((microstep[encoder] >= kNumberOfRotaryEncoderMicrostepsInStep) || (microstep[encoder] <= -kNumberOfRotaryEncoderMicrostepsInStep))
             {
                 static uint32_t previousEventTime[2] = {0, 0};
                 int8_t velocityMultiplier;
@@ -100,7 +100,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
     if (gridControl_.isSwitchInputUpdated() || buttonChangeDetected)
     {
         buttonChangeDetected = false; // reset this variable every time, it will be set back if necessary
-        for (uint8_t button = 0; button < NUMBER_OF_BUTTONS; button++)
+        for (uint8_t button = 0; button < kNumberOfButtons; button++)
         {
             if (gridControl_.isButtonInputStable(button))
             {
@@ -122,7 +122,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 bool Switches::isButtonPressed( const uint8_t buttonNumber )
 {
     bool isPressed = false;
-    if (buttonNumber < NUMBER_OF_BUTTONS)
+    if (buttonNumber < kNumberOfButtons)
     {
         isPressed = !registeredButtonInput_[buttonNumber];
     }
