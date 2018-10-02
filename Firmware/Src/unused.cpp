@@ -20,7 +20,7 @@ void MX_ADC1_Init(void);
 void MX_ADC1_Init(void)
 {
     ADC_ChannelConfTypeDef sConfig;
-    GPIO_InitTypeDef GPIO_InitStruct;
+    static GPIO_InitTypeDef GPIO_InitStruct;
 
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
     */
@@ -63,7 +63,7 @@ void MX_ADC1_Init(void)
 /* USART6 init function */
 void MX_USART6_UART_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStruct;
+    static GPIO_InitTypeDef GPIO_InitStruct;
 
     GPIO_InitStruct.Pin = MIDI_OUT_Pin|MIDI_IN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;

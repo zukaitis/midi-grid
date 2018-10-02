@@ -104,14 +104,12 @@ Colour Grid::getRandomColour()
     };
 
     const FullyLitColour fullyLitColour = static_cast<FullyLitColour>(rand() % kNumberOfVariants);
-    int8_t partlyLitColour1 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) -
-            (grid_control::kLedColourIntensityMaximum * 0.5);
+    int8_t partlyLitColour1 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) - 32;
     if (partlyLitColour1 < grid_control::kLedColourIntensityOff)
     {
         partlyLitColour1 = grid_control::kLedColourIntensityOff;
     }
-    int8_t partlyLitColour2 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) -
-            (grid_control::kLedColourIntensityMaximum * 0.5);
+    int8_t partlyLitColour2 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) - 32;
     if (partlyLitColour2 < grid_control::kLedColourIntensityOff)
     {
         partlyLitColour2 = grid_control::kLedColourIntensityOff;
@@ -156,11 +154,6 @@ Colour Grid::getRandomColour()
     }
 
     return colour;
-}
-
-void Grid::initialize()
-{
-    gridControl_.initialize();
 }
 
 void Grid::refreshLeds() const

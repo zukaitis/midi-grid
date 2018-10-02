@@ -1,14 +1,12 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 
-#include "stm32f4xx_hal.h"
-
 namespace lcd
 {
 namespace gui
 {
 
-Gui::Gui() : lcd( lcd::Lcd::getInstance() )
+Gui::Gui( Lcd& lcd ) : lcd_( lcd )
 {}
 
 Gui::~Gui()
@@ -16,39 +14,39 @@ Gui::~Gui()
 
 void Gui::displayConnectingImage()
 {
-    lcd.clear();
-    lcd.displayImage( 12, 8, lcd::usbLogo );
-    lcd.print( "USB Connecting", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.clear();
+    lcd_.displayImage( 12, 8, lcd::usbLogo );
+    lcd_.print( "USB Connecting", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayRotaryControlValues( const uint8_t value1, const uint8_t value2 )
 {
     char str[4];
-    lcd.clearArea( 0, 16, 83, 47 );
+    lcd_.clearArea( 0, 16, 83, 47 );
 
-    lcd.displayProgressArc( 0, 20, (value1 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
+    lcd_.displayProgressArc( 0, 20, (value1 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
     sprintf( str, "%d", value1 );
-    lcd.print( str, 18, 32, lcd::Justification_CENTER );
+    lcd_.print( str, 18, 32, lcd::Justification_CENTER );
 
-    lcd.displayProgressArc( 45, 20, (value2 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
+    lcd_.displayProgressArc( 45, 20, (value2 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
     sprintf( str, "%d", value2 );
-    lcd.print( str, 63, 32, lcd::Justification_CENTER );
+    lcd_.print( str, 63, 32, lcd::Justification_CENTER );
 
     rotaryControlDisplayTimeout_ = ROTARY_CONTROL_TIMEOUT;
 }
 
 void Gui::displayWaitingForMidi()
 {
-    lcd.clear();
-    lcd.displayImage( 12, 8, lcd::usbLogo );
-    lcd.print( "Awaiting MIDI", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.clear();
+    lcd_.displayImage( 12, 8, lcd::usbLogo );
+    lcd_.print( "Awaiting MIDI", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::enterLaunchpad95Mode()
 {
-    lcd.clear();
-    lcd.print( "L95", lcd::WIDTH/2, 0, lcd::Justification_CENTER );
-    lcd.displayImage( 63, 0, lcd::usbSymbolSmall );
+    lcd_.clear();
+    lcd_.print( "L95", lcd::WIDTH/2, 0, lcd::Justification_CENTER );
+    lcd_.displayImage( 63, 0, lcd::usbSymbolSmall );
 
     statusBarActive_ = true;
 
@@ -57,9 +55,9 @@ void Gui::enterLaunchpad95Mode()
 
 void Gui::enterInternalMenu()
 {
-    lcd.clear();
-    lcd.print( "Internal Menu", lcd::WIDTH/2, 16, lcd::Justification_CENTER );
-    lcd.print( "Active", lcd::WIDTH/2, 24, lcd::Justification_CENTER );
+    lcd_.clear();
+    lcd_.print( "Internal Menu", lcd::WIDTH/2, 16, lcd::Justification_CENTER );
+    lcd_.print( "Active", lcd::WIDTH/2, 24, lcd::Justification_CENTER );
     statusBarActive_ = false;
 }
 
@@ -81,7 +79,7 @@ void Gui::refresh()
     }
 
     refreshMainArea();
-    lcd.refresh();
+    lcd_.refresh();
 }
 
 void Gui::refreshStatusBar()
@@ -95,11 +93,11 @@ void Gui::refreshStatusBar()
             midiInputTimeout_ -= TIMEOUT_CHECK_STEP;
             if (midiInputTimeout_ > 0)
             {
-                lcd.displayImage( 73, 0, lcd::arrowSmallDown );
+                lcd_.displayImage( 73, 0, lcd::arrowSmallDown );
             }
             else
             {
-                lcd.clearArea( 73, 0, 77, 7 );
+                lcd_.clearArea( 73, 0, 77, 7 );
             }
         }
 
@@ -108,11 +106,11 @@ void Gui::refreshStatusBar()
             midiOutputTimeout_ -= TIMEOUT_CHECK_STEP;
             if (midiOutputTimeout_ > 0)
             {
-                lcd.displayImage( 78, 0, lcd::arrowSmallUp );
+                lcd_.displayImage( 78, 0, lcd::arrowSmallUp );
             }
             else
             {
-                lcd.clearArea( 78, 0, 83, 7 );
+                lcd_.clearArea( 78, 0, 83, 7 );
             }
         }
 
@@ -221,12 +219,12 @@ void Gui::setLaunchpad95Submode( const launchpad::Launchpad95Submode submode )
 
 void Gui::displayClipName()
 {
-    lcd.print( dawClipName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawClipName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayDeviceName()
 {
-    lcd.print( dawDeviceName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawDeviceName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayLaunchpad95Info()
@@ -243,10 +241,10 @@ void Gui::displayLaunchpad95Info()
     // only display other info when rotary control display timer runs out
     if (0 == rotaryControlDisplayTimeout_)
     {
-        lcd.clearArea( 0, 16, 83, 31 );
+        lcd_.clearArea( 0, 16, 83, 31 );
         displayStatus();
 
-        lcd.clearArea( 0, 32, 83, 47 );
+        lcd_.clearArea( 0, 32, 83, 47 );
         switch (launchpad95Mode_)
         {
             case launchpad::Launchpad95Mode_INSTRUMENT:
@@ -272,17 +270,17 @@ void Gui::displayLaunchpad95Info()
 
 void Gui::displayLaunchpad95Mode()
 {
-    lcd.clearArea( 0, 8, 83, 15 );
+    lcd_.clearArea( 0, 8, 83, 15 );
     if (launchpad::Launchpad95Mode_UNKNOWN != launchpad95Mode_)
     {
-        lcd.print( launchpad95ModeString[launchpad95Mode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
+        lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
     }
 }
 
 void Gui::displayLaunchpad95Submode()
 {
-    lcd.clearArea( 0, 8, 83, 15 );
-    lcd.print( launchpad95SubmodeString[launchpad95Submode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
+    lcd_.clearArea( 0, 8, 83, 15 );
+    lcd_.print( launchpad95SubmodeString[launchpad95Submode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
 }
 
 void Gui::displayStatus()
@@ -294,16 +292,16 @@ void Gui::displayStatus()
     switch (numberOfDisplayedSymbols)
     {
         case 1:
-            lcd.displayImage( 32, 16, lcd::play );
+            lcd_.displayImage( 32, 16, lcd::play );
             break;
         case 2:
-            lcd.displayImage( 23, 16, lcd::play );
-            lcd.displayImage( 43, 16, (dawIsRecording_ ? lcd::recordingOn : lcd::sessionRecordingOn) );
+            lcd_.displayImage( 23, 16, lcd::play );
+            lcd_.displayImage( 43, 16, (dawIsRecording_ ? lcd::recordingOn : lcd::sessionRecordingOn) );
             break;
         case 3:
-            lcd.displayImage( 12, 16, lcd::play );
-            lcd.displayImage( 32, 16, lcd::recordingOn );
-            lcd.displayImage( 52, 16, lcd::sessionRecordingOn );
+            lcd_.displayImage( 12, 16, lcd::play );
+            lcd_.displayImage( 32, 16, lcd::recordingOn );
+            lcd_.displayImage( 52, 16, lcd::sessionRecordingOn );
             break;
         default:
             break;
@@ -316,20 +314,20 @@ void Gui::displayTimingStatus()
     {
         char signatureString[6];
 
-        lcd.displayImage( 0, 40, (dawNudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive) );
-        lcd.displayImage( 10, 40, (dawNudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive) );
+        lcd_.displayImage( 0, 40, (dawNudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive) );
+        lcd_.displayImage( 10, 40, (dawNudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive) );
 
-        lcd.printNumberInBigDigits( dawTempo_, 65, 32, lcd::Justification_RIGHT );
-        lcd.print( "bpm", 66, 32 );
+        lcd_.printNumberInBigDigits( dawTempo_, 65, 32, lcd::Justification_RIGHT );
+        lcd_.print( "bpm", 66, 32 );
 
         sprintf( signatureString, "%d/%d", dawSignatureNumerator_, dawSignatureDenominator_ );
-        lcd.print( signatureString, 0, 32 );
+        lcd_.print( signatureString, 0, 32 );
     }
 }
 
 void Gui::displayTrackName()
 {
-    lcd.print( dawTrackName_, lcd::WIDTH/2, 32, lcd::Justification_CENTER );
+    lcd_.print( dawTrackName_, lcd::WIDTH/2, 32, lcd::Justification_CENTER );
 }
 
 } // namespace gui

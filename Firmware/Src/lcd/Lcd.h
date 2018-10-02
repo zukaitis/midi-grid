@@ -8,8 +8,6 @@
 #include "lcd/Backlight.h"
 #include "lcd/LcdControl.h"
 
-#include "stm32f4xx_hal.h"
-
 namespace lcd
 {
 
@@ -59,12 +57,7 @@ class Lcd
 {
 public:
 
-    static inline Lcd& getInstance()
-    {
-        static Lcd instance;
-        return instance;
-    }
-
+    Lcd();
     ~Lcd();
 
     void clear();
@@ -80,8 +73,6 @@ public:
     void setBacklightIntensity( const uint8_t intensity );
 
 private:
-    Lcd();
-
     void putChar( const uint8_t x, const uint8_t y, const char c );
 
     backlight::Backlight backlight;

@@ -1,6 +1,5 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "lcd/Lcd.h" // to be removed
 
 extern "C" {
 #include "usb/usb_device.h"
@@ -8,7 +7,7 @@ extern "C" {
 }
 
 #ifdef USE_SEMIHOSTING
-extern void initialise_monitor_handles(void); // semihosting
+extern void initialise_monitor_handles(void);
 #endif
 
 int main(void)
@@ -22,10 +21,10 @@ ApplicationMain::ApplicationMain() :
         gridControl_( grid::grid_control::GridControl() ),
         grid_( grid::Grid( gridControl_ ) ),
         switches_( grid::switches::Switches( gridControl_ ) ),
-        gui_( lcd::gui::Gui() ),
         usbMidi_( midi::UsbMidi() ),
-        launchpad_( launchpad::Launchpad(grid_, switches_, gui_, usbMidi_) ),
-        lcd_( lcd::Lcd::getInstance() )
+        lcd_( lcd::Lcd() ),
+        gui_( lcd::gui::Gui( lcd_ ) ),
+        launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) )
 {}
 
 ApplicationMain::~ApplicationMain()
@@ -46,7 +45,7 @@ void ApplicationMain::initialize()
     lcd_.initialize();
     lcd_.setBacklightIntensity( 55 );
 
-    grid_.initialize(); // should replace with GridControl::initialize() and get rid of Grid::initialize method
+    gridControl_.initialize();
     gridControl_.start();
 
     #ifdef USE_SEMIHOSTING
@@ -132,8 +131,8 @@ void ApplicationMain::configureNvicPriorities()
 
 void ApplicationMain::configureSystemClock()
 {
-    RCC_OscInitTypeDef RCC_OscInitStruct;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    static RCC_OscInitTypeDef RCC_OscInitStruct;
+    static RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
     // Configure the main internal regulator output voltage
     __HAL_RCC_PWR_CLK_ENABLE();

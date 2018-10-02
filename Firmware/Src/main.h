@@ -5,21 +5,9 @@
 #include "grid/GridControl.h"
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
+#include "lcd/Lcd.h"
 #include "program/Launchpad.h"
 #include "usb/UsbMidi.h"
-
-//namespace grid
-//{
-//    namespace grid_control
-//    {
-//        class GridControl;
-//    }
-//}
-
-namespace lcd
-{
-    class Lcd;
-}
 
 class ApplicationMain
 {
@@ -51,10 +39,10 @@ private:
     grid::grid_control::GridControl gridControl_;
     grid::Grid grid_;
     grid::switches::Switches switches_;
-    lcd::gui::Gui gui_;
     midi::UsbMidi usbMidi_;
+    lcd::Lcd lcd_;
+    lcd::gui::Gui gui_;
     launchpad::Launchpad launchpad_;
-    lcd::Lcd& lcd_; // to be removed
 };
 
 #endif // __MAIN_H__

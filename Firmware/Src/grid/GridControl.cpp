@@ -178,7 +178,7 @@ void GridControl::initializeBaseTimer()
     timerMasterConfiguration.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     HAL_TIMEx_MasterConfigSynchronization( &baseInterruptTimer_, &timerMasterConfiguration );
 
-    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
+    static TIM_OC_InitTypeDef timerOutputCompareConfiguration;
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_ACTIVE;
 
     timerOutputCompareConfiguration.Pulse = 1; // update as early as possible
@@ -202,7 +202,7 @@ void GridControl::initializeBaseTimer()
 
 void GridControl::initializeDma()
 {
-    DMA_InitTypeDef ledOutputDmaInitConfiguration;
+    static DMA_InitTypeDef ledOutputDmaInitConfiguration;
 
     __HAL_RCC_DMA2_CLK_ENABLE();
 
@@ -327,7 +327,6 @@ void GridControl::initializeGpio()
 void GridControl::initializePwmGpio()
 {
     // initialize GPIO
-    // making this structure static magically fixes the issues, but it's probably not the source of these issues
     static GPIO_InitTypeDef gpioConfiguration;
 
     // Timer GPIO configuration
@@ -358,9 +357,9 @@ void GridControl::initializePwmGpio()
 
 void GridControl::initializePwmTimers()
 {
-    TIM_Base_InitTypeDef timerBaseInitConfiguration;
+    static TIM_Base_InitTypeDef timerBaseInitConfiguration;
+    static TIM_OC_InitTypeDef timerOutputCompareConfiguration;
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
-    TIM_OC_InitTypeDef timerOutputCompareConfiguration;
     TIM_SlaveConfigTypeDef timerSlaveConfiguration;
 
     __HAL_RCC_TIM2_CLK_ENABLE();

@@ -47,7 +47,7 @@ static const char launchpad95SubmodeString[9][15] = {
 class Gui
 {
 public:
-    Gui();
+    Gui( Lcd& lcd );
     ~Gui();
 
     void displayConnectingImage();
@@ -79,7 +79,7 @@ private:
     void displayTimingStatus();
     void displayTrackName();
 
-    lcd::Lcd& lcd;
+    lcd::Lcd& lcd_;
 
     char dawClipName_[15] = " \0";
     char dawDeviceName_[15] = " \0";

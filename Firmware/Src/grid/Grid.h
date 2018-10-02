@@ -2,7 +2,6 @@
 #define GRID_BUTTONS_H_
 
 #include "grid/GridControl.h"
-#include "stm32f4xx_hal.h"
 #include "Types.h"
 
 namespace grid_control
@@ -61,7 +60,6 @@ public:
     bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent );
     Colour getLedColour( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Colour getRandomColour();
-    void initialize();
     void refreshLeds() const;
 
     void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour );

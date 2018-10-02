@@ -94,7 +94,7 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
 {
-  GPIO_InitTypeDef GPIO_InitStruct;
+  static GPIO_InitTypeDef GPIO_InitStruct;
   if(pcdHandle->Instance==USB_OTG_FS)
   {
       __HAL_RCC_GPIOA_CLK_ENABLE();
