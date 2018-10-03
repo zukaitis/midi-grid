@@ -9,6 +9,8 @@ namespace grid_control
     class GridControl;
 }
 
+class Time;
+
 namespace grid
 {
 
@@ -51,7 +53,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( grid_control::GridControl& gridControl );
+    Grid( grid_control::GridControl& gridControl, Time& time );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -71,6 +73,7 @@ private:
     void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
     grid_control::GridControl& gridControl_;
+    Time& time_;
 
     Led led_[kNumberOfColumns][kNumberOfRows];
 

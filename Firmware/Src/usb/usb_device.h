@@ -64,7 +64,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 void MX_USB_DEVICE_Init(void);
 
 /* Checks if USB connection with host is established */
-uint8_t isUsbConnected();
+uint8_t usb_device_isUsbConnected();
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,5 @@
 #include "grid/Grid.h"
+#include "system/Time.h"
 
 #include<stdlib.h>
 
@@ -7,8 +8,9 @@
 namespace grid
 {
 
-Grid::Grid( grid_control::GridControl& gridControl ) :
+Grid::Grid( grid_control::GridControl& gridControl, Time& time ) :
         gridControl_( gridControl ),
+        time_( time ),
         numberOfFlashingLeds_( 0 ),
         numberOfPulsingLeds_( 0 )
 {
@@ -161,7 +163,7 @@ void Grid::refreshLeds() const
     static uint32_t ledFlashCheckTime = 0;
     static uint32_t ledPulseCheckTime = 0;
 
-    if (HAL_GetTick() >= ledFlashCheckTime)
+    if (time_.getSystemTick() >= ledFlashCheckTime)
     {
         static uint8_t flashColourIndex = 0;
 
@@ -173,10 +175,10 @@ void Grid::refreshLeds() const
                     flashingLed_[i].colour[flashColourIndex] );
         }
         flashColourIndex = (flashColourIndex + 1) % kLedFlashingNumberOfColours;
-        ledFlashCheckTime = HAL_GetTick() + kLedFlashingPeriod; //250ms
+        ledFlashCheckTime = time_.getSystemTick() + kLedFlashingPeriod; //250ms
     }
 
-    if (HAL_GetTick() >= ledPulseCheckTime)
+    if (time_.getSystemTick() >= ledPulseCheckTime)
     {
         static uint8_t ledPulseStepNumber = 0;
 
@@ -201,7 +203,7 @@ void Grid::refreshLeds() const
             }
             setLedOutput( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour );
         }
-        ledPulseCheckTime = HAL_GetTick() + kLedPulseStepInterval;
+        ledPulseCheckTime = time_.getSystemTick() + kLedPulseStepInterval;
     }
 }
 

@@ -1,12 +1,14 @@
 #include "grid/Switches.h"
+#include "system/Time.h"
 
 namespace grid
 {
 namespace switches
 {
 
-Switches::Switches( grid_control::GridControl& gridControl ) :
-        gridControl_( gridControl )
+Switches::Switches( grid_control::GridControl& gridControl, Time& time ) :
+        gridControl_( gridControl ),
+        time_( time )
 {
     // active low
     registeredButtonInput_[0] = true;
@@ -63,7 +65,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                 static uint32_t previousEventTime[2] = {0, 0};
                 int8_t velocityMultiplier;
                 // only respond every 4 microsteps (1 physical step)
-                const uint32_t interval = HAL_GetTick() - previousEventTime[encoder];
+                const uint32_t interval = time_.getSystemTick() - previousEventTime[encoder];
 
                 if (interval >= 500)
                 {
@@ -82,7 +84,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                     velocityMultiplier = 8;
                 }
 
-                previousEventTime[encoder] = HAL_GetTick();
+                previousEventTime[encoder] = time_.getSystemTick();
                 rotaryEncoderNumber = encoder;
                 steps = ((microstep[encoder] > 0) ? 1 * velocityMultiplier : -1 * velocityMultiplier);
                 microstep[encoder] %= 4;

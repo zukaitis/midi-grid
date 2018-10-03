@@ -10,7 +10,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_midi.h"
 #include "usb/usbd_desc.h"
-#include "stm32f4xx_hal_conf.h"
+#include "system/stm32f4xx_hal_conf.h"
 #include "usbd_ctlreq.h"
 #include "stm32f4xx_hal.h"
 

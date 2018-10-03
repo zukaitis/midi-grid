@@ -1,12 +1,15 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
+#include "system/Time.h"
 
 namespace lcd
 {
 namespace gui
 {
 
-Gui::Gui( Lcd& lcd ) : lcd_( lcd )
+Gui::Gui( Lcd& lcd, Time& time ) :
+        lcd_( lcd ),
+        time_( time )
 {}
 
 Gui::~Gui()
@@ -86,7 +89,7 @@ void Gui::refreshStatusBar()
 {
     static uint32_t refreshCheckTime = 0;
 
-    if (HAL_GetTick() >= refreshCheckTime)
+    if (time_.getSystemTick() >= refreshCheckTime)
     {
         if (midiInputTimeout_ > 0)
         {
@@ -114,7 +117,7 @@ void Gui::refreshStatusBar()
             }
         }
 
-        refreshCheckTime = HAL_GetTick() + TIMEOUT_CHECK_STEP; // check every 250ms
+        refreshCheckTime = time_.getSystemTick() + TIMEOUT_CHECK_STEP; // check every 250ms
     }
 }
 
@@ -122,7 +125,7 @@ void Gui::refreshMainArea()
 {
     static uint32_t checkTime = 0;
 
-    if (HAL_GetTick() >= checkTime)
+    if (time_.getSystemTick() >= checkTime)
     {
         if (rotaryControlDisplayTimeout_ > 0)
         {
@@ -134,7 +137,7 @@ void Gui::refreshMainArea()
             }
         }
 
-        checkTime = HAL_GetTick() + TIMEOUT_CHECK_STEP; // check every 250ms
+        checkTime = time_.getSystemTick() + TIMEOUT_CHECK_STEP; // check every 250ms
     }
 }
 

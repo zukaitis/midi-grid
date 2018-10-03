@@ -8,6 +8,8 @@
 #include "lcd/Backlight.h"
 #include "lcd/LcdControl.h"
 
+class Time;
+
 namespace lcd
 {
 
@@ -57,7 +59,7 @@ class Lcd
 {
 public:
 
-    Lcd();
+    Lcd( Time& time );
     ~Lcd();
 
     void clear();
@@ -77,6 +79,7 @@ private:
 
     backlight::Backlight backlight;
     lcd_control::LcdControl lcdControl;
+    Time& time_;
 
     uint8_t appointedBacklightIntensity_ = 0;
     uint8_t currentBacklightIntensity_ = 0;

@@ -1,4 +1,5 @@
 #include "lcd/Lcd.h"
+#include "system/Time.h"
 
 #include <string.h>
 #include <math.h>
@@ -6,7 +7,8 @@
 namespace lcd
 {
 
-Lcd::Lcd()
+Lcd::Lcd( Time& time ) :
+        time_( time )
 {
 }
 
@@ -181,7 +183,7 @@ void Lcd::refresh()
 {
     static uint32_t refreshCheckTime = 0;
 
-    if (HAL_GetTick() >= refreshCheckTime)
+    if (time_.getSystemTick() >= refreshCheckTime)
     {
         if (updateRequired_)
         {
@@ -201,7 +203,7 @@ void Lcd::refresh()
             }
         }
 
-        refreshCheckTime = HAL_GetTick() + 20; // check every 20ms
+        refreshCheckTime = time_.getSystemTick() + 20; // check every 20ms
     }
 }
 

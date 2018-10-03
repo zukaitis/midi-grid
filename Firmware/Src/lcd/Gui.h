@@ -3,10 +3,7 @@
 
 #include "program/Launchpad.h"
 
-namespace launchpad
-{
-    class Launchpad;
-}
+class Time;
 
 namespace lcd
 {
@@ -47,7 +44,7 @@ static const char launchpad95SubmodeString[9][15] = {
 class Gui
 {
 public:
-    Gui( Lcd& lcd );
+    Gui( Lcd& lcd, Time& time );
     ~Gui();
 
     void displayConnectingImage();
@@ -80,6 +77,7 @@ private:
     void displayTrackName();
 
     lcd::Lcd& lcd_;
+    Time& time_;
 
     char dawClipName_[15] = " \0";
     char dawDeviceName_[15] = " \0";

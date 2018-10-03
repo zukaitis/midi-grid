@@ -1,10 +1,5 @@
 #include "main.h"
-#include "stm32f4xx_hal.h"
-
-extern "C" {
-#include "usb/usb_device.h"
 #include "usb/queue32.h"
-}
 
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void);
@@ -18,12 +13,14 @@ int main(void)
 }
 
 ApplicationMain::ApplicationMain() :
+        system_( System() ),
+        time_( Time() ),
         gridControl_( grid::grid_control::GridControl() ),
-        grid_( grid::Grid( gridControl_ ) ),
-        switches_( grid::switches::Switches( gridControl_ ) ),
+        grid_( grid::Grid( gridControl_, time_ ) ),
+        switches_( grid::switches::Switches( gridControl_, time_ ) ),
         usbMidi_( midi::UsbMidi() ),
-        lcd_( lcd::Lcd() ),
-        gui_( lcd::gui::Gui( lcd_ ) ),
+        lcd_( lcd::Lcd( time_ ) ),
+        gui_( lcd::gui::Gui( lcd_, time_ ) ),
         launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) )
 {}
 
@@ -32,11 +29,8 @@ ApplicationMain::~ApplicationMain()
 
 void ApplicationMain::initialize()
 {
-    HAL_Init();
-    configureNvicPriorities();
-    configureSystemClock();
 
-    MX_USB_DEVICE_Init();
+    system_.initialize();
 
     #ifdef USE_SEMIHOSTING
     initialise_monitor_handles(); // enable semihosting
@@ -57,7 +51,7 @@ void ApplicationMain::run()
 {
     gui_.displayConnectingImage();
 
-    while (!isUsbConnected())
+    while (!system_.isUsbConnected())
     {
         gui_.refresh();
     }
@@ -108,72 +102,13 @@ void ApplicationMain::run()
     }
 }
 
-void ApplicationMain::configureNvicPriorities()
-{
-    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-    // System interrupt init
-    // MemoryManagement_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
-    // BusFault_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
-    // UsageFault_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
-    // SVCall_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
-    // DebugMonitor_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
-    // PendSV_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
-    // SysTick_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
-}
-
-void ApplicationMain::configureSystemClock()
-{
-    static RCC_OscInitTypeDef RCC_OscInitStruct;
-    static RCC_ClkInitTypeDef RCC_ClkInitStruct;
-
-    // Configure the main internal regulator output voltage
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-    // Initializes the CPU, AHB and APB busses clocks
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLM = 8;
-    RCC_OscInitStruct.PLL.PLLN = 192;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-    RCC_OscInitStruct.PLL.PLLQ = 4;
-    HAL_RCC_OscConfig(&RCC_OscInitStruct);
-
-    // Initializes the CPU, AHB and APB busses clocks
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3);
-
-    // Configure the Systick interrupt time
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
-
-    // Configure the Systick
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-
-    // SysTick_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
-}
 
 void ApplicationMain::randomLightAnimation()
 {
     static uint32_t newLightTime = 0;
 
-    if (HAL_GetTick() >= newLightTime)
+    if (time_.getSystemTick() >= newLightTime)
     {
         static uint8_t ledsChanged = 0;
 
@@ -181,7 +116,7 @@ void ApplicationMain::randomLightAnimation()
         const uint8_t ledPositionY = rand() % 8;
 
         grid_.setLed(ledPositionX, ledPositionY, getRandomColour());
-        newLightTime = HAL_GetTick() + 500 + rand() % 1000;
+        newLightTime = time_.getSystemTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
         {
@@ -189,15 +124,6 @@ void ApplicationMain::randomLightAnimation()
             ledsChanged = 0;
         }
     }
-}
-
-void ApplicationMain::resetIntoBootloader()
-{
-    // write these bytes into the end of RAM, so processor would jump into bootloader after reset
-    // (there is condition in system_stm32f4xx.c that checks for this value at the beginning of a program)
-    *((unsigned long *)0x2001FFF0) = 0xDEADBEEF;
-    // Reset the processor
-    NVIC_SystemReset();
 }
 
 void ApplicationMain::runGridInputTest()
@@ -241,7 +167,7 @@ void ApplicationMain::runInternalMenu()
             if ((7 == buttonX) && (0 == buttonY))
             {
                 // reset into DFU bootloader
-                resetIntoBootloader();
+                system_.resetIntoBootloader();
             }
         }
 

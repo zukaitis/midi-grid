@@ -7,7 +7,10 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "program/Launchpad.h"
+#include "system/System.h"
+#include "system/Time.h"
 #include "usb/UsbMidi.h"
+
 
 class ApplicationMain
 {
@@ -25,17 +28,16 @@ public:
     void initialize();
     void run();
 
-    void configureNvicPriorities();
-    void configureSystemClock();
     Colour getRandomColour();
     void randomLightAnimation();
-    void resetIntoBootloader();
     void runGridInputTest();
     void runInternalMenu();
 
 private:
     ApplicationMain();
 
+    System system_;
+    Time time_;
     grid::grid_control::GridControl gridControl_;
     grid::Grid grid_;
     grid::switches::Switches switches_;
