@@ -18,7 +18,7 @@ Lcd::~Lcd()
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcd_control::BUFFER_SIZE );
+    memset( &lcdBuffer_[0][0], 0x00, lcd_control::kBufferSize );
     updateRequired_ = true;
 }
 

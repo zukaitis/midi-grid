@@ -1,16 +1,16 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <grid/GridControl.h>
 #include "grid/Grid.h"
-#include "grid/GridControl.h"
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "program/Launchpad.h"
+#include "system/GlobalInterrupts.h"
 #include "system/System.h"
 #include "system/Time.h"
 #include "usb/UsbMidi.h"
-
 
 class ApplicationMain
 {
@@ -37,6 +37,7 @@ private:
     ApplicationMain();
 
     System system_;
+    GlobalInterrupts globalInterrupts_;
     Time time_;
     grid::grid_control::GridControl gridControl_;
     grid::Grid grid_;

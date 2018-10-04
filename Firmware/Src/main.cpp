@@ -14,9 +14,10 @@ int main(void)
 
 ApplicationMain::ApplicationMain() :
         system_( System() ),
+        globalInterrupts_( GlobalInterrupts() ),
         time_( Time() ),
         gridControl_( grid::grid_control::GridControl() ),
-        grid_( grid::Grid( gridControl_, time_ ) ),
+        grid_( grid::Grid( gridControl_, globalInterrupts_, time_ ) ),
         switches_( grid::switches::Switches( gridControl_, time_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd( time_ ) ),

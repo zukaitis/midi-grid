@@ -1,7 +1,7 @@
 #ifndef GRID_SWITCHES_H_
 #define GRID_SWITCHES_H_
 
-#include "grid/GridControl.h"
+#include <grid/GridControl.h>
 #include "Types.h"
 
 class Time;

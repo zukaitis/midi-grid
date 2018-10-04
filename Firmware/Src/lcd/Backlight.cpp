@@ -1,5 +1,6 @@
 #include "lcd/Backlight.h"
 
+#include "stm32f4xx_hal.h"
 #include <string.h>
 
 namespace lcd
@@ -8,9 +9,20 @@ namespace lcd
 namespace backlight
 {
 
-uint32_t Backlight::outputBuffer_[OUTPUT_BUFFER_SIZE];
-DMA_HandleTypeDef Backlight::dmaConfiguration_;
-SPI_HandleTypeDef Backlight::spiConfiguration_;
+static GPIO_TypeDef* const LCD_GPIO_Port = GPIOB;
+static const uint16_t LIGHT_Pin = GPIO_PIN_5;
+
+static const uint16_t INTENSITY[Backlight::kNumberOfIntensityLevels] = {
+        0, 1, 2, 3, 5, 8, 11, 15, 20, 25, 30, 36, 43, 50, 57, 65,
+        74, 82, 92, 102, 112, 123, 135, 147, 159, 172, 185, 199, 213, 228, 243, 258,
+        274, 291, 308, 325, 343, 362, 380, 400, 419, 439, 460, 481, 502, 524, 547, 570,
+        593, 616, 641, 665, 690, 716, 741, 768, 795, 822, 849, 877, 906, 935, 964, 994,
+        1024
+};
+
+uint32_t Backlight::outputBuffer_[kOutputBufferSize];
+static DMA_HandleTypeDef dmaConfiguration_;
+static SPI_HandleTypeDef spiConfiguration_;
 
 Backlight::Backlight()
 {
@@ -35,9 +47,9 @@ void Backlight::setIntensity( uint8_t intensity )
 {
     uint8_t wordIndex = 0;
 
-    if (intensity >= NUMBER_OF_INTENSITY_LEVELS)
+    if (intensity >= kNumberOfIntensityLevels)
     {
-        intensity = NUMBER_OF_INTENSITY_LEVELS - 1;
+        intensity = kNumberOfIntensityLevels - 1;
     }
 
     const uint16_t numberOfFullySetWords = INTENSITY[intensity] / 32;
@@ -48,12 +60,12 @@ void Backlight::setIntensity( uint8_t intensity )
         outputBuffer_[wordIndex++] = 0xFFFFFFFF;
     }
 
-    if (wordIndex < OUTPUT_BUFFER_SIZE)
+    if (wordIndex < kOutputBufferSize)
     {
         outputBuffer_[wordIndex++] = 0xFFFFFFFF >> (32 - (INTENSITY[intensity] % 32));
     }
 
-    while (wordIndex < OUTPUT_BUFFER_SIZE)
+    while (wordIndex < kOutputBufferSize)
     {
         // fill rest of the buffer with zeros
         outputBuffer_[wordIndex++] = 0x00000000;
@@ -80,7 +92,7 @@ void Backlight::initializeDma()
     HAL_DMA_Start( &dmaConfiguration_,
             reinterpret_cast<uint32_t>(&outputBuffer_[0]),
             reinterpret_cast<uint32_t>(&spiConfiguration_.Instance->DR),
-            OUTPUT_BUFFER_SIZE * sizeof(outputBuffer_[0]) );
+            kOutputBufferSize * sizeof(outputBuffer_[0]) );
 }
 
 void Backlight::initializeGpio()

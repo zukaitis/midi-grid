@@ -1,18 +1,19 @@
 #ifndef GRID_BUTTONS_H_
 #define GRID_BUTTONS_H_
 
-#include "grid/GridControl.h"
+#include <grid/GridControl.h>
 #include "Types.h"
+
+class GlobalInterrupts;
+class Time;
+
+namespace grid
+{
 
 namespace grid_control
 {
     class GridControl;
 }
-
-class Time;
-
-namespace grid
-{
 
 static const uint8_t kNumberOfRows = 8;
 static const uint8_t kNumberOfColumns = 10;
@@ -53,7 +54,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( grid_control::GridControl& gridControl, Time& time );
+    Grid( grid_control::GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -73,11 +74,12 @@ private:
     void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
 
     grid_control::GridControl& gridControl_;
+    GlobalInterrupts& globalInterrupts_;
     Time& time_;
 
     Led led_[kNumberOfColumns][kNumberOfRows];
 
-    uint16_t registeredButtonInput_[grid_control::kNumberOfVerticalSegments];
+    uint16_t registeredButtonInput_[grid_control::GridControl::kNumberOfVerticalSegments];
 
     FlashingLed flashingLed_[kNumberOfLeds];
     uint8_t numberOfFlashingLeds_;

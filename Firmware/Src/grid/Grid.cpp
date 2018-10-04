@@ -1,4 +1,5 @@
 #include "grid/Grid.h"
+#include "system/GlobalInterrupts.h"
 #include "system/Time.h"
 
 #include<stdlib.h>
@@ -8,13 +9,14 @@
 namespace grid
 {
 
-Grid::Grid( grid_control::GridControl& gridControl, Time& time ) :
+Grid::Grid( grid_control::GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time ) :
         gridControl_( gridControl ),
+        globalInterrupts_( globalInterrupts ),
         time_( time ),
         numberOfFlashingLeds_( 0 ),
         numberOfPulsingLeds_( 0 )
 {
-    for (uint8_t index = 0; index < grid_control::kNumberOfVerticalSegments; index++)
+    for (uint8_t index = 0; index < grid_control::GridControl::kNumberOfVerticalSegments; index++)
     {
         registeredButtonInput_[index] = 0x0000;
     }
@@ -50,10 +52,10 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
 
     if (gridControl_.isGridInputUpdated() || buttonChangeDetected)
     {
-        __disable_irq();
+        globalInterrupts_.disable();
         buttonChangeDetected = false; //reset this variable every time, it will be set back if necessary
         gridControl_.resetGridInputUpdatedFlag();
-        for (int8_t x = 0; x < grid_control::kNumberOfVerticalSegments; x++)
+        for (int8_t x = 0; x < grid_control::GridControl::kNumberOfVerticalSegments; x++)
         {
             if (gridControl_.isGridVerticalSegmentInputStable( x ))
             {
@@ -61,7 +63,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                 const uint8_t buttonColumnChanges = registeredButtonInput_[x] ^ buttonInput;
                 if (0 != buttonColumnChanges)
                 {
-                    for (int8_t y = 0; y < grid_control::kNumberOfHorizontalSegments; y++)
+                    for (int8_t y = 0; y < grid_control::GridControl::kNumberOfHorizontalSegments; y++)
                     {
                         if (0 != ((buttonColumnChanges >> y) & 0x0001))
                         {
@@ -70,12 +72,12 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                             if (x >= kNumberOfColumns)
                             {
                                 x -= kNumberOfColumns;
-                                y += grid_control::kNumberOfHorizontalSegments;
+                                y += grid_control::GridControl::kNumberOfHorizontalSegments;
                             }
                             buttonPositionX = x;
                             buttonPositionY = y;
                             buttonChangeDetected = true;
-                            __enable_irq();
+                            globalInterrupts_.enable();
                             return true;
                         }
                     }
@@ -83,7 +85,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
             }
         }
     }
-    __enable_irq();
+    globalInterrupts_.enable();
     return false;
 }
 
@@ -106,15 +108,15 @@ Colour Grid::getRandomColour()
     };
 
     const FullyLitColour fullyLitColour = static_cast<FullyLitColour>(rand() % kNumberOfVariants);
-    int8_t partlyLitColour1 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour1 < grid_control::kLedColourIntensityOff)
+    int8_t partlyLitColour1 = (rand() % (grid_control::GridControl::kLedColourIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColour1 < grid_control::GridControl::kLedColourIntensityOff)
     {
-        partlyLitColour1 = grid_control::kLedColourIntensityOff;
+        partlyLitColour1 = grid_control::GridControl::kLedColourIntensityOff;
     }
-    int8_t partlyLitColour2 = (rand() % (grid_control::kLedColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour2 < grid_control::kLedColourIntensityOff)
+    int8_t partlyLitColour2 = (rand() % (grid_control::GridControl::kLedColourIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColour2 < grid_control::GridControl::kLedColourIntensityOff)
     {
-        partlyLitColour2 = grid_control::kLedColourIntensityOff;
+        partlyLitColour2 = grid_control::GridControl::kLedColourIntensityOff;
     }
 
     Colour colour = { 0, 0, 0 };
@@ -122,34 +124,34 @@ Colour Grid::getRandomColour()
     switch (fullyLitColour)
     {
         case kRed:
-            colour.Red = grid_control::kLedColourIntensityMaximum;
+            colour.Red = grid_control::GridControl::kLedColourIntensityMaximum;
             colour.Green = static_cast<uint8_t>(partlyLitColour1);
             colour.Blue = static_cast<uint8_t>(partlyLitColour2);
             break;
         case kGreen:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = grid_control::kLedColourIntensityMaximum;
+            colour.Green = grid_control::GridControl::kLedColourIntensityMaximum;
             colour.Blue = static_cast<uint8_t>(partlyLitColour2);
             break;
         case kBlue:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
             colour.Green = static_cast<uint8_t>(partlyLitColour2);
-            colour.Blue = grid_control::kLedColourIntensityMaximum;
+            colour.Blue = grid_control::GridControl::kLedColourIntensityMaximum;
             break;
         case kRedAndGreen:
-            colour.Red = grid_control::kLedColourIntensityMaximum;
-            colour.Green = grid_control::kLedColourIntensityMaximum;
+            colour.Red = grid_control::GridControl::kLedColourIntensityMaximum;
+            colour.Green = grid_control::GridControl::kLedColourIntensityMaximum;
             colour.Blue = static_cast<uint8_t>(partlyLitColour1);
             break;
         case kRedAndBlue:
-            colour.Red = grid_control::kLedColourIntensityMaximum;
+            colour.Red = grid_control::GridControl::kLedColourIntensityMaximum;
             colour.Green = static_cast<uint8_t>(partlyLitColour1);
-            colour.Blue = grid_control::kLedColourIntensityMaximum;
+            colour.Blue = grid_control::GridControl::kLedColourIntensityMaximum;
             break;
         case kGreenAndBlue:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = grid_control::kLedColourIntensityMaximum;
-            colour.Blue = grid_control::kLedColourIntensityMaximum;
+            colour.Green = grid_control::GridControl::kLedColourIntensityMaximum;
+            colour.Blue = grid_control::GridControl::kLedColourIntensityMaximum;
             break;
         default:
             break;
@@ -279,10 +281,10 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= kNumberOfPadColumns);
 
-    if (ledPositionY >= grid_control::kNumberOfHorizontalSegments)
+    if (ledPositionY >= grid_control::GridControl::kNumberOfHorizontalSegments)
     {
         ledPositionX += kNumberOfColumns;
-        ledPositionY = ledPositionY % grid_control::kNumberOfHorizontalSegments;
+        ledPositionY = ledPositionY % grid_control::GridControl::kNumberOfHorizontalSegments;
     }
 
     gridControl_.setLedColour( ledPositionX, ledPositionY, directLed, colour );
