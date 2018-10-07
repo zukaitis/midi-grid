@@ -5,8 +5,6 @@
 
 namespace lcd
 {
-namespace backlight
-{
 
 class Backlight
 {
@@ -17,18 +15,17 @@ public:
     void initialize();
     void setIntensity( uint8_t intensity );
 
-    static const uint8_t kNumberOfIntensityLevels = 65;
+    static const uint8_t numberOfIntensityLevels = 65;
 
 private:
     void initializeDma();
     void initializeGpio();
     void initializeSpi();
 
-    static const uint16_t kOutputBufferSize = 32; // 10 bit resolution
-    static uint32_t outputBuffer_[kOutputBufferSize];
+    static const uint16_t kOutputBufferSize_ = 32; // 10 bit resolution
+    static uint32_t outputBuffer_[kOutputBufferSize_];
 };
 
-} // namespace backlight
 } // namespace lcd
 
 #endif // LCD_BACKLIGHT_H_

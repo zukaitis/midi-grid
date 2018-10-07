@@ -1,14 +1,12 @@
 #ifndef GRID_SWITCHES_H_
 #define GRID_SWITCHES_H_
 
-#include <grid/GridControl.h>
+#include "grid/GridControl.h"
 #include "Types.h"
 
 class Time;
 
 namespace grid
-{
-namespace switches
 {
 
 enum Buttons
@@ -28,7 +26,7 @@ static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1,
 class Switches
 {
 public:
-    Switches( grid_control::GridControl& gridControl, Time& time );
+    Switches( GridControl& gridControl, Time& time );
     ~Switches();
 
     void discardAllPendingEvents();
@@ -39,13 +37,12 @@ public:
     bool isButtonPressed( const uint8_t buttonNumber );
 
 private:
-    grid_control::GridControl& gridControl_;
+    GridControl& gridControl_;
     Time& time_;
 
     bool registeredButtonInput_[kNumberOfButtons];
 };
 
-} // namespace switches
 } // namespace grid
 
 #endif // GRID_SWITCHES_H_

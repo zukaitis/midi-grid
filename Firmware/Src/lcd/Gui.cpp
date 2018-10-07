@@ -1,15 +1,73 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
+#include "lcd/images.h"
 #include "system/Time.h"
 
 namespace lcd
 {
-namespace gui
-{
+
+static const Image usbLogo = { usbLogoArray, 180, 60, 24 };
+
+static const Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
+static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
+static const Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
+static const Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
+
+static const Image play = { playArray, 32, 16, 16 };
+static const Image recordingOn = { recordingOnArray, 32, 16, 16 };
+static const Image sessionRecordingOn = { sessionRecordingOnArray, 32, 16, 16 };
+static const Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 10, 8};
+static const Image nudgeDownActive = { nudgeDownActiveArray, 10, 10, 8};
+static const Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 10, 8};
+static const Image nudgeUpActive = { nudgeUpActiveArray, 10, 10, 8};
+
+static const uint16_t kTimeoutCheckStep = 250; // ms
+static const uint16_t kMidiTimeout = 1250; // ms
+static const uint16_t kRotaryControlTimeout = 1250; // ms
+
+static const char launchpad95ModeString[8][16] = {
+        "Session\0",
+        "Instrument\0",
+        "Device control\0",
+        "User 1\0",
+        "Drum step seq.\0",
+        "Melodic seq.\0",
+        "User 2\0",
+        "Mixer\0"
+};
+
+static const char launchpad95SubmodeString[9][15] = {
+        " \0",
+        "Scale\0",
+        "Volume\0",
+        "Pan\0",
+        "Send A\0",
+        "Send B\0",
+        "MSS: Length\0",
+        "MSS: Octave\0",
+        "MSS: Velocity\0"
+};
 
 Gui::Gui( Lcd& lcd, Time& time ) :
         lcd_( lcd ),
-        time_( time )
+        time_( time ),
+        dawClipName_( " \0" ),
+        dawDeviceName_( " \0" ),
+        dawTrackName_( " \0" ),
+        dawIsPlaying_( false ),
+        dawIsRecording_( false ),
+        dawIsSessionRecording_( false ),
+        dawNudgeDownActive_( false ),
+        dawNudgeUpActive_( false ),
+        dawTempo_( 0 ),
+        dawSignatureNumerator_( 0 ),
+        dawSignatureDenominator_( 0 ),
+        launchpad95Mode_( launchpad::Launchpad95Mode_UNKNOWN ),
+        launchpad95Submode_( launchpad::Launchpad95Submode_DEFAULT ),
+        midiInputTimeout_( 0 ),
+        midiOutputTimeout_( 0 ),
+        rotaryControlDisplayTimeout_( 0 ),
+        statusBarActive_( false )
 {}
 
 Gui::~Gui()
@@ -18,8 +76,8 @@ Gui::~Gui()
 void Gui::displayConnectingImage()
 {
     lcd_.clear();
-    lcd_.displayImage( 12, 8, lcd::usbLogo );
-    lcd_.print( "USB Connecting", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.displayImage( 12, 8, usbLogo );
+    lcd_.print( "USB Connecting", lcd_.width/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayRotaryControlValues( const uint8_t value1, const uint8_t value2 )
@@ -27,29 +85,29 @@ void Gui::displayRotaryControlValues( const uint8_t value1, const uint8_t value2
     char str[4];
     lcd_.clearArea( 0, 16, 83, 47 );
 
-    lcd_.displayProgressArc( 0, 20, (value1 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
+    lcd_.displayProgressArc( 0, 20, (value1 * (lcd_.numberOfProgressArcPositions - 1)) / 127 );
     sprintf( str, "%d", value1 );
     lcd_.print( str, 18, 32, lcd::Justification_CENTER );
 
-    lcd_.displayProgressArc( 45, 20, (value2 * (lcd::NUMBER_OF_PROGRESS_ARC_POSITIONS - 1)) / 127 );
+    lcd_.displayProgressArc( 45, 20, (value2 * (lcd_.numberOfProgressArcPositions - 1)) / 127 );
     sprintf( str, "%d", value2 );
     lcd_.print( str, 63, 32, lcd::Justification_CENTER );
 
-    rotaryControlDisplayTimeout_ = ROTARY_CONTROL_TIMEOUT;
+    rotaryControlDisplayTimeout_ = kRotaryControlTimeout;
 }
 
 void Gui::displayWaitingForMidi()
 {
     lcd_.clear();
-    lcd_.displayImage( 12, 8, lcd::usbLogo );
-    lcd_.print( "Awaiting MIDI", lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.displayImage( 12, 8, usbLogo );
+    lcd_.print( "Awaiting MIDI", lcd_.width/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::enterLaunchpad95Mode()
 {
     lcd_.clear();
-    lcd_.print( "L95", lcd::WIDTH/2, 0, lcd::Justification_CENTER );
-    lcd_.displayImage( 63, 0, lcd::usbSymbolSmall );
+    lcd_.print( "L95", lcd_.width/2, 0, lcd::Justification_CENTER );
+    lcd_.displayImage( 63, 0, usbSymbolSmall );
 
     statusBarActive_ = true;
 
@@ -59,19 +117,19 @@ void Gui::enterLaunchpad95Mode()
 void Gui::enterInternalMenu()
 {
     lcd_.clear();
-    lcd_.print( "Internal Menu", lcd::WIDTH/2, 16, lcd::Justification_CENTER );
-    lcd_.print( "Active", lcd::WIDTH/2, 24, lcd::Justification_CENTER );
+    lcd_.print( "Internal Menu", lcd_.width/2, 16, lcd::Justification_CENTER );
+    lcd_.print( "Active", lcd_.width/2, 24, lcd::Justification_CENTER );
     statusBarActive_ = false;
 }
 
 void Gui::registerMidiInputActivity()
 {
-    midiInputTimeout_ = MIDI_TIMEOUT;
+    midiInputTimeout_ = kMidiTimeout;
 }
 
 void Gui::registerMidiOutputActivity()
 {
-    midiOutputTimeout_ = MIDI_TIMEOUT;
+    midiOutputTimeout_ = kMidiTimeout;
 }
 
 void Gui::refresh()
@@ -93,10 +151,10 @@ void Gui::refreshStatusBar()
     {
         if (midiInputTimeout_ > 0)
         {
-            midiInputTimeout_ -= TIMEOUT_CHECK_STEP;
+            midiInputTimeout_ -= kTimeoutCheckStep;
             if (midiInputTimeout_ > 0)
             {
-                lcd_.displayImage( 73, 0, lcd::arrowSmallDown );
+                lcd_.displayImage( 73, 0, arrowSmallDown );
             }
             else
             {
@@ -106,10 +164,10 @@ void Gui::refreshStatusBar()
 
         if (midiOutputTimeout_ > 0)
         {
-            midiOutputTimeout_ -= TIMEOUT_CHECK_STEP;
+            midiOutputTimeout_ -= kTimeoutCheckStep;
             if (midiOutputTimeout_ > 0)
             {
-                lcd_.displayImage( 78, 0, lcd::arrowSmallUp );
+                lcd_.displayImage( 78, 0, arrowSmallUp );
             }
             else
             {
@@ -117,7 +175,7 @@ void Gui::refreshStatusBar()
             }
         }
 
-        refreshCheckTime = time_.getSystemTick() + TIMEOUT_CHECK_STEP; // check every 250ms
+        refreshCheckTime = time_.getSystemTick() + kTimeoutCheckStep; // check every 250ms
     }
 }
 
@@ -129,7 +187,7 @@ void Gui::refreshMainArea()
     {
         if (rotaryControlDisplayTimeout_ > 0)
         {
-            rotaryControlDisplayTimeout_ -= TIMEOUT_CHECK_STEP;
+            rotaryControlDisplayTimeout_ -= kTimeoutCheckStep;
             if (0  == rotaryControlDisplayTimeout_)
             {
                 // time ran out, back to showing info
@@ -137,17 +195,17 @@ void Gui::refreshMainArea()
             }
         }
 
-        checkTime = time_.getSystemTick() + TIMEOUT_CHECK_STEP; // check every 250ms
+        checkTime = time_.getSystemTick() + kTimeoutCheckStep; // check every 250ms
     }
 }
 
 
 void Gui::setDawClipName( const char* const name, const uint8_t length )
 {
-    if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
+    if (length > lcd_.numberOfCharactersInLine)
     {
-        strncpy( dawClipName_, &name[0], lcd::NUMBER_OF_CHARACTERS_IN_LINE );
-        dawClipName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
+        strncpy( dawClipName_, &name[0], lcd_.numberOfCharactersInLine );
+        dawClipName_[lcd_.numberOfCharactersInLine] = '\0'; // shorten the name
     }
     else
     {
@@ -159,10 +217,10 @@ void Gui::setDawClipName( const char* const name, const uint8_t length )
 
 void Gui::setDawDeviceName( const char* const name, const uint8_t length )
 {
-    if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
+    if (length > lcd_.numberOfCharactersInLine)
     {
-        strncpy( dawDeviceName_, &name[0], lcd::NUMBER_OF_CHARACTERS_IN_LINE );
-        dawDeviceName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
+        strncpy( dawDeviceName_, &name[0], lcd_.numberOfCharactersInLine );
+        dawDeviceName_[lcd_.numberOfCharactersInLine] = '\0'; // shorten the name
     }
     else
     {
@@ -195,10 +253,10 @@ void Gui::setDawTimingValues( const uint16_t tempo, const uint8_t signatureNumer
 
 void Gui::setDawTrackName( const char* const name, const uint8_t length )
 {
-    if (length > lcd::NUMBER_OF_CHARACTERS_IN_LINE)
+    if (length > lcd_.numberOfCharactersInLine)
     {
-        strncpy( dawTrackName_, name, lcd::NUMBER_OF_CHARACTERS_IN_LINE );
-        dawTrackName_[lcd::NUMBER_OF_CHARACTERS_IN_LINE] = '\0'; // shorten the name
+        strncpy( dawTrackName_, name, lcd_.numberOfCharactersInLine );
+        dawTrackName_[lcd_.numberOfCharactersInLine] = '\0'; // shorten the name
     }
     else
     {
@@ -222,12 +280,12 @@ void Gui::setLaunchpad95Submode( const launchpad::Launchpad95Submode submode )
 
 void Gui::displayClipName()
 {
-    lcd_.print( dawClipName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawClipName_, lcd_.width/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayDeviceName()
 {
-    lcd_.print( dawDeviceName_, lcd::WIDTH/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawDeviceName_, lcd_.width/2, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayLaunchpad95Info()
@@ -276,14 +334,14 @@ void Gui::displayLaunchpad95Mode()
     lcd_.clearArea( 0, 8, 83, 15 );
     if (launchpad::Launchpad95Mode_UNKNOWN != launchpad95Mode_)
     {
-        lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
+        lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd_.width/2, 8, lcd::Justification_CENTER );
     }
 }
 
 void Gui::displayLaunchpad95Submode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    lcd_.print( launchpad95SubmodeString[launchpad95Submode_], lcd::WIDTH/2, 8, lcd::Justification_CENTER );
+    lcd_.print( launchpad95SubmodeString[launchpad95Submode_], lcd_.width/2, 8, lcd::Justification_CENTER );
 }
 
 void Gui::displayStatus()
@@ -295,16 +353,16 @@ void Gui::displayStatus()
     switch (numberOfDisplayedSymbols)
     {
         case 1:
-            lcd_.displayImage( 32, 16, lcd::play );
+            lcd_.displayImage( 32, 16, play );
             break;
         case 2:
-            lcd_.displayImage( 23, 16, lcd::play );
-            lcd_.displayImage( 43, 16, (dawIsRecording_ ? lcd::recordingOn : lcd::sessionRecordingOn) );
+            lcd_.displayImage( 23, 16, play );
+            lcd_.displayImage( 43, 16, (dawIsRecording_ ? recordingOn : sessionRecordingOn) );
             break;
         case 3:
-            lcd_.displayImage( 12, 16, lcd::play );
-            lcd_.displayImage( 32, 16, lcd::recordingOn );
-            lcd_.displayImage( 52, 16, lcd::sessionRecordingOn );
+            lcd_.displayImage( 12, 16, play );
+            lcd_.displayImage( 32, 16, recordingOn );
+            lcd_.displayImage( 52, 16, sessionRecordingOn );
             break;
         default:
             break;
@@ -317,8 +375,8 @@ void Gui::displayTimingStatus()
     {
         char signatureString[6];
 
-        lcd_.displayImage( 0, 40, (dawNudgeDownActive_ ? lcd::nudgeDownActive : lcd::nudgeDownInactive) );
-        lcd_.displayImage( 10, 40, (dawNudgeUpActive_ ? lcd::nudgeUpActive : lcd::nudgeUpInactive) );
+        lcd_.displayImage( 0, 40, (dawNudgeDownActive_ ? nudgeDownActive : nudgeDownInactive) );
+        lcd_.displayImage( 10, 40, (dawNudgeUpActive_ ? nudgeUpActive : nudgeUpInactive) );
 
         lcd_.printNumberInBigDigits( dawTempo_, 65, 32, lcd::Justification_RIGHT );
         lcd_.print( "bpm", 66, 32 );
@@ -330,8 +388,7 @@ void Gui::displayTimingStatus()
 
 void Gui::displayTrackName()
 {
-    lcd_.print( dawTrackName_, lcd::WIDTH/2, 32, lcd::Justification_CENTER );
+    lcd_.print( dawTrackName_, lcd_.width/2, 32, lcd::Justification_CENTER );
 }
 
-} // namespace gui
 } // namespace lcd

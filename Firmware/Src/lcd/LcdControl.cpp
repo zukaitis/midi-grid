@@ -4,8 +4,6 @@
 
 namespace lcd
 {
-namespace lcd_control
-{
 
 static GPIO_TypeDef* const LCD_GPIO_Port = GPIOB;
 static const uint16_t RESET_Pin = GPIO_PIN_2;
@@ -56,7 +54,7 @@ void LcdControl::transmit( uint8_t* const buffer )
     }
 
     HAL_GPIO_WritePin( LCD_GPIO_Port, DC_Pin, GPIO_PIN_SET );  //data mode
-    HAL_SPI_Transmit_DMA( &lcdSpi, &buffer[0], kBufferSize );
+    HAL_SPI_Transmit_DMA( &lcdSpi, &buffer[0], bufferSize );
 }
 
 void LcdControl::initializeDma()
@@ -147,6 +145,5 @@ void LcdControl::writeCommand( const uint8_t command )
     HAL_SPI_Transmit_DMA( &lcdSpi, &commandToWrite, 1 );
 }
 
-} // namespace lcd_control
 } // namespace lcd
 

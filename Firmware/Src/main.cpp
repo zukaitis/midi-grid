@@ -16,12 +16,12 @@ ApplicationMain::ApplicationMain() :
         system_( System() ),
         globalInterrupts_( GlobalInterrupts() ),
         time_( Time() ),
-        gridControl_( grid::grid_control::GridControl() ),
+        gridControl_( grid::GridControl() ),
         grid_( grid::Grid( gridControl_, globalInterrupts_, time_ ) ),
-        switches_( grid::switches::Switches( gridControl_, time_ ) ),
+        switches_( grid::Switches( gridControl_, time_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd( time_ ) ),
-        gui_( lcd::gui::Gui( lcd_, time_ ) ),
+        gui_( lcd::Gui( lcd_, time_ ) ),
         launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) )
 {}
 
@@ -78,7 +78,7 @@ void ApplicationMain::run()
         ButtonEvent event;
         if (switches_.getButtonEvent( button, event ))
         {
-            if ((grid::switches::kInternalMenuButton == button) && (ButtonEvent_PRESSED == event))
+            if ((grid::kInternalMenuButton == button) && (ButtonEvent_PRESSED == event))
             {
                 runInternalMenu();
             }
@@ -96,7 +96,7 @@ void ApplicationMain::run()
     {
         launchpad_.runProgram();
         // program only returns here when red button is pressed
-        if (switches_.isButtonPressed( grid::switches::kInternalMenuButton ))
+        if (switches_.isButtonPressed( grid::kInternalMenuButton ))
         {
             runInternalMenu();
         }

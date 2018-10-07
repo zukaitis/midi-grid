@@ -1,12 +1,10 @@
 #ifndef LCD_LCDCONTROL_H_
 #define LCD_LCDCONTROL_H_
 
+#include <stdint.h>
+
 namespace lcd
 {
-namespace lcd_control
-{
-
-static const uint16_t kBufferSize = 504;
 
 class LcdControl
 {
@@ -17,6 +15,7 @@ public:
     void initialize();
     void transmit( uint8_t* const buffer );
 
+    static const uint16_t bufferSize = 504;
 private:
     void initializeDma();
     void initializeGpio();
@@ -27,7 +26,6 @@ private:
     void writeCommand( const uint8_t command );
 };
 
-} // namespace lcd_control
 } // namespace lcd
 
 #endif // LCD_LCDCONTROL_H_

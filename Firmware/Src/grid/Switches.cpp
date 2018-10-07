@@ -3,10 +3,8 @@
 
 namespace grid
 {
-namespace switches
-{
 
-Switches::Switches( grid_control::GridControl& gridControl, Time& time ) :
+Switches::Switches( GridControl& gridControl, Time& time ) :
         gridControl_( gridControl ),
         time_( time )
 {
@@ -131,5 +129,4 @@ bool Switches::isButtonPressed( const uint8_t buttonNumber )
     return isPressed;
 }
 
-} // namespace switches
 } // namespace grid

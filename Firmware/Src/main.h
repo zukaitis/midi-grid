@@ -39,12 +39,12 @@ private:
     System system_;
     GlobalInterrupts globalInterrupts_;
     Time time_;
-    grid::grid_control::GridControl gridControl_;
+    grid::GridControl gridControl_;
     grid::Grid grid_;
-    grid::switches::Switches switches_;
+    grid::Switches switches_;
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
-    lcd::gui::Gui gui_;
+    lcd::Gui gui_;
     launchpad::Launchpad launchpad_;
 };
 

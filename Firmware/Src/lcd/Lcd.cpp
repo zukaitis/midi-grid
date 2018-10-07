@@ -1,15 +1,38 @@
 #include "lcd/Lcd.h"
 #include "system/Time.h"
 
+#include "lcd/font.h"
+#include "lcd/progressArc.h"
+
 #include <string.h>
 #include <math.h>
 
 namespace lcd
 {
 
+static const Image digitBig[10] = {
+        { DIGITS_BIG[0], 24, 12, 16 }, { DIGITS_BIG[1], 24, 12, 16 }, { DIGITS_BIG[2], 24, 12, 16 }, { DIGITS_BIG[3], 24, 12, 16 },
+        { DIGITS_BIG[4], 24, 12, 16 }, { DIGITS_BIG[5], 24, 12, 16 }, { DIGITS_BIG[6], 24, 12, 16 }, { DIGITS_BIG[7], 24, 12, 16 },
+        { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
+};
+
 Lcd::Lcd( Time& time ) :
-        time_( time )
+        numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ),
+        backlight_( Backlight() ),
+        lcdControl_( LcdControl() ),
+        time_( time ),
+        appointedBacklightIntensity_( 0 ),
+        currentBacklightIntensity_( 0 ),
+        updateRequired_( false )
 {
+    for (uint8_t line = 0; line < numberOfLines; line++)
+    {
+        for (uint8_t x = 0; x < width; x++)
+        {
+            lcdBuffer_[line][x] = 0x00;
+        }
+    }
+
 }
 
 Lcd::~Lcd()
@@ -18,7 +41,7 @@ Lcd::~Lcd()
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcd_control::kBufferSize );
+    memset( &lcdBuffer_[0][0], 0x00, lcdControl_.bufferSize );
     updateRequired_ = true;
 }
 
@@ -28,14 +51,14 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
     {
         for (uint8_t i = 0; i < (x2-x1+1); i++)
         {
-            if ((x1+i) >= WIDTH)
+            if ((x1+i) >= width)
             {
                 break;
             }
             else
             {
                 lcdBuffer_[j+y1/8][x1+i] &= ~(0xFF << (y1 % 8));
-                if (((j*8 + y1) < (HEIGHT - 8)) && (0 != (y1 % 8)))
+                if (((j*8 + y1) < (height - 8)) && (0 != (y1 % 8)))
                 {
                     lcdBuffer_[j+y1/8+1][x1+i] &= ~(0xFF >> (8 - y1 % 8));
                 }
@@ -51,7 +74,7 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
     {
         for (uint8_t i = 0; i < image.width; i++)
         {
-            if ((x+i) >= WIDTH)
+            if ((x+i) >= width)
             {
                 break;
             }
@@ -60,7 +83,7 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
                 lcdBuffer_[j+y/8][x+i] &= ~(0xFF << (y % 8));
                 lcdBuffer_[j+y/8][x+i] |= image.image[j*image.width + i] << (y % 8);
 
-                if (((j*8 + y) < (HEIGHT - 8)) && (0 != (y % 8)))
+                if (((j*8 + y) < (height - 8)) && (0 != (y % 8)))
                 {
                     lcdBuffer_[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
                     lcdBuffer_[j+y/8+1][x+i] |= image.image[j*image.width + i] >> (8 - y % 8);
@@ -79,14 +102,14 @@ void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t po
 
 void Lcd::initialize()
 {
-    lcdControl.initialize();
-    backlight.initialize();
+    lcdControl_.initialize();
+    backlight_.initialize();
     clear();
 }
 
 void Lcd::print( const char* string, uint8_t x, const uint8_t y )
 {
-    if (y < HEIGHT) // width is checked in putChar
+    if (y < height) // width is checked in putChar
     {
         while (*string)
         {
@@ -111,14 +134,14 @@ void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, con
             break;
         case Justification_CENTER:
             textWidth = textWidth / 2;
-            if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
+            if ((textWidth <= x) && (textWidth <= (width - x)))
             {
                 print( string, (x - textWidth), y );
             }
             break;
         case Justification_LEFT:
         default:
-            if (textWidth < (WIDTH - x))
+            if (textWidth < (width - x))
             {
                 print( string, x, y );
             }
@@ -164,14 +187,14 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
             break;
         case Justification_CENTER:
             textWidth = textWidth / 2;
-            if ((textWidth <= x) && (textWidth <= (WIDTH - x)))
+            if ((textWidth <= x) && (textWidth <= (width - x)))
             {
                 printNumberInBigDigits( number, (x - textWidth), y, numberOfDigits );
             }
             break;
         case Justification_LEFT:
         default:
-            if (textWidth < (WIDTH - x))
+            if (textWidth < (width - x))
             {
                 printNumberInBigDigits( number, x, y, numberOfDigits );
             }
@@ -187,7 +210,7 @@ void Lcd::refresh()
     {
         if (updateRequired_)
         {
-            lcdControl.transmit( &lcdBuffer_[0][0] );
+            lcdControl_.transmit( &lcdBuffer_[0][0] );
             updateRequired_ = false;
         }
 
@@ -195,11 +218,11 @@ void Lcd::refresh()
         {
             if (currentBacklightIntensity_ > appointedBacklightIntensity_)
             {
-                backlight.setIntensity( --currentBacklightIntensity_ );
+                backlight_.setIntensity( --currentBacklightIntensity_ );
             }
             else
             {
-                backlight.setIntensity( ++currentBacklightIntensity_ );
+                backlight_.setIntensity( ++currentBacklightIntensity_ );
             }
         }
 
@@ -216,7 +239,7 @@ void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
 {
     for (uint8_t i = 0; i < 6; i++)
     {
-        if ((x+i) >= WIDTH)
+        if ((x+i) >= width)
         {
             break;
         }
@@ -225,7 +248,7 @@ void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
             lcdBuffer_[y/8][x+i] &= ~(0xFF << (y % 8));
             lcdBuffer_[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
 
-            if ((y < (HEIGHT - FONT_HEIGHT)) && (0 != (y % 8)))
+            if ((y < (height - FONT_HEIGHT)) && (0 != (y % 8)))
             {
                 lcdBuffer_[y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
                 lcdBuffer_[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);

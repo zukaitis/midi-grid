@@ -10,37 +10,6 @@ namespace lcd
 
 class Lcd;
 
-namespace gui
-{
-
-static const uint16_t TIMEOUT_CHECK_STEP = 250; // ms
-
-static const uint16_t MIDI_TIMEOUT = 1250; // ms
-static const uint16_t ROTARY_CONTROL_TIMEOUT = 1250; // ms
-
-static const char launchpad95ModeString[8][16] = {
-        "Session\0",
-        "Instrument\0",
-        "Device control\0",
-        "User 1\0",
-        "Drum step seq.\0",
-        "Melodic seq.\0",
-        "User 2\0",
-        "Mixer\0"
-};
-
-static const char launchpad95SubmodeString[9][15] = {
-        " \0",
-        "Scale\0",
-        "Volume\0",
-        "Pan\0",
-        "Send A\0",
-        "Send B\0",
-        "MSS: Length\0",
-        "MSS: Octave\0",
-        "MSS: Velocity\0"
-};
-
 class Gui
 {
 public:
@@ -79,27 +48,26 @@ private:
     lcd::Lcd& lcd_;
     Time& time_;
 
-    char dawClipName_[15] = " \0";
-    char dawDeviceName_[15] = " \0";
-    char dawTrackName_[15] = " \0";
-    bool dawIsPlaying_ = false;
-    bool dawIsRecording_ = false;
-    bool dawIsSessionRecording_ = false;
-    bool dawNudgeDownActive_ = false;
-    bool dawNudgeUpActive_ = false;
-    uint16_t dawTempo_ = 0;
-    uint8_t dawSignatureNumerator_ = 0;
-    uint8_t dawSignatureDenominator_ = 0;
+    char dawClipName_[15];
+    char dawDeviceName_[15];
+    char dawTrackName_[15];
+    bool dawIsPlaying_;
+    bool dawIsRecording_;
+    bool dawIsSessionRecording_;
+    bool dawNudgeDownActive_;
+    bool dawNudgeUpActive_;
+    uint16_t dawTempo_;
+    uint8_t dawSignatureNumerator_;
+    uint8_t dawSignatureDenominator_;
 
-    launchpad::Launchpad95Mode launchpad95Mode_ = launchpad::Launchpad95Mode_UNKNOWN;
-    launchpad::Launchpad95Submode launchpad95Submode_ = launchpad::Launchpad95Submode_DEFAULT;
-    uint16_t midiInputTimeout_ = 0;
-    uint16_t midiOutputTimeout_ = 0;
-    uint16_t rotaryControlDisplayTimeout_ = 0;
-    bool statusBarActive_ = false;
+    launchpad::Launchpad95Mode launchpad95Mode_;
+    launchpad::Launchpad95Submode launchpad95Submode_;
+    uint16_t midiInputTimeout_;
+    uint16_t midiOutputTimeout_;
+    uint16_t rotaryControlDisplayTimeout_;
+    bool statusBarActive_;
 };
 
-} // namespace gui
 } // namespace lcd
 
 #endif /* LCD_GUI_H_ */

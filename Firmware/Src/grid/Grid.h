@@ -1,7 +1,6 @@
 #ifndef GRID_BUTTONS_H_
 #define GRID_BUTTONS_H_
 
-#include <grid/GridControl.h>
 #include "Types.h"
 
 class GlobalInterrupts;
@@ -10,20 +9,7 @@ class Time;
 namespace grid
 {
 
-namespace grid_control
-{
-    class GridControl;
-}
-
-static const uint8_t kNumberOfRows = 8;
-static const uint8_t kNumberOfColumns = 10;
-static const uint8_t kNumberOfPadColumns = 8;
-static const uint8_t kNumberOfLeds = kNumberOfRows * kNumberOfColumns;
-
-static const uint32_t kLedFlashingPeriod = 250; // 120bpm - default flashing rate
-static const uint8_t kLedFlashingNumberOfColours = 2;
-static const uint32_t kLedPulseStepInterval = 67; // 1000ms / 15 = 66.6... ms
-static const uint8_t kLedPulseStepCount = 15;
+class GridControl;
 
 enum LedLightingType
 {
@@ -31,6 +17,8 @@ enum LedLightingType
     LedLightingType_FLASH,
     LedLightingType_PULSE
 };
+
+static const uint8_t kLedFlashingNumberOfColours = 2;
 
 struct FlashingLed
 {
@@ -54,7 +42,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( grid_control::GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time );
+    Grid( GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -70,21 +58,27 @@ public:
 
     void turnAllLedsOff();
 
+    static const uint8_t numberOfRows = 8;
+    static const uint8_t numberOfColumns = 10;
+    static const uint8_t numberOfLeds = numberOfRows * numberOfColumns;
+
 private:
     void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
+    void updateButtonColumnInput();
 
-    grid_control::GridControl& gridControl_;
+    GridControl& gridControl_;
     GlobalInterrupts& globalInterrupts_;
     Time& time_;
 
-    Led led_[kNumberOfColumns][kNumberOfRows];
+    Led led_[numberOfColumns][numberOfRows];
 
-    uint16_t registeredButtonInput_[grid_control::GridControl::kNumberOfVerticalSegments];
+    uint8_t buttonColumnInput_[numberOfColumns];
+    uint8_t registeredButtonColumnInput_[numberOfColumns];
 
-    FlashingLed flashingLed_[kNumberOfLeds];
+    FlashingLed flashingLed_[numberOfLeds];
     uint8_t numberOfFlashingLeds_;
 
-    PulsingLed pulsingLed_[kNumberOfLeds];
+    PulsingLed pulsingLed_[numberOfLeds];
     uint8_t numberOfPulsingLeds_;
 };
 

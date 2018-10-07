@@ -1,10 +1,6 @@
 #ifndef LCD_LCD_H_
 #define LCD_LCD_H_
 
-#include "lcd/font.h"
-#include "lcd/images.h"
-#include "lcd/progressArc.h"
-
 #include "lcd/Backlight.h"
 #include "lcd/LcdControl.h"
 
@@ -28,37 +24,9 @@ struct Image
     uint8_t height;
 };
 
-static const Image usbLogo = { usbLogoArray, 180, 60, 24 };
-
-static const Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
-static const Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
-static const Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
-static const Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
-
-static const Image play = { playArray, 32, 16, 16 };
-static const Image recordingOn = { recordingOnArray, 32, 16, 16 };
-static const Image sessionRecordingOn = { sessionRecordingOnArray, 32, 16, 16 };
-static const Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 10, 8};
-static const Image nudgeDownActive = { nudgeDownActiveArray, 10, 10, 8};
-static const Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 10, 8};
-static const Image nudgeUpActive = { nudgeUpActiveArray, 10, 10, 8};
-
-static const Image digitBig[10] = {
-        { DIGITS_BIG[0], 24, 12, 16 }, { DIGITS_BIG[1], 24, 12, 16 }, { DIGITS_BIG[2], 24, 12, 16 }, { DIGITS_BIG[3], 24, 12, 16 },
-        { DIGITS_BIG[4], 24, 12, 16 }, { DIGITS_BIG[5], 24, 12, 16 }, { DIGITS_BIG[6], 24, 12, 16 }, { DIGITS_BIG[7], 24, 12, 16 },
-        { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
-};
-
-static const uint8_t WIDTH = 84;
-static const uint8_t HEIGHT = 48;
-static const uint8_t NUMBER_OF_LINES = 6;
-static const uint8_t NUMBER_OF_CHARACTERS_IN_LINE = 14;
-static const uint8_t NUMBER_OF_PROGRESS_ARC_POSITIONS = NUMBER_OF_ARC_POSITIONS;
-
 class Lcd
 {
 public:
-
     Lcd( Time& time );
     ~Lcd();
 
@@ -74,17 +42,24 @@ public:
     void refresh();
     void setBacklightIntensity( const uint8_t intensity );
 
+    const uint8_t numberOfProgressArcPositions;
+
+    static const uint8_t width = 84;
+    static const uint8_t height = 48;
+    static const uint8_t numberOfLines = 6;
+    static const uint8_t numberOfCharactersInLine = 14;
+
 private:
     void putChar( const uint8_t x, const uint8_t y, const char c );
 
-    backlight::Backlight backlight;
-    lcd_control::LcdControl lcdControl;
+    Backlight backlight_;
+    LcdControl lcdControl_;
     Time& time_;
 
-    uint8_t appointedBacklightIntensity_ = 0;
-    uint8_t currentBacklightIntensity_ = 0;
-    uint8_t lcdBuffer_[NUMBER_OF_LINES][WIDTH];
-    bool updateRequired_ = false;
+    uint8_t appointedBacklightIntensity_;
+    uint8_t currentBacklightIntensity_;
+    uint8_t lcdBuffer_[numberOfLines][width];
+    bool updateRequired_;
 };
 
 } // namespace
