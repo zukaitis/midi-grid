@@ -1,7 +1,7 @@
 #ifndef LCD_GUI_H_
 #define LCD_GUI_H_
 
-#include "program/Launchpad.h"
+#include "application/Launchpad.h"
 
 namespace hal {
 class Time;

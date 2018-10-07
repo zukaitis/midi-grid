@@ -6,7 +6,7 @@
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
-#include "program/Launchpad.h"
+#include "application/Launchpad.h"
 #include "hal/GlobalInterrupts.h"
 #include "hal/Hal.h"
 #include "hal/Time.h"
