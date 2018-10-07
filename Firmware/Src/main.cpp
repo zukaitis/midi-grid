@@ -1,5 +1,4 @@
 #include "main.h"
-#include "usb/queue32.h"
 
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void);
@@ -13,12 +12,12 @@ int main(void)
 }
 
 ApplicationMain::ApplicationMain() :
-        system_( System() ),
-        globalInterrupts_( GlobalInterrupts() ),
-        time_( Time() ),
-        gridControl_( grid::GridControl() ),
-        grid_( grid::Grid( gridControl_, globalInterrupts_, time_ ) ),
-        switches_( grid::Switches( gridControl_, time_ ) ),
+        hal_( hal::Hal() ),
+        globalInterrupts_( hal::GlobalInterrupts() ),
+        time_( hal::Time() ),
+        gridDriver_( grid::GridDriver() ),
+        grid_( grid::Grid( gridDriver_, globalInterrupts_, time_ ) ),
+        switches_( grid::Switches( gridDriver_, time_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd( time_ ) ),
         gui_( lcd::Gui( lcd_, time_ ) ),
@@ -31,7 +30,7 @@ ApplicationMain::~ApplicationMain()
 void ApplicationMain::initialize()
 {
 
-    system_.initialize();
+    hal_.initialize();
 
     #ifdef USE_SEMIHOSTING
     initialise_monitor_handles(); // enable semihosting
@@ -40,8 +39,8 @@ void ApplicationMain::initialize()
     lcd_.initialize();
     lcd_.setBacklightIntensity( 55 );
 
-    gridControl_.initialize();
-    gridControl_.start();
+    gridDriver_.initialize();
+    gridDriver_.start();
 
     #ifdef USE_SEMIHOSTING
     printf("Semihosting output enabled\n");
@@ -52,7 +51,7 @@ void ApplicationMain::run()
 {
     gui_.displayConnectingImage();
 
-    while (!system_.isUsbConnected())
+    while (!hal_.isUsbConnected())
     {
         gui_.refresh();
     }
@@ -78,7 +77,7 @@ void ApplicationMain::run()
         ButtonEvent event;
         if (switches_.getButtonEvent( button, event ))
         {
-            if ((grid::kInternalMenuButton == button) && (ButtonEvent_PRESSED == event))
+            if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
             {
                 runInternalMenu();
             }
@@ -96,7 +95,7 @@ void ApplicationMain::run()
     {
         launchpad_.runProgram();
         // program only returns here when red button is pressed
-        if (switches_.isButtonPressed( grid::kInternalMenuButton ))
+        if (switches_.isButtonPressed( switches_.internalMenuButton ))
         {
             runInternalMenu();
         }
@@ -168,7 +167,7 @@ void ApplicationMain::runInternalMenu()
             if ((7 == buttonX) && (0 == buttonY))
             {
                 // reset into DFU bootloader
-                system_.resetIntoBootloader();
+                hal_.resetIntoBootloader();
             }
         }
 

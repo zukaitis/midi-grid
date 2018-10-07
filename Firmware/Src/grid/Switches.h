@@ -1,32 +1,22 @@
 #ifndef GRID_SWITCHES_H_
 #define GRID_SWITCHES_H_
 
-#include "grid/GridControl.h"
 #include "Types.h"
 
+namespace hal {
 class Time;
+}
 
 namespace grid
 {
 
-enum Buttons
-{
-    kUndefinedButton = 0U,
-    kInternalMenuButton = 1U,
-};
-
-static const uint8_t kNumberOfButtons = 2;
-static const uint8_t kNumberOfRotaryEncoders = 2;
-static const uint8_t kNumberOfRotaryEncoderTimeSteps = 10;
-static const int8_t kNumberOfRotaryEncoderMicrostepsInStep = 4;
-
-static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
+class GridDriver;
 
 // class used to acquire values from two additional buttons and rotary encoders
 class Switches
 {
 public:
-    Switches( GridControl& gridControl, Time& time );
+    Switches( GridDriver& gridControl, hal::Time& time );
     ~Switches();
 
     void discardAllPendingEvents();
@@ -36,11 +26,19 @@ public:
 
     bool isButtonPressed( const uint8_t buttonNumber );
 
-private:
-    GridControl& gridControl_;
-    Time& time_;
+    enum Buttons
+    {
+        undefinedButton = 0U,
+        internalMenuButton = 1U,
+    };
 
-    bool registeredButtonInput_[kNumberOfButtons];
+private:
+    GridDriver& gridDriver_;
+    hal::Time& time_;
+
+    static const uint8_t numberOfButtons_ = 2;
+
+    bool registeredButtonInput_[numberOfButtons_];
 };
 
 } // namespace grid

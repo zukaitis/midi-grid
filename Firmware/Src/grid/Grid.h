@@ -3,13 +3,15 @@
 
 #include "Types.h"
 
+namespace hal {
 class GlobalInterrupts;
 class Time;
+}
 
 namespace grid
 {
 
-class GridControl;
+class GridDriver;
 
 enum LedLightingType
 {
@@ -42,7 +44,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time );
+    Grid( GridDriver& gridControl, hal::GlobalInterrupts& globalInterrupts, hal::Time& time );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -66,9 +68,9 @@ private:
     void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
     void updateButtonColumnInput();
 
-    GridControl& gridControl_;
-    GlobalInterrupts& globalInterrupts_;
-    Time& time_;
+    GridDriver& gridDriver_;
+    hal::GlobalInterrupts& globalInterrupts_;
+    hal::Time& time_;
 
     Led led_[numberOfColumns][numberOfRows];
 

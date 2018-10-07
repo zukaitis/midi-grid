@@ -43,7 +43,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "system/stm32f4xx_hal_conf.h"
+#include "hal/stm32f4xx_hal_conf.h"
 
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{

@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace hal {
+
 class Time
 {
 public:
@@ -11,5 +13,7 @@ public:
 
     uint32_t getSystemTick();
 };
+
+} // namespace hal
 
 #endif /* SYSTEM_TIME_H_ */

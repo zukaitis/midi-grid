@@ -1,4 +1,6 @@
-#include "grid/GridControl.h"
+#include "grid/GridDriver.h"
+#include "hal/gpio_definitions.h"
+
 #include "stm32f4xx_hal.h"
 
 namespace grid
@@ -18,51 +20,12 @@ static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
 
 static const uint8_t kNumberOfLedColourIntensityLevels = 65;
 
-static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
-static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;
-static const uint16_t BUTTON_IN2_Pin = GPIO_PIN_10;
-static const uint16_t ROTARY1_A_Pin = GPIO_PIN_14;
-static const uint16_t ROTARY1_B_Pin = GPIO_PIN_15;
-static const uint16_t ROTARY2_A_Pin = GPIO_PIN_11;
-static const uint16_t ROTARY2_B_Pin = GPIO_PIN_12;
-static const uint16_t GRID_BUTTON_IN1_Pin = GPIO_PIN_0;
-static const uint16_t GRID_BUTTON_IN2_Pin = GPIO_PIN_1;
-static const uint16_t GRID_BUTTON_IN3_Pin = GPIO_PIN_2;
-static const uint16_t GRID_BUTTON_IN4_Pin = GPIO_PIN_3;
+static TIM_TypeDef* const pwmTimerRedInstance = TIM2;
+static TIM_TypeDef* const pwmTimerGreenInstance = TIM4;
+static TIM_TypeDef* const pwmTimerBlueInstance = TIM3;
+static TIM_TypeDef* const baseTimerInstance = TIM1;
 
-static GPIO_TypeDef* const verticalSegmentControlGpioPort = GPIOA;
-static const uint16_t COLUMN_OUT1_Pin = GPIO_PIN_8;
-static const uint16_t COLUMN_OUT2_Pin = GPIO_PIN_9;
-static const uint16_t COLUMN_OUT3_Pin = GPIO_PIN_10;
-static const uint16_t COLUMN_OUT4_Pin = GPIO_PIN_5;
-static const uint16_t COLUMN_OUT5_Pin = GPIO_PIN_4;
-static const uint16_t COLUMN_OUT6_Pin = GPIO_PIN_15;
-
-static GPIO_TypeDef* const PWM_RED_GPIO_PORT = GPIOA;
-static const uint16_t PWM_RED1_Pin = GPIO_PIN_0;
-static const uint16_t PWM_RED2_Pin = GPIO_PIN_1;
-static const uint16_t PWM_RED3_Pin = GPIO_PIN_2;
-static const uint16_t PWM_RED4_Pin = GPIO_PIN_3;
-
-static GPIO_TypeDef* const PWM_GREEN_GPIO_PORT = GPIOB;
-const uint16_t PWM_GREEN1_Pin = GPIO_PIN_6;
-const uint16_t PWM_GREEN2_Pin = GPIO_PIN_7;
-const uint16_t PWM_GREEN3_Pin = GPIO_PIN_8;
-const uint16_t PWM_GREEN4_Pin = GPIO_PIN_9;
-
-static GPIO_TypeDef* const PWM_BLUE1_2_GPIO_PORT = GPIOA;
-static const uint16_t PWM_BLUE1_Pin = GPIO_PIN_6;
-static const uint16_t PWM_BLUE2_Pin = GPIO_PIN_7;
-static GPIO_TypeDef* const PWM_BLUE3_4_GPIO_PORT = GPIOB;
-static const uint16_t PWM_BLUE3_Pin = GPIO_PIN_0;
-static const uint16_t PWM_BLUE4_Pin = GPIO_PIN_1;
-
-static TIM_TypeDef* const PWM_TIMER_RED = TIM2;
-static TIM_TypeDef* const PWM_TIMER_GREEN = TIM4;
-static TIM_TypeDef* const PWM_TIMER_BLUE = TIM3;
-static TIM_TypeDef* const BASE_INTERRUPT_TIMER = TIM1;
-
-static const uint16_t BRIGHTNESS_THROUGH_PAD[kNumberOfLedColourIntensityLevels] = {
+static const uint16_t kBrightnessThroughPad[kNumberOfLedColourIntensityLevels] = {
         0, 338, 635, 943, 1273, 1627, 2001, 2393,
         2805, 3237, 3683, 4149, 4627, 5121, 5641, 6157,
         6713, 7259, 7823, 8400, 9007, 9603, 10229, 10856,
@@ -80,7 +43,7 @@ static const uint16_t BRIGHTNESS_THROUGH_PAD[kNumberOfLedColourIntensityLevels] 
 //        21338, 22540, 23785, 25072, 26404, 27779, 29200, 30666,
 //        32178, 33737, 35342, 36996, 38698, 40449, 42249, 44099, 46000 };
 
-static const uint16_t BRIGHTNESS_DIRECT[kNumberOfLedColourIntensityLevels] = {
+static const uint16_t kBrightnessDirect[kNumberOfLedColourIntensityLevels] = {
         0, 223, 308, 397, 494, 598, 709, 825,
         947, 1075, 1208, 1348, 1491, 1639, 1793, 1950,
         2113, 2279, 2448, 2621, 2802, 2981, 3164, 3354,
@@ -90,21 +53,21 @@ static const uint16_t BRIGHTNESS_DIRECT[kNumberOfLedColourIntensityLevels] = {
         8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
         10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
 
-static const uint32_t kColumnSelectValue[GridControl::numberOfVerticalSegments] = {
+static const uint32_t kColumnSelectValue[GridDriver::numberOfVerticalSegments] = {
         0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
         0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
         0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
         0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
         0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
 
-uint8_t GridControl::currentlyStableInputBufferIndex_ = 1;
-bool GridControl::gridInputUpdated_ = false;
-bool GridControl::switchInputUpdated_ = false;
+uint8_t GridDriver::currentlyStableInputBufferIndex_ = 1;
+bool GridDriver::gridInputUpdated_ = false;
+bool GridDriver::switchInputUpdated_ = false;
 
-uint32_t GridControl::buttonInput_[nNumberOfButtonDebouncingCycles][numberOfVerticalSegments];
-uint32_t GridControl::pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalSegments];
-uint32_t GridControl::pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
-uint32_t GridControl::pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
+uint32_t GridDriver::buttonInput_[nNumberOfButtonDebouncingCycles][numberOfVerticalSegments];
+uint32_t GridDriver::pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalSegments];
+uint32_t GridDriver::pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
+uint32_t GridDriver::pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
 
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;
@@ -116,7 +79,6 @@ static DMA_HandleTypeDef pwmOutputGreenDmaConfiguration;
 static DMA_HandleTypeDef pwmOutputBlueDmaConfiguration;
 static DMA_HandleTypeDef columnSelectDmaConfiguration;
 
-
 extern "C" void DMA2_Stream5_IRQHandler()
 {
     HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
@@ -124,19 +86,19 @@ extern "C" void DMA2_Stream5_IRQHandler()
 
 static void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef* hdma )
 {
-    GridControl::inputReadoutToMemory0CompleteCallback();
+    GridDriver::inputReadoutToMemory0CompleteCallback();
 }
 
 static void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef* hdma )
 {
-    GridControl::inputReadoutToMemory1CompleteCallback();
+    GridDriver::inputReadoutToMemory1CompleteCallback();
 }
 
 static void dmaErrorCallback( __DMA_HandleTypeDef* hdma ) // unused
 {
 }
 
-GridControl::GridControl()
+GridDriver::GridDriver()
 {
     for (uint8_t segment = 0; segment < numberOfVerticalSegments; segment++)
     {
@@ -146,27 +108,27 @@ GridControl::GridControl()
     turnAllLedsOff();
 }
 
-GridControl::~GridControl()
+GridDriver::~GridDriver()
 {
 }
 
-bool GridControl::getButtonInput( const uint8_t button ) const
+bool GridDriver::getButtonInput( const uint8_t button ) const
 {
     return (0 != (kNonGridButtonMask[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
 }
 
-uint8_t GridControl::getGridButtonInput( const uint8_t column ) const
+uint8_t GridDriver::getGridButtonInput( const uint8_t column ) const
 {
     return static_cast<uint8_t>(kGridButtonMask & buttonInput_[currentlyStableInputBufferIndex_][column]);
 }
 
-uint8_t GridControl::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
+uint8_t GridDriver::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
 {
     const uint8_t index = timeStep * 2;
     return (kRotaryEncoderMask[encoder] & buttonInput_[currentlyStableInputBufferIndex_][index])>>kRotaryEncoderBitShift[encoder];
 }
 
-void GridControl::initialize()
+void GridDriver::initialize()
 {
     initializeGpio();
     initializePwmTimers();
@@ -175,55 +137,55 @@ void GridControl::initialize()
     initializeDma();
 }
 
-bool GridControl::isButtonInputStable( const uint8_t button ) const
+bool GridDriver::isButtonInputStable( const uint8_t button ) const
 {
     return (0 == (kNonGridButtonMask[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
 }
 
-bool GridControl::isGridVerticalSegmentInputStable( const uint8_t segment ) const
+bool GridDriver::isGridVerticalSegmentInputStable( const uint8_t segment ) const
 {
     return (0 == (kGridButtonMask & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
 }
 
-bool GridControl::isGridInputUpdated() const
+bool GridDriver::isGridInputUpdated() const
 {
     return gridInputUpdated_;
 }
 
-bool GridControl::isSwitchInputUpdated() const
+bool GridDriver::isSwitchInputUpdated() const
 {
     return switchInputUpdated_;
 }
 
-void GridControl::resetGridInputUpdatedFlag()
+void GridDriver::resetGridInputUpdatedFlag()
 {
     gridInputUpdated_ = false;
 }
 
-void GridControl::resetSwitchInputUpdatedFlag()
+void GridDriver::resetSwitchInputUpdatedFlag()
 {
     switchInputUpdated_ = false;
 }
 
-void GridControl::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
+void GridDriver::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
 {
     ledPositionX = (ledPositionX + numberOfVerticalSegments - kTimerFrameOffset) % numberOfVerticalSegments;
 
     if (directLed)
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = BRIGHTNESS_DIRECT[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Blue];
     }
     else
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = BRIGHTNESS_THROUGH_PAD[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Blue];
     }
 }
 
-void GridControl::start()
+void GridDriver::start()
 {
     TIM_CCxChannelCmd( pwmTimerRed.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
     TIM_CCxChannelCmd( pwmTimerRed.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
@@ -250,27 +212,27 @@ void GridControl::start()
     HAL_TIM_Base_Start( &baseInterruptTimer );
 }
 
-void GridControl::turnAllLedsOff()
+void GridDriver::turnAllLedsOff()
 {
     for (uint8_t x = 0; x < numberOfVerticalSegments; x++)
     {
         for (uint8_t y = 0; y < numberOfHorizontalSegments; y++)
         {
-            pwmOutputRed_[x][y] = BRIGHTNESS_DIRECT[0];
-            pwmOutputGreen_[x][y] = BRIGHTNESS_DIRECT[0];
-            pwmOutputBlue_[x][y] = BRIGHTNESS_DIRECT[0];
+            pwmOutputRed_[x][y] = kBrightnessDirect[0];
+            pwmOutputGreen_[x][y] = kBrightnessDirect[0];
+            pwmOutputBlue_[x][y] = kBrightnessDirect[0];
         }
     }
 }
 
-void GridControl::initializeBaseTimer()
+void GridDriver::initializeBaseTimer()
 {
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
     TIM_MasterConfigTypeDef timerMasterConfiguration;
 
     __HAL_RCC_TIM1_CLK_ENABLE();
 
-    baseInterruptTimer.Instance = BASE_INTERRUPT_TIMER;
+    baseInterruptTimer.Instance = baseTimerInstance;
     baseInterruptTimer.Init.Prescaler = kBaseInterruptClockPrescaler - 1;
     baseInterruptTimer.Init.CounterMode = TIM_COUNTERMODE_UP;
     baseInterruptTimer.Init.Period = kBaseInterruptClockPeriod - 1;
@@ -306,7 +268,7 @@ void GridControl::initializeBaseTimer()
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_UPDATE );
 }
 
-void GridControl::initializeDma()
+void GridDriver::initializeDma()
 {
     static DMA_InitTypeDef ledOutputDmaInitConfiguration;
 
@@ -328,7 +290,7 @@ void GridControl::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration );
     HAL_DMA_Start( &columnSelectDmaConfiguration,
             reinterpret_cast<uint32_t>(&kColumnSelectValue[0]),
-            reinterpret_cast<uint32_t>(&verticalSegmentControlGpioPort->ODR),
+            reinterpret_cast<uint32_t>(&hal::COLUMN_OUT_GPIO_PORT->ODR),
             numberOfVerticalSegments );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
@@ -349,7 +311,7 @@ void GridControl::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC2], pwmOutputRedDmaConfiguration );
     HAL_DMA_Start( &pwmOutputRedDmaConfiguration,
             reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
-            reinterpret_cast<uint32_t>(&PWM_TIMER_RED->DMAR),
+            reinterpret_cast<uint32_t>(&pwmTimerRedInstance->DMAR),
             numberOfVerticalSegments * numberOfHorizontalSegments );
 
     pwmOutputGreenDmaConfiguration.Instance = DMA2_Stream6;
@@ -358,7 +320,7 @@ void GridControl::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC3], pwmOutputGreenDmaConfiguration );
     HAL_DMA_Start( &pwmOutputGreenDmaConfiguration,
             reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
-            reinterpret_cast<uint32_t>(&PWM_TIMER_GREEN->DMAR),
+            reinterpret_cast<uint32_t>(&pwmTimerGreenInstance->DMAR),
             numberOfVerticalSegments * numberOfHorizontalSegments );
 
     pwmOutputBlueDmaConfiguration.Instance = DMA2_Stream4;
@@ -367,7 +329,7 @@ void GridControl::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC4], pwmOutputBlueDmaConfiguration );
     HAL_DMA_Start( &pwmOutputBlueDmaConfiguration,
             reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
-            reinterpret_cast<uint32_t>(&PWM_TIMER_BLUE->DMAR),
+            reinterpret_cast<uint32_t>(&pwmTimerBlueInstance->DMAR),
             numberOfVerticalSegments * numberOfHorizontalSegments );
 
     buttonInputDmaConfiguration.Instance = DMA2_Stream5;
@@ -392,13 +354,13 @@ void GridControl::initializeDma()
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
-            reinterpret_cast<uint32_t>(&GRID_BUTTON_IN_GPIO_PORT->IDR),
+            reinterpret_cast<uint32_t>(&hal::GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
             numberOfVerticalSegments );
 }
 
-void GridControl::initializeGpio()
+void GridDriver::initializeGpio()
 {
       static GPIO_InitTypeDef gpioConfiguration;
 
@@ -407,30 +369,32 @@ void GridControl::initializeGpio()
       __HAL_RCC_GPIOA_CLK_ENABLE();
 
       // Configure GPIO pin Output Level
-      HAL_GPIO_WritePin( verticalSegmentControlGpioPort,
-              COLUMN_OUT1_Pin | COLUMN_OUT2_Pin | COLUMN_OUT3_Pin |COLUMN_OUT4_Pin |COLUMN_OUT5_Pin |
-                      COLUMN_OUT6_Pin,
+      HAL_GPIO_WritePin( hal::COLUMN_OUT_GPIO_PORT,
+              hal::COLUMN_OUT1_Pin | hal::COLUMN_OUT2_Pin | hal::COLUMN_OUT3_Pin | hal::COLUMN_OUT4_Pin |
+              hal::COLUMN_OUT5_Pin | hal::COLUMN_OUT6_Pin,
               GPIO_PIN_SET );
 
-      gpioConfiguration.Pin = BUTTON_IN1_Pin | BUTTON_IN2_Pin | ROTARY1_A_Pin | ROTARY1_B_Pin | ROTARY2_A_Pin| ROTARY2_B_Pin;
+      gpioConfiguration.Pin = hal::BUTTON_IN1_Pin | hal::BUTTON_IN2_Pin | hal::ROTARY1_A_Pin | hal::ROTARY1_B_Pin |
+              hal::ROTARY2_A_Pin| hal::ROTARY2_B_Pin;
       gpioConfiguration.Mode = GPIO_MODE_INPUT;
       gpioConfiguration.Pull = GPIO_PULLUP;
-      HAL_GPIO_Init( GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( hal::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
 
-      gpioConfiguration.Pin = GRID_BUTTON_IN1_Pin | GRID_BUTTON_IN2_Pin | GRID_BUTTON_IN3_Pin | GRID_BUTTON_IN4_Pin;
+      gpioConfiguration.Pin = hal::GRID_BUTTON_IN1_Pin | hal::GRID_BUTTON_IN2_Pin | hal::GRID_BUTTON_IN3_Pin |
+              hal::GRID_BUTTON_IN4_Pin;
       gpioConfiguration.Mode = GPIO_MODE_INPUT;
       gpioConfiguration.Pull = GPIO_PULLDOWN;
-      HAL_GPIO_Init( GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( hal::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
 
-      gpioConfiguration.Pin = COLUMN_OUT1_Pin | COLUMN_OUT2_Pin | COLUMN_OUT3_Pin | COLUMN_OUT4_Pin |
-              COLUMN_OUT5_Pin | COLUMN_OUT6_Pin;
+      gpioConfiguration.Pin = hal::COLUMN_OUT1_Pin | hal::COLUMN_OUT2_Pin | hal::COLUMN_OUT3_Pin | hal::COLUMN_OUT4_Pin |
+              hal::COLUMN_OUT5_Pin | hal::COLUMN_OUT6_Pin;
       gpioConfiguration.Mode = GPIO_MODE_OUTPUT_OD;
       gpioConfiguration.Pull = GPIO_NOPULL;
       gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-      HAL_GPIO_Init( verticalSegmentControlGpioPort, &gpioConfiguration );
+      HAL_GPIO_Init( hal::COLUMN_OUT_GPIO_PORT, &gpioConfiguration );
 }
 
-void GridControl::initializePwmGpio()
+void GridDriver::initializePwmGpio()
 {
     // initialize GPIO
     static GPIO_InitTypeDef gpioConfiguration;
@@ -444,24 +408,24 @@ void GridControl::initializePwmGpio()
     gpioConfiguration.Pull = GPIO_PULLDOWN;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 
-    gpioConfiguration.Pin = PWM_RED1_Pin|PWM_RED2_Pin|PWM_RED3_Pin|PWM_RED4_Pin;
+    gpioConfiguration.Pin = hal::PWM_RED1_Pin | hal::PWM_RED2_Pin | hal::PWM_RED3_Pin | hal::PWM_RED4_Pin;
     gpioConfiguration.Alternate = GPIO_AF1_TIM2;
-    HAL_GPIO_Init( PWM_RED_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( hal::PWM_RED_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = PWM_GREEN1_Pin|PWM_GREEN2_Pin|PWM_GREEN3_Pin|PWM_GREEN4_Pin;
+    gpioConfiguration.Pin = hal::PWM_GREEN1_Pin | hal::PWM_GREEN2_Pin | hal::PWM_GREEN3_Pin | hal::PWM_GREEN4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM4;
-    HAL_GPIO_Init( PWM_GREEN_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( hal::PWM_GREEN_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = PWM_BLUE1_Pin|PWM_BLUE2_Pin;
+    gpioConfiguration.Pin = hal::PWM_BLUE1_Pin | hal::PWM_BLUE2_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init( PWM_BLUE1_2_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( hal::PWM_BLUE1_2_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = PWM_BLUE3_Pin|PWM_BLUE4_Pin;
+    gpioConfiguration.Pin = hal::PWM_BLUE3_Pin | hal::PWM_BLUE4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init( PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( hal::PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
 }
 
-void GridControl::initializePwmTimers()
+void GridDriver::initializePwmTimers()
 {
     static TIM_Base_InitTypeDef timerBaseInitConfiguration;
     static TIM_OC_InitTypeDef timerOutputCompareConfiguration;
@@ -477,7 +441,7 @@ void GridControl::initializePwmTimers()
     timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
 
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
-    timerOutputCompareConfiguration.Pulse = BRIGHTNESS_DIRECT[0]; // start with passive output
+    timerOutputCompareConfiguration.Pulse = kBrightnessDirect[0]; // start with passive output
     timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
 
@@ -489,7 +453,7 @@ void GridControl::initializePwmTimers()
     timerBaseInitConfiguration.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
     // Red PWM output configuration
-    pwmTimerRed.Instance = PWM_TIMER_RED;
+    pwmTimerRed.Instance = pwmTimerRedInstance;
     pwmTimerRed.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerRed );
     HAL_TIM_ConfigClockSource( &pwmTimerRed, &timerClockSourceConfiguration );
@@ -504,7 +468,7 @@ void GridControl::initializePwmTimers()
     pwmTimerRed.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Green PWM output configuration
-    pwmTimerGreen.Instance = PWM_TIMER_GREEN;
+    pwmTimerGreen.Instance = pwmTimerGreenInstance;
     pwmTimerGreen.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerGreen );
     HAL_TIM_ConfigClockSource( &pwmTimerGreen, &timerClockSourceConfiguration );
@@ -519,7 +483,7 @@ void GridControl::initializePwmTimers()
     pwmTimerGreen.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 
     // Blue PWM output configuration
-    pwmTimerBlue.Instance = PWM_TIMER_BLUE;
+    pwmTimerBlue.Instance = pwmTimerBlueInstance;
     pwmTimerBlue.Init = timerBaseInitConfiguration;
     HAL_TIM_Base_Init( &pwmTimerBlue );
     HAL_TIM_ConfigClockSource( &pwmTimerBlue, &timerClockSourceConfiguration );

@@ -1,7 +1,7 @@
 #include "grid/Grid.h"
-#include "grid/GridControl.h"
-#include "system/GlobalInterrupts.h"
-#include "system/Time.h"
+#include "grid/GridDriver.h"
+#include "hal/GlobalInterrupts.h"
+#include "hal/Time.h"
 
 #include<stdlib.h>
 
@@ -15,8 +15,8 @@ static const uint32_t kLedFlashingPeriod = 250; // 120bpm - default flashing rat
 static const uint32_t kLedPulseStepInterval = 67; // 1000ms / 15 = 66.6... ms
 static const uint8_t kLedPulseStepCount = 15;
 
-Grid::Grid( GridControl& gridControl, GlobalInterrupts& globalInterrupts, Time& time ) :
-        gridControl_( gridControl ),
+Grid::Grid( GridDriver& gridDriver, hal::GlobalInterrupts& globalInterrupts, hal::Time& time ) :
+        gridDriver_( gridDriver ),
         globalInterrupts_( globalInterrupts ),
         time_( time ),
         numberOfFlashingLeds_( 0 ),
@@ -59,11 +59,11 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
 
     bool eventAvailable = false;
 
-    if (gridControl_.isGridInputUpdated())
+    if (gridDriver_.isGridInputUpdated())
     {
         globalInterrupts_.disable();
         updateButtonColumnInput();
-        gridControl_.resetGridInputUpdatedFlag();
+        gridDriver_.resetGridInputUpdatedFlag();
         globalInterrupts_.enable();
         buttonChangeDetected = true;
     }
@@ -116,15 +116,15 @@ Colour Grid::getRandomColour()
     };
 
     const FullyLitColour fullyLitColour = static_cast<FullyLitColour>(rand() % kNumberOfVariants);
-    int8_t partlyLitColour1 = (rand() % (gridControl_.ledColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour1 < gridControl_.ledColourIntensityOff)
+    int8_t partlyLitColour1 = (rand() % (gridDriver_.ledColourIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColour1 < gridDriver_.ledColourIntensityOff)
     {
-        partlyLitColour1 = gridControl_.ledColourIntensityOff;
+        partlyLitColour1 = gridDriver_.ledColourIntensityOff;
     }
-    int8_t partlyLitColour2 = (rand() % (gridControl_.ledColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour2 < gridControl_.ledColourIntensityOff)
+    int8_t partlyLitColour2 = (rand() % (gridDriver_.ledColourIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColour2 < gridDriver_.ledColourIntensityOff)
     {
-        partlyLitColour2 = gridControl_.ledColourIntensityOff;
+        partlyLitColour2 = gridDriver_.ledColourIntensityOff;
     }
 
     Colour colour = { 0, 0, 0 };
@@ -132,34 +132,34 @@ Colour Grid::getRandomColour()
     switch (fullyLitColour)
     {
         case kRed:
-            colour.Red = gridControl_.ledColourIntensityMaximum;
+            colour.Red = gridDriver_.ledColourIntensityMaximum;
             colour.Green = static_cast<uint8_t>(partlyLitColour1);
             colour.Blue = static_cast<uint8_t>(partlyLitColour2);
             break;
         case kGreen:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = gridControl_.ledColourIntensityMaximum;
+            colour.Green = gridDriver_.ledColourIntensityMaximum;
             colour.Blue = static_cast<uint8_t>(partlyLitColour2);
             break;
         case kBlue:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
             colour.Green = static_cast<uint8_t>(partlyLitColour2);
-            colour.Blue = gridControl_.ledColourIntensityMaximum;
+            colour.Blue = gridDriver_.ledColourIntensityMaximum;
             break;
         case kRedAndGreen:
-            colour.Red = gridControl_.ledColourIntensityMaximum;
-            colour.Green = gridControl_.ledColourIntensityMaximum;
+            colour.Red = gridDriver_.ledColourIntensityMaximum;
+            colour.Green = gridDriver_.ledColourIntensityMaximum;
             colour.Blue = static_cast<uint8_t>(partlyLitColour1);
             break;
         case kRedAndBlue:
-            colour.Red = gridControl_.ledColourIntensityMaximum;
+            colour.Red = gridDriver_.ledColourIntensityMaximum;
             colour.Green = static_cast<uint8_t>(partlyLitColour1);
-            colour.Blue = gridControl_.ledColourIntensityMaximum;
+            colour.Blue = gridDriver_.ledColourIntensityMaximum;
             break;
         case kGreenAndBlue:
             colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = gridControl_.ledColourIntensityMaximum;
-            colour.Blue = gridControl_.ledColourIntensityMaximum;
+            colour.Green = gridDriver_.ledColourIntensityMaximum;
+            colour.Blue = gridDriver_.ledColourIntensityMaximum;
             break;
         default:
             break;
@@ -289,19 +289,19 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= kNumberOfPadColumns);
 
-    if (ledPositionY >= gridControl_.numberOfHorizontalSegments)
+    if (ledPositionY >= gridDriver_.numberOfHorizontalSegments)
     {
         ledPositionX += numberOfColumns;
-        ledPositionY = ledPositionY % gridControl_.numberOfHorizontalSegments;
+        ledPositionY = ledPositionY % gridDriver_.numberOfHorizontalSegments;
     }
 
-    gridControl_.setLedColour( ledPositionX, ledPositionY, directLed, colour );
+    gridDriver_.setLedColour( ledPositionX, ledPositionY, directLed, colour );
 
 }
 
 void Grid::turnAllLedsOff()
 {
-    gridControl_.turnAllLedsOff();
+    gridDriver_.turnAllLedsOff();
 
     // todo: also remove flashing, pulsing leds and reset colours to zeros
 }
@@ -311,19 +311,19 @@ void Grid::updateButtonColumnInput()
     for (int8_t column = 0; column < numberOfColumns; column++)
     {
         // update column bits [0:3]
-        if (gridControl_.isGridVerticalSegmentInputStable( column ))
+        if (gridDriver_.isGridVerticalSegmentInputStable( column ))
         {
             // overwrite existing value with a new one
             buttonColumnInput_[column] &= 0xF0;
-            buttonColumnInput_[column] |= gridControl_.getGridButtonInput( column );
+            buttonColumnInput_[column] |= gridDriver_.getGridButtonInput( column );
         }
 
         // update column bits [4:7]
-        if (gridControl_.isGridVerticalSegmentInputStable( column + numberOfColumns ))
+        if (gridDriver_.isGridVerticalSegmentInputStable( column + numberOfColumns ))
         {
             // overwrite existing value with a new one
             buttonColumnInput_[column] &= 0x0F;
-            buttonColumnInput_[column] |= gridControl_.getGridButtonInput( column + numberOfColumns ) << 4;
+            buttonColumnInput_[column] |= gridDriver_.getGridButtonInput( column + numberOfColumns ) << 4;
         }
     }
 }

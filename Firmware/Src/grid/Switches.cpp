@@ -1,11 +1,18 @@
 #include "grid/Switches.h"
-#include "system/Time.h"
+#include "grid/GridDriver.h"
+#include "hal/Time.h"
 
 namespace grid
 {
 
-Switches::Switches( GridControl& gridControl, Time& time ) :
-        gridControl_( gridControl ),
+static const uint8_t kNumberOfRotaryEncoders = 2;
+static const uint8_t kNumberOfRotaryEncoderTimeSteps = 10;
+static const int8_t kNumberOfRotaryEncoderMicrostepsInStep = 4;
+
+static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
+
+Switches::Switches( GridDriver& gridDriver, hal::Time& time ) :
+        gridDriver_( gridDriver ),
         time_( time )
 {
     // active low
@@ -41,10 +48,10 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
     static bool encoderChangeDetected = false;
 
 
-    if (gridControl_.isSwitchInputUpdated() || encoderChangeDetected)
+    if (gridDriver_.isSwitchInputUpdated() || encoderChangeDetected)
     {
         encoderChangeDetected = false;
-        gridControl_.resetSwitchInputUpdatedFlag();
+        gridDriver_.resetSwitchInputUpdatedFlag();
         for (uint8_t encoder = 0; encoder < kNumberOfRotaryEncoders; encoder++)
         {
             static int8_t microstep[2] = {0, 0};
@@ -53,7 +60,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
             for (uint8_t timeStep = 0; timeStep < kNumberOfRotaryEncoderTimeSteps; timeStep++)
             {
                 previousEncoderValue[encoder] <<= 2;
-                previousEncoderValue[encoder] |= gridControl_.getRotaryEncodersInput( encoder, timeStep );
+                previousEncoderValue[encoder] |= gridDriver_.getRotaryEncodersInput( encoder, timeStep );
                 previousEncoderValue[encoder] &= 0x0F;
                 microstep[encoder] += kEncoderState[previousEncoderValue[encoder]];
             }
@@ -97,14 +104,14 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 {
     static bool buttonChangeDetected = false;
 
-    if (gridControl_.isSwitchInputUpdated() || buttonChangeDetected)
+    if (gridDriver_.isSwitchInputUpdated() || buttonChangeDetected)
     {
         buttonChangeDetected = false; // reset this variable every time, it will be set back if necessary
-        for (uint8_t button = 0; button < kNumberOfButtons; button++)
+        for (uint8_t button = 0; button < numberOfButtons_; button++)
         {
-            if (gridControl_.isButtonInputStable(button))
+            if (gridDriver_.isButtonInputStable(button))
             {
-                const bool buttonInput = gridControl_.getButtonInput(button);
+                const bool buttonInput = gridDriver_.getButtonInput(button);
                 if (registeredButtonInput_[button] != buttonInput)
                 {
                     buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
@@ -122,7 +129,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
 bool Switches::isButtonPressed( const uint8_t buttonNumber )
 {
     bool isPressed = false;
-    if (buttonNumber < kNumberOfButtons)
+    if (buttonNumber < numberOfButtons_)
     {
         isPressed = !registeredButtonInput_[buttonNumber];
     }

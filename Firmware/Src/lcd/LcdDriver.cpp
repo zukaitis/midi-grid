@@ -1,17 +1,10 @@
-#include "lcd/LcdControl.h"
+#include "lcd/LcdDriver.h"
+#include "hal/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
 
 namespace lcd
 {
-
-static GPIO_TypeDef* const LCD_GPIO_Port = GPIOB;
-static const uint16_t RESET_Pin = GPIO_PIN_2;
-static const uint16_t DC_Pin = GPIO_PIN_10;
-static const uint16_t CS_Pin = GPIO_PIN_12;
-static const uint16_t SCK_Pin = GPIO_PIN_13;
-
-static const uint16_t MOSI_Pin = GPIO_PIN_15;
 
 static DMA_HandleTypeDef lcdSpiDma;
 static SPI_HandleTypeDef lcdSpi;
@@ -21,15 +14,15 @@ extern "C" void DMA1_Stream4_IRQHandler()
     HAL_DMA_IRQHandler(&lcdSpiDma);
 }
 
-LcdControl::LcdControl()
+LcdDriver::LcdDriver()
 {
 }
 
-LcdControl::~LcdControl()
+LcdDriver::~LcdDriver()
 {
 }
 
-void LcdControl::initialize()
+void LcdDriver::initialize()
 {
     initializeGpio();
     initializeSpi();
@@ -44,7 +37,7 @@ void LcdControl::initialize()
     writeCommand( 0x0C ); // LCD normal.
 }
 
-void LcdControl::transmit( uint8_t* const buffer )
+void LcdDriver::transmit( uint8_t* const buffer )
 {
     setCursor( 0, 0 );
 
@@ -53,11 +46,11 @@ void LcdControl::transmit( uint8_t* const buffer )
         // wait until previous transfer is done
     }
 
-    HAL_GPIO_WritePin( LCD_GPIO_Port, DC_Pin, GPIO_PIN_SET );  //data mode
+    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, &buffer[0], bufferSize );
 }
 
-void LcdControl::initializeDma()
+void LcdDriver::initializeDma()
 {
     __HAL_RCC_DMA1_CLK_ENABLE();
 
@@ -83,25 +76,25 @@ void LcdControl::initializeDma()
     HAL_NVIC_EnableIRQ( DMA1_Stream4_IRQn );
 }
 
-void LcdControl::initializeGpio()
+void LcdDriver::initializeGpio()
 {
     static GPIO_InitTypeDef gpioConfiguration;
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
-    gpioConfiguration.Pin = DC_Pin | RESET_Pin;
+    gpioConfiguration.Pin = hal::DC_Pin | hal::RESET_Pin;
     gpioConfiguration.Mode = GPIO_MODE_OUTPUT_PP;
     gpioConfiguration.Pull = GPIO_NOPULL;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( hal::LCD_GPIO_Port, &gpioConfiguration );
 
-    gpioConfiguration.Pin = CS_Pin | SCK_Pin | MOSI_Pin;
+    gpioConfiguration.Pin = hal::CS_Pin | hal::SCK_Pin | hal::MOSI_Pin;
     gpioConfiguration.Mode = GPIO_MODE_AF_PP;
     gpioConfiguration.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init( LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( hal::LCD_GPIO_Port, &gpioConfiguration );
 }
 
-void LcdControl::initializeSpi()
+void LcdDriver::initializeSpi()
 {
     __HAL_RCC_SPI2_CLK_ENABLE();
 
@@ -120,19 +113,19 @@ void LcdControl::initializeSpi()
     HAL_SPI_Init( &lcdSpi );
 }
 
-void LcdControl::resetController()
+void LcdDriver::resetController()
 {
-    HAL_GPIO_WritePin( LCD_GPIO_Port, RESET_Pin, GPIO_PIN_RESET );
-    HAL_GPIO_WritePin( LCD_GPIO_Port, RESET_Pin, GPIO_PIN_SET );
+    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::RESET_Pin, GPIO_PIN_RESET );
+    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::RESET_Pin, GPIO_PIN_SET );
 }
 
-void LcdControl::setCursor( const uint8_t x, const uint8_t y )
+void LcdDriver::setCursor( const uint8_t x, const uint8_t y )
 {
     writeCommand( 0x80 | x ); // column.
     writeCommand( 0x40 | y ); // row.
 }
 
-void LcdControl::writeCommand( const uint8_t command )
+void LcdDriver::writeCommand( const uint8_t command )
 {
     uint8_t commandToWrite = command;
 
@@ -141,7 +134,7 @@ void LcdControl::writeCommand( const uint8_t command )
         // wait until previous transfer is done
     }
 
-    HAL_GPIO_WritePin( LCD_GPIO_Port, DC_Pin, GPIO_PIN_RESET ); //command mode
+    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::DC_Pin, GPIO_PIN_RESET ); //command mode
     HAL_SPI_Transmit_DMA( &lcdSpi, &commandToWrite, 1 );
 }
 

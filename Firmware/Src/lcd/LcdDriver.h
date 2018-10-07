@@ -6,11 +6,11 @@
 namespace lcd
 {
 
-class LcdControl
+class LcdDriver
 {
 public:
-    LcdControl();
-    ~LcdControl();
+    LcdDriver();
+    ~LcdDriver();
 
     void initialize();
     void transmit( uint8_t* const buffer );

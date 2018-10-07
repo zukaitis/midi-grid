@@ -1,17 +1,20 @@
-#include "system/System.h"
+#include "hal/Hal.h"
 
 #include "stm32f4xx_hal.h"
 #include "usb/usb_device.h"
 
-System::System()
+namespace hal
+{
+
+Hal::Hal()
 {
 }
 
-System::~System()
+Hal::~Hal()
 {
 }
 
-void System::initialize()
+void Hal::initialize()
 {
     HAL_Init();
     configureNvicPriorities();
@@ -19,12 +22,12 @@ void System::initialize()
     MX_USB_DEVICE_Init();
 }
 
-bool System::isUsbConnected()
+bool Hal::isUsbConnected()
 {
     return (0 != usb_device_isUsbConnected());
 }
 
-void System::resetIntoBootloader()
+void Hal::resetIntoBootloader()
 {
     // write these bytes into the end of RAM, so processor would jump into bootloader after reset
     // (there is conditional in system_stm32f4xx.c that checks for this value at the beginning of a program)
@@ -33,7 +36,7 @@ void System::resetIntoBootloader()
     NVIC_SystemReset();
 }
 
-void System::configureNvicPriorities()
+void Hal::configureNvicPriorities()
 {
     HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -54,7 +57,7 @@ void System::configureNvicPriorities()
     HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-void System::configureSystemClock()
+void Hal::configureSystemClock()
 {
     static RCC_OscInitTypeDef RCC_OscInitStruct;
     static RCC_ClkInitTypeDef RCC_ClkInitStruct;
@@ -93,3 +96,5 @@ void System::configureSystemClock()
     // SysTick_IRQn interrupt configuration
     HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
+
+} // namespace hal

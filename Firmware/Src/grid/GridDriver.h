@@ -1,17 +1,17 @@
-#ifndef GRID_BUTTONS_GRIDCONTROL_H_
-#define GRID_BUTTONS_GRIDCONTROL_H_
+#ifndef GRID_GRIDDRIVER_H_
+#define GRID_GRIDDRIVER_H_
 
 #include "Types.h"
 
 namespace grid
 {
 
-class GridControl
+class GridDriver
 {
 public:
 
-    GridControl();
-    ~GridControl();
+    GridDriver();
+    ~GridDriver();
 
     bool getButtonInput( const uint8_t button ) const;
     uint8_t getGridButtonInput( const uint8_t column ) const;
@@ -69,4 +69,4 @@ private:
 };
 
 } // namespace grid
-#endif // GRID_BUTTONS_GRIDCONTROL_H_
+#endif // GRID_GRIDDRIVER_H_

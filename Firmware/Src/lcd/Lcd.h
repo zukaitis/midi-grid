@@ -2,9 +2,11 @@
 #define LCD_LCD_H_
 
 #include "lcd/Backlight.h"
-#include "lcd/LcdControl.h"
+#include "lcd/LcdDriver.h"
 
+namespace hal {
 class Time;
+}
 
 namespace lcd
 {
@@ -27,7 +29,7 @@ struct Image
 class Lcd
 {
 public:
-    Lcd( Time& time );
+    Lcd( hal::Time& time );
     ~Lcd();
 
     void clear();
@@ -53,8 +55,8 @@ private:
     void putChar( const uint8_t x, const uint8_t y, const char c );
 
     Backlight backlight_;
-    LcdControl lcdControl_;
-    Time& time_;
+    LcdDriver lcdDriver_;
+    hal::Time& time_;
 
     uint8_t appointedBacklightIntensity_;
     uint8_t currentBacklightIntensity_;

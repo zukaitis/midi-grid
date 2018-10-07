@@ -1,15 +1,15 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include <grid/GridControl.h>
+#include "grid/GridDriver.h"
 #include "grid/Grid.h"
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "program/Launchpad.h"
-#include "system/GlobalInterrupts.h"
-#include "system/System.h"
-#include "system/Time.h"
+#include "hal/GlobalInterrupts.h"
+#include "hal/Hal.h"
+#include "hal/Time.h"
 #include "usb/UsbMidi.h"
 
 class ApplicationMain
@@ -36,10 +36,10 @@ public:
 private:
     ApplicationMain();
 
-    System system_;
-    GlobalInterrupts globalInterrupts_;
-    Time time_;
-    grid::GridControl gridControl_;
+    hal::Hal hal_;
+    hal::GlobalInterrupts globalInterrupts_;
+    hal::Time time_;
+    grid::GridDriver gridDriver_;
     grid::Grid grid_;
     grid::Switches switches_;
     midi::UsbMidi usbMidi_;

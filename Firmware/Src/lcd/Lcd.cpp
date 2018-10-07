@@ -1,5 +1,5 @@
 #include "lcd/Lcd.h"
-#include "system/Time.h"
+#include "hal/Time.h"
 
 #include "lcd/font.h"
 #include "lcd/progressArc.h"
@@ -16,10 +16,10 @@ static const Image digitBig[10] = {
         { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
 };
 
-Lcd::Lcd( Time& time ) :
+Lcd::Lcd( hal::Time& time ) :
         numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ),
         backlight_( Backlight() ),
-        lcdControl_( LcdControl() ),
+        lcdDriver_( LcdDriver() ),
         time_( time ),
         appointedBacklightIntensity_( 0 ),
         currentBacklightIntensity_( 0 ),
@@ -41,7 +41,7 @@ Lcd::~Lcd()
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcdControl_.bufferSize );
+    memset( &lcdBuffer_[0][0], 0x00, lcdDriver_.bufferSize );
     updateRequired_ = true;
 }
 
@@ -102,7 +102,7 @@ void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t po
 
 void Lcd::initialize()
 {
-    lcdControl_.initialize();
+    lcdDriver_.initialize();
     backlight_.initialize();
     clear();
 }
@@ -210,7 +210,7 @@ void Lcd::refresh()
     {
         if (updateRequired_)
         {
-            lcdControl_.transmit( &lcdBuffer_[0][0] );
+            lcdDriver_.transmit( &lcdBuffer_[0][0] );
             updateRequired_ = false;
         }
 

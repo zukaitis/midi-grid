@@ -1,11 +1,14 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-class System
+namespace hal
+{
+
+class Hal
 {
 public:
-    System();
-    virtual ~System();
+    Hal();
+    virtual ~Hal();
 
     void initialize();
     bool isUsbConnected();
@@ -15,5 +18,7 @@ private:
     void configureNvicPriorities();
     void configureSystemClock();
 };
+
+} // namespace hal
 
 #endif /* SYSTEM_H_ */

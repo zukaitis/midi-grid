@@ -1,6 +1,9 @@
-#include "system/GlobalInterrupts.h"
+#include "hal/GlobalInterrupts.h"
 
 #include "stm32f4xx_hal.h"
+
+namespace hal
+{
 
 GlobalInterrupts::GlobalInterrupts()
 {
@@ -20,4 +23,4 @@ void GlobalInterrupts::enable()
     __enable_irq();
 }
 
-
+} // namespace hal
