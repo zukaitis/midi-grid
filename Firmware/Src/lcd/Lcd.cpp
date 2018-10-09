@@ -1,5 +1,5 @@
 #include "lcd/Lcd.h"
-#include "hal/Time.h"
+#include "system/Time.h"
 
 #include "lcd/font.h"
 #include "lcd/progressArc.h"
@@ -16,7 +16,7 @@ static const Image digitBig[10] = {
         { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
 };
 
-Lcd::Lcd( hal::Time& time ) :
+Lcd::Lcd( mcu::Time& time ) :
         numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ),
         backlight_( Backlight() ),
         lcdDriver_( LcdDriver() ),

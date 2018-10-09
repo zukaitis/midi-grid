@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace hal {
+namespace mcu {
 
 class Time
 {

@@ -3,7 +3,7 @@
 
 #include "Types.h"
 
-namespace hal {
+namespace mcu {
 class GlobalInterrupts;
 class Time;
 }
@@ -44,7 +44,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( GridDriver& gridControl, hal::GlobalInterrupts& globalInterrupts, hal::Time& time );
+    Grid( GridDriver& gridControl, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time );
     ~Grid();
 
     bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
@@ -69,8 +69,8 @@ private:
     void updateButtonColumnInput();
 
     GridDriver& gridDriver_;
-    hal::GlobalInterrupts& globalInterrupts_;
-    hal::Time& time_;
+    mcu::GlobalInterrupts& globalInterrupts_;
+    mcu::Time& time_;
 
     Led led_[numberOfColumns][numberOfRows];
 

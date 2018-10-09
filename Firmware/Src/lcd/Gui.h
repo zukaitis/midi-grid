@@ -3,7 +3,7 @@
 
 #include "application/Launchpad.h"
 
-namespace hal {
+namespace mcu {
 class Time;
 }
 
@@ -15,7 +15,7 @@ class Lcd;
 class Gui
 {
 public:
-    Gui( Lcd& lcd, hal::Time& time );
+    Gui( Lcd& lcd, mcu::Time& time );
     ~Gui();
 
     void displayConnectingImage();
@@ -48,7 +48,7 @@ private:
     void displayTrackName();
 
     lcd::Lcd& lcd_;
-    hal::Time& time_;
+    mcu::Time& time_;
 
     char dawClipName_[15];
     char dawDeviceName_[15];

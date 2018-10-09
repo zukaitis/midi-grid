@@ -1,5 +1,5 @@
 #include "grid/GridDriver.h"
-#include "hal/gpio_definitions.h"
+#include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
 
@@ -290,7 +290,7 @@ void GridDriver::initializeDma()
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration );
     HAL_DMA_Start( &columnSelectDmaConfiguration,
             reinterpret_cast<uint32_t>(&kColumnSelectValue[0]),
-            reinterpret_cast<uint32_t>(&hal::COLUMN_OUT_GPIO_PORT->ODR),
+            reinterpret_cast<uint32_t>(&mcu::COLUMN_OUT_GPIO_PORT->ODR),
             numberOfVerticalSegments );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
@@ -354,7 +354,7 @@ void GridDriver::initializeDma()
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
-            reinterpret_cast<uint32_t>(&hal::GRID_BUTTON_IN_GPIO_PORT->IDR),
+            reinterpret_cast<uint32_t>(&mcu::GRID_BUTTON_IN_GPIO_PORT->IDR),
             reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
             reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
             numberOfVerticalSegments );
@@ -369,29 +369,29 @@ void GridDriver::initializeGpio()
       __HAL_RCC_GPIOA_CLK_ENABLE();
 
       // Configure GPIO pin Output Level
-      HAL_GPIO_WritePin( hal::COLUMN_OUT_GPIO_PORT,
-              hal::COLUMN_OUT1_Pin | hal::COLUMN_OUT2_Pin | hal::COLUMN_OUT3_Pin | hal::COLUMN_OUT4_Pin |
-              hal::COLUMN_OUT5_Pin | hal::COLUMN_OUT6_Pin,
+      HAL_GPIO_WritePin( mcu::COLUMN_OUT_GPIO_PORT,
+              mcu::COLUMN_OUT1_Pin | mcu::COLUMN_OUT2_Pin | mcu::COLUMN_OUT3_Pin | mcu::COLUMN_OUT4_Pin |
+              mcu::COLUMN_OUT5_Pin | mcu::COLUMN_OUT6_Pin,
               GPIO_PIN_SET );
 
-      gpioConfiguration.Pin = hal::BUTTON_IN1_Pin | hal::BUTTON_IN2_Pin | hal::ROTARY1_A_Pin | hal::ROTARY1_B_Pin |
-              hal::ROTARY2_A_Pin| hal::ROTARY2_B_Pin;
+      gpioConfiguration.Pin = mcu::BUTTON_IN1_Pin | mcu::BUTTON_IN2_Pin | mcu::ROTARY1_A_Pin | mcu::ROTARY1_B_Pin |
+              mcu::ROTARY2_A_Pin| mcu::ROTARY2_B_Pin;
       gpioConfiguration.Mode = GPIO_MODE_INPUT;
       gpioConfiguration.Pull = GPIO_PULLUP;
-      HAL_GPIO_Init( hal::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( mcu::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
 
-      gpioConfiguration.Pin = hal::GRID_BUTTON_IN1_Pin | hal::GRID_BUTTON_IN2_Pin | hal::GRID_BUTTON_IN3_Pin |
-              hal::GRID_BUTTON_IN4_Pin;
+      gpioConfiguration.Pin = mcu::GRID_BUTTON_IN1_Pin | mcu::GRID_BUTTON_IN2_Pin | mcu::GRID_BUTTON_IN3_Pin |
+              mcu::GRID_BUTTON_IN4_Pin;
       gpioConfiguration.Mode = GPIO_MODE_INPUT;
       gpioConfiguration.Pull = GPIO_PULLDOWN;
-      HAL_GPIO_Init( hal::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( mcu::GRID_BUTTON_IN_GPIO_PORT, &gpioConfiguration );
 
-      gpioConfiguration.Pin = hal::COLUMN_OUT1_Pin | hal::COLUMN_OUT2_Pin | hal::COLUMN_OUT3_Pin | hal::COLUMN_OUT4_Pin |
-              hal::COLUMN_OUT5_Pin | hal::COLUMN_OUT6_Pin;
+      gpioConfiguration.Pin = mcu::COLUMN_OUT1_Pin | mcu::COLUMN_OUT2_Pin | mcu::COLUMN_OUT3_Pin | mcu::COLUMN_OUT4_Pin |
+              mcu::COLUMN_OUT5_Pin | mcu::COLUMN_OUT6_Pin;
       gpioConfiguration.Mode = GPIO_MODE_OUTPUT_OD;
       gpioConfiguration.Pull = GPIO_NOPULL;
       gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-      HAL_GPIO_Init( hal::COLUMN_OUT_GPIO_PORT, &gpioConfiguration );
+      HAL_GPIO_Init( mcu::COLUMN_OUT_GPIO_PORT, &gpioConfiguration );
 }
 
 void GridDriver::initializePwmGpio()
@@ -408,21 +408,21 @@ void GridDriver::initializePwmGpio()
     gpioConfiguration.Pull = GPIO_PULLDOWN;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 
-    gpioConfiguration.Pin = hal::PWM_RED1_Pin | hal::PWM_RED2_Pin | hal::PWM_RED3_Pin | hal::PWM_RED4_Pin;
+    gpioConfiguration.Pin = mcu::PWM_RED1_Pin | mcu::PWM_RED2_Pin | mcu::PWM_RED3_Pin | mcu::PWM_RED4_Pin;
     gpioConfiguration.Alternate = GPIO_AF1_TIM2;
-    HAL_GPIO_Init( hal::PWM_RED_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::PWM_RED_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = hal::PWM_GREEN1_Pin | hal::PWM_GREEN2_Pin | hal::PWM_GREEN3_Pin | hal::PWM_GREEN4_Pin;
+    gpioConfiguration.Pin = mcu::PWM_GREEN1_Pin | mcu::PWM_GREEN2_Pin | mcu::PWM_GREEN3_Pin | mcu::PWM_GREEN4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM4;
-    HAL_GPIO_Init( hal::PWM_GREEN_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::PWM_GREEN_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = hal::PWM_BLUE1_Pin | hal::PWM_BLUE2_Pin;
+    gpioConfiguration.Pin = mcu::PWM_BLUE1_Pin | mcu::PWM_BLUE2_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init( hal::PWM_BLUE1_2_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::PWM_BLUE1_2_GPIO_PORT, &gpioConfiguration );
 
-    gpioConfiguration.Pin = hal::PWM_BLUE3_Pin | hal::PWM_BLUE4_Pin;
+    gpioConfiguration.Pin = mcu::PWM_BLUE3_Pin | mcu::PWM_BLUE4_Pin;
     gpioConfiguration.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init( hal::PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
 }
 
 void GridDriver::initializePwmTimers()

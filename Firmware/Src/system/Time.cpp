@@ -1,7 +1,7 @@
-#include "hal/Time.h"
+#include "system/Time.h"
 #include "stm32f4xx_hal.h"
 
-namespace hal {
+namespace mcu {
 
 Time::Time()
 {

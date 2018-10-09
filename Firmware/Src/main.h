@@ -1,15 +1,15 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <system/System.h>
 #include "grid/GridDriver.h"
 #include "grid/Grid.h"
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "application/Launchpad.h"
-#include "hal/GlobalInterrupts.h"
-#include "hal/Hal.h"
-#include "hal/Time.h"
+#include "system/GlobalInterrupts.h"
+#include "system/Time.h"
 #include "usb/UsbMidi.h"
 
 class ApplicationMain
@@ -33,12 +33,15 @@ public:
     void runGridInputTest();
     void runInternalMenu();
 
+    bool displayBootAnimation();
+    Colour getBootAnimationColour( const uint8_t ledPositionX, const uint8_t ledPositionY );
+
 private:
     ApplicationMain();
 
-    hal::Hal hal_;
-    hal::GlobalInterrupts globalInterrupts_;
-    hal::Time time_;
+    mcu::System system_;
+    mcu::GlobalInterrupts globalInterrupts_;
+    mcu::Time time_;
     grid::GridDriver gridDriver_;
     grid::Grid grid_;
     grid::Switches switches_;

@@ -1,8 +1,8 @@
-#include "hal/GlobalInterrupts.h"
+#include "system/GlobalInterrupts.h"
 
 #include "stm32f4xx_hal.h"
 
-namespace hal
+namespace mcu
 {
 
 GlobalInterrupts::GlobalInterrupts()

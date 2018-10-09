@@ -1,5 +1,5 @@
 #include "lcd/Backlight.h"
-#include "hal/gpio_definitions.h"
+#include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
 #include <string.h>
@@ -97,12 +97,12 @@ void Backlight::initializeGpio()
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
-    gpioConfiguration.Pin = hal::LIGHT_Pin;
+    gpioConfiguration.Pin = mcu::LIGHT_Pin;
     gpioConfiguration.Mode = GPIO_MODE_AF_PP;
     gpioConfiguration.Pull = GPIO_NOPULL;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     gpioConfiguration.Alternate = GPIO_AF6_SPI3;
-    HAL_GPIO_Init( hal::LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::LCD_GPIO_Port, &gpioConfiguration );
 }
 
 void Backlight::initializeSpi()

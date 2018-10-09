@@ -1,9 +1,9 @@
 #include "grid/Grid.h"
 #include "grid/GridDriver.h"
-#include "hal/GlobalInterrupts.h"
-#include "hal/Time.h"
+#include "system/GlobalInterrupts.h"
+#include "system/Time.h"
 
-#include<stdlib.h>
+#include<math.h>
 
 //#include "lcd/Lcd.h" // for debugging, to be removed
 
@@ -15,7 +15,7 @@ static const uint32_t kLedFlashingPeriod = 250; // 120bpm - default flashing rat
 static const uint32_t kLedPulseStepInterval = 67; // 1000ms / 15 = 66.6... ms
 static const uint8_t kLedPulseStepCount = 15;
 
-Grid::Grid( GridDriver& gridDriver, hal::GlobalInterrupts& globalInterrupts, hal::Time& time ) :
+Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time ) :
         gridDriver_( gridDriver ),
         globalInterrupts_( globalInterrupts ),
         time_( time ),

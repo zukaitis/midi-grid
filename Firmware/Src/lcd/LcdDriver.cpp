@@ -1,5 +1,5 @@
 #include "lcd/LcdDriver.h"
-#include "hal/gpio_definitions.h"
+#include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
 
@@ -46,7 +46,7 @@ void LcdDriver::transmit( uint8_t* const buffer )
         // wait until previous transfer is done
     }
 
-    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::DC_Pin, GPIO_PIN_SET );  //data mode
+    HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, &buffer[0], bufferSize );
 }
 
@@ -82,16 +82,16 @@ void LcdDriver::initializeGpio()
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
-    gpioConfiguration.Pin = hal::DC_Pin | hal::RESET_Pin;
+    gpioConfiguration.Pin = mcu::DC_Pin | mcu::RESET_Pin;
     gpioConfiguration.Mode = GPIO_MODE_OUTPUT_PP;
     gpioConfiguration.Pull = GPIO_NOPULL;
     gpioConfiguration.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init( hal::LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::LCD_GPIO_Port, &gpioConfiguration );
 
-    gpioConfiguration.Pin = hal::CS_Pin | hal::SCK_Pin | hal::MOSI_Pin;
+    gpioConfiguration.Pin = mcu::CS_Pin | mcu::SCK_Pin | mcu::MOSI_Pin;
     gpioConfiguration.Mode = GPIO_MODE_AF_PP;
     gpioConfiguration.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init( hal::LCD_GPIO_Port, &gpioConfiguration );
+    HAL_GPIO_Init( mcu::LCD_GPIO_Port, &gpioConfiguration );
 }
 
 void LcdDriver::initializeSpi()
@@ -115,8 +115,8 @@ void LcdDriver::initializeSpi()
 
 void LcdDriver::resetController()
 {
-    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::RESET_Pin, GPIO_PIN_RESET );
-    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::RESET_Pin, GPIO_PIN_SET );
+    HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_RESET );
+    HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_SET );
 }
 
 void LcdDriver::setCursor( const uint8_t x, const uint8_t y )
@@ -134,7 +134,7 @@ void LcdDriver::writeCommand( const uint8_t command )
         // wait until previous transfer is done
     }
 
-    HAL_GPIO_WritePin( hal::LCD_GPIO_Port, hal::DC_Pin, GPIO_PIN_RESET ); //command mode
+    HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_RESET ); //command mode
     HAL_SPI_Transmit_DMA( &lcdSpi, &commandToWrite, 1 );
 }
 

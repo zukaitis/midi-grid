@@ -1,7 +1,10 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "lcd/images.h"
-#include "hal/Time.h"
+#include "system/Time.h"
+
+#include <stdio.h>
+#include <string.h>
 
 namespace lcd
 {
@@ -48,7 +51,7 @@ static const char launchpad95SubmodeString[9][15] = {
         "MSS: Velocity\0"
 };
 
-Gui::Gui( Lcd& lcd, hal::Time& time ) :
+Gui::Gui( Lcd& lcd, mcu::Time& time ) :
         lcd_( lcd ),
         time_( time ),
         dawClipName_( " \0" ),

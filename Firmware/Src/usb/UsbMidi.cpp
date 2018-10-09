@@ -3,6 +3,14 @@
 #include "stm32f4xx_hal.h"
 #include "queue32.h"
 
+#include "usbd_midi.h"
+#include "usb/usbd_desc.h"
+
+extern "C" {
+extern uint8_t USBD_MIDI_SendData (USBD_HandleTypeDef *pdev, uint8_t *pBuf, uint16_t length);
+extern void USBD_MIDI_SendPacket(void);
+}
+
 // basic midi rx/tx functions
 static uint16_t MIDI_DataRx(uint8_t *msg, uint16_t length);
 static uint16_t MIDI_DataTx(uint8_t *message, uint16_t length);

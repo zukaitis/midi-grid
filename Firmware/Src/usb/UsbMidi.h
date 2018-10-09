@@ -1,13 +1,7 @@
 #ifndef USB_USB_MIDI_H_
 #define USB_USB_MIDI_H_
 
-#include "usbd_midi.h"
-#include "usb/usbd_desc.h"
-
-extern "C" {
-extern uint8_t USBD_MIDI_SendData (USBD_HandleTypeDef *pdev, uint8_t *pBuf, uint16_t length);
-extern void USBD_MIDI_SendPacket(void);
-}
+#include <stdint.h>
 
 namespace midi
 {

@@ -1,6 +1,6 @@
 #include "grid/Switches.h"
 #include "grid/GridDriver.h"
-#include "hal/Time.h"
+#include "system/Time.h"
 
 namespace grid
 {
@@ -11,7 +11,7 @@ static const int8_t kNumberOfRotaryEncoderMicrostepsInStep = 4;
 
 static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
-Switches::Switches( GridDriver& gridDriver, hal::Time& time ) :
+Switches::Switches( GridDriver& gridDriver, mcu::Time& time ) :
         gridDriver_( gridDriver ),
         time_( time )
 {

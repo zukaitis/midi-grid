@@ -1,14 +1,14 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-namespace hal
+namespace mcu
 {
 
-class Hal
+class System
 {
 public:
-    Hal();
-    virtual ~Hal();
+    System();
+    virtual ~System();
 
     void initialize();
     bool isUsbConnected();

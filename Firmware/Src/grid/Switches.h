@@ -3,7 +3,7 @@
 
 #include "Types.h"
 
-namespace hal {
+namespace mcu {
 class Time;
 }
 
@@ -16,7 +16,7 @@ class GridDriver;
 class Switches
 {
 public:
-    Switches( GridDriver& gridControl, hal::Time& time );
+    Switches( GridDriver& gridControl, mcu::Time& time );
     ~Switches();
 
     void discardAllPendingEvents();
@@ -34,7 +34,7 @@ public:
 
 private:
     GridDriver& gridDriver_;
-    hal::Time& time_;
+    mcu::Time& time_;
 
     static const uint8_t numberOfButtons_ = 2;
 

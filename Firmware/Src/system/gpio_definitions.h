@@ -10,7 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 
-namespace hal {
+namespace mcu {
 
 static GPIO_TypeDef* const GRID_BUTTON_IN_GPIO_PORT = GPIOC;
 static const uint16_t BUTTON_IN1_Pin = GPIO_PIN_13;

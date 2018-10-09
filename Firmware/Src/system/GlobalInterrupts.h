@@ -1,7 +1,7 @@
 #ifndef SYSTEM_GLOBALINTERRUPTS_H_
 #define SYSTEM_GLOBALINTERRUPTS_H_
 
-namespace hal {
+namespace mcu {
 
 class GlobalInterrupts
 {

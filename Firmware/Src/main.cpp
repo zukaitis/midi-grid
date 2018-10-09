@@ -1,5 +1,9 @@
 #include "main.h"
 
+#include <math.h>
+
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void);
 #endif
@@ -12,9 +16,9 @@ int main(void)
 }
 
 ApplicationMain::ApplicationMain() :
-        hal_( hal::Hal() ),
-        globalInterrupts_( hal::GlobalInterrupts() ),
-        time_( hal::Time() ),
+        system_( mcu::System() ),
+        globalInterrupts_( mcu::GlobalInterrupts() ),
+        time_( mcu::Time() ),
         gridDriver_( grid::GridDriver() ),
         grid_( grid::Grid( gridDriver_, globalInterrupts_, time_ ) ),
         switches_( grid::Switches( gridDriver_, time_ ) ),
@@ -30,7 +34,7 @@ ApplicationMain::~ApplicationMain()
 void ApplicationMain::initialize()
 {
 
-    hal_.initialize();
+    system_.initialize();
 
     #ifdef USE_SEMIHOSTING
     initialise_monitor_handles(); // enable semihosting
@@ -51,7 +55,7 @@ void ApplicationMain::run()
 {
     gui_.displayConnectingImage();
 
-    while (!hal_.isUsbConnected())
+    while (!system_.isUsbConnected())
     {
         gui_.refresh();
     }
@@ -69,7 +73,9 @@ void ApplicationMain::run()
     }
 #endif
 
-
+    while(!displayBootAnimation())
+    {
+    }
 
     while (!usbMidi_.isPacketAvailable())
     {
@@ -126,6 +132,59 @@ void ApplicationMain::randomLightAnimation()
     }
 }
 
+bool ApplicationMain::displayBootAnimation()
+{
+    bool animationEnded = false;
+
+    static uint32_t stepChangeTime = 0;
+    static uint8_t currentStepNumber = 0;
+    const uint8_t totalNumberOfSteps = 8;
+
+    if (time_.getSystemTick() >= stepChangeTime)
+    {
+        grid_.turnAllLedsOff();
+
+        if (currentStepNumber < totalNumberOfSteps)
+        {
+            for (uint8_t x = 0; x <= currentStepNumber; x++)
+            {
+                const uint8_t y = currentStepNumber;
+                grid_.setLed( x, y, getBootAnimationColour(x, y));
+                grid_.setLed( 7-x, 7-y, getBootAnimationColour(7-x, 7-y));
+            }
+
+            for (uint8_t y = 0; y < currentStepNumber; y++)
+            {
+                const uint8_t x = currentStepNumber;
+                grid_.setLed( x, y, getBootAnimationColour(x, y));
+                grid_.setLed( 7-x, 7-y, getBootAnimationColour(7-x, 7-y));
+            }
+
+            currentStepNumber++;
+        }
+        else
+        {
+            animationEnded = true;
+        }
+
+        stepChangeTime = time_.getSystemTick() + 70; // step each 70ms
+    }
+
+    return animationEnded;
+}
+
+/* calculates colour value according to led position */
+Colour ApplicationMain::getBootAnimationColour( const uint8_t ledPositionX, const uint8_t ledPositionY )
+{
+    Colour colour = {0, 0, 0};
+
+    colour.Red = ((7 - MAX( ledPositionY, 7 - ledPositionX )) * 64) / 7;
+    colour.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
+    colour.Blue = ((7 - MAX( ledPositionX, 7 - ledPositionY )) * 64) / 7;
+
+    return colour;
+}
+
 void ApplicationMain::runGridInputTest()
 {
     uint8_t buttonX, buttonY;
@@ -167,7 +226,7 @@ void ApplicationMain::runInternalMenu()
             if ((7 == buttonX) && (0 == buttonY))
             {
                 // reset into DFU bootloader
-                hal_.resetIntoBootloader();
+                system_.resetIntoBootloader();
             }
         }
 

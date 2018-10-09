@@ -26,7 +26,7 @@ uint32_t b4arrq_next(uint32_t value){
 
 uint32_t b4arrq_push(stB4Arrq *qp, uint32_t *p)
 {
-    __disable_irq(); // todo: try removing this
+    __disable_irq();
     uint32_t *q = qp->queue;
     uint32_t last = qp->last;
     if(b4arrq_next(last) == qp->top)
