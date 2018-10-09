@@ -20,13 +20,13 @@ enum LedLightingType
     LedLightingType_PULSE
 };
 
-static const uint8_t kLedFlashingNumberOfColours = 2;
+static const uint8_t kLedFlashingNumberOfColors = 2;
 
 struct FlashingLed
 {
     uint8_t positionX;
     uint8_t positionY;
-    Colour colour[kLedFlashingNumberOfColours];
+    Color color[kLedFlashingNumberOfColors];
 };
 
 struct PulsingLed
@@ -37,7 +37,7 @@ struct PulsingLed
 
 struct Led
 {
-    Colour colour;
+    Color color;
     LedLightingType lightingType; // light?flash?pulse
 };
 
@@ -47,16 +47,16 @@ public:
     Grid( GridDriver& gridControl, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time );
     ~Grid();
 
-    bool areColoursEqual( const Colour& colour1, const Colour& colour2 ) const;
+    bool areColorsEqual( const Color& color1, const Color& color2 ) const;
 
     void discardAllPendingButtonEvents();
     bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent );
-    Colour getLedColour( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
-    Colour getRandomColour();
+    Color getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
+    Color getRandomColor();
     void refreshLeds() const;
 
-    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour );
-    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType );
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color );
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType );
 
     void turnAllLedsOff();
 
@@ -65,7 +65,7 @@ public:
     static const uint8_t numberOfLeds = numberOfRows * numberOfColumns;
 
 private:
-    void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const;
+    void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const;
     void updateButtonColumnInput();
 
     GridDriver& gridDriver_;

@@ -33,12 +33,12 @@ Grid::~Grid()
 {
 }
 
-bool Grid::areColoursEqual( const Colour& colour1, const Colour& colour2 ) const
+bool Grid::areColorsEqual( const Color& color1, const Color& color2 ) const
 {
     bool equal = true;
-    equal &= (colour1.Red == colour2.Red);
-    equal &= (colour1.Green == colour2.Green);
-    equal &= (colour1.Blue == colour2.Blue);
+    equal &= (color1.Red == color2.Red);
+    equal &= (color1.Green == color2.Green);
+    equal &= (color1.Blue == color2.Blue);
     return equal;
 }
 
@@ -97,14 +97,14 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
     return eventAvailable;
 }
 
-Colour Grid::getLedColour( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
+Color Grid::getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
 {
-    return led_[ledPositionX][ledPositionY].colour;
+    return led_[ledPositionX][ledPositionY].color;
 }
 
-Colour Grid::getRandomColour()
+Color Grid::getRandomColor()
 {
-    enum FullyLitColour
+    enum FullyLitColor
     {
         kRed = 0,
         kGreen,
@@ -115,57 +115,57 @@ Colour Grid::getRandomColour()
         kNumberOfVariants
     };
 
-    const FullyLitColour fullyLitColour = static_cast<FullyLitColour>(rand() % kNumberOfVariants);
-    int8_t partlyLitColour1 = (rand() % (gridDriver_.ledColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour1 < gridDriver_.ledColourIntensityOff)
+    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(rand() % kNumberOfVariants);
+    int8_t partlyLitColor1 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColor1 < gridDriver_.ledColorIntensityOff)
     {
-        partlyLitColour1 = gridDriver_.ledColourIntensityOff;
+        partlyLitColor1 = gridDriver_.ledColorIntensityOff;
     }
-    int8_t partlyLitColour2 = (rand() % (gridDriver_.ledColourIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColour2 < gridDriver_.ledColourIntensityOff)
+    int8_t partlyLitColor2 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColor2 < gridDriver_.ledColorIntensityOff)
     {
-        partlyLitColour2 = gridDriver_.ledColourIntensityOff;
+        partlyLitColor2 = gridDriver_.ledColorIntensityOff;
     }
 
-    Colour colour = { 0, 0, 0 };
+    Color color = { 0, 0, 0 };
 
-    switch (fullyLitColour)
+    switch (fullyLitColor)
     {
         case kRed:
-            colour.Red = gridDriver_.ledColourIntensityMaximum;
-            colour.Green = static_cast<uint8_t>(partlyLitColour1);
-            colour.Blue = static_cast<uint8_t>(partlyLitColour2);
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = static_cast<uint8_t>(partlyLitColor1);
+            color.Blue = static_cast<uint8_t>(partlyLitColor2);
             break;
         case kGreen:
-            colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = gridDriver_.ledColourIntensityMaximum;
-            colour.Blue = static_cast<uint8_t>(partlyLitColour2);
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = static_cast<uint8_t>(partlyLitColor2);
             break;
         case kBlue:
-            colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = static_cast<uint8_t>(partlyLitColour2);
-            colour.Blue = gridDriver_.ledColourIntensityMaximum;
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = static_cast<uint8_t>(partlyLitColor2);
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
             break;
         case kRedAndGreen:
-            colour.Red = gridDriver_.ledColourIntensityMaximum;
-            colour.Green = gridDriver_.ledColourIntensityMaximum;
-            colour.Blue = static_cast<uint8_t>(partlyLitColour1);
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = static_cast<uint8_t>(partlyLitColor1);
             break;
         case kRedAndBlue:
-            colour.Red = gridDriver_.ledColourIntensityMaximum;
-            colour.Green = static_cast<uint8_t>(partlyLitColour1);
-            colour.Blue = gridDriver_.ledColourIntensityMaximum;
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = static_cast<uint8_t>(partlyLitColor1);
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
             break;
         case kGreenAndBlue:
-            colour.Red = static_cast<uint8_t>(partlyLitColour1);
-            colour.Green = gridDriver_.ledColourIntensityMaximum;
-            colour.Blue = gridDriver_.ledColourIntensityMaximum;
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
             break;
         default:
             break;
     }
 
-    return colour;
+    return color;
 }
 
 void Grid::refreshLeds() const
@@ -175,16 +175,16 @@ void Grid::refreshLeds() const
 
     if (time_.getSystemTick() >= ledFlashCheckTime)
     {
-        static uint8_t flashColourIndex = 0;
+        static uint8_t flashColorIndex = 0;
 
         for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
         {
             setLedOutput(
                     flashingLed_[i].positionX,
                     flashingLed_[i].positionY,
-                    flashingLed_[i].colour[flashColourIndex] );
+                    flashingLed_[i].color[flashColorIndex] );
         }
-        flashColourIndex = (flashColourIndex + 1) % kLedFlashingNumberOfColours;
+        flashColorIndex = (flashColorIndex + 1) % kLedFlashingNumberOfColors;
         ledFlashCheckTime = time_.getSystemTick() + kLedFlashingPeriod; //250ms
     }
 
@@ -196,33 +196,33 @@ void Grid::refreshLeds() const
 
         for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
         {
-            Colour dimmedColour = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].colour;
+            Color dimmedColor = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].color;
             if (ledPulseStepNumber <= 3)
             {
                 // y = x / 4
-                dimmedColour.Red = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColour.Green = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColour.Blue = (dimmedColour.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
             }
             else
             {
                 // y = -x / 16
-                dimmedColour.Red = (dimmedColour.Red * (19 - ledPulseStepNumber)) / 16;
-                dimmedColour.Green = (dimmedColour.Green * (19 - ledPulseStepNumber)) / 16;
-                dimmedColour.Blue = (dimmedColour.Blue * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
             }
-            setLedOutput( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColour );
+            setLedOutput( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColor );
         }
         ledPulseCheckTime = time_.getSystemTick() + kLedPulseStepInterval;
     }
 }
 
-void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour )
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
 {
-    setLed( ledPositionX, ledPositionY, colour, LedLightingType_LIGHT );
+    setLed( ledPositionX, ledPositionY, color, LedLightingType_LIGHT );
 }
 
-void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Colour colour, const LedLightingType lightingType )
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType )
 {
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
     if (LedLightingType_FLASH == led_[ledPositionX][ledPositionY].lightingType)
@@ -255,19 +255,19 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     switch (lightingType)
     {
         case LedLightingType_LIGHT:
-            led_[ledPositionX][ledPositionY].colour = colour;
+            led_[ledPositionX][ledPositionY].color = color;
             led_[ledPositionX][ledPositionY].lightingType = LedLightingType_LIGHT;
-            setLedOutput( ledPositionX, ledPositionY, colour );
+            setLedOutput( ledPositionX, ledPositionY, color );
             break;
         case LedLightingType_FLASH:
             flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;
             flashingLed_[numberOfFlashingLeds_].positionY = ledPositionY;
             //save current color to have an alternate
-            flashingLed_[numberOfFlashingLeds_].colour[1] = led_[ledPositionX][ledPositionY].colour;
-            flashingLed_[numberOfFlashingLeds_].colour[0] = colour;
+            flashingLed_[numberOfFlashingLeds_].color[1] = led_[ledPositionX][ledPositionY].color;
+            flashingLed_[numberOfFlashingLeds_].color[0] = color;
             ++numberOfFlashingLeds_;
             led_[ledPositionX][ledPositionY].lightingType = LedLightingType_FLASH;
-            led_[ledPositionX][ledPositionY].colour = colour;
+            led_[ledPositionX][ledPositionY].color = color;
             // don't change output value, it will be set on next flash period
             break;
         case LedLightingType_PULSE:
@@ -276,7 +276,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
             pulsingLed_[numberOfPulsingLeds_].positionY = ledPositionY;
             ++numberOfPulsingLeds_;
             led_[ledPositionX][ledPositionY].lightingType = LedLightingType_PULSE;
-            led_[ledPositionX][ledPositionY].colour = colour;
+            led_[ledPositionX][ledPositionY].color = color;
             // don't change output value, it will be set on next pulse period
             break;
         default:
@@ -284,7 +284,7 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     }
 }
 
-void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colour colour ) const
+void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= kNumberOfPadColumns);
@@ -295,7 +295,7 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Colou
         ledPositionY = ledPositionY % gridDriver_.numberOfHorizontalSegments;
     }
 
-    gridDriver_.setLedColour( ledPositionX, ledPositionY, directLed, colour );
+    gridDriver_.setLedColor( ledPositionX, ledPositionY, directLed, color );
 
 }
 
@@ -303,7 +303,7 @@ void Grid::turnAllLedsOff()
 {
     gridDriver_.turnAllLedsOff();
 
-    // todo: also remove flashing, pulsing leds and reset colours to zeros
+    // todo: also remove flashing, pulsing leds and reset colors to zeros
 }
 
 void Grid::updateButtonColumnInput()

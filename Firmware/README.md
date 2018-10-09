@@ -17,7 +17,7 @@ LCD is interfaced through SPI, using DMA. LCD backlight is connected on MOSI out
 is constantly transmitted by backlight SPI controller - this imitates an independent PWM output and does not use processor resources.
 
 ### Program
-Currently there is only one operating mode, which is used to work with Ableton and Launchpad95g script. In this mode, LED colours are set according to MIDI messages received from
+Currently there is only one operating mode, which is used to work with Ableton and Launchpad95g script. In this mode, LED colors are set according to MIDI messages received from
 DAW, and corresponding MIDI messages are sent to PC, when any of the buttons is pressed or released.
 
 ### USB

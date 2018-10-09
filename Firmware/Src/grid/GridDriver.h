@@ -40,7 +40,7 @@ public:
     void resetGridInputUpdatedFlag();
     void resetSwitchInputUpdatedFlag();
 
-    void setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour );
+    void setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color color );
     void start();
     void turnAllLedsOff();
 
@@ -48,8 +48,8 @@ public:
     static const uint8_t numberOfVerticalSegments = 20;
     static const uint8_t nNumberOfButtonDebouncingCycles = 2;
 
-    static const uint8_t ledColourIntensityMaximum = 64;
-    static const uint8_t ledColourIntensityOff = 0;
+    static const uint8_t ledColorIntensityMaximum = 64;
+    static const uint8_t ledColorIntensityOff = 0;
 private:
 
     void initializeBaseTimer();

@@ -28,13 +28,13 @@ public:
     void initialize();
     void run();
 
-    Colour getRandomColour();
+    Color getRandomColor();
     void randomLightAnimation();
     void runGridInputTest();
     void runInternalMenu();
 
     bool displayBootAnimation();
-    Colour getBootAnimationColour( const uint8_t ledPositionX, const uint8_t ledPositionY );
+    Color getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
 
 private:
     ApplicationMain();

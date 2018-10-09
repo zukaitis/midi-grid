@@ -35,9 +35,9 @@ static const uint8_t kDrumLayout[10][8] = {
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const uint8_t kLaunchpadColourPaletteSize = 128;
+static const uint8_t kLaunchpadColorPaletteSize = 128;
 
-static const Colour kLaunchpadColourPalette[kLaunchpadColourPaletteSize] = {
+static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {0, 0, 0}, {8, 8, 8}, {32, 32, 32}, {64, 64, 64}, {64, 20, 18}, {64, 3, 0}, {23, 1, 0}, {7, 0, 0},
         {64, 48, 25}, {64, 22, 0}, {23, 8, 0}, {10, 7, 0}, {64, 64, 9}, {64, 64, 0}, {23, 23, 0}, {6, 6, 0},
         {33, 64, 11}, {17, 64, 0}, {6, 23, 0}, {5, 11, 0}, {14, 64, 11}, {0, 64, 0}, {0, 23, 0}, {0, 7, 0},
@@ -180,53 +180,53 @@ void Launchpad::runProgram()
 Launchpad95Mode Launchpad::getLaunchpad95Mode()
 {
     Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
-    Colour colour;
+    Color color;
 
     do
     {
-        colour = grid.getLedColour( 9, 3 ); // session led
-        if (grid.areColoursEqual( colour, kLaunchpadColourPalette[21] ))
+        color = grid.getLedColor( 9, 3 ); // session led
+        if (grid.areColorsEqual( color, kLaunchpadColorPalette[21] ))
         {
             mode = Launchpad95Mode_SESSION;
             break;
         }
 
-        colour = grid.getLedColour( 9, 2 ); // user1 led
-        if (grid.areColoursEqual( colour, kLaunchpadColourPalette[37] ))
+        color = grid.getLedColor( 9, 2 ); // user1 led
+        if (grid.areColorsEqual( color, kLaunchpadColorPalette[37] ))
         {
             mode = Launchpad95Mode_INSTRUMENT;
             break;
         }
-        else if (grid.areColoursEqual( colour, kLaunchpadColourPalette[48] ))
+        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[48] ))
         {
             mode = Launchpad95Mode_DEVICE_CONTROLLER;
             break;
         }
-        else if (grid.areColoursEqual( colour, kLaunchpadColourPalette[45] ))
+        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[45] ))
         {
             mode = Launchpad95Mode_USER1;
             break;
         }
 
-        colour = grid.getLedColour( 9, 0 );
-        if (grid.areColoursEqual( colour, kLaunchpadColourPalette[53] ))
+        color = grid.getLedColor( 9, 0 );
+        if (grid.areColorsEqual( color, kLaunchpadColorPalette[53] ))
         {
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
             break;
         }
-        else if (grid.areColoursEqual( colour, kLaunchpadColourPalette[9] ))
+        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[9] ))
         {
             mode = Launchpad95Mode_MELODIC_SEQUENCER;
             break;
         }
-        else if (grid.areColoursEqual( colour, kLaunchpadColourPalette[45] ))
+        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[45] ))
         {
             mode = Launchpad95Mode_USER2;
             break;
         }
 
-        colour = grid.getLedColour( 9, 1 ); // mixer led
-        if (grid.areColoursEqual( colour, kLaunchpadColourPalette[29] ))
+        color = grid.getLedColor( 9, 1 ); // mixer led
+        if (grid.areColorsEqual( color, kLaunchpadColorPalette[29] ))
         {
             mode = Launchpad95Mode_MIXER;
             break;
@@ -239,20 +239,20 @@ Launchpad95Mode Launchpad::getLaunchpad95Mode()
 Launchpad95Submode Launchpad::getLaunchpad95Submode()
 {
     Launchpad95Submode submode = Launchpad95Submode_DEFAULT;
-    Colour colour;
+    Color color;
 
     switch (currentLaunchpad95Mode_)
     {
         case Launchpad95Mode_INSTRUMENT:
-            colour = grid.getLedColour( 8, 7 );
-            if (grid.areColoursEqual( colour, kLaunchpadColourPalette[9] ))
+            color = grid.getLedColor( 8, 7 );
+            if (grid.areColorsEqual( color, kLaunchpadColorPalette[9] ))
             {
                 submode = Launchpad95Submode_SCALE;
             }
             break;
         case Launchpad95Mode_DRUM_STEP_SEQUENCER:
-            colour = grid.getLedColour( 8, 7 );
-            if (grid.areColoursEqual( colour, kLaunchpadColourPalette[5] ))
+            color = grid.getLedColor( 8, 7 );
+            if (grid.areColorsEqual( color, kLaunchpadColorPalette[5] ))
             {
                 submode = Launchpad95Submode_SCALE;
             }
@@ -260,26 +260,26 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
         case Launchpad95Mode_MIXER:
             do
             {
-                colour = grid.getLedColour( 8, 7 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[31] ))
+                color = grid.getLedColor( 8, 7 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_VOLUME;
                     break;
                 }
-                colour = grid.getLedColour( 8, 6 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[31] ))
+                color = grid.getLedColor( 8, 6 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_PAN;
                     break;
                 }
-                colour = grid.getLedColour( 8, 5 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[31] ))
+                color = grid.getLedColor( 8, 5 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_SEND_A;
                     break;
                 }
-                colour = grid.getLedColour( 8, 4 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[31] ))
+                color = grid.getLedColor( 8, 4 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_SEND_B;
                 }
@@ -288,20 +288,20 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
         case Launchpad95Mode_MELODIC_SEQUENCER:
             do
             {
-                colour = grid.getLedColour( 8, 3 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[29] ))
+                color = grid.getLedColor( 8, 3 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[29] ))
                 {
                     submode = Launchpad95Submode_LENGTH;
                     break;
                 }
-                colour = grid.getLedColour( 8, 2 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[48] ))
+                color = grid.getLedColor( 8, 2 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[48] ))
                 {
                     submode = Launchpad95Submode_OCTAVE;
                     break;
                 }
-                colour = grid.getLedColour( 8, 1 );
-                if (grid.areColoursEqual( colour, kLaunchpadColourPalette[37] ))
+                color = grid.getLedColor( 8, 1 );
+                if (grid.areColorsEqual( color, kLaunchpadColorPalette[37] ))
                 {
                     submode = Launchpad95Submode_VELOCITY;
                 }
@@ -350,7 +350,7 @@ void Launchpad::processChangeControlMidiMessage( uint8_t channel, uint8_t contro
     {
         const uint8_t ledPositionX = 9;
         const uint8_t ledPositionY = kTopRowControllerNumber[control - 104];
-        grid.setLed( ledPositionX, ledPositionY, kLaunchpadColourPalette[value], static_cast<grid::LedLightingType>(channel) );
+        grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[value], static_cast<grid::LedLightingType>(channel) );
         if (ledPositionY <= 3)
         {
             currentLaunchpad95Mode_ = getLaunchpad95Mode();
@@ -397,9 +397,9 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
                 channel = 0;
             }
 
-            if (velocity < kLaunchpadColourPaletteSize)
+            if (velocity < kLaunchpadColorPaletteSize)
             {
-                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], static_cast<grid::LedLightingType>(channel) );
             }
         }
     }
@@ -416,9 +416,9 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
                 channel = 0;
             }
 
-            if (velocity < kLaunchpadColourPaletteSize)
+            if (velocity < kLaunchpadColorPaletteSize)
             {
-                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColourPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], static_cast<grid::LedLightingType>(channel) );
             }
 
             if (8 == ledPositionX)

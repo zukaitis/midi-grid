@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct Colour
+struct Color
 {
     uint8_t Red;
     uint8_t Green;

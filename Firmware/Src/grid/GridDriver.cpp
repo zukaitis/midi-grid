@@ -18,14 +18,14 @@ static const uint16_t kNonGridButtonMask[2] = {0x2000, 0x0400};
 static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
 static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
 
-static const uint8_t kNumberOfLedColourIntensityLevels = 65;
+static const uint8_t kNumberOfLedColorIntensityLevels = 65;
 
 static TIM_TypeDef* const pwmTimerRedInstance = TIM2;
 static TIM_TypeDef* const pwmTimerGreenInstance = TIM4;
 static TIM_TypeDef* const pwmTimerBlueInstance = TIM3;
 static TIM_TypeDef* const baseTimerInstance = TIM1;
 
-static const uint16_t kBrightnessThroughPad[kNumberOfLedColourIntensityLevels] = {
+static const uint16_t kBrightnessThroughPad[kNumberOfLedColorIntensityLevels] = {
         0, 338, 635, 943, 1273, 1627, 2001, 2393,
         2805, 3237, 3683, 4149, 4627, 5121, 5641, 6157,
         6713, 7259, 7823, 8400, 9007, 9603, 10229, 10856,
@@ -43,7 +43,7 @@ static const uint16_t kBrightnessThroughPad[kNumberOfLedColourIntensityLevels] =
 //        21338, 22540, 23785, 25072, 26404, 27779, 29200, 30666,
 //        32178, 33737, 35342, 36996, 38698, 40449, 42249, 44099, 46000 };
 
-static const uint16_t kBrightnessDirect[kNumberOfLedColourIntensityLevels] = {
+static const uint16_t kBrightnessDirect[kNumberOfLedColorIntensityLevels] = {
         0, 223, 308, 397, 494, 598, 709, 825,
         947, 1075, 1208, 1348, 1491, 1639, 1793, 1950,
         2113, 2279, 2448, 2621, 2802, 2981, 3164, 3354,
@@ -167,21 +167,21 @@ void GridDriver::resetSwitchInputUpdatedFlag()
     switchInputUpdated_ = false;
 }
 
-void GridDriver::setLedColour( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Colour colour )
+void GridDriver::setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color color )
 {
     ledPositionX = (ledPositionX + numberOfVerticalSegments - kTimerFrameOffset) % numberOfVerticalSegments;
 
     if (directLed)
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Blue];
     }
     else
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[colour.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Red];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Green];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Blue];
     }
 }
 

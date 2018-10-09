@@ -67,8 +67,8 @@ void ApplicationMain::run()
     {
         for (uint8_t y=0; y<8; y++)
         {
-            Colour colour = {static_cast<uint8_t>(x*8+y+1), 0, 0};
-            grid_.setLed( x, y, colour );
+            Color color = {static_cast<uint8_t>(x*8+y+1), 0, 0};
+            grid_.setLed( x, y, color );
         }
     }
 #endif
@@ -121,7 +121,7 @@ void ApplicationMain::randomLightAnimation()
         const uint8_t ledPositionX = rand() % 8;
         const uint8_t ledPositionY = rand() % 8;
 
-        grid_.setLed(ledPositionX, ledPositionY, getRandomColour());
+        grid_.setLed(ledPositionX, ledPositionY, getRandomColor());
         newLightTime = time_.getSystemTick() + 500 + rand() % 1000;
         ledsChanged++;
         if (ledsChanged > 63)
@@ -149,15 +149,15 @@ bool ApplicationMain::displayBootAnimation()
             for (uint8_t x = 0; x <= currentStepNumber; x++)
             {
                 const uint8_t y = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColour(x, y));
-                grid_.setLed( 7-x, 7-y, getBootAnimationColour(7-x, 7-y));
+                grid_.setLed( x, y, getBootAnimationColor(x, y));
+                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y));
             }
 
             for (uint8_t y = 0; y < currentStepNumber; y++)
             {
                 const uint8_t x = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColour(x, y));
-                grid_.setLed( 7-x, 7-y, getBootAnimationColour(7-x, 7-y));
+                grid_.setLed( x, y, getBootAnimationColor(x, y));
+                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y));
             }
 
             currentStepNumber++;
@@ -173,16 +173,16 @@ bool ApplicationMain::displayBootAnimation()
     return animationEnded;
 }
 
-/* calculates colour value according to led position */
-Colour ApplicationMain::getBootAnimationColour( const uint8_t ledPositionX, const uint8_t ledPositionY )
+/* calculates color value according to led position */
+Color ApplicationMain::getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY )
 {
-    Colour colour = {0, 0, 0};
+    Color color = {0, 0, 0};
 
-    colour.Red = ((7 - MAX( ledPositionY, 7 - ledPositionX )) * 64) / 7;
-    colour.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
-    colour.Blue = ((7 - MAX( ledPositionX, 7 - ledPositionY )) * 64) / 7;
+    color.Red = ((7 - MAX( ledPositionY, 7 - ledPositionX )) * 64) / 7;
+    color.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
+    color.Blue = ((7 - MAX( ledPositionX, 7 - ledPositionY )) * 64) / 7;
 
-    return colour;
+    return color;
 }
 
 void ApplicationMain::runGridInputTest()
@@ -192,12 +192,12 @@ void ApplicationMain::runGridInputTest()
 
     if (grid_.getButtonEvent( buttonX, buttonY, event ))
     {
-        Colour colour = { 0, 0, 0 };
+        Color color = { 0, 0, 0 };
         if (ButtonEvent_PRESSED == event)
         {
-            colour = grid_.getRandomColour();
+            color = grid_.getRandomColor();
         }
-        grid_.setLed( buttonX, buttonY, colour );
+        grid_.setLed( buttonX, buttonY, color );
     }
 }
 
@@ -214,7 +214,7 @@ void ApplicationMain::runInternalMenu()
     gui_.enterInternalMenu();
 
     grid_.turnAllLedsOff();
-    const Colour red = {64U, 0U, 0U};
+    const Color red = {64U, 0U, 0U};
     grid_.setLed(7, 0, red);
 
     while (1)
