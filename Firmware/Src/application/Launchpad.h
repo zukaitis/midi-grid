@@ -30,7 +30,8 @@ enum Layout
     Layout_USER2,
     Layout_RESERVED,
     Layout_VOLUME,
-    Layout_PAN
+    Layout_PAN,
+    kMaximumLayoutIndex = Layout_PAN
 };
 
 enum Launchpad95Mode
@@ -67,21 +68,26 @@ public:
     void runProgram();
 
 private:
-    Launchpad95Mode getLaunchpad95Mode();
-    Launchpad95Submode getLaunchpad95Submode();
+    Launchpad95Mode determineLaunchpad95Mode();
+    Launchpad95Submode determineLaunchpad95Submode();
+
+    bool handleAdditionalControlInput();
+    bool handleGridInput();
+    bool handleMidiInput();
 
     void processDawInfoMessage( const char* const message, uint8_t length );
-    void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
+    void processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
     void processSystemExclusiveMessage( uint8_t* const message, uint8_t length );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
-    void setCurrentLayout( uint8_t layout );
+    void sendMixerModeControlMessage();
+    void setCurrentLayout( const uint8_t layout );
 
-    grid::Grid& grid;
-    grid::Switches& switches;
-    lcd::Gui& gui;
-    midi::UsbMidi& usbMidi;
+    grid::Grid& grid_;
+    grid::Switches& switches_;
+    lcd::Gui& gui_;
+    midi::UsbMidi& usbMidi_;
 
     Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
     Layout currentLayout_;

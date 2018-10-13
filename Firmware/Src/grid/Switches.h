@@ -28,7 +28,7 @@ public:
 
     enum Buttons
     {
-        undefinedButton = 0U,
+        additionalNoteButton = 0U,
         internalMenuButton = 1U,
     };
 

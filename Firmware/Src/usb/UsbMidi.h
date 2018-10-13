@@ -18,6 +18,32 @@ union MidiInput
     MidiPacket packet;
 };
 
+enum CodeIndexNumber
+{
+    kMiscellaneousFunctionCodes = 0x00,
+    kCableEvents = 0x01,
+    kSystemCommon2Bytes = 0x02,
+    kSystemCommon3Bytes = 0x03,
+    kSystemExclusive = 0x04,
+    kSystemExclusiveEnd1Byte = 0x05,
+    kSystemExclusiveEnd2Bytes = 0x06,
+    kSystemExclusiveEnd3Bytes = 0x07,
+    kNoteOff = 0x08,
+    kNoteOn = 0x09,
+    kPolyKeyPress = 0x0A,
+    kControlChange = 0x0B,
+    kProgramChange = 0x0C,
+    kChannelPressure = 0x0D,
+    kPitchBendChange = 0x0E,
+    kSingleByte = 0x0F
+};
+
+static const uint8_t kCodeIndexNumberMask = 0x0F;
+static const uint8_t kChannelMask = 0x0F;
+
+static const uint8_t kMinimumControlValue = 0;
+static const uint8_t kMaximumControlValue = 127;
+
 class UsbMidi
 {
 public:

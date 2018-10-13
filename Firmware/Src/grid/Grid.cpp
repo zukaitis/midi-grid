@@ -61,6 +61,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
 
     if (gridDriver_.isGridInputUpdated())
     {
+        // interrupts are disabled, so that active buffer wouldn't change during reading
         globalInterrupts_.disable();
         updateButtonColumnInput();
         gridDriver_.resetGridInputUpdatedFlag();

@@ -11,8 +11,8 @@
 namespace launchpad
 {
 
-static const int16_t kMidiControlMinimumValue = 0;
-static const int16_t kMidiControlMaximumValue = 127;
+static const uint8_t kControlValueLow = 0;
+static const uint8_t kControlValueHigh = 127;
 
 static const uint8_t kChallengeResponseLength = 10;
 static const uint8_t kChallengeResponse[kChallengeResponseLength] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
@@ -21,14 +21,44 @@ static const uint8_t kStandardSystemExclussiveMessageHeaderLength = 6;
 static const uint8_t kStandardSystemExclussiveMessageHeader[kStandardSystemExclussiveMessageHeaderLength] =
         { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
 
-static const uint8_t kSessionLayout[10][8] = {
+enum MidiChannel
+{
+    kSessionLayoutMidiChannel = 0,
+    kDeviceControlMidiChannel = 0,
+    kAdditionalControlMidiChannel = 5,
+    kUser1LayoutMidiChannel = 7, // can select channel from 6, 7 and 8
+    kUser2LayoutMidiChannel = 15 // can select channel from 14, 15 and 16
+};
+
+static const uint8_t kSubmodeColumn = 8;
+static const uint8_t kDeviceControlColumn = 9;
+enum DeviceControlButtons
+{
+    kUp = 104,
+    kMinimumDeviceControlValue = kUp,
+    kDown = 105,
+    kLeft = 106,
+    kRight = 107,
+    kSession = 108,
+    kUser1 = 109,
+    kUser2 = 110,
+    kMixer = 111,
+    kMaximumDeviceControlValue = kMixer
+};
+
+// buttons are numerated bottom to top, same as in grid
+static const uint8_t kDeviceControlColumnValue[grid::Grid::numberOfRows] = {kUser2, kMixer, kUser1, kSession, kUp, kLeft, kRight, kDown};
+
+static const uint8_t kAdditionalNoteButtonNote = 55;
+
+static const uint8_t kSessionLayout[grid::Grid::numberOfColumns][grid::Grid::numberOfRows] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
         {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
         {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
         {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
         {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const uint8_t kDrumLayout[10][8] = {
+static const uint8_t kDrumLayout[grid::Grid::numberOfColumns][grid::Grid::numberOfRows] = {
         {36, 40, 44, 48, 52, 56, 60, 64}, {37, 41, 45, 49, 53, 57, 61, 65},
         {38, 42, 46, 50, 54, 58, 62, 66}, {39, 43, 47, 51, 55, 59, 63, 67},
         {68, 72, 76, 80, 84, 88, 92, 96}, {69, 73, 77, 81, 85, 89, 93, 97},
@@ -55,178 +85,95 @@ static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {7, 7, 13}, {56, 64, 21}, {30, 64, 47}, {38, 38, 64}, {35, 25, 64}, {17, 17, 17}, {30, 30, 30}, {56, 64, 64},
         {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
 
-static const uint8_t kTopRowControllerNumber[8] = {4, 7, 5, 6, 3, 2, 0, 1};
-
-Launchpad::Launchpad( grid::Grid& grid_, grid::Switches& switches_, lcd::Gui& gui_, midi::UsbMidi& usbMidi_ ) :
-        grid( grid_ ),
-        switches( switches_ ),
-        gui( gui_ ),
-        usbMidi( usbMidi_ ),
+Launchpad::Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, midi::UsbMidi& usbMidi ) :
+        grid_( grid ),
+        switches_( switches ),
+        gui_( gui ),
+        usbMidi_( usbMidi ),
         currentLaunchpad95Mode_( Launchpad95Mode_UNKNOWN ),
         currentLayout_( Layout_SESSION ),
         systemExclusiveInputMessageLength_( 0 )
 {
-    rotaryControlValue_[0] = 64;
-    rotaryControlValue_[1] = 64;
+    rotaryControlValue_[0] = midi::kMaximumControlValue;
+    rotaryControlValue_[1] = midi::kMaximumControlValue;
 }
 
 void Launchpad::runProgram()
 {
-    uint8_t buttonX, buttonY;
-    int8_t rotaryStep;
-    ButtonEvent event;
-    midi::MidiPacket inputPacket;
 
-    grid.discardAllPendingButtonEvents();
-    grid.turnAllLedsOff();
-    switches.discardAllPendingEvents();
+    grid_.discardAllPendingButtonEvents();
+    grid_.turnAllLedsOff();
+    switches_.discardAllPendingEvents();
 
-    usbMidi.sendControlChange( 0, 111, 127 ); // always send control to put device into mixer mode, when entering launchpad mode
-    gui.registerMidiOutputActivity();
+    sendMixerModeControlMessage();
 
-    gui.enterLaunchpad95Mode();
+    gui_.enterLaunchpad95Mode();
 
-    while (1)
+    bool stopApplication = false;
+
+    while (!stopApplication)
     {
-        if (usbMidi.getPacket( inputPacket ))
-        {
-            const uint8_t codeIndexNumber = inputPacket.header & 0x0F;
-            switch (codeIndexNumber)
-            {
-                case 0x09: // note on
-                    processNoteOnMidiMessage( inputPacket.data[0] & 0x0F, inputPacket.data[1], inputPacket.data[2] );
-                    break;
-                case 0x08: // note off
-                    processNoteOnMidiMessage( inputPacket.data[0] & 0x0F, inputPacket.data[1], 0 );
-                    break;
-                case 0x0B: // change control
-                    processChangeControlMidiMessage( inputPacket.data[0] & 0x0F, inputPacket.data[1], inputPacket.data[2] );
-                    break;
-                case 0x04: // system exclusive
-                case 0x05:
-                case 0x06:
-                case 0x07:
-                    processSystemExclusiveMidiPacket( inputPacket );
-                    break;
-                default:
-                    break;
-            }
-            gui.registerMidiInputActivity();
-        }
+        stopApplication |= handleMidiInput();
+        stopApplication |= handleGridInput();
+        stopApplication |= handleAdditionalControlInput();
 
-        if (grid.getButtonEvent( buttonX, buttonY, event ))
-        {
-            const uint8_t velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
-            if (9 == buttonX) // control row
-            {
-                usbMidi.sendControlChange( 0, kSessionLayout[buttonX][buttonY], velocity );
-            }
-            else
-            {
-                switch (currentLayout_)
-                {
-                    case Layout_SESSION:
-                        usbMidi.sendNoteOn( 0, kSessionLayout[buttonX][buttonY], velocity );
-                        break;
-                    case Layout_USER1:
-                        usbMidi.sendNoteOn( 7, kDrumLayout[buttonX][buttonY], velocity ); // can select channel between 6, 7 and 8
-                        break;
-                    case Layout_USER2:
-                        usbMidi.sendNoteOn( 15, kSessionLayout[buttonX][buttonY], velocity ); // can select channel between 14, 15 and 16
-                        break;
-                    default:
-                        usbMidi.sendNoteOn( 0, kSessionLayout[buttonX][buttonY], velocity );
-                        break;
-                }
-            }
-            gui.registerMidiOutputActivity();
-        }
-
-        if (switches.getButtonEvent( buttonX,  event ))
-        {
-            if (0 == buttonX) // only send note on the event of black button
-            {
-                const uint8_t velocity = (ButtonEvent_PRESSED == event) ? 127 : 0;
-                usbMidi.sendNoteOn( 5, 55, velocity );
-                gui.registerMidiOutputActivity();
-            }
-            else if ((1 == buttonX) && event)
-            {
-                break; // break launchpad mode loop, enter internal menu
-            }
-        }
-
-        if (switches.getRotaryEncoderEvent( buttonX, rotaryStep ))
-        {
-            rotaryControlValue_[buttonX] += rotaryStep;
-            if (rotaryControlValue_[buttonX] > kMidiControlMaximumValue)
-            {
-                rotaryControlValue_[buttonX] = kMidiControlMaximumValue;
-            }
-            else if (rotaryControlValue_[buttonX] < kMidiControlMinimumValue)
-            {
-                rotaryControlValue_[buttonX] = kMidiControlMinimumValue;
-            }
-            usbMidi.sendControlChange( 5, buttonX, rotaryControlValue_[buttonX] ); // randomly selected channel and control values
-            gui.registerMidiOutputActivity();
-            gui.displayRotaryControlValues( rotaryControlValue_[0], rotaryControlValue_[1] );
-        }
-
-        grid.refreshLeds();
-        gui.refresh();
+        grid_.refreshLeds();
+        gui_.refresh();
     }
 }
 
-Launchpad95Mode Launchpad::getLaunchpad95Mode()
+
+
+Launchpad95Mode Launchpad::determineLaunchpad95Mode()
 {
     Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
     Color color;
 
     do
     {
-        color = grid.getLedColor( 9, 3 ); // session led
-        if (grid.areColorsEqual( color, kLaunchpadColorPalette[21] ))
+        color = grid_.getLedColor( kDeviceControlColumn, 3 ); // session led
+        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[21] ))
         {
             mode = Launchpad95Mode_SESSION;
             break;
         }
 
-        color = grid.getLedColor( 9, 2 ); // user1 led
-        if (grid.areColorsEqual( color, kLaunchpadColorPalette[37] ))
+        color = grid_.getLedColor( kDeviceControlColumn, 2 ); // user1 led
+        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[37] ))
         {
             mode = Launchpad95Mode_INSTRUMENT;
             break;
         }
-        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[48] ))
+        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[48] ))
         {
             mode = Launchpad95Mode_DEVICE_CONTROLLER;
             break;
         }
-        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[45] ))
+        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[45] ))
         {
             mode = Launchpad95Mode_USER1;
             break;
         }
 
-        color = grid.getLedColor( 9, 0 );
-        if (grid.areColorsEqual( color, kLaunchpadColorPalette[53] ))
+        color = grid_.getLedColor( kDeviceControlColumn, 0 );
+        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[53] ))
         {
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
             break;
         }
-        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[9] ))
+        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[9] ))
         {
             mode = Launchpad95Mode_MELODIC_SEQUENCER;
             break;
         }
-        else if (grid.areColorsEqual( color, kLaunchpadColorPalette[45] ))
+        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[45] ))
         {
             mode = Launchpad95Mode_USER2;
             break;
         }
 
-        color = grid.getLedColor( 9, 1 ); // mixer led
-        if (grid.areColorsEqual( color, kLaunchpadColorPalette[29] ))
+        color = grid_.getLedColor( kDeviceControlColumn, 1 ); // mixer led
+        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[29] ))
         {
             mode = Launchpad95Mode_MIXER;
             break;
@@ -236,7 +183,7 @@ Launchpad95Mode Launchpad::getLaunchpad95Mode()
     return mode;
 }
 
-Launchpad95Submode Launchpad::getLaunchpad95Submode()
+Launchpad95Submode Launchpad::determineLaunchpad95Submode()
 {
     Launchpad95Submode submode = Launchpad95Submode_DEFAULT;
     Color color;
@@ -244,15 +191,15 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
     switch (currentLaunchpad95Mode_)
     {
         case Launchpad95Mode_INSTRUMENT:
-            color = grid.getLedColor( 8, 7 );
-            if (grid.areColorsEqual( color, kLaunchpadColorPalette[9] ))
+            color = grid_.getLedColor( kSubmodeColumn, 7 );
+            if (grid_.areColorsEqual( color, kLaunchpadColorPalette[9] ))
             {
                 submode = Launchpad95Submode_SCALE;
             }
             break;
         case Launchpad95Mode_DRUM_STEP_SEQUENCER:
-            color = grid.getLedColor( 8, 7 );
-            if (grid.areColorsEqual( color, kLaunchpadColorPalette[5] ))
+            color = grid_.getLedColor( kSubmodeColumn, 7 );
+            if (grid_.areColorsEqual( color, kLaunchpadColorPalette[5] ))
             {
                 submode = Launchpad95Submode_SCALE;
             }
@@ -260,26 +207,26 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
         case Launchpad95Mode_MIXER:
             do
             {
-                color = grid.getLedColor( 8, 7 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                color = grid_.getLedColor( kSubmodeColumn, 7 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_VOLUME;
                     break;
                 }
-                color = grid.getLedColor( 8, 6 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                color = grid_.getLedColor( kSubmodeColumn, 6 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_PAN;
                     break;
                 }
-                color = grid.getLedColor( 8, 5 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                color = grid_.getLedColor( kSubmodeColumn, 5 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_SEND_A;
                     break;
                 }
-                color = grid.getLedColor( 8, 4 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                color = grid_.getLedColor( kSubmodeColumn, 4 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
                 {
                     submode = Launchpad95Submode_SEND_B;
                 }
@@ -288,20 +235,20 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
         case Launchpad95Mode_MELODIC_SEQUENCER:
             do
             {
-                color = grid.getLedColor( 8, 3 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[29] ))
+                color = grid_.getLedColor( kSubmodeColumn, 3 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[29] ))
                 {
                     submode = Launchpad95Submode_LENGTH;
                     break;
                 }
-                color = grid.getLedColor( 8, 2 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[48] ))
+                color = grid_.getLedColor( kSubmodeColumn, 2 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[48] ))
                 {
                     submode = Launchpad95Submode_OCTAVE;
                     break;
                 }
-                color = grid.getLedColor( 8, 1 );
-                if (grid.areColorsEqual( color, kLaunchpadColorPalette[37] ))
+                color = grid_.getLedColor( kSubmodeColumn, 1 );
+                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[37] ))
                 {
                     submode = Launchpad95Submode_VELOCITY;
                 }
@@ -314,28 +261,146 @@ Launchpad95Submode Launchpad::getLaunchpad95Submode()
     return submode;
 }
 
+bool Launchpad::handleAdditionalControlInput()
+{
+    bool stopApplication = false;
+
+    ButtonEvent event;
+
+    uint8_t encoderNumber;
+    int8_t rotaryStep;
+
+    if (switches_.getRotaryEncoderEvent( encoderNumber, rotaryStep ))
+    {
+        rotaryControlValue_[encoderNumber] += rotaryStep;
+        if (rotaryControlValue_[encoderNumber] > static_cast<int16_t>(midi::kMaximumControlValue))
+        {
+            rotaryControlValue_[encoderNumber] = static_cast<int16_t>(midi::kMaximumControlValue);
+        }
+        else if (rotaryControlValue_[encoderNumber] < static_cast<int16_t>(midi::kMinimumControlValue))
+        {
+            rotaryControlValue_[encoderNumber] = static_cast<int16_t>(midi::kMinimumControlValue);
+        }
+        usbMidi_.sendControlChange( kAdditionalControlMidiChannel, encoderNumber, rotaryControlValue_[encoderNumber] );
+        gui_.registerMidiOutputActivity();
+        gui_.displayRotaryControlValues( static_cast<uint8_t>(rotaryControlValue_[0]), static_cast<uint8_t>(rotaryControlValue_[1]) );
+    }
+
+    uint8_t button;
+
+    if (switches_.getButtonEvent( button,  event ))
+    {
+        if (switches_.additionalNoteButton == button) // only send note on the event of black button
+        {
+            const uint8_t controlValue = (ButtonEvent_PRESSED == event) ? kControlValueHigh : kControlValueLow;
+            usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
+            gui_.registerMidiOutputActivity();
+        }
+        else if (switches_.internalMenuButton == button)
+        {
+            if (ButtonEvent_PRESSED == event)
+            {
+                stopApplication = true; // break launchpad mode loop, enter internal menu
+            }
+        }
+    }
+
+    return stopApplication;
+}
+
+bool Launchpad::handleMidiInput()
+{
+    const bool stopApplication = false;
+
+    midi::MidiPacket inputPacket;
+
+    if (usbMidi_.getPacket( inputPacket ))
+    {
+        const uint8_t codeIndexNumber = inputPacket.header & midi::kCodeIndexNumberMask;
+        switch (codeIndexNumber)
+        {
+            case midi::kNoteOn:
+                processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
+                break;
+            case midi::kNoteOff:
+                processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], 0 );
+                break;
+            case midi::kControlChange:
+                processChangeControlMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
+                break;
+            case midi::kSystemExclusive:
+            case midi::kSystemExclusiveEnd1Byte:
+            case midi::kSystemExclusiveEnd2Bytes:
+            case midi::kSystemExclusiveEnd3Bytes:
+                processSystemExclusiveMidiPacket( inputPacket );
+                break;
+            default:
+                break;
+        }
+        gui_.registerMidiInputActivity();
+    }
+
+    return stopApplication;
+}
+
+bool Launchpad::handleGridInput()
+{
+    const bool stopApplication = false;
+
+    uint8_t buttonX, buttonY;
+    ButtonEvent event;
+
+    if (grid_.getButtonEvent( buttonX, buttonY, event ))
+    {
+        const uint8_t controlValue = (ButtonEvent_PRESSED == event) ? kControlValueHigh : kControlValueLow;
+        if (kDeviceControlColumn == buttonX) // control column
+        {
+            usbMidi_.sendControlChange( kDeviceControlMidiChannel, kDeviceControlColumnValue[buttonY], controlValue );
+        }
+        else
+        {
+            switch (currentLayout_)
+            {
+                case Layout_USER1:
+                    usbMidi_.sendNoteOn( kUser1LayoutMidiChannel, kDrumLayout[buttonX][buttonY], controlValue );
+                    break;
+                case Layout_USER2:
+                    usbMidi_.sendNoteOn( kUser2LayoutMidiChannel, kSessionLayout[buttonX][buttonY], controlValue );
+                    break;
+                case Layout_SESSION:
+                default:
+                    usbMidi_.sendNoteOn( kSessionLayoutMidiChannel, kSessionLayout[buttonX][buttonY], controlValue );
+                    break;
+            }
+        }
+        gui_.registerMidiOutputActivity();
+    }
+
+    return stopApplication;
+}
+
 void Launchpad::processDawInfoMessage( const char* const message, uint8_t length )
 {
     switch (message[0])
     {
         case 't':
-            gui.setDawTrackName( &message[1], length - 1 );
+            gui_.setDawTrackName( &message[1], length - 1 );
             break;
         case 'c':
-            gui.setDawClipName( &message[1], length - 1 );
+            gui_.setDawClipName( &message[1], length - 1 );
             break;
         case 'd':
-            gui.setDawDeviceName( &message[1], length - 1 );
+            gui_.setDawDeviceName( &message[1], length - 1 );
             break;
         case 's':
-            gui.setDawStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );
+            gui_.setDawStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );
             break;
         case 'T':
             {
                 const uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
                 const uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
                 const uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
-                gui.setDawTimingValues( tempo, signatureNumerator, signatureDenominator,
+                gui_.setDawTimingValues( tempo, signatureNumerator, signatureDenominator,
                         ('D' == message[8]), ('U' == message[8]) );
             }
             break;
@@ -344,25 +409,36 @@ void Launchpad::processDawInfoMessage( const char* const message, uint8_t length
     }
 }
 
-void Launchpad::processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value )
+void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value )
 {
-    if ((control >= 104) && (control <= 111))
+    if ((control >= kMinimumDeviceControlValue) && (control <= kMaximumDeviceControlValue))
     {
-        const uint8_t ledPositionX = 9;
-        const uint8_t ledPositionY = kTopRowControllerNumber[control - 104];
-        grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[value], static_cast<grid::LedLightingType>(channel) );
-        if (ledPositionY <= 3)
+        const uint8_t ledPositionX = kDeviceControlColumn;
+        uint8_t ledPositionY;
+        for (uint8_t y = 0; y < grid_.numberOfRows; y++)
         {
-            currentLaunchpad95Mode_ = getLaunchpad95Mode();
-            gui.setLaunchpad95Mode( currentLaunchpad95Mode_ );
+            // find corresponding led
+            if (kDeviceControlColumnValue[y] == control)
+            {
+                ledPositionY = y;
+                break;
+            }
+        }
+
+        grid_.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[value], static_cast<grid::LedLightingType>(channel) );
+
+        if ((control == kSession) || (control == kUser1) || (control == kMixer) || (control == kUser2))
+        {
+            currentLaunchpad95Mode_ = determineLaunchpad95Mode();
+            gui_.setLaunchpad95Mode( currentLaunchpad95Mode_ );
             if (Launchpad95Mode_MELODIC_SEQUENCER == currentLaunchpad95Mode_)
             {
                 // only melodic step sequencer can stay in submode between mode changes
-                gui.setLaunchpad95Submode( getLaunchpad95Submode() );
+                gui_.setLaunchpad95Submode( determineLaunchpad95Submode() );
             }
             else
             {
-                gui.setLaunchpad95Submode( Launchpad95Submode_DEFAULT );
+                gui_.setLaunchpad95Submode( Launchpad95Submode_DEFAULT );
             }
         }
     }
@@ -371,60 +447,59 @@ void Launchpad::processChangeControlMidiMessage( uint8_t channel, uint8_t contro
 void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, const uint8_t velocity )
 {
     uint8_t ledPositionX, ledPositionY;
+    bool ledPositionCorrect = false;
+
     if (Layout_USER1 == currentLayout_)
     {
         // only this layout uses drum layout
-        if ((note >= 36) && (note <= 107))
+        if (note >= kDrumLayout[0][0])
         {
-            if (note <= 67)
+            if (note <= kDrumLayout[3][7])
             {
                 ledPositionX = note % 4;
-                ledPositionY = (note - 36) / 4;
+                ledPositionY = (note - kDrumLayout[0][0]) / 4;
+                ledPositionCorrect = true;
             }
-            else if (note <= 99)
+            else if (note <= kDrumLayout[7][7])
             {
-                ledPositionX = note % 4 + 4;
-                ledPositionY = (note - 68) / 4;
+                ledPositionX = (note % 4) + 4;
+                ledPositionY = (note - kDrumLayout[4][0]) / 4;
+                ledPositionCorrect = true;
             }
-            else
+            else if (note <= kDrumLayout[8][0])
             {
                 ledPositionX = 8;
-                ledPositionY = 107 - note;
-            }
-
-            if (channel > 2)
-            {
-                channel = 0;
-            }
-
-            if (velocity < kLaunchpadColorPaletteSize)
-            {
-                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], static_cast<grid::LedLightingType>(channel) );
+                ledPositionY = kDrumLayout[8][0] - note;
+                ledPositionCorrect = true;
             }
         }
     }
     else
     {
-        // not sure if this conditional is needed
-        if ((note >= 11) && (note <= 89))
+        if ((note >= kSessionLayout[0][0]) && (note <= kSessionLayout[8][7]))
         {
             ledPositionX = (note % 10) - 1;
             ledPositionY = (note / 10) - 1;
+            ledPositionCorrect = true;
+        }
+    }
 
-            if (channel > 2)
+    if (ledPositionCorrect)
+    {
+        if (velocity < kLaunchpadColorPaletteSize)
+        {
+            grid::LedLightingType lightingType = grid::LedLightingType_LIGHT;
+            if (channel <= static_cast<uint8_t>(grid::LedLightingType_PULSE))
             {
-                channel = 0;
+                lightingType = static_cast<grid::LedLightingType>(channel);
             }
 
-            if (velocity < kLaunchpadColorPaletteSize)
-            {
-                grid.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], static_cast<grid::LedLightingType>(channel) );
-            }
+            grid_.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], lightingType );
 
-            if (8 == ledPositionX)
+            if ((Layout_USER1 != currentLayout_) && (kSubmodeColumn == ledPositionX))
             {
                 // possible change in submode
-                gui.setLaunchpad95Submode( getLaunchpad95Submode() );
+                gui_.setLaunchpad95Submode( determineLaunchpad95Submode() );
             }
         }
     }
@@ -442,8 +517,8 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
                     setCurrentLayout( message[7] );
                     break;
                 case 0x40:
-                    usbMidi.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength ); // always return zeros as challenge response
-                    gui.registerMidiOutputActivity();
+                    usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength ); // always return zeros as challenge response
+                    gui_.registerMidiOutputActivity();
                     break;
                 case 0x14: // text scroll
                     message[length-1] = 0; // put string terminator at the end
@@ -458,7 +533,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
 
 void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet )
 {
-    const uint8_t codeIndexNumber = packet.header & 0x0F;
+    const uint8_t codeIndexNumber = packet.header & midi::kCodeIndexNumberMask;
 
     if (systemExclusiveInputMessageLength_ >= (systemExclussiveMessageMaximumLength_ - 3))
     {
@@ -468,16 +543,16 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
     {
         switch (codeIndexNumber)
         {
-            case 0x04:
-            case 0x07:
+            case midi::kSystemExclusive:
+            case midi::kSystemExclusiveEnd3Bytes:
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[2];
                 break;
-            case 0x05:
+            case midi::kSystemExclusiveEnd1Byte:
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
                 break;
-            case 0x06:
+            case midi::kSystemExclusiveEnd2Bytes:
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
                 systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
                 break;
@@ -485,7 +560,8 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
                 break;
         }
 
-        if ((0x05 == codeIndexNumber) || (0x06 == codeIndexNumber) || (0x07 == codeIndexNumber))
+        if ((midi::kSystemExclusiveEnd1Byte == codeIndexNumber) || (midi::kSystemExclusiveEnd2Bytes == codeIndexNumber) ||
+                (midi::kSystemExclusiveEnd3Bytes == codeIndexNumber))
         {
             processSystemExclusiveMessage( &systemExclusiveInputMessage_[0], systemExclusiveInputMessageLength_ );
             systemExclusiveInputMessageLength_ = 0; // reset message length
@@ -493,9 +569,16 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
     }
 }
 
-void Launchpad::setCurrentLayout( uint8_t layout )
+void Launchpad::sendMixerModeControlMessage()
 {
-    if (layout <= Layout_PAN)
+    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer, kControlValueHigh );
+    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer, kControlValueLow );
+    gui_.registerMidiOutputActivity();
+}
+
+void Launchpad::setCurrentLayout( const uint8_t layout )
+{
+    if (layout <= kMaximumLayoutIndex)
     {
         currentLayout_ = static_cast<Layout>(layout);
     }
