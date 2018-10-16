@@ -20,6 +20,14 @@ static const uint8_t kChallengeResponse[kChallengeResponseLength] = { 0xF0, 0x00
 static const uint8_t kStandardSystemExclussiveMessageHeaderLength = 6;
 static const uint8_t kStandardSystemExclussiveMessageHeader[kStandardSystemExclussiveMessageHeaderLength] =
         { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
+static const uint8_t kStandardSystemExclussiveMessageMinimumLength = 8;
+
+enum StandardSystemExclussiveMessageType
+{
+    kTextScroll = 0x14,
+    kSetLayout = 0x22,
+    kChallenge = 0x40
+};
 
 enum MidiChannel
 {
@@ -393,15 +401,21 @@ void Launchpad::processDawInfoMessage( const char* const message, uint8_t length
             gui_.setDawDeviceName( &message[1], length - 1 );
             break;
         case 's':
-            gui_.setDawStatus( ('P' == message[1]), ('R' == message[2]), ('S' == message[3]) );
+            {
+                const bool isPlaying = ('P' == message[1]);
+                const bool isRecording = ('R' == message[2]);
+                const bool isSessionRecording = ('S' == message[3]);
+                gui_.setDawStatus( isPlaying, isRecording, isSessionRecording );
+            }
             break;
         case 'T':
             {
                 const uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
                 const uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
                 const uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
-                gui_.setDawTimingValues( tempo, signatureNumerator, signatureDenominator,
-                        ('D' == message[8]), ('U' == message[8]) );
+                const bool nudgeDownActive = ('D' == message[8]);
+                const bool nudgeUpActive = ('U' == message[8]);
+                gui_.setDawTimingValues( tempo, signatureNumerator, signatureDenominator, nudgeDownActive, nudgeUpActive );
             }
             break;
         default:
@@ -507,20 +521,21 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
 
 void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t length )
 {
-    if (length > 7)
+    if (length >= kStandardSystemExclussiveMessageMinimumLength)
     {
         if (0 == memcmp( message, kStandardSystemExclussiveMessageHeader, kStandardSystemExclussiveMessageHeaderLength ))
         {
-            switch(message[6])
+            const uint8_t standardMessageType = message[6];
+            switch(standardMessageType)
             {
-                case 0x22:
+                case kSetLayout:
                     setCurrentLayout( message[7] );
                     break;
-                case 0x40:
-                    usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength ); // always return zeros as challenge response
+                case kChallenge:
+                    usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength );
                     gui_.registerMidiOutputActivity();
                     break;
-                case 0x14: // text scroll
+                case kTextScroll:
                     message[length-1] = 0; // put string terminator at the end
                     processDawInfoMessage( reinterpret_cast<char*>(&message[7]), length - 7 - 1 );
                     break;

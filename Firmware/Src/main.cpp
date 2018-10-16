@@ -86,6 +86,10 @@ void ApplicationMain::run()
             if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
             {
                 runInternalMenu();
+
+                // clear LEDs and display USB logo at the return from internal menu
+                grid_.turnAllLedsOff();
+                gui_.displayWaitingForMidi();
             }
         }
         //randomLightAnimation();
@@ -204,26 +208,26 @@ void ApplicationMain::runGridInputTest()
 void ApplicationMain::runInternalMenu()
 {
     uint8_t buttonX, buttonY;
-    int8_t rotaryStep;
     ButtonEvent event;
     midi::MidiPacket unusedInputPacket;
 
     grid_.discardAllPendingButtonEvents();
     switches_.discardAllPendingEvents();
-
+    grid_.turnAllLedsOff();
     gui_.enterInternalMenu();
 
-    grid_.turnAllLedsOff();
     const Color red = {64U, 0U, 0U};
-    grid_.setLed(7, 0, red);
+    const uint8_t bootloaderButtonX = 7;
+    const uint8_t bootloaderButtonY = 0;
+    grid_.setLed( bootloaderButtonX, bootloaderButtonY, red );
 
     while (1)
     {
-        usbMidi_.getPacket(unusedInputPacket); // check for incoming packets and discard them
+        usbMidi_.getPacket( unusedInputPacket ); // check for incoming packets and discard them
 
         if (grid_.getButtonEvent( buttonX, buttonY, event ))
         {
-            if ((7 == buttonX) && (0 == buttonY))
+            if ((bootloaderButtonX == buttonX) && (bootloaderButtonY == buttonY))
             {
                 // reset into DFU bootloader
                 system_.resetIntoBootloader();
@@ -232,15 +236,12 @@ void ApplicationMain::runInternalMenu()
 
         if (switches_.getButtonEvent( buttonX,  event ))
         {
-            if ((1 == buttonX) && (!event))
+            if ((switches_.internalMenuButton == buttonX) && (ButtonEvent_RELEASED == event))
             {
                 break; // break internal menu loop, get back to launchpad mode
             }
         }
 
-        switches_.getRotaryEncoderEvent( buttonX, rotaryStep ); // unused atm
-
-        //grid.refreshLeds();
         gui_.refresh();
     }
 }
