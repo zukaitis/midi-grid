@@ -18,8 +18,7 @@ specifically with modified [Launchpad95](http://motscousus.com/stuff/2011-07_Nov
 MIDI remote script - [Launchpad95g](https://github.com/zukaitis/Launchpad95g). Additional functionality, like stand-alone modes,
 or compatibility with other DAWs may be implemented later.
 
-More thorough information, regarding design and implementation, is available in READMEs of [Firmware](https://github.com/zukaitis/midi-grid/tree/master/Firmware)
-and [Hardware](https://github.com/zukaitis/midi-grid/tree/master/Hardware).
+More thorough information, regarding design and implementation, is available in [wiki of this project](https://github.com/zukaitis/midi-grid/wiki).
 
 ## Thanks to
 - [@mimuz](https://github.com/mimuz) - for sharing [STM32 USB MIDI library](https://github.com/mimuz/mimuz-tuch)
