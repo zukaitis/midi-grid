@@ -92,9 +92,9 @@ private:
     Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
     Layout currentLayout_;
 
-    static const uint8_t systemExclussiveMessageMaximumLength_ = 64;
+    static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
 
-    uint8_t systemExclusiveInputMessage_[systemExclussiveMessageMaximumLength_];
+    uint8_t systemExclusiveInputMessage_[kSystemExclussiveMessageMaximumLength_];
     uint8_t systemExclusiveInputMessageLength_;
 
     int16_t rotaryControlValue_[2];

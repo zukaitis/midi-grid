@@ -11,6 +11,7 @@
 namespace launchpad
 {
 
+/* MIDI */
 static const uint8_t kControlValueLow = 0;
 static const uint8_t kControlValueHigh = 127;
 
@@ -38,35 +39,47 @@ enum MidiChannel
     kUser2LayoutMidiChannel = 15 // can select channel from 14, 15 and 16
 };
 
-static const uint8_t kSubmodeColumn = 8;
-static const uint8_t kDeviceControlColumn = 9;
-enum DeviceControlButtons
-{
-    kUp = 104,
-    kMinimumDeviceControlValue = kUp,
-    kDown = 105,
-    kLeft = 106,
-    kRight = 107,
-    kSession = 108,
-    kUser1 = 109,
-    kUser2 = 110,
-    kMixer = 111,
-    kMaximumDeviceControlValue = kMixer
-};
-
-// buttons are numerated bottom to top, same as in grid
-static const uint8_t kDeviceControlColumnValue[grid::Grid::numberOfRows] = {kUser2, kMixer, kUser1, kSession, kUp, kLeft, kRight, kDown};
-
 static const uint8_t kAdditionalNoteButtonNote = 55;
 
-static const uint8_t kSessionLayout[grid::Grid::numberOfColumns][grid::Grid::numberOfRows] = {
+/* Grid */
+static const uint8_t kNumberOfColumns = 10;
+static const uint8_t kNumberOfRows = 8;
+
+static const uint8_t kSubmodeColumn = 8;
+static const uint8_t kDeviceControlColumn = 9;
+
+struct DeviceControlButton
+{
+    uint8_t positionX;
+    uint8_t positionY;
+    uint8_t controlValue;
+};
+
+static const DeviceControlButton kSession = {.positionX = 9, .positionY = 3, .controlValue = 108};
+static const DeviceControlButton kMixer = {.positionX = 9, .positionY = 1, .controlValue = 111};
+static const DeviceControlButton kUser1 = {.positionX = 9, .positionY = 2, .controlValue = 109};
+static const DeviceControlButton kUser2 = {.positionX = 9, .positionY = 0, .controlValue = 110};
+static const DeviceControlButton kUp = {.positionX = 9, .positionY = 4, .controlValue = 104};
+static const DeviceControlButton kDown = {.positionX = 9, .positionY = 7, .controlValue = 105};
+static const DeviceControlButton kLeft = {.positionX = 9, .positionY = 5, .controlValue = 106};
+static const DeviceControlButton kRight = {.positionX = 9, .positionY = 6, .controlValue = 107};
+
+static const uint8_t kMinimumDeviceControlValue = kUp.controlValue;
+static const uint8_t kMaximumDeviceControlValue = kMixer.controlValue;
+
+// buttons are numerated bottom to top, same as in grid
+static const uint8_t kDeviceControlColumnValue[kNumberOfRows] = {
+        kUser2.controlValue, kMixer.controlValue, kUser1.controlValue, kSession.controlValue,
+        kUp.controlValue, kLeft.controlValue, kRight.controlValue, kDown.controlValue };
+
+static const uint8_t kSessionLayout[kNumberOfColumns][kNumberOfRows] = {
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
         {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
         {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
         {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
         {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const uint8_t kDrumLayout[grid::Grid::numberOfColumns][grid::Grid::numberOfRows] = {
+static const uint8_t kDrumLayout[kNumberOfColumns][kNumberOfRows] = {
         {36, 40, 44, 48, 52, 56, 60, 64}, {37, 41, 45, 49, 53, 57, 61, 65},
         {38, 42, 46, 50, 54, 58, 62, 66}, {39, 43, 47, 51, 55, 59, 63, 67},
         {68, 72, 76, 80, 84, 88, 92, 96}, {69, 73, 77, 81, 85, 89, 93, 97},
@@ -74,7 +87,6 @@ static const uint8_t kDrumLayout[grid::Grid::numberOfColumns][grid::Grid::number
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
 static const uint8_t kLaunchpadColorPaletteSize = 128;
-
 static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {0, 0, 0}, {8, 8, 8}, {32, 32, 32}, {64, 64, 64}, {64, 20, 18}, {64, 3, 0}, {23, 1, 0}, {7, 0, 0},
         {64, 48, 25}, {64, 22, 0}, {23, 8, 0}, {10, 7, 0}, {64, 64, 9}, {64, 64, 0}, {23, 23, 0}, {6, 6, 0},
@@ -102,13 +114,13 @@ Launchpad::Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui,
         currentLayout_( Layout_SESSION ),
         systemExclusiveInputMessageLength_( 0 )
 {
-    rotaryControlValue_[0] = midi::kMaximumControlValue;
-    rotaryControlValue_[1] = midi::kMaximumControlValue;
+    const int16_t initialControlValue = static_cast<int16_t>(midi::kMaximumControlValue) / 2;
+    rotaryControlValue_[0] = initialControlValue;
+    rotaryControlValue_[1] = initialControlValue;
 }
 
 void Launchpad::runProgram()
 {
-
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
     switches_.discardAllPendingEvents();
@@ -139,14 +151,14 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
 
     do
     {
-        color = grid_.getLedColor( kDeviceControlColumn, 3 ); // session led
+        color = grid_.getLedColor( kDeviceControlColumn, kSession.positionY );
         if (grid_.areColorsEqual( color, kLaunchpadColorPalette[21] ))
         {
             mode = Launchpad95Mode_SESSION;
             break;
         }
 
-        color = grid_.getLedColor( kDeviceControlColumn, 2 ); // user1 led
+        color = grid_.getLedColor( kDeviceControlColumn, kUser1.positionY );
         if (grid_.areColorsEqual( color, kLaunchpadColorPalette[37] ))
         {
             mode = Launchpad95Mode_INSTRUMENT;
@@ -163,7 +175,7 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
             break;
         }
 
-        color = grid_.getLedColor( kDeviceControlColumn, 0 );
+        color = grid_.getLedColor( kDeviceControlColumn, kUser2.positionY );
         if (grid_.areColorsEqual( color, kLaunchpadColorPalette[53] ))
         {
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
@@ -180,7 +192,7 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
             break;
         }
 
-        color = grid_.getLedColor( kDeviceControlColumn, 1 ); // mixer led
+        color = grid_.getLedColor( kDeviceControlColumn, kMixer.positionY );
         if (grid_.areColorsEqual( color, kLaunchpadColorPalette[29] ))
         {
             mode = Launchpad95Mode_MIXER;
@@ -274,7 +286,6 @@ bool Launchpad::handleAdditionalControlInput()
     bool stopApplication = false;
 
     ButtonEvent event;
-
     uint8_t encoderNumber;
     int8_t rotaryStep;
 
@@ -428,20 +439,22 @@ void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const ui
     if ((control >= kMinimumDeviceControlValue) && (control <= kMaximumDeviceControlValue))
     {
         const uint8_t ledPositionX = kDeviceControlColumn;
-        uint8_t ledPositionY;
+
         for (uint8_t y = 0; y < grid_.numberOfRows; y++)
         {
             // find corresponding led
             if (kDeviceControlColumnValue[y] == control)
             {
-                ledPositionY = y;
+                const uint8_t ledPositionY = y;
+                grid_.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[value], static_cast<grid::LedLightingType>(channel) );
                 break;
             }
         }
 
-        grid_.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[value], static_cast<grid::LedLightingType>(channel) );
-
-        if ((control == kSession) || (control == kUser1) || (control == kMixer) || (control == kUser2))
+        if ( (control == kSession.controlValue) ||
+            (control == kUser1.controlValue) ||
+            (control == kMixer.controlValue) ||
+            (control == kUser2.controlValue) )
         {
             currentLaunchpad95Mode_ = determineLaunchpad95Mode();
             gui_.setLaunchpad95Mode( currentLaunchpad95Mode_ );
@@ -550,7 +563,7 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
 {
     const uint8_t codeIndexNumber = packet.header & midi::kCodeIndexNumberMask;
 
-    if (systemExclusiveInputMessageLength_ >= (systemExclussiveMessageMaximumLength_ - 3))
+    if (systemExclusiveInputMessageLength_ >= (kSystemExclussiveMessageMaximumLength_ - 3))
     {
         systemExclusiveInputMessageLength_ = 0; // discard this message, as it is too long
     }
@@ -586,8 +599,8 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
 
 void Launchpad::sendMixerModeControlMessage()
 {
-    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer, kControlValueHigh );
-    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer, kControlValueLow );
+    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer.controlValue, kControlValueHigh );
+    usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer.controlValue, kControlValueLow );
     gui_.registerMidiOutputActivity();
 }
 

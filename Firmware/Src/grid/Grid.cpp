@@ -297,7 +297,6 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color
     }
 
     gridDriver_.setLedColor( ledPositionX, ledPositionY, directLed, color );
-
 }
 
 void Grid::turnAllLedsOff()
