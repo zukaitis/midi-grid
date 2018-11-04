@@ -111,6 +111,7 @@ void Gui::enterLaunchpad95Mode()
     lcd_.clear();
     lcd_.print( "L95", lcd_.width/2, 0, lcd::Justification_CENTER );
     lcd_.displayImage( 63, 0, usbSymbolSmall );
+    lcd_.displayImage( 0, 0, midiSymbolSmall );
 
     statusBarActive_ = true;
 

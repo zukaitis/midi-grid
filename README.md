@@ -1,7 +1,7 @@
 # midi-grid
 DIY RGB MIDI grid controller
 
-[![Video](https://img.youtube.com/vi/7otjcxH8tro/0.jpg)](https://youtu.be/7otjcxH8tro "Demo video")
+[![Video](https://img.youtube.com/vi/mxI5Q21d1T0/0.jpg)](https://youtu.be/mxI5Q21d1T0 "Demo video")
 
 midi-grid is an open source MIDI controller, main part of which is 8x8 LED iluminated button grid.
 
