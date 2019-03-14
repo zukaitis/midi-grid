@@ -38,7 +38,7 @@ struct PulsingLed
 struct Led
 {
     Color color;
-    LedLightingType lightingType; // light?flash?pulse
+    LedLightingType lightingType;
 };
 
 class Grid
@@ -65,6 +65,11 @@ public:
     static const uint8_t numberOfLeds = numberOfRows * numberOfColumns;
 
 private:
+    void addFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color secondColor );
+    void addPulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color );
+    void removeFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY );
+    void removePulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY );
+
     void setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const;
     void updateButtonColumnInput();
 

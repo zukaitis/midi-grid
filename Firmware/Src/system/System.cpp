@@ -51,9 +51,9 @@ void System::configureNvicPriorities()
     // DebugMonitor_IRQn interrupt configuration
     HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
     // PendSV_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
     // SysTick_IRQn interrupt configuration
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
 void System::configureSystemClock()
@@ -96,4 +96,17 @@ void System::configureSystemClock()
     HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-} // namespace hal
+} // namespace mcu
+
+// overridden HAL function, standard implementation of which does not work because of disabled interrupts
+extern uint32_t SystemCoreClock;
+
+extern "C" void HAL_Delay(uint32_t Delay)
+{
+	const uint64_t delayCycles = (Delay * SystemCoreClock) / 1000;
+	uint64_t i = 0;
+	while (i < delayCycles)
+	{
+		i++;
+	}
+}

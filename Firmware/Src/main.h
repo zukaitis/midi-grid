@@ -11,8 +11,9 @@
 #include "system/GlobalInterrupts.h"
 #include "system/Time.h"
 #include "usb/UsbMidi.h"
+#include "thread.hpp"
 
-class ApplicationMain
+class ApplicationMain: public cpp_freertos::Thread
 {
 public:
 
@@ -26,7 +27,10 @@ public:
     ~ApplicationMain();
 
     void initialize();
-    void run();
+    void runRequiresRenaming();
+    virtual void Run();
+    void RunDMC();
+    void RunJMJ();
 
     Color getRandomColor();
     void randomLightAnimation();

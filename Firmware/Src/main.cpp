@@ -12,10 +12,12 @@ int main(void)
 {
     ApplicationMain& applicationMain = ApplicationMain::getInstance();
     applicationMain.initialize();
-    applicationMain.run(); // doesn't return
+    applicationMain.Start(); // doesn't return
+    cpp_freertos::Thread::StartScheduler();
 }
 
 ApplicationMain::ApplicationMain() :
+        Thread("main", 500, 1),
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
         time_( mcu::Time() ),
@@ -33,26 +35,18 @@ ApplicationMain::~ApplicationMain()
 
 void ApplicationMain::initialize()
 {
-
+    globalInterrupts_.disable();
     system_.initialize();
+}
 
-    #ifdef USE_SEMIHOSTING
-    initialise_monitor_handles(); // enable semihosting
-    #endif
-
+void ApplicationMain::Run()
+{
     lcd_.initialize();
     lcd_.setBacklightIntensity( 55 );
 
     gridDriver_.initialize();
     gridDriver_.start();
 
-    #ifdef USE_SEMIHOSTING
-    printf("Semihosting output enabled\n");
-    #endif
-}
-
-void ApplicationMain::run()
-{
     gui_.displayConnectingImage();
 
     while (!system_.isUsbConnected())
@@ -62,44 +56,29 @@ void ApplicationMain::run()
 
     gui_.displayWaitingForMidi();
 
-#ifdef DISPLAY_BRIGHTNESS_LEVELS
-    for (uint8_t x=0; x<8; x++)
-    {
-        for (uint8_t y=0; y<8; y++)
-        {
-            Color color = {static_cast<uint8_t>(x*8+y+1), 0, 0};
-            grid_.setLed( x, y, color );
-        }
-    }
-#endif
-
     while(!displayBootAnimation())
     {
     }
 
-    while (!usbMidi_.isPacketAvailable())
-    {
-        uint8_t button;
-        ButtonEvent event;
-        if (switches_.getButtonEvent( button, event ))
-        {
-            if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
-            {
-                runInternalMenu();
+	while (!usbMidi_.isPacketAvailable())
+	{
+		uint8_t button;
+		ButtonEvent event;
+		if (switches_.getButtonEvent( button, event ))
+		{
+			if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
+			{
+				runInternalMenu();
 
-                // clear LEDs and display USB logo at the return from internal menu
-                grid_.turnAllLedsOff();
-                gui_.displayWaitingForMidi();
-            }
-        }
-        //randomLightAnimation();
-        runGridInputTest();
-        gui_.refresh();
-    }
-
-    #ifdef USE_SEMIHOSTING
-    printf("Printing unacknowledged MIDI messages:\n");
-    #endif
+				// clear LEDs and display USB logo at the return from internal menu
+				grid_.turnAllLedsOff();
+				gui_.displayWaitingForMidi();
+			}
+		}
+		//randomLightAnimation();
+		runGridInputTest();
+		gui_.refresh();
+	}
 
     while (1)
     {
@@ -111,8 +90,6 @@ void ApplicationMain::run()
         }
     }
 }
-
-
 
 void ApplicationMain::randomLightAnimation()
 {
@@ -243,5 +220,14 @@ void ApplicationMain::runInternalMenu()
         }
 
         gui_.refresh();
+    }
+}
+
+extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
+{
+    volatile uint8_t i;
+    while(1)
+    {
+        i++;
     }
 }

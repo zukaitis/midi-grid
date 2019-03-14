@@ -3,7 +3,7 @@
 #include "system/GlobalInterrupts.h"
 #include "system/Time.h"
 
-#include<math.h>
+#include <math.h>
 
 //#include "lcd/Lcd.h" // for debugging, to be removed
 
@@ -228,29 +228,11 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
     if (LedLightingType_FLASH == led_[ledPositionX][ledPositionY].lightingType)
     {
-        for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
-        {
-            if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
-            {
-                // move last element into the place of element that is being removed
-                flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1];
-                numberOfFlashingLeds_--;
-                break;
-            }
-        }
+        removeFlashingLed( ledPositionX, ledPositionY );
     }
     else if (LedLightingType_PULSE == led_[ledPositionX][ledPositionY].lightingType)
     {
-        for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
-        {
-            if ((ledPositionX == pulsingLed_[i].positionX)&&(ledPositionY == pulsingLed_[i].positionY))
-            {
-                // move last element into the place of element that is being removed
-                pulsingLed_[i] = pulsingLed_[numberOfPulsingLeds_ - 1];
-                numberOfPulsingLeds_--;
-                break;
-            }
-        }
+        removePulsingLed( ledPositionX, ledPositionY );
     }
 
     switch (lightingType)
@@ -261,27 +243,78 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
             setLedOutput( ledPositionX, ledPositionY, color );
             break;
         case LedLightingType_FLASH:
-            flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;
-            flashingLed_[numberOfFlashingLeds_].positionY = ledPositionY;
-            //save current color to have an alternate
-            flashingLed_[numberOfFlashingLeds_].color[1] = led_[ledPositionX][ledPositionY].color;
-            flashingLed_[numberOfFlashingLeds_].color[0] = color;
-            ++numberOfFlashingLeds_;
-            led_[ledPositionX][ledPositionY].lightingType = LedLightingType_FLASH;
-            led_[ledPositionX][ledPositionY].color = color;
-            // don't change output value, it will be set on next flash period
+            addFlashingLed( ledPositionX, ledPositionY, color );
             break;
         case LedLightingType_PULSE:
-            //save current color to have an alternate
-            pulsingLed_[numberOfPulsingLeds_].positionX = ledPositionX;
-            pulsingLed_[numberOfPulsingLeds_].positionY = ledPositionY;
-            ++numberOfPulsingLeds_;
-            led_[ledPositionX][ledPositionY].lightingType = LedLightingType_PULSE;
-            led_[ledPositionX][ledPositionY].color = color;
-            // don't change output value, it will be set on next pulse period
+            addPulsingLed( ledPositionX, ledPositionY, color );
             break;
         default:
             break;
+    }
+}
+
+void Grid::turnAllLedsOff()
+{
+    gridDriver_.turnAllLedsOff();
+
+    // todo: also remove flashing, pulsing leds and reset colors to zeros
+}
+
+void Grid::addFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color newColor )
+{
+    flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;
+    flashingLed_[numberOfFlashingLeds_].positionY = ledPositionY;
+    //save current color to have an alternate
+    flashingLed_[numberOfFlashingLeds_].color[1] = led_[ledPositionX][ledPositionY].color;
+    flashingLed_[numberOfFlashingLeds_].color[0] = newColor;
+    ++numberOfFlashingLeds_;
+    led_[ledPositionX][ledPositionY].lightingType = LedLightingType_FLASH;
+    led_[ledPositionX][ledPositionY].color = newColor;
+
+    // enable task, if it was disabled
+    // don't change output value, it will be set on next flash period
+}
+
+void Grid::addPulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
+{
+    //save current color to have an alternate
+    pulsingLed_[numberOfPulsingLeds_].positionX = ledPositionX;
+    pulsingLed_[numberOfPulsingLeds_].positionY = ledPositionY;
+    ++numberOfPulsingLeds_;
+    led_[ledPositionX][ledPositionY].lightingType = LedLightingType_PULSE;
+    led_[ledPositionX][ledPositionY].color = color;
+
+    // enable task, if it was disabled
+    // don't change output value, it will be set on next pulse period
+}
+
+void Grid::removeFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY )
+{
+    for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
+    {
+        if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
+        {
+            // move last element into the place of element that is being removed
+            flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1];
+            numberOfFlashingLeds_--;
+            // disable task, if if number became 0
+            break;
+        }
+    }
+}
+
+void Grid::removePulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY )
+{
+    for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
+    {
+        if ((ledPositionX == pulsingLed_[i].positionX)&&(ledPositionY == pulsingLed_[i].positionY))
+        {
+            // move last element into the place of element that is being removed
+            pulsingLed_[i] = pulsingLed_[numberOfPulsingLeds_ - 1];
+            numberOfPulsingLeds_--;
+            // disable task, if if number became 0
+            break;
+        }
     }
 }
 
@@ -297,13 +330,6 @@ void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color
     }
 
     gridDriver_.setLedColor( ledPositionX, ledPositionY, directLed, color );
-}
-
-void Grid::turnAllLedsOff()
-{
-    gridDriver_.turnAllLedsOff();
-
-    // todo: also remove flashing, pulsing leds and reset colors to zeros
 }
 
 void Grid::updateButtonColumnInput()
