@@ -3,6 +3,7 @@
 #include "system/GlobalInterrupts.h"
 #include "system/Time.h"
 
+#include "ticks.hpp"
 #include <math.h>
 
 //#include "lcd/Lcd.h" // for debugging, to be removed
@@ -17,10 +18,11 @@ static const uint8_t kLedPulseStepCount = 15;
 
 Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time ) :
         gridDriver_( gridDriver ),
+        ledOutput_( GridLedOutput( gridDriver ) ),
+        flashingLeds_( ledOutput_ ),
+        pulsingLeds_( ledOutput_ ),
         globalInterrupts_( globalInterrupts ),
-        time_( time ),
-        numberOfFlashingLeds_( 0 ),
-        numberOfPulsingLeds_( 0 )
+        time_( time )
 {
     for (uint8_t index = 0; index < numberOfColumns; index++)
     {
@@ -169,55 +171,6 @@ Color Grid::getRandomColor()
     return color;
 }
 
-void Grid::refreshLeds() const
-{
-    static uint32_t ledFlashCheckTime = 0;
-    static uint32_t ledPulseCheckTime = 0;
-
-    if (time_.getSystemTick() >= ledFlashCheckTime)
-    {
-        static uint8_t flashColorIndex = 0;
-
-        for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
-        {
-            setLedOutput(
-                    flashingLed_[i].positionX,
-                    flashingLed_[i].positionY,
-                    flashingLed_[i].color[flashColorIndex] );
-        }
-        flashColorIndex = (flashColorIndex + 1) % kLedFlashingNumberOfColors;
-        ledFlashCheckTime = time_.getSystemTick() + kLedFlashingPeriod; //250ms
-    }
-
-    if (time_.getSystemTick() >= ledPulseCheckTime)
-    {
-        static uint8_t ledPulseStepNumber = 0;
-
-        ledPulseStepNumber = (ledPulseStepNumber + 1) % kLedPulseStepCount;
-
-        for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
-        {
-            Color dimmedColor = led_[pulsingLed_[i].positionX][pulsingLed_[i].positionY].color;
-            if (ledPulseStepNumber <= 3)
-            {
-                // y = x / 4
-                dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-            }
-            else
-            {
-                // y = -x / 16
-                dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
-                dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
-                dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
-            }
-            setLedOutput( pulsingLed_[i].positionX, pulsingLed_[i].positionY, dimmedColor );
-        }
-        ledPulseCheckTime = time_.getSystemTick() + kLedPulseStepInterval;
-    }
-}
-
 void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
 {
     setLed( ledPositionX, ledPositionY, color, LedLightingType_LIGHT );
@@ -228,29 +181,30 @@ void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
     if (LedLightingType_FLASH == led_[ledPositionX][ledPositionY].lightingType)
     {
-        removeFlashingLed( ledPositionX, ledPositionY );
+        flashingLeds_.remove( ledPositionX, ledPositionY );
     }
     else if (LedLightingType_PULSE == led_[ledPositionX][ledPositionY].lightingType)
     {
-        removePulsingLed( ledPositionX, ledPositionY );
+        pulsingLeds_.remove( ledPositionX, ledPositionY );
     }
 
     switch (lightingType)
     {
         case LedLightingType_LIGHT:
-            led_[ledPositionX][ledPositionY].color = color;
-            led_[ledPositionX][ledPositionY].lightingType = LedLightingType_LIGHT;
-            setLedOutput( ledPositionX, ledPositionY, color );
+            ledOutput_.set( ledPositionX, ledPositionY, color );
             break;
         case LedLightingType_FLASH:
-            addFlashingLed( ledPositionX, ledPositionY, color );
+            flashingLeds_.add( ledPositionX, ledPositionY, led_[ledPositionX][ledPositionY].color, color );
             break;
         case LedLightingType_PULSE:
-            addPulsingLed( ledPositionX, ledPositionY, color );
+            pulsingLeds_.add( ledPositionX, ledPositionY, color );
             break;
         default:
             break;
     }
+
+    led_[ledPositionX][ledPositionY].lightingType = lightingType;
+    led_[ledPositionX][ledPositionY].color = color;
 }
 
 void Grid::turnAllLedsOff()
@@ -258,78 +212,6 @@ void Grid::turnAllLedsOff()
     gridDriver_.turnAllLedsOff();
 
     // todo: also remove flashing, pulsing leds and reset colors to zeros
-}
-
-void Grid::addFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color newColor )
-{
-    flashingLed_[numberOfFlashingLeds_].positionX = ledPositionX;
-    flashingLed_[numberOfFlashingLeds_].positionY = ledPositionY;
-    //save current color to have an alternate
-    flashingLed_[numberOfFlashingLeds_].color[1] = led_[ledPositionX][ledPositionY].color;
-    flashingLed_[numberOfFlashingLeds_].color[0] = newColor;
-    ++numberOfFlashingLeds_;
-    led_[ledPositionX][ledPositionY].lightingType = LedLightingType_FLASH;
-    led_[ledPositionX][ledPositionY].color = newColor;
-
-    // enable task, if it was disabled
-    // don't change output value, it will be set on next flash period
-}
-
-void Grid::addPulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
-{
-    //save current color to have an alternate
-    pulsingLed_[numberOfPulsingLeds_].positionX = ledPositionX;
-    pulsingLed_[numberOfPulsingLeds_].positionY = ledPositionY;
-    ++numberOfPulsingLeds_;
-    led_[ledPositionX][ledPositionY].lightingType = LedLightingType_PULSE;
-    led_[ledPositionX][ledPositionY].color = color;
-
-    // enable task, if it was disabled
-    // don't change output value, it will be set on next pulse period
-}
-
-void Grid::removeFlashingLed( const uint8_t ledPositionX, const uint8_t ledPositionY )
-{
-    for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
-    {
-        if ((ledPositionX == flashingLed_[i].positionX) && (ledPositionY == flashingLed_[i].positionY))
-        {
-            // move last element into the place of element that is being removed
-            flashingLed_[i] = flashingLed_[numberOfFlashingLeds_ - 1];
-            numberOfFlashingLeds_--;
-            // disable task, if if number became 0
-            break;
-        }
-    }
-}
-
-void Grid::removePulsingLed( const uint8_t ledPositionX, const uint8_t ledPositionY )
-{
-    for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
-    {
-        if ((ledPositionX == pulsingLed_[i].positionX)&&(ledPositionY == pulsingLed_[i].positionY))
-        {
-            // move last element into the place of element that is being removed
-            pulsingLed_[i] = pulsingLed_[numberOfPulsingLeds_ - 1];
-            numberOfPulsingLeds_--;
-            // disable task, if if number became 0
-            break;
-        }
-    }
-}
-
-void Grid::setLedOutput( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const
-{
-    // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
-    const bool directLed = (ledPositionX >= kNumberOfPadColumns);
-
-    if (ledPositionY >= gridDriver_.numberOfHorizontalSegments)
-    {
-        ledPositionX += numberOfColumns;
-        ledPositionY = ledPositionY % gridDriver_.numberOfHorizontalSegments;
-    }
-
-    gridDriver_.setLedColor( ledPositionX, ledPositionY, directLed, color );
 }
 
 void Grid::updateButtonColumnInput()
@@ -350,6 +232,157 @@ void Grid::updateButtonColumnInput()
             // overwrite existing value with a new one
             buttonColumnInput_[column] &= 0x0F;
             buttonColumnInput_[column] |= gridDriver_.getGridButtonInput( column + numberOfColumns ) << 4;
+        }
+    }
+}
+
+GridLedOutput::GridLedOutput( GridDriver& gridDriver ):
+        gridDriver_( gridDriver )
+{
+}
+
+GridLedOutput::~GridLedOutput()
+{
+}
+
+void GridLedOutput::set( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const
+{
+    // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
+    const bool directLed = (ledPositionX >= kNumberOfPadColumns);
+
+    if (ledPositionY >= gridDriver_.numberOfHorizontalSegments)
+    {
+        ledPositionX += numberOfColumns;
+        ledPositionY = ledPositionY % gridDriver_.numberOfHorizontalSegments;
+    }
+
+    gridDriver_.setLedColor( ledPositionX, ledPositionY, directLed, color );
+}
+
+FlashingLeds::FlashingLeds( GridLedOutput& gridLedOutput ):
+        Timer( cpp_freertos::Ticks::MsToTicks( kLedFlashingPeriod ) ),
+        ledOutput_( gridLedOutput ),
+        numberOfFlashingLeds_( 0 )
+{
+}
+
+FlashingLeds::~FlashingLeds()
+{
+}
+
+void FlashingLeds::Run()
+{
+    static uint8_t flashColorIndex = 0;
+
+    for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
+    {
+        ledOutput_.set(led_[i].positionX, led_[i].positionY, led_[i].color[flashColorIndex] );
+    }
+    flashColorIndex = (flashColorIndex + 1) % 2;
+}
+
+void FlashingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color1, const Color color2 )
+{
+    led_[numberOfFlashingLeds_].positionX = ledPositionX;
+    led_[numberOfFlashingLeds_].positionY = ledPositionY;
+    led_[numberOfFlashingLeds_].color[0] = color1;
+    led_[numberOfFlashingLeds_].color[1] = color2;
+    numberOfFlashingLeds_++;
+
+    if (1 == numberOfFlashingLeds_)
+    {
+        Start();
+    }
+    // don't change output value, it will be set on next flash period
+}
+
+void FlashingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPositionY )
+{
+    for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
+    {
+        if ((ledPositionX == led_[i].positionX) && (ledPositionY == led_[i].positionY))
+        {
+            // move last element into the place of element that is being removed
+            led_[i] = led_[numberOfFlashingLeds_ - 1];
+            numberOfFlashingLeds_--;
+
+            if (0 == numberOfFlashingLeds_)
+            {
+                Stop();
+            }
+            break;
+        }
+    }
+}
+
+PulsingLeds::PulsingLeds( GridLedOutput& gridLedOutput ):
+        Timer( cpp_freertos::Ticks::MsToTicks( kLedPulseStepInterval ) ),
+        ledOutput_( gridLedOutput ),
+        numberOfPulsingLeds_( 0 )
+{
+}
+
+PulsingLeds::~PulsingLeds()
+{
+}
+
+void PulsingLeds::Run()
+{
+    static uint8_t ledPulseStepNumber = 0;
+
+    ledPulseStepNumber = (ledPulseStepNumber + 1) % kLedPulseStepCount;
+
+    for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
+    {
+        Color dimmedColor = led_[i].color;
+        if (ledPulseStepNumber <= 3)
+        {
+            // y = x / 4
+            dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+            dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+            dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+        }
+        else
+        {
+            // y = -x / 16
+            dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
+            dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
+            dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
+        }
+        ledOutput_.set( led_[i].positionX, led_[i].positionY, dimmedColor );
+    }
+}
+
+void PulsingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
+{
+    //save current color to have an alternate
+    led_[numberOfPulsingLeds_].positionX = ledPositionX;
+    led_[numberOfPulsingLeds_].positionY = ledPositionY;
+    led_[numberOfPulsingLeds_].color = color;
+    numberOfPulsingLeds_++;
+
+    if (1 == numberOfPulsingLeds_)
+    {
+        Start();
+    }
+    // don't change output value, it will be set on next pulse period
+}
+
+void PulsingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPositionY )
+{
+    for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
+    {
+        if ((ledPositionX == led_[i].positionX)&&(ledPositionY == led_[i].positionY))
+        {
+            // move last element into the place of element that is being removed
+            led_[i] = led_[numberOfPulsingLeds_ - 1];
+            numberOfPulsingLeds_--;
+
+            if (0 == numberOfPulsingLeds_)
+            {
+                Stop();
+            }
+            break;
         }
     }
 }

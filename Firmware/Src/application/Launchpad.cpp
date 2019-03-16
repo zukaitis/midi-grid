@@ -137,7 +137,6 @@ void Launchpad::runProgram()
         stopApplication |= handleGridInput();
         stopApplication |= handleAdditionalControlInput();
 
-        grid_.refreshLeds();
         gui_.refresh();
     }
 }
@@ -440,7 +439,7 @@ void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const ui
     {
         const uint8_t ledPositionX = kDeviceControlColumn;
 
-        for (uint8_t y = 0; y < grid_.numberOfRows; y++)
+        for (uint8_t y = 0; y < grid::numberOfRows; y++)
         {
             // find corresponding led
             if (kDeviceControlColumnValue[y] == control)

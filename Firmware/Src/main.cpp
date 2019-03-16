@@ -60,25 +60,25 @@ void ApplicationMain::Run()
     {
     }
 
-	while (!usbMidi_.isPacketAvailable())
-	{
-		uint8_t button;
-		ButtonEvent event;
-		if (switches_.getButtonEvent( button, event ))
-		{
-			if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
-			{
-				runInternalMenu();
+    while (!usbMidi_.isPacketAvailable())
+    {
+        uint8_t button;
+        ButtonEvent event;
+        if (switches_.getButtonEvent( button, event ))
+        {
+            if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
+            {
+                runInternalMenu();
 
-				// clear LEDs and display USB logo at the return from internal menu
-				grid_.turnAllLedsOff();
-				gui_.displayWaitingForMidi();
-			}
-		}
-		//randomLightAnimation();
-		runGridInputTest();
-		gui_.refresh();
-	}
+                // clear LEDs and display USB logo at the return from internal menu
+                grid_.turnAllLedsOff();
+                gui_.displayWaitingForMidi();
+            }
+        }
+        //randomLightAnimation();
+        runGridInputTest();
+        gui_.refresh();
+    }
 
     while (1)
     {
@@ -130,15 +130,15 @@ bool ApplicationMain::displayBootAnimation()
             for (uint8_t x = 0; x <= currentStepNumber; x++)
             {
                 const uint8_t y = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColor(x, y));
-                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y));
+                grid_.setLed( x, y, getBootAnimationColor(x, y) );
+                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
             }
 
             for (uint8_t y = 0; y < currentStepNumber; y++)
             {
                 const uint8_t x = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColor(x, y));
-                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y));
+                grid_.setLed( x, y, getBootAnimationColor(x, y) );
+                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
             }
 
             currentStepNumber++;
@@ -225,7 +225,7 @@ void ApplicationMain::runInternalMenu()
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
 {
-    volatile uint8_t i;
+    volatile uint32_t i;
     while(1)
     {
         i++;

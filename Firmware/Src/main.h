@@ -11,6 +11,7 @@
 #include "system/GlobalInterrupts.h"
 #include "system/Time.h"
 #include "usb/UsbMidi.h"
+
 #include "thread.hpp"
 
 class ApplicationMain: public cpp_freertos::Thread
