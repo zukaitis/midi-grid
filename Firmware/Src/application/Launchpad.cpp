@@ -141,16 +141,13 @@ void Launchpad::runProgram()
     }
 }
 
-
-
 Launchpad95Mode Launchpad::determineLaunchpad95Mode()
 {
     Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
-    Color color;
 
     do
     {
-        color = grid_.getLedColor( kDeviceControlColumn, kSession.positionY );
+        Color color = grid_.getLedColor( kDeviceControlColumn, kSession.positionY );
         if (grid_.areColorsEqual( color, kLaunchpadColorPalette[21] ))
         {
             mode = Launchpad95Mode_SESSION;

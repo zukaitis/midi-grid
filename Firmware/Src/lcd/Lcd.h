@@ -4,6 +4,8 @@
 #include "lcd/Backlight.h"
 #include "lcd/LcdDriver.h"
 
+#include "thread.hpp"
+
 namespace mcu {
 class Time;
 }
@@ -26,11 +28,13 @@ struct Image
     uint8_t height;
 };
 
-class Lcd
+class Lcd: public cpp_freertos::Thread
 {
 public:
     Lcd( mcu::Time& time );
     ~Lcd();
+
+    virtual void Run();
 
     void clear();
     void clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2 );
@@ -41,8 +45,9 @@ public:
     void print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification );
     void printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
     void printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification );
-    void refresh();
     void setBacklightIntensity( const uint8_t intensity );
+    void updateBacklightIntensity();
+    void updateScreenContent();
 
     const uint8_t numberOfProgressArcPositions;
 

@@ -144,7 +144,6 @@ void Gui::refresh()
     }
 
     refreshMainArea();
-    lcd_.refresh();
 }
 
 void Gui::refreshStatusBar()

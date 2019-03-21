@@ -1,9 +1,10 @@
 #include "lcd/Lcd.h"
-#include "system/Time.h"
 
+#include "system/Time.h"
 #include "lcd/font.h"
 #include "lcd/progressArc.h"
 
+#include "ticks.hpp"
 #include <string.h>
 #include <math.h>
 
@@ -17,7 +18,8 @@ static const Image digitBig[10] = {
 };
 
 Lcd::Lcd( mcu::Time& time ) :
-        numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ),
+        Thread("Lcd", 200, 2),
+        numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ), // from generated file
         backlight_( Backlight() ),
         lcdDriver_( LcdDriver() ),
         time_( time ),
@@ -105,6 +107,7 @@ void Lcd::initialize()
     lcdDriver_.initialize();
     backlight_.initialize();
     clear();
+    Start();
 }
 
 void Lcd::print( const char* string, uint8_t x, const uint8_t y )
@@ -202,31 +205,16 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
     }
 }
 
-void Lcd::refresh()
+void Lcd::Run()
 {
-    static uint32_t refreshCheckTime = 0;
+    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( 20 );
 
-    if (time_.getSystemTick() >= refreshCheckTime)
+    while (1)
     {
-        if (updateRequired_)
-        {
-            lcdDriver_.transmit( &lcdBuffer_[0][0] );
-            updateRequired_ = false;
-        }
+        DelayUntil( delayPeriod );
 
-        if (currentBacklightIntensity_ != appointedBacklightIntensity_)
-        {
-            if (currentBacklightIntensity_ > appointedBacklightIntensity_)
-            {
-                backlight_.setIntensity( --currentBacklightIntensity_ );
-            }
-            else
-            {
-                backlight_.setIntensity( ++currentBacklightIntensity_ );
-            }
-        }
-
-        refreshCheckTime = time_.getSystemTick() + 20; // check every 20ms
+        updateScreenContent();
+        updateBacklightIntensity();
     }
 }
 
@@ -254,6 +242,30 @@ void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
                 lcdBuffer_[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
             }
         }
+    }
+}
+
+void Lcd::updateBacklightIntensity()
+{
+    if (currentBacklightIntensity_ != appointedBacklightIntensity_)
+    {
+        if (currentBacklightIntensity_ > appointedBacklightIntensity_)
+        {
+            backlight_.setIntensity( --currentBacklightIntensity_ );
+        }
+        else
+        {
+            backlight_.setIntensity( ++currentBacklightIntensity_ );
+        }
+    }
+}
+
+void Lcd::updateScreenContent()
+{
+    if (updateRequired_)
+    {
+        lcdDriver_.transmit( &lcdBuffer_[0][0] );
+        updateRequired_ = false;
     }
 }
 

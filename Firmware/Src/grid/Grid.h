@@ -3,7 +3,7 @@
 
 #include "Types.h"
 
-#include "timer.hpp"
+#include "thread.hpp"
 
 namespace mcu
 {
@@ -39,7 +39,7 @@ private:
     GridDriver& gridDriver_;
 };
 
-class FlashingLeds: public cpp_freertos::Timer
+class FlashingLeds: public cpp_freertos::Thread
 {
 public:
     FlashingLeds( GridLedOutput& gridLedOutput );
@@ -64,7 +64,7 @@ private:
     uint8_t numberOfFlashingLeds_;
 };
 
-class PulsingLeds: public cpp_freertos::Timer
+class PulsingLeds: public cpp_freertos::Thread
 {
 public:
     PulsingLeds( GridLedOutput& gridLedOutput );

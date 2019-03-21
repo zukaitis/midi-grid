@@ -260,10 +260,12 @@ void GridLedOutput::set( uint8_t ledPositionX, uint8_t ledPositionY, const Color
 }
 
 FlashingLeds::FlashingLeds( GridLedOutput& gridLedOutput ):
-        Timer( cpp_freertos::Ticks::MsToTicks( kLedFlashingPeriod ) ),
+        Thread( "FlashingLeds", 200, 2 ),
         ledOutput_( gridLedOutput ),
         numberOfFlashingLeds_( 0 )
 {
+    Start();
+    Suspend();
 }
 
 FlashingLeds::~FlashingLeds()
@@ -272,13 +274,19 @@ FlashingLeds::~FlashingLeds()
 
 void FlashingLeds::Run()
 {
+    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( kLedFlashingPeriod );
     static uint8_t flashColorIndex = 0;
 
-    for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
+    while (1)
     {
-        ledOutput_.set(led_[i].positionX, led_[i].positionY, led_[i].color[flashColorIndex] );
+        DelayUntil( delayPeriod );
+
+        for (uint8_t i = 0; i < numberOfFlashingLeds_; i++)
+        {
+            ledOutput_.set(led_[i].positionX, led_[i].positionY, led_[i].color[flashColorIndex] );
+        }
+        flashColorIndex = (flashColorIndex + 1) % 2;
     }
-    flashColorIndex = (flashColorIndex + 1) % 2;
 }
 
 void FlashingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color1, const Color color2 )
@@ -291,7 +299,7 @@ void FlashingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, 
 
     if (1 == numberOfFlashingLeds_)
     {
-        Start();
+        Resume();
     }
     // don't change output value, it will be set on next flash period
 }
@@ -308,7 +316,7 @@ void FlashingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPosition
 
             if (0 == numberOfFlashingLeds_)
             {
-                Stop();
+                Suspend();
             }
             break;
         }
@@ -316,10 +324,12 @@ void FlashingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPosition
 }
 
 PulsingLeds::PulsingLeds( GridLedOutput& gridLedOutput ):
-        Timer( cpp_freertos::Ticks::MsToTicks( kLedPulseStepInterval ) ),
+        Thread( "PulsingLeds", 200, 2 ),
         ledOutput_( gridLedOutput ),
         numberOfPulsingLeds_( 0 )
 {
+    Start();
+    Suspend();
 }
 
 PulsingLeds::~PulsingLeds()
@@ -328,28 +338,34 @@ PulsingLeds::~PulsingLeds()
 
 void PulsingLeds::Run()
 {
+    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( kLedPulseStepInterval );
     static uint8_t ledPulseStepNumber = 0;
 
-    ledPulseStepNumber = (ledPulseStepNumber + 1) % kLedPulseStepCount;
-
-    for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
+    while (1)
     {
-        Color dimmedColor = led_[i].color;
-        if (ledPulseStepNumber <= 3)
+        DelayUntil( delayPeriod );
+
+        ledPulseStepNumber = (ledPulseStepNumber + 1) % kLedPulseStepCount;
+
+        for (uint8_t i = 0; i < numberOfPulsingLeds_; i++)
         {
-            // y = x / 4
-            dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-            dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-            dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+            Color dimmedColor = led_[i].color;
+            if (ledPulseStepNumber <= 3)
+            {
+                // y = x / 4
+                dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+            }
+            else
+            {
+                // y = -x / 16
+                dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
+            }
+            ledOutput_.set( led_[i].positionX, led_[i].positionY, dimmedColor );
         }
-        else
-        {
-            // y = -x / 16
-            dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
-            dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
-            dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
-        }
-        ledOutput_.set( led_[i].positionX, led_[i].positionY, dimmedColor );
     }
 }
 
@@ -363,7 +379,7 @@ void PulsingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, c
 
     if (1 == numberOfPulsingLeds_)
     {
-        Start();
+        Resume();
     }
     // don't change output value, it will be set on next pulse period
 }
@@ -380,7 +396,7 @@ void PulsingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPositionY
 
             if (0 == numberOfPulsingLeds_)
             {
-                Stop();
+                Suspend();
             }
             break;
         }
