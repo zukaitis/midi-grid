@@ -7,6 +7,7 @@
 #include "grid/Switches.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
+#include "application/InternalMenu.h"
 #include "application/Launchpad.h"
 #include "system/GlobalInterrupts.h"
 #include "system/Time.h"
@@ -14,7 +15,7 @@
 
 #include "thread.hpp"
 
-class ApplicationMain: public cpp_freertos::Thread
+class ApplicationMain: public freertos::Thread
 {
 public:
 
@@ -28,15 +29,14 @@ public:
     ~ApplicationMain();
 
     void initialize();
-    void runRequiresRenaming();
     virtual void Run();
-    void RunDMC();
-    void RunJMJ();
 
     Color getRandomColor();
     void randomLightAnimation();
     void runGridInputTest();
     void runInternalMenu();
+
+    void switchApplicationCallback( const uint8_t applicationIndex );
 
     bool displayBootAnimation();
     Color getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
@@ -54,6 +54,9 @@ private:
     lcd::Lcd lcd_;
     lcd::Gui gui_;
     launchpad::Launchpad launchpad_;
+    internal_menu::InternalMenu internalMenu_;
+
+    bool internalMenuRunning; // temporary variable, to be removed
 };
 
 #endif // __MAIN_H__

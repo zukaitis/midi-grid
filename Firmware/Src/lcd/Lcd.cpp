@@ -34,7 +34,6 @@ Lcd::Lcd( mcu::Time& time ) :
             lcdBuffer_[line][x] = 0x00;
         }
     }
-
 }
 
 Lcd::~Lcd()
@@ -207,7 +206,7 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
 
 void Lcd::Run()
 {
-    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( 20 );
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 20 );
 
     while (1)
     {

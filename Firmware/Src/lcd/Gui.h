@@ -3,6 +3,8 @@
 
 #include "application/Launchpad.h"
 
+#include "thread.hpp"
+
 namespace mcu {
 class Time;
 }
@@ -12,11 +14,13 @@ namespace lcd
 
 class Lcd;
 
-class Gui
+class Gui : private freertos::Thread
 {
 public:
-    Gui( Lcd& lcd, mcu::Time& time );
+    Gui( Lcd& lcd );
     ~Gui();
+
+    virtual void Run();
 
     void displayConnectingImage();
     void displayRotaryControlValues( const uint8_t value1, const uint8_t value2 );
@@ -25,7 +29,6 @@ public:
     void enterInternalMenu();
     void registerMidiInputActivity();
     void registerMidiOutputActivity();
-    void refresh();
     void refreshStatusBar();
     void refreshMainArea();
     void setDawClipName( const char* const name, const uint8_t length );
@@ -48,7 +51,6 @@ private:
     void displayTrackName();
 
     lcd::Lcd& lcd_;
-    mcu::Time& time_;
 
     char dawClipName_[15];
     char dawDeviceName_[15];

@@ -39,7 +39,7 @@ private:
     GridDriver& gridDriver_;
 };
 
-class FlashingLeds: public cpp_freertos::Thread
+class FlashingLeds: private freertos::Thread
 {
 public:
     FlashingLeds( GridLedOutput& gridLedOutput );
@@ -64,7 +64,7 @@ private:
     uint8_t numberOfFlashingLeds_;
 };
 
-class PulsingLeds: public cpp_freertos::Thread
+class PulsingLeds: private freertos::Thread
 {
 public:
     PulsingLeds( GridLedOutput& gridLedOutput );

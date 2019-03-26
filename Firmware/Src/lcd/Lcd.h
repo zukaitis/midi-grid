@@ -28,7 +28,7 @@ struct Image
     uint8_t height;
 };
 
-class Lcd: public cpp_freertos::Thread
+class Lcd: private freertos::Thread
 {
 public:
     Lcd( mcu::Time& time );

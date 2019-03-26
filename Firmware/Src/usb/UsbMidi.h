@@ -41,8 +41,8 @@ enum CodeIndexNumber
 static const uint8_t kCodeIndexNumberMask = 0x0F;
 static const uint8_t kChannelMask = 0x0F;
 
-static const uint8_t kMinimumControlValue = 0;
-static const uint8_t kMaximumControlValue = 127;
+static const int16_t kMinimumControlValue = 0;
+static const int16_t kMaximumControlValue = 127;
 
 class UsbMidi
 {

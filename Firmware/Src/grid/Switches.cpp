@@ -43,10 +43,7 @@ void Switches::discardAllPendingEvents()
 // call this method after checking buttons, because it resets flag in GridControl
 bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps )
 {
-
-
     static bool encoderChangeDetected = false;
-
 
     if (gridDriver_.isSwitchInputUpdated() || encoderChangeDetected)
     {

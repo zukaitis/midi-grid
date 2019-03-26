@@ -1,7 +1,8 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "lcd/images.h"
-#include "system/Time.h"
+
+#include "ticks.hpp"
 
 #include <stdio.h>
 #include <string.h>
@@ -51,9 +52,9 @@ static const char launchpad95SubmodeString[9][15] = {
         "MSS: Velocity\0"
 };
 
-Gui::Gui( Lcd& lcd, mcu::Time& time ) :
+Gui::Gui( Lcd& lcd ) :
+        Thread( "Lcd_Gui", 100, 2 ),
         lcd_( lcd ),
-        time_( time ),
         dawClipName_( " \0" ),
         dawDeviceName_( " \0" ),
         dawTrackName_( " \0" ),
@@ -71,7 +72,9 @@ Gui::Gui( Lcd& lcd, mcu::Time& time ) :
         midiOutputTimeout_( 0 ),
         rotaryControlDisplayTimeout_( 0 ),
         statusBarActive_( false )
-{}
+{
+    Start();
+}
 
 Gui::~Gui()
 {}
@@ -136,69 +139,61 @@ void Gui::registerMidiOutputActivity()
     midiOutputTimeout_ = kMidiTimeout;
 }
 
-void Gui::refresh()
+void Gui::Run()
 {
-    if (statusBarActive_)
-    {
-        refreshStatusBar();
-    }
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( kTimeoutCheckStep );
 
-    refreshMainArea();
+    while (1)
+    {
+        DelayUntil( delayPeriod );
+
+        if (statusBarActive_)
+        {
+            refreshStatusBar();
+        }
+        refreshMainArea();
+    }
 }
 
 void Gui::refreshStatusBar()
 {
-    static uint32_t refreshCheckTime = 0;
-
-    if (time_.getSystemTick() >= refreshCheckTime)
+    if (midiInputTimeout_ > 0)
     {
+        midiInputTimeout_ -= kTimeoutCheckStep;
         if (midiInputTimeout_ > 0)
         {
-            midiInputTimeout_ -= kTimeoutCheckStep;
-            if (midiInputTimeout_ > 0)
-            {
-                lcd_.displayImage( 73, 0, arrowSmallDown );
-            }
-            else
-            {
-                lcd_.clearArea( 73, 0, 77, 7 );
-            }
+            lcd_.displayImage( 73, 0, arrowSmallDown );
         }
+        else
+        {
+            lcd_.clearArea( 73, 0, 77, 7 );
+        }
+    }
 
+    if (midiOutputTimeout_ > 0)
+    {
+        midiOutputTimeout_ -= kTimeoutCheckStep;
         if (midiOutputTimeout_ > 0)
         {
-            midiOutputTimeout_ -= kTimeoutCheckStep;
-            if (midiOutputTimeout_ > 0)
-            {
-                lcd_.displayImage( 78, 0, arrowSmallUp );
-            }
-            else
-            {
-                lcd_.clearArea( 78, 0, 83, 7 );
-            }
+            lcd_.displayImage( 78, 0, arrowSmallUp );
         }
-
-        refreshCheckTime = time_.getSystemTick() + kTimeoutCheckStep; // check every 250ms
+        else
+        {
+            lcd_.clearArea( 78, 0, 83, 7 );
+        }
     }
 }
 
 void Gui::refreshMainArea()
 {
-    static uint32_t checkTime = 0;
-
-    if (time_.getSystemTick() >= checkTime)
+    if (rotaryControlDisplayTimeout_ > 0)
     {
-        if (rotaryControlDisplayTimeout_ > 0)
+        rotaryControlDisplayTimeout_ -= kTimeoutCheckStep;
+        if (0  == rotaryControlDisplayTimeout_)
         {
-            rotaryControlDisplayTimeout_ -= kTimeoutCheckStep;
-            if (0  == rotaryControlDisplayTimeout_)
-            {
-                // time ran out, back to showing info
-                displayLaunchpad95Info();
-            }
+            // time ran out, back to showing info
+            displayLaunchpad95Info();
         }
-
-        checkTime = time_.getSystemTick() + kTimeoutCheckStep; // check every 250ms
     }
 }
 

@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include <math.h>
+#include <functional>
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -12,8 +13,8 @@ int main(void)
 {
     ApplicationMain& applicationMain = ApplicationMain::getInstance();
     applicationMain.initialize();
-    applicationMain.Start(); // doesn't return
-    cpp_freertos::Thread::StartScheduler();
+    applicationMain.Start();
+    freertos::Thread::StartScheduler();
 }
 
 ApplicationMain::ApplicationMain() :
@@ -26,8 +27,9 @@ ApplicationMain::ApplicationMain() :
         switches_( grid::Switches( gridDriver_, time_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd( time_ ) ),
-        gui_( lcd::Gui( lcd_, time_ ) ),
-        launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) )
+        gui_( lcd::Gui( lcd_ ) ),
+        launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) ),
+        internalMenu_( grid_, switches_, gui_, system_, std::bind( &ApplicationMain::switchApplicationCallback, this, std::placeholders::_1 ) )
 {}
 
 ApplicationMain::~ApplicationMain()
@@ -51,7 +53,6 @@ void ApplicationMain::Run()
 
     while (!system_.isUsbConnected())
     {
-        gui_.refresh();
     }
 
     gui_.displayWaitingForMidi();
@@ -77,17 +78,14 @@ void ApplicationMain::Run()
         }
         //randomLightAnimation();
         runGridInputTest();
-        gui_.refresh();
     }
 
     while (1)
     {
         launchpad_.runProgram();
+        
         // program only returns here when red button is pressed
-        if (switches_.isButtonPressed( switches_.internalMenuButton ))
-        {
-            runInternalMenu();
-        }
+        runInternalMenu();
     }
 }
 
@@ -184,49 +182,28 @@ void ApplicationMain::runGridInputTest()
 
 void ApplicationMain::runInternalMenu()
 {
-    uint8_t buttonX, buttonY;
-    ButtonEvent event;
-    midi::MidiPacket unusedInputPacket;
+    internalMenuRunning = true;
+    internalMenu_.enable();
 
-    grid_.discardAllPendingButtonEvents();
-    switches_.discardAllPendingEvents();
-    grid_.turnAllLedsOff();
-    gui_.enterInternalMenu();
-
-    const Color red = {64U, 0U, 0U};
-    const uint8_t bootloaderButtonX = 7;
-    const uint8_t bootloaderButtonY = 0;
-    grid_.setLed( bootloaderButtonX, bootloaderButtonY, red );
-
-    while (1)
+    while (internalMenuRunning)
     {
-        usbMidi_.getPacket( unusedInputPacket ); // check for incoming packets and discard them
+    }
 
-        if (grid_.getButtonEvent( buttonX, buttonY, event ))
-        {
-            if ((bootloaderButtonX == buttonX) && (bootloaderButtonY == buttonY))
-            {
-                // reset into DFU bootloader
-                system_.resetIntoBootloader();
-            }
-        }
+    internalMenu_.disable();
+}
 
-        if (switches_.getButtonEvent( buttonX,  event ))
-        {
-            if ((switches_.internalMenuButton == buttonX) && (ButtonEvent_RELEASED == event))
-            {
-                break; // break internal menu loop, get back to launchpad mode
-            }
-        }
-
-        gui_.refresh();
+void ApplicationMain::switchApplicationCallback( const uint8_t applicationIndex )
+{
+    if (0 == applicationIndex)
+    {
+        internalMenuRunning = false;
     }
 }
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
 {
     volatile uint32_t i;
-    while(1)
+    while (true)
     {
         i++;
     }

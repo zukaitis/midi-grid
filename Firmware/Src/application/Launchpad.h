@@ -1,5 +1,5 @@
-#ifndef PROGRAM_LAUNCHPAD_H_
-#define PROGRAM_LAUNCHPAD_H_
+#ifndef APPLICATION_LAUNCHPAD_H_
+#define APPLICATION_LAUNCHPAD_H_
 
 #include "Types.h"
 #include "usb/UsbMidi.h"
@@ -23,7 +23,7 @@ namespace midi
 namespace launchpad
 {
 
-enum Layout
+enum Layout : uint8_t
 {
     Layout_SESSION = 0,
     Layout_USER1,
@@ -34,7 +34,7 @@ enum Layout
     kMaximumLayoutIndex = Layout_PAN
 };
 
-enum Launchpad95Mode
+enum Launchpad95Mode : uint8_t
 {
     Launchpad95Mode_SESSION = 0,
     Launchpad95Mode_INSTRUMENT,
@@ -47,7 +47,7 @@ enum Launchpad95Mode
     Launchpad95Mode_UNKNOWN
 };
 
-enum Launchpad95Submode
+enum Launchpad95Submode : uint8_t
 {
     Launchpad95Submode_DEFAULT = 0,
     Launchpad95Submode_SCALE, // Instrument and Drum step sequencer
@@ -63,7 +63,7 @@ enum Launchpad95Submode
 class Launchpad
 {
 public:
-    Launchpad( grid::Grid& grid_, grid::Switches& switches_, lcd::Gui& gui_, midi::UsbMidi& usbMidi_ );
+    Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, midi::UsbMidi& usbMidi );
 
     void runProgram();
 
@@ -82,7 +82,7 @@ private:
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
     void sendMixerModeControlMessage();
-    void setCurrentLayout( const uint8_t layout );
+    void setCurrentLayout( const Layout layout );
 
     grid::Grid& grid_;
     grid::Switches& switches_;
@@ -102,4 +102,4 @@ private:
 
 } // namespace
 
-#endif // PROGRAM_LAUNCHPAD_H_
+#endif // APPLICATION_LAUNCHPAD_H_

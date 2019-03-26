@@ -274,7 +274,7 @@ FlashingLeds::~FlashingLeds()
 
 void FlashingLeds::Run()
 {
-    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( kLedFlashingPeriod );
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( kLedFlashingPeriod );
     static uint8_t flashColorIndex = 0;
 
     while (1)
@@ -338,7 +338,7 @@ PulsingLeds::~PulsingLeds()
 
 void PulsingLeds::Run()
 {
-    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( kLedPulseStepInterval );
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( kLedPulseStepInterval );
     static uint8_t ledPulseStepNumber = 0;
 
     while (1)

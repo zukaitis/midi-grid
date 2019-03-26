@@ -114,7 +114,7 @@ Launchpad::Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui,
         currentLayout_( Layout_SESSION ),
         systemExclusiveInputMessageLength_( 0 )
 {
-    const int16_t initialControlValue = static_cast<int16_t>(midi::kMaximumControlValue) / 2;
+    const int16_t initialControlValue = midi::kMaximumControlValue / 2;
     rotaryControlValue_[0] = initialControlValue;
     rotaryControlValue_[1] = initialControlValue;
 }
@@ -136,8 +136,6 @@ void Launchpad::runProgram()
         stopApplication |= handleMidiInput();
         stopApplication |= handleGridInput();
         stopApplication |= handleAdditionalControlInput();
-
-        gui_.refresh();
     }
 }
 
@@ -288,13 +286,13 @@ bool Launchpad::handleAdditionalControlInput()
     if (switches_.getRotaryEncoderEvent( encoderNumber, rotaryStep ))
     {
         rotaryControlValue_[encoderNumber] += rotaryStep;
-        if (rotaryControlValue_[encoderNumber] > static_cast<int16_t>(midi::kMaximumControlValue))
+        if (rotaryControlValue_[encoderNumber] > midi::kMaximumControlValue)
         {
-            rotaryControlValue_[encoderNumber] = static_cast<int16_t>(midi::kMaximumControlValue);
+            rotaryControlValue_[encoderNumber] = midi::kMaximumControlValue;
         }
-        else if (rotaryControlValue_[encoderNumber] < static_cast<int16_t>(midi::kMinimumControlValue))
+        else if (rotaryControlValue_[encoderNumber] < midi::kMinimumControlValue)
         {
-            rotaryControlValue_[encoderNumber] = static_cast<int16_t>(midi::kMinimumControlValue);
+            rotaryControlValue_[encoderNumber] = midi::kMinimumControlValue;
         }
         usbMidi_.sendControlChange( kAdditionalControlMidiChannel, encoderNumber, rotaryControlValue_[encoderNumber] );
         gui_.registerMidiOutputActivity();
@@ -538,7 +536,13 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
             switch(standardMessageType)
             {
                 case kSetLayout:
-                    setCurrentLayout( message[7] );
+                    {
+                        const uint8_t layoutIndex = message[7];
+                        if (layoutIndex <= kMaximumLayoutIndex)
+                        {
+                            setCurrentLayout( static_cast<Layout>(layoutIndex) );
+                        }
+                    }
                     break;
                 case kChallenge:
                     usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength );
@@ -600,12 +604,9 @@ void Launchpad::sendMixerModeControlMessage()
     gui_.registerMidiOutputActivity();
 }
 
-void Launchpad::setCurrentLayout( const uint8_t layout )
+void Launchpad::setCurrentLayout( const Layout layout )
 {
-    if (layout <= kMaximumLayoutIndex)
-    {
-        currentLayout_ = static_cast<Layout>(layout);
-    }
+    currentLayout_ = layout;
 }
 
 } // namespace
