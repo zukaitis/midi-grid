@@ -1,7 +1,6 @@
 #include "grid/Grid.h"
 #include "grid/GridDriver.h"
 #include "system/GlobalInterrupts.h"
-#include "system/Time.h"
 
 #include "ticks.hpp"
 #include <math.h>
@@ -16,13 +15,12 @@ static const uint32_t kLedFlashingPeriod = 250; // 120bpm - default flashing rat
 static const uint32_t kLedPulseStepInterval = 67; // 1000ms / 15 = 66.6... ms
 static const uint8_t kLedPulseStepCount = 15;
 
-Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time ) :
+Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts ) :
         gridDriver_( gridDriver ),
         ledOutput_( GridLedOutput( gridDriver ) ),
         flashingLeds_( ledOutput_ ),
         pulsingLeds_( ledOutput_ ),
-        globalInterrupts_( globalInterrupts ),
-        time_( time )
+        globalInterrupts_( globalInterrupts )
 {
     for (uint8_t index = 0; index < numberOfColumns; index++)
     {

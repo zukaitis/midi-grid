@@ -511,10 +511,6 @@ void xPortSysTickHandler( void )
 		}
 	}
 	portENABLE_INTERRUPTS();
-
-	// to be removed
-	HAL_IncTick();
-	HAL_SYSTICK_IRQHandler();
 }
 /*-----------------------------------------------------------*/
 

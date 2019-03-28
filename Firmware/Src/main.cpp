@@ -1,4 +1,5 @@
 #include "main.h"
+#include "ticks.hpp"
 
 #include <math.h>
 #include <functional>
@@ -21,12 +22,11 @@ ApplicationMain::ApplicationMain() :
         Thread("main", 500, 1),
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
-        time_( mcu::Time() ),
         gridDriver_( grid::GridDriver() ),
-        grid_( grid::Grid( gridDriver_, globalInterrupts_, time_ ) ),
-        switches_( grid::Switches( gridDriver_, time_ ) ),
+        grid_( grid::Grid( gridDriver_, globalInterrupts_ ) ),
+        switches_( grid::Switches( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
-        lcd_( lcd::Lcd( time_ ) ),
+        lcd_( lcd::Lcd() ),
         gui_( lcd::Gui( lcd_ ) ),
         launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) ),
         internalMenu_( grid_, switches_, gui_, system_, std::bind( &ApplicationMain::switchApplicationCallback, this, std::placeholders::_1 ) )
@@ -44,7 +44,7 @@ void ApplicationMain::initialize()
 void ApplicationMain::Run()
 {
     lcd_.initialize();
-    lcd_.setBacklightIntensity( 55 );
+    lcd_.setBacklightIntensity( 60 );
 
     gridDriver_.initialize();
     gridDriver_.start();
@@ -76,7 +76,6 @@ void ApplicationMain::Run()
                 gui_.displayWaitingForMidi();
             }
         }
-        //randomLightAnimation();
         runGridInputTest();
     }
 
@@ -89,64 +88,38 @@ void ApplicationMain::Run()
     }
 }
 
-void ApplicationMain::randomLightAnimation()
-{
-    static uint32_t newLightTime = 0;
-
-    if (time_.getSystemTick() >= newLightTime)
-    {
-        static uint8_t ledsChanged = 0;
-
-        const uint8_t ledPositionX = rand() % 8;
-        const uint8_t ledPositionY = rand() % 8;
-
-        grid_.setLed(ledPositionX, ledPositionY, getRandomColor());
-        newLightTime = time_.getSystemTick() + 500 + rand() % 1000;
-        ledsChanged++;
-        if (ledsChanged > 63)
-        {
-            grid_.turnAllLedsOff();
-            ledsChanged = 0;
-        }
-    }
-}
-
 bool ApplicationMain::displayBootAnimation()
 {
-    bool animationEnded = false;
-
-    static uint32_t stepChangeTime = 0;
     static uint8_t currentStepNumber = 0;
     const uint8_t totalNumberOfSteps = 8;
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
 
-    if (time_.getSystemTick() >= stepChangeTime)
+    DelayUntil( delayPeriod );
+
+    grid_.turnAllLedsOff();
+    bool animationEnded = false;
+
+    if (currentStepNumber < totalNumberOfSteps)
     {
-        grid_.turnAllLedsOff();
-
-        if (currentStepNumber < totalNumberOfSteps)
+        for (uint8_t x = 0; x <= currentStepNumber; x++)
         {
-            for (uint8_t x = 0; x <= currentStepNumber; x++)
-            {
-                const uint8_t y = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColor(x, y) );
-                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
-            }
-
-            for (uint8_t y = 0; y < currentStepNumber; y++)
-            {
-                const uint8_t x = currentStepNumber;
-                grid_.setLed( x, y, getBootAnimationColor(x, y) );
-                grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
-            }
-
-            currentStepNumber++;
-        }
-        else
-        {
-            animationEnded = true;
+            const uint8_t y = currentStepNumber;
+            grid_.setLed( x, y, getBootAnimationColor(x, y) );
+            grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
         }
 
-        stepChangeTime = time_.getSystemTick() + 70; // step each 70ms
+        for (uint8_t y = 0; y < currentStepNumber; y++)
+        {
+            const uint8_t x = currentStepNumber;
+            grid_.setLed( x, y, getBootAnimationColor(x, y) );
+            grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
+        }
+
+        currentStepNumber++;
+    }
+    else
+    {
+        animationEnded = true;
     }
 
     return animationEnded;

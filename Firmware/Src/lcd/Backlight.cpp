@@ -7,7 +7,7 @@
 namespace lcd
 {
 
-static const uint16_t kIntensity[Backlight::numberOfIntensityLevels] = {
+static const uint16_t kIntensity[65] = {
         0, 1, 2, 3, 5, 8, 11, 15, 20, 25, 30, 36, 43, 50, 57, 65,
         74, 82, 92, 102, 112, 123, 135, 147, 159, 172, 185, 199, 213, 228, 243, 258,
         274, 291, 308, 325, 343, 362, 380, 400, 419, 439, 460, 481, 502, 524, 547, 570,
@@ -43,9 +43,9 @@ void Backlight::setIntensity( uint8_t intensity )
 {
     uint8_t wordIndex = 0;
 
-    if (intensity >= numberOfIntensityLevels)
+    if (intensity > maximumIntensity)
     {
-        intensity = numberOfIntensityLevels - 1;
+        intensity = maximumIntensity;
     }
 
     const uint16_t numberOfFullySetWords = kIntensity[intensity] / 32;

@@ -15,7 +15,7 @@ public:
     void initialize();
     void setIntensity( uint8_t intensity );
 
-    static const uint8_t numberOfIntensityLevels = 65;
+    static const uint8_t maximumIntensity = 64;
 
 private:
     void initializeDma();

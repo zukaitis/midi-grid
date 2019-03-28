@@ -30,26 +30,26 @@ static const uint16_t kMidiTimeout = 1250; // ms
 static const uint16_t kRotaryControlTimeout = 1250; // ms
 
 static const char launchpad95ModeString[8][16] = {
-        "Session\0",
-        "Instrument\0",
-        "Device control\0",
-        "User 1\0",
-        "Drum step seq.\0",
-        "Melodic seq.\0",
-        "User 2\0",
-        "Mixer\0"
+        "Session",
+        "Instrument",
+        "Device control",
+        "User 1",
+        "Drum step seq.",
+        "Melodic seq.",
+        "User 2",
+        "Mixer"
 };
 
 static const char launchpad95SubmodeString[9][15] = {
-        " \0",
-        "Scale\0",
-        "Volume\0",
-        "Pan\0",
-        "Send A\0",
-        "Send B\0",
-        "MSS: Length\0",
-        "MSS: Octave\0",
-        "MSS: Velocity\0"
+        " ",
+        "Scale",
+        "Volume",
+        "Pan",
+        "Send A",
+        "Send B",
+        "MSS: Length",
+        "MSS: Octave",
+        "MSS: Velocity"
 };
 
 Gui::Gui( Lcd& lcd ) :

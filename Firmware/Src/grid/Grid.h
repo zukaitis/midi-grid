@@ -98,7 +98,7 @@ struct Led
 class Grid
 {
 public:
-    Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts, mcu::Time& time );
+    Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
     ~Grid();
 
     bool areColorsEqual( const Color& color1, const Color& color2 ) const;
@@ -121,7 +121,6 @@ private:
     FlashingLeds flashingLeds_;
     PulsingLeds pulsingLeds_;
     mcu::GlobalInterrupts& globalInterrupts_;
-    mcu::Time& time_;
 
     Led led_[numberOfColumns][numberOfRows];
     uint8_t buttonColumnInput_[numberOfColumns];

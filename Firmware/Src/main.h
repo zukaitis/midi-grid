@@ -10,7 +10,6 @@
 #include "application/InternalMenu.h"
 #include "application/Launchpad.h"
 #include "system/GlobalInterrupts.h"
-#include "system/Time.h"
 #include "usb/UsbMidi.h"
 
 #include "thread.hpp"
@@ -46,7 +45,6 @@ private:
 
     mcu::System system_;
     mcu::GlobalInterrupts globalInterrupts_;
-    mcu::Time time_;
     grid::GridDriver gridDriver_;
     grid::Grid grid_;
     grid::Switches switches_;

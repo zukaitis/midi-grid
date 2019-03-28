@@ -31,7 +31,7 @@ struct Image
 class Lcd: private freertos::Thread
 {
 public:
-    Lcd( mcu::Time& time );
+    Lcd();
     ~Lcd();
 
     virtual void Run();
@@ -61,7 +61,6 @@ private:
 
     Backlight backlight_;
     LcdDriver lcdDriver_;
-    mcu::Time& time_;
 
     uint8_t appointedBacklightIntensity_;
     uint8_t currentBacklightIntensity_;

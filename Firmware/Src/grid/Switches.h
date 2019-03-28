@@ -16,7 +16,7 @@ class GridDriver;
 class Switches
 {
 public:
-    Switches( GridDriver& gridControl, mcu::Time& time );
+    Switches( GridDriver& gridControl );
     ~Switches();
 
     void discardAllPendingEvents();
@@ -34,7 +34,6 @@ public:
 
 private:
     GridDriver& gridDriver_;
-    mcu::Time& time_;
 
     static const uint8_t numberOfButtons_ = 2;
 

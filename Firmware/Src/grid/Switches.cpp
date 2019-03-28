@@ -1,6 +1,8 @@
 #include "grid/Switches.h"
 #include "grid/GridDriver.h"
-#include "system/Time.h"
+#include "ticks.hpp"
+
+#include <stdlib.h>
 
 namespace grid
 {
@@ -11,9 +13,8 @@ static const int8_t kNumberOfRotaryEncoderMicrostepsInStep = 4;
 
 static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
-Switches::Switches( GridDriver& gridDriver, mcu::Time& time ) :
-        gridDriver_( gridDriver ),
-        time_( time )
+Switches::Switches( GridDriver& gridDriver ) :
+        gridDriver_( gridDriver )
 {
     // active low
     registeredButtonInput_[0] = true;
@@ -62,14 +63,15 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                 microstep[encoder] += kEncoderState[previousEncoderValue[encoder]];
             }
 
-            if ((microstep[encoder] >= kNumberOfRotaryEncoderMicrostepsInStep) || (microstep[encoder] <= -kNumberOfRotaryEncoderMicrostepsInStep))
+            // only respond every 4 microsteps (1 physical step)
+            if (abs( microstep[encoder] ) >= kNumberOfRotaryEncoderMicrostepsInStep )
             {
                 static uint32_t previousEventTime[2] = {0, 0};
                 int8_t velocityMultiplier;
-                // only respond every 4 microsteps (1 physical step)
-                const uint32_t interval = time_.getSystemTick() - previousEventTime[encoder];
+                
+                const uint32_t interval = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() ) - previousEventTime[encoder];
 
-                if (interval >= 500)
+                if (interval > 500)
                 {
                     velocityMultiplier = 1;
                 }
@@ -86,7 +88,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
                     velocityMultiplier = 8;
                 }
 
-                previousEventTime[encoder] = time_.getSystemTick();
+                previousEventTime[encoder] = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() );
                 rotaryEncoderNumber = encoder;
                 steps = ((microstep[encoder] > 0) ? 1 * velocityMultiplier : -1 * velocityMultiplier);
                 microstep[encoder] %= 4;
