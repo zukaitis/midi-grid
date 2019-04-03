@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+namespace freertos
+{
+    class Queue;
+}
+
 namespace midi
 {
 

@@ -2,6 +2,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "queue32.h"
+#include "queue.hpp"
 
 #include "usbd_midi.h"
 #include "usb/usbd_desc.h"
@@ -17,6 +18,7 @@ static uint16_t MIDI_DataTx(uint8_t *message, uint16_t length);
 
 // from mi:muz (Internal)
 stB4Arrq rxq;
+//static freertos::Queue midiQueue = freertos::Queue( 256, sizeof(uint32_t) );
 
 USBD_MIDI_ItfTypeDef USBD_Interface_fops_FS =
 {
@@ -24,7 +26,7 @@ USBD_MIDI_ItfTypeDef USBD_Interface_fops_FS =
     MIDI_DataTx
 };
 
-static const uint8_t kMidiPacketSize = 4;
+static const uint16_t kMidiPacketSize = 4;
 
 static uint16_t MIDI_DataRx(uint8_t *message, uint16_t length)
 {
@@ -35,6 +37,7 @@ static uint16_t MIDI_DataRx(uint8_t *message, uint16_t length)
         for(uint16_t count = 0; count < numberOfMessages; count++)
         {
             b4arrq_push(&rxq,((uint32_t *)message)+count);
+            //midiQueue.Enqueue( reinterpret_cast<uint32_t*>(message + count*kMidiPacketSize) );
         }
     }
     return 0;
@@ -72,15 +75,19 @@ UsbMidi::~UsbMidi()
 {
 }
 
-bool UsbMidi::getPacket( MidiPacket& packet)
+bool UsbMidi::getPacket( MidiPacket& packet )
 {
     MidiInput midiInput;
     bool packetAvailable = false;
     if (0 != rxq.num)
+    //if (!midiQueue.IsEmpty())
     {
         midiInput.input = *b4arrq_pop(&rxq);
-        packet = midiInput.packet;
-        packetAvailable = true;
+        //if (midiQueue.Dequeue( &midiInput.input, 1 ))
+        {
+            packet = midiInput.packet;
+            packetAvailable = true;
+        }
     }
     return packetAvailable;
 }
@@ -88,6 +95,7 @@ bool UsbMidi::getPacket( MidiPacket& packet)
 bool UsbMidi::isPacketAvailable()
 {
     return (0 != rxq.num);
+    //return !midiQueue.IsEmpty();
 }
 
 void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )

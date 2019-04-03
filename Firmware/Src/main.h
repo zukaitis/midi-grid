@@ -1,7 +1,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include <system/System.h>
+#include "system/System.h"
 #include "grid/GridDriver.h"
 #include "grid/Grid.h"
 #include "grid/Switches.h"
@@ -17,7 +17,6 @@
 class ApplicationMain: public freertos::Thread
 {
 public:
-
     // singleton, because class has to be called from main() function
     static ApplicationMain& getInstance()
     {
@@ -37,7 +36,7 @@ public:
 
     void switchApplicationCallback( const uint8_t applicationIndex );
 
-    bool displayBootAnimation();
+    void displayBootAnimation();
     Color getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
 
 private:

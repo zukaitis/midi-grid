@@ -2,6 +2,7 @@
 #define GRID_GRIDDRIVER_H_
 
 #include "Types.h"
+#include <functional>
 
 namespace grid
 {
@@ -13,6 +14,8 @@ public:
     GridDriver();
     ~GridDriver();
 
+    void addNotificationCallback( std::function<void()> callback );
+
     bool getButtonInput( const uint8_t button ) const;
     uint8_t getGridButtonInput( const uint8_t column ) const;
     uint8_t getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const;
@@ -23,6 +26,7 @@ public:
         currentlyStableInputBufferIndex_ = 0;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
+        callNotifications();
     }
 
     static inline void inputReadoutToMemory1CompleteCallback()
@@ -30,6 +34,15 @@ public:
         currentlyStableInputBufferIndex_ = 1;
         gridInputUpdated_ = true;
         switchInputUpdated_ = true;
+        callNotifications();
+    }
+
+    static inline void callNotifications()
+    {
+        for (uint8_t index = 0; index < numberOfNotifications_; index++)
+        {
+            notify_[index]();
+        }
     }
 
     bool isButtonInputStable( const uint8_t button ) const;
@@ -46,7 +59,7 @@ public:
 
     static const uint8_t numberOfHorizontalSegments = 4;
     static const uint8_t numberOfVerticalSegments = 20;
-    static const uint8_t nNumberOfButtonDebouncingCycles = 2;
+    static const uint8_t numberOfButtonDebouncingCycles = 2;
 
     static const uint8_t ledColorIntensityMaximum = 64;
     static const uint8_t ledColorIntensityOff = 0;
@@ -62,10 +75,14 @@ private:
     static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 
-    static uint32_t buttonInput_[nNumberOfButtonDebouncingCycles][numberOfVerticalSegments];
+    static uint32_t buttonInput_[numberOfButtonDebouncingCycles][numberOfVerticalSegments];
     static uint32_t pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalSegments];
     static uint32_t pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
     static uint32_t pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
+
+    static const uint8_t kMaximumNumberOfNotifications = 3;
+    static std::function<void(void)> notify_[kMaximumNumberOfNotifications];
+    static uint8_t numberOfNotifications_;
 };
 
 } // namespace grid

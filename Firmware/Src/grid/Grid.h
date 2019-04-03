@@ -4,6 +4,7 @@
 #include "Types.h"
 
 #include "thread.hpp"
+#include "queue.hpp"
 
 namespace mcu
 {
@@ -95,7 +96,7 @@ struct Led
     LedLightingType lightingType;
 };
 
-class Grid
+class Grid : private freertos::Thread
 {
 public:
     Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
@@ -104,7 +105,7 @@ public:
     bool areColorsEqual( const Color& color1, const Color& color2 ) const;
 
     void discardAllPendingButtonEvents();
-    bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent );
+    bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonAction& buttonEvent );
     Color getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Color getRandomColor();
 
@@ -116,11 +117,19 @@ public:
 private:
     void updateButtonColumnInput();
 
+    virtual void Run();
+
+    inline void notifyFromISRWrapper()
+    {
+        NotifyFromISR();
+    }
+
     GridDriver& gridDriver_;
     GridLedOutput ledOutput_;
     FlashingLeds flashingLeds_;
     PulsingLeds pulsingLeds_;
     mcu::GlobalInterrupts& globalInterrupts_;
+    freertos::Queue buttonInputEvents_;
 
     Led led_[numberOfColumns][numberOfRows];
     uint8_t buttonColumnInput_[numberOfColumns];

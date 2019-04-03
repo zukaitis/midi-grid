@@ -1,10 +1,8 @@
 #include "main.h"
 #include "ticks.hpp"
 
-#include <math.h>
 #include <functional>
-
-#define MAX(a,b) (((a)>(b))?(a):(b))
+#include <algorithm>
 
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void);
@@ -56,18 +54,15 @@ void ApplicationMain::Run()
     }
 
     gui_.displayWaitingForMidi();
-
-    while(!displayBootAnimation())
-    {
-    }
+    displayBootAnimation();
 
     while (!usbMidi_.isPacketAvailable())
     {
         uint8_t button;
-        ButtonEvent event;
+        ButtonAction event;
         if (switches_.getButtonEvent( button, event ))
         {
-            if ((switches_.internalMenuButton == button) && (ButtonEvent_PRESSED == event))
+            if ((switches_.internalMenuButton == button) && (ButtonAction_PRESSED == event))
             {
                 runInternalMenu();
 
@@ -82,47 +77,38 @@ void ApplicationMain::Run()
     while (1)
     {
         launchpad_.runProgram();
-        
+
         // program only returns here when red button is pressed
         runInternalMenu();
     }
 }
 
-bool ApplicationMain::displayBootAnimation()
+void ApplicationMain::displayBootAnimation()
 {
-    static uint8_t currentStepNumber = 0;
-    const uint8_t totalNumberOfSteps = 8;
+    static const uint8_t totalNumberOfSteps = 8;
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
 
-    DelayUntil( delayPeriod );
-
     grid_.turnAllLedsOff();
-    bool animationEnded = false;
 
-    if (currentStepNumber < totalNumberOfSteps)
+    for (uint8_t currentStepNumber = 0; currentStepNumber < totalNumberOfSteps; currentStepNumber++)
     {
         for (uint8_t x = 0; x <= currentStepNumber; x++)
         {
             const uint8_t y = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor(x, y) );
-            grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
+            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
+            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
         }
 
-        for (uint8_t y = 0; y < currentStepNumber; y++)
+        for (uint8_t y = 0; y <= currentStepNumber; y++)
         {
             const uint8_t x = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor(x, y) );
-            grid_.setLed( 7-x, 7-y, getBootAnimationColor(7-x, 7-y) );
+            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
+            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
         }
-
-        currentStepNumber++;
+        
+        DelayUntil( delayPeriod );
+        grid_.turnAllLedsOff();
     }
-    else
-    {
-        animationEnded = true;
-    }
-
-    return animationEnded;
 }
 
 /* calculates color value according to led position */
@@ -130,9 +116,9 @@ Color ApplicationMain::getBootAnimationColor( const uint8_t ledPositionX, const 
 {
     Color color = {0, 0, 0};
 
-    color.Red = ((7 - MAX( ledPositionY, 7 - ledPositionX )) * 64) / 7;
+    color.Red = ((7 - std::max( ledPositionY, static_cast<uint8_t>(7U - ledPositionX) )) * 64) / 7;
     color.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
-    color.Blue = ((7 - MAX( ledPositionX, 7 - ledPositionY )) * 64) / 7;
+    color.Blue = ((7 - std::max( ledPositionX, static_cast<uint8_t>(7U - ledPositionY) )) * 64) / 7;
 
     return color;
 }
@@ -140,12 +126,12 @@ Color ApplicationMain::getBootAnimationColor( const uint8_t ledPositionX, const 
 void ApplicationMain::runGridInputTest()
 {
     uint8_t buttonX, buttonY;
-    ButtonEvent event;
+    ButtonAction event;
 
     if (grid_.getButtonEvent( buttonX, buttonY, event ))
     {
         Color color = { 0, 0, 0 };
-        if (ButtonEvent_PRESSED == event)
+        if (ButtonAction_PRESSED == event)
         {
             color = grid_.getRandomColor();
         }

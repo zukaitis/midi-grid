@@ -29,7 +29,7 @@ void Switches::discardAllPendingEvents()
 {
     uint8_t unusedUnsignedChar;
     int8_t unusedSignedChar;
-    ButtonEvent unusedEvent;
+    ButtonAction unusedEvent;
 
     // call methods while they have pending events
     while (getButtonEvent( unusedUnsignedChar, unusedEvent ))
@@ -99,7 +99,7 @@ bool Switches::getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& step
     return false;
 }
 
-bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
+bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonAction& buttonEvent )
 {
     static bool buttonChangeDetected = false;
 
@@ -113,7 +113,7 @@ bool Switches::getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent )
                 const bool buttonInput = gridDriver_.getButtonInput(button);
                 if (registeredButtonInput_[button] != buttonInput)
                 {
-                    buttonEvent = buttonInput ? ButtonEvent_RELEASED : ButtonEvent_PRESSED; // active low
+                    buttonEvent = buttonInput ? ButtonAction_RELEASED : ButtonAction_PRESSED; // active low
                     registeredButtonInput_[button] = buttonInput;
                     buttonNumber = button;
                     buttonChangeDetected = true;

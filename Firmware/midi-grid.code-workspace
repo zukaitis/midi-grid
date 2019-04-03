@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "Firmware"
+			"path": "/mnt/hdd/Documents/projects/midi-grid/Firmware"
 		}
     ],
     "settings": {
@@ -39,7 +39,8 @@
             "tuple": "cpp",
             "typeinfo": "cpp",
             "utility": "cpp",
-            "functional": "cpp"
+            "functional": "cpp",
+            "deque": "cpp"
         }
     },
 }

@@ -10,10 +10,18 @@ struct Color
     uint8_t Blue;
 };
 
-enum ButtonEvent
+// both Grid and AdditionalButtons classes use these types, that's why they're grobal
+enum ButtonAction : uint8_t
 {
-    ButtonEvent_RELEASED = 0,
-    ButtonEvent_PRESSED
+    ButtonAction_RELEASED = 0,
+    ButtonAction_PRESSED
+};
+
+struct ButtonEvent
+{
+    ButtonAction action;
+    uint8_t positionX;
+    uint8_t positionY;
 };
 
 #endif // TYPES_H_

@@ -180,6 +180,16 @@ class Thread {
             SchedulerActive = false;
         }
 
+        inline void Notify()
+        {
+            xTaskNotify( GetHandle(), 0, eNoAction );
+        }
+
+        inline void NotifyFromISR()
+        {
+            xTaskNotifyFromISR( GetHandle(), 0, eNoAction, pdFALSE );
+        }
+
 #if (INCLUDE_vTaskSuspend == 1)
         /**
          *  Suspend this thread.
@@ -359,6 +369,10 @@ class Thread {
 
 #endif
 
+        inline uint32_t TakeNotification( TickType_t Timeout = portMAX_DELAY )
+        {
+            return ulTaskNotifyTake( pdTRUE, Timeout );
+        }
 
     /////////////////////////////////////////////////////////////////////////
     //

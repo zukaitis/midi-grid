@@ -22,7 +22,7 @@ AdditionalButtonInputHandler::AdditionalButtonInputHandler( grid::Switches& swit
 void AdditionalButtonInputHandler::Run()
 {
     uint8_t button;
-    ButtonEvent event;
+    ButtonAction event;
 
     while (true)
     {
@@ -30,7 +30,7 @@ void AdditionalButtonInputHandler::Run()
 
         if (switches_.getButtonEvent( button,  event ))
         {
-            if ((switches_.internalMenuButton == button) && (ButtonEvent_RELEASED == event))
+            if ((switches_.internalMenuButton == button) && (ButtonAction_PRESSED == event))
             {
                 stopApplication_(); // return from interal menu
             }
@@ -48,14 +48,14 @@ GridInputHandler::GridInputHandler( grid::Grid& grid, mcu::System& system ):
 void GridInputHandler::Run()
 {
     uint8_t buttonX, buttonY;
-    ButtonEvent event;
+    ButtonAction event;
 
     while (true)
     {
         Delay( 10 ); // to be replaced with block from additional button queue
         if (grid_.getButtonEvent( buttonX, buttonY, event ))
         {
-            if ((kBootloaderButtonX == buttonX) && (kBootloaderButtonY == buttonY) && (ButtonEvent_PRESSED == event))
+            if ((kBootloaderButtonX == buttonX) && (kBootloaderButtonY == buttonY) && (ButtonAction_PRESSED == event))
             {
                 // reset into DFU bootloader
                 system_.resetIntoBootloader();

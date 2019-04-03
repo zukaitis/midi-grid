@@ -1,0 +1,16 @@
+{
+  "commands": [
+    {
+      "command": "commands.refresh",
+      "text": "$(sync)",
+      "tooltip": "Refresh commands",
+      "color": "#FFCC00"
+    },
+    {
+        "command": "terminal.cd Debug",
+        "text": "Build",
+        "tooltip": "Build Debug configuration",
+        "color": "#00FF00"
+    }
+  ]
+}

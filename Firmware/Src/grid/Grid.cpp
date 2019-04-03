@@ -4,6 +4,7 @@
 
 #include "ticks.hpp"
 #include <math.h>
+#include <functional>
 
 //#include "lcd/Lcd.h" // for debugging, to be removed
 
@@ -14,19 +15,25 @@ static const uint8_t kNumberOfPadColumns = 8;
 static const uint32_t kLedFlashingPeriod = 250; // 120bpm - default flashing rate
 static const uint32_t kLedPulseStepInterval = 67; // 1000ms / 15 = 66.6... ms
 static const uint8_t kLedPulseStepCount = 15;
+static const uint32_t kButtonInputEventQueueSize = 16;
 
 Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts ) :
+        Thread( "Grid", 200, 4 ),
         gridDriver_( gridDriver ),
         ledOutput_( GridLedOutput( gridDriver ) ),
-        flashingLeds_( ledOutput_ ),
-        pulsingLeds_( ledOutput_ ),
-        globalInterrupts_( globalInterrupts )
+        flashingLeds_( FlashingLeds( ledOutput_ ) ),
+        pulsingLeds_( PulsingLeds( ledOutput_ ) ),
+        globalInterrupts_( globalInterrupts ),
+        buttonInputEvents_( freertos::Queue( kButtonInputEventQueueSize, sizeof( ButtonEvent ) ) )
 {
     for (uint8_t index = 0; index < numberOfColumns; index++)
     {
         buttonColumnInput_[index] = 0x00;
         registeredButtonColumnInput_[index] = 0x00;
     }
+
+    gridDriver_.addNotificationCallback( std::bind( &Grid::notifyFromISRWrapper, this ) );
+    Start();
 }
 
 Grid::~Grid()
@@ -45,7 +52,7 @@ bool Grid::areColorsEqual( const Color& color1, const Color& color2 ) const
 void Grid::discardAllPendingButtonEvents()
 {
     uint8_t unusedUnsignedChar;
-    ButtonEvent unusedEvent;
+    ButtonAction unusedEvent;
 
     // call method while it has pending events
     while (getButtonEvent( unusedUnsignedChar, unusedUnsignedChar, unusedEvent ))
@@ -53,8 +60,9 @@ void Grid::discardAllPendingButtonEvents()
     }
 }
 
-bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonEvent& buttonEvent )
+bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonAction& buttonEvent )
 {
+#if 0
     static bool buttonChangeDetected = false;
 
     bool eventAvailable = false;
@@ -82,7 +90,7 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
                 {
                     if (0 != ((columnChanges >> y) & 0x01))
                     {
-                        buttonEvent = static_cast<ButtonEvent>((buttonColumnInput_[x] >> y) & 0x01);
+                        buttonEvent = static_cast<ButtonAction>((buttonColumnInput_[x] >> y) & 0x01);
                         buttonPositionX = x;
                         buttonPositionY = y;
                         registeredButtonColumnInput_[x] ^= (1 << y); // toggle bit that was registered
@@ -95,7 +103,55 @@ bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, B
             }
         }
     }
+    #endif
+
+    bool eventAvailable = false;
+
+    if (!buttonInputEvents_.IsEmpty())
+    {
+        ButtonEvent event = {};
+        buttonInputEvents_.Dequeue( &event, 1 );
+        buttonPositionX = event.positionX;
+        buttonPositionY = event.positionY;
+        buttonEvent = event.action;
+        eventAvailable = true;
+    }
+
     return eventAvailable;
+}
+
+void Grid::Run()
+{
+    while (true)
+    {
+        TakeNotification(); // blocking until grid driver gives notification
+
+        // interrupts are disabled, so that active buffer wouldn't change during reading
+        globalInterrupts_.disable();
+        updateButtonColumnInput();
+        gridDriver_.resetGridInputUpdatedFlag();
+        globalInterrupts_.enable();
+
+        for (uint8_t x = 0; x < numberOfColumns; x++)
+        {
+            const uint8_t columnChanges = buttonColumnInput_[x] ^ registeredButtonColumnInput_[x];
+            if (0 != columnChanges)
+            {
+                for (uint8_t y = 0; y < numberOfRows; y++)
+                {
+                    if (0 != ((columnChanges >> y) & 0x01))
+                    {
+                        ButtonEvent event;
+                        event.action = static_cast<ButtonAction>((buttonColumnInput_[x] >> y) & 0x01);
+                        event.positionX = x;
+                        event.positionY = y;
+                        buttonInputEvents_.Enqueue( &event );
+                        registeredButtonColumnInput_[x] ^= (1 << y); // toggle bit that was registered
+                    }
+                }
+            }
+        }
+    }
 }
 
 Color Grid::getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
@@ -275,7 +331,7 @@ void FlashingLeds::Run()
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( kLedFlashingPeriod );
     static uint8_t flashColorIndex = 0;
 
-    while (1)
+    while (true)
     {
         DelayUntil( delayPeriod );
 
@@ -339,7 +395,7 @@ void PulsingLeds::Run()
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( kLedPulseStepInterval );
     static uint8_t ledPulseStepNumber = 0;
 
-    while (1)
+    while (true)
     {
         DelayUntil( delayPeriod );
 

@@ -21,7 +21,7 @@ public:
 
     void discardAllPendingEvents();
 
-    bool getButtonEvent( uint8_t& buttonNumber, ButtonEvent& buttonEvent );
+    bool getButtonEvent( uint8_t& buttonNumber, ButtonAction& buttonEvent );
     bool getRotaryEncoderEvent( uint8_t& rotaryEncoderNumber, int8_t& steps );
 
     bool isButtonPressed( const uint8_t buttonNumber );

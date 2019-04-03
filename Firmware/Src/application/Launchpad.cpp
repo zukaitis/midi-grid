@@ -279,7 +279,7 @@ bool Launchpad::handleAdditionalControlInput()
 {
     bool stopApplication = false;
 
-    ButtonEvent event;
+    ButtonAction event;
     uint8_t encoderNumber;
     int8_t rotaryStep;
 
@@ -305,13 +305,13 @@ bool Launchpad::handleAdditionalControlInput()
     {
         if (switches_.additionalNoteButton == button) // only send note on the event of black button
         {
-            const uint8_t controlValue = (ButtonEvent_PRESSED == event) ? kControlValueHigh : kControlValueLow;
+            const uint8_t controlValue = (ButtonAction_PRESSED == event) ? kControlValueHigh : kControlValueLow;
             usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
             gui_.registerMidiOutputActivity();
         }
         else if (switches_.internalMenuButton == button)
         {
-            if (ButtonEvent_PRESSED == event)
+            if (ButtonAction_PRESSED == event)
             {
                 stopApplication = true; // break launchpad mode loop, enter internal menu
             }
@@ -361,11 +361,11 @@ bool Launchpad::handleGridInput()
     const bool stopApplication = false;
 
     uint8_t buttonX, buttonY;
-    ButtonEvent event;
+    ButtonAction event;
 
     if (grid_.getButtonEvent( buttonX, buttonY, event ))
     {
-        const uint8_t controlValue = (ButtonEvent_PRESSED == event) ? kControlValueHigh : kControlValueLow;
+        const uint8_t controlValue = (ButtonAction_PRESSED == event) ? kControlValueHigh : kControlValueLow;
         if (kDeviceControlColumn == buttonX) // control column
         {
             usbMidi_.sendControlChange( kDeviceControlMidiChannel, kDeviceControlColumnValue[buttonY], controlValue );

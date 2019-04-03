@@ -14,7 +14,7 @@ static const uint32_t kPwmClockPrescaler = 1;
 static const uint16_t kPwmClockPeriod = 47000; // <500us - has to be shorter than base period
 
 static const uint16_t kGridButtonMask = 0x000F;
-static const uint16_t kNonGridButtonMask[2] = {0x2000, 0x0400};
+static const uint16_t kAdditionalButtonMask[2] = {0x2000, 0x0400};
 static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
 static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
 
@@ -64,10 +64,13 @@ uint8_t GridDriver::currentlyStableInputBufferIndex_ = 1;
 bool GridDriver::gridInputUpdated_ = false;
 bool GridDriver::switchInputUpdated_ = false;
 
-uint32_t GridDriver::buttonInput_[nNumberOfButtonDebouncingCycles][numberOfVerticalSegments];
+uint32_t GridDriver::buttonInput_[numberOfButtonDebouncingCycles][numberOfVerticalSegments];
 uint32_t GridDriver::pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalSegments];
 uint32_t GridDriver::pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
 uint32_t GridDriver::pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
+
+std::function<void(void)> GridDriver::notify_[kMaximumNumberOfNotifications];
+uint8_t GridDriver::numberOfNotifications_;
 
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;
@@ -112,9 +115,15 @@ GridDriver::~GridDriver()
 {
 }
 
+void GridDriver::addNotificationCallback( std::function<void()> callback )
+{
+    notify_[numberOfNotifications_] = callback;
+    numberOfNotifications_++;
+}
+
 bool GridDriver::getButtonInput( const uint8_t button ) const
 {
-    return (0 != (kNonGridButtonMask[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
+    return (0 != (kAdditionalButtonMask[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
 }
 
 uint8_t GridDriver::getGridButtonInput( const uint8_t column ) const
@@ -139,7 +148,7 @@ void GridDriver::initialize()
 
 bool GridDriver::isButtonInputStable( const uint8_t button ) const
 {
-    return (0 == (kNonGridButtonMask[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
+    return (0 == (kAdditionalButtonMask[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
 }
 
 bool GridDriver::isGridVerticalSegmentInputStable( const uint8_t segment ) const
@@ -350,7 +359,7 @@ void GridDriver::initializeDma()
     HAL_DMA_Init( &buttonInputDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
 
-    HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 0, 0 );
+    HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 5, 0 );
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
