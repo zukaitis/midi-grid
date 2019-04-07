@@ -4,7 +4,8 @@
 #include "system/System.h"
 #include "grid/GridDriver.h"
 #include "grid/Grid.h"
-#include "grid/Switches.h"
+#include "grid/AdditionalButtons.h"
+#include "grid/RotaryControls.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "application/InternalMenu.h"
@@ -46,7 +47,8 @@ private:
     mcu::GlobalInterrupts globalInterrupts_;
     grid::GridDriver gridDriver_;
     grid::Grid grid_;
-    grid::Switches switches_;
+    grid::AdditionalButtons additionalButtons_;
+    grid::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
     lcd::Gui gui_;

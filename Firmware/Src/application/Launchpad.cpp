@@ -1,7 +1,8 @@
 #include "application/Launchpad.h"
 
 #include "grid/Grid.h"
-#include "grid/Switches.h"
+#include "grid/AdditionalButtons.h"
+#include "grid/RotaryControls.h"
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 
@@ -105,9 +106,10 @@ static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {7, 7, 13}, {56, 64, 21}, {30, 64, 47}, {38, 38, 64}, {35, 25, 64}, {17, 17, 17}, {30, 30, 30}, {56, 64, 64},
         {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
 
-Launchpad::Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, midi::UsbMidi& usbMidi ) :
+Launchpad::Launchpad( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi ) :
         grid_( grid ),
-        switches_( switches ),
+        additionalButtons_( additionalButtons ),
+        rotaryControls_( rotaryControls ),
         gui_( gui ),
         usbMidi_( usbMidi ),
         currentLaunchpad95Mode_( Launchpad95Mode_UNKNOWN ),
@@ -123,7 +125,7 @@ void Launchpad::runProgram()
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
-    switches_.discardAllPendingEvents();
+    additionalButtons_.discardAllPendingEvents();
 
     sendMixerModeControlMessage();
 
@@ -279,39 +281,39 @@ bool Launchpad::handleAdditionalControlInput()
 {
     bool stopApplication = false;
 
-    ButtonAction event;
-    uint8_t encoderNumber;
-    int8_t rotaryStep;
+    grid::RotaryControls::Event rotaryControlEvent = {};
 
-    if (switches_.getRotaryEncoderEvent( encoderNumber, rotaryStep ))
+    if (rotaryControls_.waitForEvent( rotaryControlEvent ))
     {
-        rotaryControlValue_[encoderNumber] += rotaryStep;
-        if (rotaryControlValue_[encoderNumber] > midi::kMaximumControlValue)
+        const uint8_t controlIndex = rotaryControlEvent.control;
+        rotaryControlValue_[controlIndex] += rotaryControlEvent.steps;
+
+        if (rotaryControlValue_[controlIndex] > midi::kMaximumControlValue)
         {
-            rotaryControlValue_[encoderNumber] = midi::kMaximumControlValue;
+            rotaryControlValue_[controlIndex] = midi::kMaximumControlValue;
         }
-        else if (rotaryControlValue_[encoderNumber] < midi::kMinimumControlValue)
+        else if (rotaryControlValue_[controlIndex] < midi::kMinimumControlValue)
         {
-            rotaryControlValue_[encoderNumber] = midi::kMinimumControlValue;
+            rotaryControlValue_[controlIndex] = midi::kMinimumControlValue;
         }
-        usbMidi_.sendControlChange( kAdditionalControlMidiChannel, encoderNumber, rotaryControlValue_[encoderNumber] );
+        usbMidi_.sendControlChange( kAdditionalControlMidiChannel, controlIndex, rotaryControlValue_[controlIndex] );
         gui_.registerMidiOutputActivity();
         gui_.displayRotaryControlValues( static_cast<uint8_t>(rotaryControlValue_[0]), static_cast<uint8_t>(rotaryControlValue_[1]) );
     }
 
-    uint8_t button;
+    grid::AdditionalButtons::Event additionalButtonEvent = {};
 
-    if (switches_.getButtonEvent( button,  event ))
+    if (additionalButtons_.getEvent( additionalButtonEvent ))
     {
-        if (switches_.additionalNoteButton == button) // only send note on the event of black button
+        if (grid::AdditionalButtons::extraNoteButton == additionalButtonEvent.button) // only send note on the event of black button
         {
-            const uint8_t controlValue = (ButtonAction_PRESSED == event) ? kControlValueHigh : kControlValueLow;
+            const uint8_t controlValue = (ButtonAction_PRESSED == additionalButtonEvent.action) ? kControlValueHigh : kControlValueLow;
             usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
             gui_.registerMidiOutputActivity();
         }
-        else if (switches_.internalMenuButton == button)
+        else if (additionalButtons_.internalMenuButton == additionalButtonEvent.button)
         {
-            if (ButtonAction_PRESSED == event)
+            if (ButtonAction_PRESSED == additionalButtonEvent.action)
             {
                 stopApplication = true; // break launchpad mode loop, enter internal menu
             }

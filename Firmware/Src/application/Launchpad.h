@@ -7,7 +7,8 @@
 namespace grid
 {
     class Grid;
-    class Switches;
+    class AdditionalButtons;
+    class RotaryControls;
 }
 
 namespace lcd
@@ -63,7 +64,8 @@ enum Launchpad95Submode : uint8_t
 class Launchpad
 {
 public:
-    Launchpad( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, midi::UsbMidi& usbMidi );
+    Launchpad( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, grid::RotaryControls& rotaryControls,
+            lcd::Gui& gui, midi::UsbMidi& usbMidi );
 
     void runProgram();
 
@@ -85,7 +87,8 @@ private:
     void setCurrentLayout( const Layout layout );
 
     grid::Grid& grid_;
-    grid::Switches& switches_;
+    grid::AdditionalButtons& additionalButtons_;
+    grid::RotaryControls& rotaryControls_;
     lcd::Gui& gui_;
     midi::UsbMidi& usbMidi_;
 

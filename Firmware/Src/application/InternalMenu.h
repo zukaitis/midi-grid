@@ -8,7 +8,7 @@
 namespace grid
 {
     class Grid;
-    class Switches;
+    class AdditionalButtons;
 }
 
 namespace lcd
@@ -26,11 +26,11 @@ namespace internal_menu {
 class AdditionalButtonInputHandler: public freertos::Thread
 {
 public:
-    AdditionalButtonInputHandler( grid::Switches& switches, std::function<void()> stopApplicationCallback );
+    AdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons, std::function<void()> stopApplicationCallback );
 
     virtual void Run();
 private:
-    grid::Switches& switches_;
+    grid::AdditionalButtons& additionalButtons_;
     std::function<void()> stopApplication_;
 };
 
@@ -48,7 +48,7 @@ private:
 class InternalMenu
 {
 public:
-    InternalMenu( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, mcu::System& system, std::function<void(uint8_t)> switchApplicationCallback );
+    InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(uint8_t)> switchApplicationCallback );
 
     void enable();
     void disable();

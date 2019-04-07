@@ -22,12 +22,13 @@ ApplicationMain::ApplicationMain() :
         globalInterrupts_( mcu::GlobalInterrupts() ),
         gridDriver_( grid::GridDriver() ),
         grid_( grid::Grid( gridDriver_, globalInterrupts_ ) ),
-        switches_( grid::Switches( gridDriver_ ) ),
+        additionalButtons_( grid::AdditionalButtons( gridDriver_ ) ),
+        rotaryControls_( grid::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
         gui_( lcd::Gui( lcd_ ) ),
-        launchpad_( launchpad::Launchpad( grid_, switches_, gui_, usbMidi_ ) ),
-        internalMenu_( grid_, switches_, gui_, system_, std::bind( &ApplicationMain::switchApplicationCallback, this, std::placeholders::_1 ) )
+        launchpad_( launchpad::Launchpad( grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
+        internalMenu_( grid_, additionalButtons_, gui_, system_, std::bind( &ApplicationMain::switchApplicationCallback, this, std::placeholders::_1 ) )
 {}
 
 ApplicationMain::~ApplicationMain()
@@ -58,11 +59,10 @@ void ApplicationMain::Run()
 
     while (!usbMidi_.isPacketAvailable())
     {
-        uint8_t button;
-        ButtonAction event;
-        if (switches_.getButtonEvent( button, event ))
+        grid::AdditionalButtons::Event event = {};
+        if (additionalButtons_.getEvent( event ))
         {
-            if ((switches_.internalMenuButton == button) && (ButtonAction_PRESSED == event))
+            if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
             {
                 runInternalMenu();
 
@@ -74,7 +74,7 @@ void ApplicationMain::Run()
         runGridInputTest();
     }
 
-    while (1)
+    while (true)
     {
         launchpad_.runProgram();
 

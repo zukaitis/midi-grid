@@ -17,11 +17,4 @@ enum ButtonAction : uint8_t
     ButtonAction_PRESSED
 };
 
-struct ButtonEvent
-{
-    ButtonAction action;
-    uint8_t positionX;
-    uint8_t positionY;
-};
-
 #endif // TYPES_H_

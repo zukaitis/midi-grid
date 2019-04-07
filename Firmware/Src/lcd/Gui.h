@@ -5,10 +5,6 @@
 
 #include "thread.hpp"
 
-namespace mcu {
-class Time;
-}
-
 namespace lcd
 {
 

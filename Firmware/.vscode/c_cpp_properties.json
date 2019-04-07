@@ -1,16 +1,4 @@
 {
-    "env" : {
-        "includePath": [
-            "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
-            "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
-            "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
-            "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
-            "${workspaceFolder}/Drivers/CMSIS/Include",
-            "${workspaceFolder}/Middlewares/USBMIDI/Inc",
-            "${workspaceFolder}/Src",
-            "${workspaceFolder}/Drivers/FreeRTOS/include"
-        ]
-    },
     "configurations": [
         {
             "name": "default",
@@ -21,7 +9,17 @@
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
-            "cppStandard": "c++17"
+            "cppStandard": "c++17",
+            "includePath": [
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/Middlewares/USBMIDI/Inc",
+                "${workspaceFolder}/Src",
+                "${workspaceFolder}/Drivers/FreeRTOS/include"
+            ]
         }
     ],
     "version": 4

@@ -61,7 +61,6 @@ static const uint32_t kColumnSelectValue[GridDriver::numberOfVerticalSegments] =
         0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
 
 uint8_t GridDriver::currentlyStableInputBufferIndex_ = 1;
-bool GridDriver::gridInputUpdated_ = false;
 bool GridDriver::switchInputUpdated_ = false;
 
 uint32_t GridDriver::buttonInput_[numberOfButtonDebouncingCycles][numberOfVerticalSegments];
@@ -156,19 +155,9 @@ bool GridDriver::isGridVerticalSegmentInputStable( const uint8_t segment ) const
     return (0 == (kGridButtonMask & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
 }
 
-bool GridDriver::isGridInputUpdated() const
-{
-    return gridInputUpdated_;
-}
-
 bool GridDriver::isSwitchInputUpdated() const
 {
     return switchInputUpdated_;
-}
-
-void GridDriver::resetGridInputUpdatedFlag()
-{
-    gridInputUpdated_ = false;
 }
 
 void GridDriver::resetSwitchInputUpdatedFlag()

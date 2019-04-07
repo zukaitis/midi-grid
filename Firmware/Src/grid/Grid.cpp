@@ -62,49 +62,6 @@ void Grid::discardAllPendingButtonEvents()
 
 bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonAction& buttonEvent )
 {
-#if 0
-    static bool buttonChangeDetected = false;
-
-    bool eventAvailable = false;
-
-    if (gridDriver_.isGridInputUpdated())
-    {
-        // interrupts are disabled, so that active buffer wouldn't change during reading
-        globalInterrupts_.disable();
-        updateButtonColumnInput();
-        gridDriver_.resetGridInputUpdatedFlag();
-        globalInterrupts_.enable();
-        buttonChangeDetected = true;
-    }
-
-    if (buttonChangeDetected)
-    {
-        buttonChangeDetected = false; //reset this variable every time, it will be set back on if necessary
-
-        for (uint8_t x = 0; x < numberOfColumns; x++)
-        {
-            const uint8_t columnChanges = buttonColumnInput_[x] ^ registeredButtonColumnInput_[x];
-            if (0 != columnChanges)
-            {
-                for (uint8_t y = 0; y < numberOfRows; y++)
-                {
-                    if (0 != ((columnChanges >> y) & 0x01))
-                    {
-                        buttonEvent = static_cast<ButtonAction>((buttonColumnInput_[x] >> y) & 0x01);
-                        buttonPositionX = x;
-                        buttonPositionY = y;
-                        registeredButtonColumnInput_[x] ^= (1 << y); // toggle bit that was registered
-                        buttonChangeDetected = true;
-                        eventAvailable = true;
-                        x = numberOfColumns; // break out of the first loop
-                        y = numberOfRows; // break out of the second loop
-                    }
-                }
-            }
-        }
-    }
-    #endif
-
     bool eventAvailable = false;
 
     if (!buttonInputEvents_.IsEmpty())
@@ -129,7 +86,6 @@ void Grid::Run()
         // interrupts are disabled, so that active buffer wouldn't change during reading
         globalInterrupts_.disable();
         updateButtonColumnInput();
-        gridDriver_.resetGridInputUpdatedFlag();
         globalInterrupts_.enable();
 
         for (uint8_t x = 0; x < numberOfColumns; x++)
@@ -141,7 +97,7 @@ void Grid::Run()
                 {
                     if (0 != ((columnChanges >> y) & 0x01))
                     {
-                        ButtonEvent event;
+                        ButtonEvent event = {};
                         event.action = static_cast<ButtonAction>((buttonColumnInput_[x] >> y) & 0x01);
                         event.positionX = x;
                         event.positionY = y;

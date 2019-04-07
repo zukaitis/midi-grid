@@ -1,7 +1,7 @@
 #include "application/InternalMenu.h"
 
 #include "grid/Grid.h"
-#include "grid/Switches.h"
+#include "grid/AdditionalButtons.h"
 #include "lcd/Gui.h"
 #include "system/System.h"
 
@@ -12,25 +12,23 @@ namespace internal_menu {
 static const uint8_t kBootloaderButtonX = 7;
 static const uint8_t kBootloaderButtonY = 0;
 
-AdditionalButtonInputHandler::AdditionalButtonInputHandler( grid::Switches& switches, std::function<void()> stopApplicationCallback ):
+AdditionalButtonInputHandler::AdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons, std::function<void()> stopApplicationCallback ):
     Thread( "InteralMenu_AdditionalButtonInputHandler", 500, 3 ),
-    switches_( switches ),
+    additionalButtons_( additionalButtons ),
     stopApplication_( stopApplicationCallback )
 {
 }
 
 void AdditionalButtonInputHandler::Run()
 {
-    uint8_t button;
-    ButtonAction event;
-
     while (true)
     {
         Delay( 10 ); // to be replaced with block from additional button queue
 
-        if (switches_.getButtonEvent( button,  event ))
+        grid::AdditionalButtons::Event event;
+        if (additionalButtons_.getEvent( event ))
         {
-            if ((switches_.internalMenuButton == button) && (ButtonAction_PRESSED == event))
+            if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
             {
                 stopApplication_(); // return from interal menu
             }
@@ -64,10 +62,10 @@ void GridInputHandler::Run()
     }
 }
 
-InternalMenu::InternalMenu( grid::Grid& grid, grid::Switches& switches, lcd::Gui& gui, mcu::System& system, std::function<void(const uint8_t)> switchApplicationCallback ):
+InternalMenu::InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(const uint8_t)> switchApplicationCallback ):
         grid_( grid ),
         gui_( gui ),
-        additionalButtonInputHandler_( AdditionalButtonInputHandler( switches, std::bind( &InternalMenu::stopApplicationCallback, this ) ) ),
+        additionalButtonInputHandler_( AdditionalButtonInputHandler( additionalButtons, std::bind( &InternalMenu::stopApplicationCallback, this ) ) ),
         gridInputHandler_( GridInputHandler( grid, system )),
         switchApplication_( switchApplicationCallback )
 {
@@ -80,7 +78,7 @@ InternalMenu::InternalMenu( grid::Grid& grid, grid::Switches& switches, lcd::Gui
 void InternalMenu::enable()
 {
     grid_.discardAllPendingButtonEvents();
-    // switches_.discardAllPendingEvents();
+    // additionalButtons_.discardAllPendingEvents();
     grid_.turnAllLedsOff();
     gui_.enterInternalMenu();
 

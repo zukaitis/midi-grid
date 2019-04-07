@@ -24,7 +24,6 @@ public:
     static inline void inputReadoutToMemory0CompleteCallback()
     {
         currentlyStableInputBufferIndex_ = 0;
-        gridInputUpdated_ = true;
         switchInputUpdated_ = true;
         callNotifications();
     }
@@ -32,9 +31,33 @@ public:
     static inline void inputReadoutToMemory1CompleteCallback()
     {
         currentlyStableInputBufferIndex_ = 1;
-        gridInputUpdated_ = true;
         switchInputUpdated_ = true;
         callNotifications();
+    }
+
+    static inline void notifyOnBufferChange()
+    {
+        static uint32_t previousChecksum = 0xFFFFFFFF; 
+        const uint32_t currentChecksum = getInputBufferChecksum();
+        if (currentChecksum != previousChecksum)
+        {
+            previousChecksum = currentChecksum;
+            callNotifications();
+        }
+    }
+
+    static inline uint32_t getInputBufferChecksum()
+    {
+        static const uint32_t numberOfElements = sizeof( buttonInput_ ) / sizeof( uint32_t );
+        static const uint32_t* const element = &buttonInput_[0][0];
+        uint32_t checksum = 0;
+
+        for (uint8_t index = 0; index < numberOfElements; index++)
+        {
+            checksum ^= element[index];
+        }
+
+        return checksum;
     }
 
     static inline void callNotifications()
@@ -48,9 +71,7 @@ public:
     bool isButtonInputStable( const uint8_t button ) const;
     bool isGridVerticalSegmentInputStable( const uint8_t column ) const;
 
-    bool isGridInputUpdated() const;
     bool isSwitchInputUpdated() const;
-    void resetGridInputUpdatedFlag();
     void resetSwitchInputUpdatedFlag();
 
     void setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color color );
@@ -72,7 +93,6 @@ private:
     void initializePwmTimers();
 
     static uint8_t currentlyStableInputBufferIndex_;
-    static bool gridInputUpdated_;
     static bool switchInputUpdated_;
 
     static uint32_t buttonInput_[numberOfButtonDebouncingCycles][numberOfVerticalSegments];

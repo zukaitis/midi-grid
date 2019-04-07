@@ -9,7 +9,6 @@
 namespace mcu
 {
 class GlobalInterrupts;
-class Time;
 }
 
 namespace grid
@@ -113,6 +112,13 @@ public:
     void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType );
 
     void turnAllLedsOff();
+
+    struct ButtonEvent
+    {
+        ButtonAction action;
+        uint8_t positionX;
+        uint8_t positionY;
+    };
 
 private:
     void updateButtonColumnInput();
