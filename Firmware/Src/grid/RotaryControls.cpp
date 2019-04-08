@@ -35,7 +35,17 @@ void RotaryControls::discardAllPendingEvents()
 
 bool RotaryControls::waitForEvent( Event& event )
 {
-    const bool eventAvailable = inputEvents_.Dequeue( &event, 1 );
+    // TO BE USED LATER
+    // const bool eventAvailable = inputEvents_.Dequeue( &event ); // block until event
+    // return eventAvailable;
+    bool eventAvailable = false;
+
+    if (!inputEvents_.IsEmpty())
+    {
+        inputEvents_.Dequeue( &event, 1 );
+        eventAvailable = true;
+    }
+
     return eventAvailable;
 }
 

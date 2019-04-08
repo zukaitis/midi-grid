@@ -6,8 +6,7 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 
-#include "usb/usb_device.h"
-#include "usb/queue32.h"
+#include <string.h>
 
 namespace launchpad
 {

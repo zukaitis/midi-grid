@@ -1,6 +1,8 @@
 #include "main.h"
 #include "ticks.hpp"
 
+#include "stm32f4xx_hal.h"
+
 #include <functional>
 #include <algorithm>
 
@@ -137,6 +139,9 @@ void ApplicationMain::runGridInputTest()
         }
         grid_.setLed( buttonX, buttonY, color );
     }
+    uint32_t priority;
+    uint32_t subpriority;
+    HAL_NVIC_GetPriority(PendSV_IRQn, NVIC_PRIORITYGROUP_4, &priority, &subpriority);
 }
 
 void ApplicationMain::runInternalMenu()

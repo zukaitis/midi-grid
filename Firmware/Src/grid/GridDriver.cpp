@@ -34,14 +34,6 @@ static const uint16_t kBrightnessThroughPad[kNumberOfLedColorIntensityLevels] = 
         23219, 24066, 24897, 25725, 26599, 27430, 28301, 29198,
         30041, 30947, 31835, 32790, 33683, 34601, 35567, 36579,
         37515, 38478, 39415, 40403, 41358, 42373, 43359, 44409, 46000 };
-//        0, 338, 341, 349, 363, 384, 414, 453,
-//        503, 566, 641, 730, 834, 954, 1091, 1245,
-//        1418, 1611, 1823, 2057, 2312, 2591, 2892, 3218,
-//        3569, 3945, 4348, 4779, 5237, 5724, 6240, 6787,
-//        7364, 7973, 8614, 9288, 9995, 10737, 11513, 12325,
-//        13173, 14058, 14981, 15941, 16941, 17979, 19058, 20177,
-//        21338, 22540, 23785, 25072, 26404, 27779, 29200, 30666,
-//        32178, 33737, 35342, 36996, 38698, 40449, 42249, 44099, 46000 };
 
 static const uint16_t kBrightnessDirect[kNumberOfLedColorIntensityLevels] = {
         0, 223, 308, 397, 494, 598, 709, 825,
@@ -348,7 +340,7 @@ void GridDriver::initializeDma()
     HAL_DMA_Init( &buttonInputDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
 
-    HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 5, 0 );
+    HAL_NVIC_SetPriority( DMA2_Stream5_IRQn, 6, 0 );
     HAL_NVIC_EnableIRQ( DMA2_Stream5_IRQn );
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
