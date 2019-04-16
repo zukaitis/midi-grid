@@ -11,59 +11,22 @@ extern uint8_t USBD_MIDI_SendData (USBD_HandleTypeDef *pdev, uint8_t *pBuf, uint
 extern void USBD_MIDI_SendPacket(void);
 }
 
-// basic midi rx/tx functions
-static uint16_t MIDI_DataRx(uint8_t *message, uint16_t length);
-static uint16_t MIDI_DataTx(uint8_t *message, uint16_t length);
-
-static freertos::Queue midiQueue = freertos::Queue( 256, sizeof(uint32_t) );
-
 USBD_MIDI_ItfTypeDef USBD_Interface_fops_FS =
 {
-    MIDI_DataRx,
-    MIDI_DataTx
+    midi::UsbMidi::receiveData,
+    midi::UsbMidi::transmitData
 };
-
-static const uint16_t kMidiPacketSize = 4;
-
-static uint16_t MIDI_DataRx(uint8_t *message, uint16_t length)
-{
-    const uint16_t numberOfMessages = length / kMidiPacketSize;
-    const uint16_t lostBytes = length % kMidiPacketSize;
-    if (0 == lostBytes)
-    {
-        for(uint16_t count = 0; count < numberOfMessages; count++)
-        {
-            //b4arrq_push(&rxq,((uint32_t *)message)+count);
-            BaseType_t unused;
-            midiQueue.EnqueueFromISR( reinterpret_cast<uint32_t*>(message + count*kMidiPacketSize), &unused );
-        }
-    }
-    return 0;
-}
-
-static uint16_t MIDI_DataTx(uint8_t *message, uint16_t length)
-{
-    uint32_t index = 0;
-    while (index < length)
-    {
-        APP_Rx_Buffer[APP_Rx_ptr_in] = *(message + index);
-        APP_Rx_ptr_in++;
-        index++;
-        if (APP_RX_DATA_SIZE == APP_Rx_ptr_in)
-        {
-            APP_Rx_ptr_in = 0;
-        }
-    }
-    return USBD_OK;
-}
 
 namespace midi
 {
 
+static const uint16_t kMidiPacketSize = 4;
 static const uint8_t kNoteMask = 0x7F;
 static const uint8_t kVelocityMask = 0x7F;
 static const uint8_t kControlMask = 0x7F;
 static const uint8_t kControlValueMask = 0x7F;
+
+freertos::Queue UsbMidi::receivedMessages = freertos::Queue( 256, sizeof(uint32_t) );
 
 UsbMidi::UsbMidi()
 {
@@ -77,9 +40,9 @@ bool UsbMidi::getPacket( MidiPacket& packet )
 {
     MidiInput midiInput;
     bool packetAvailable = false;
-    if (!midiQueue.IsEmpty())
+    if (!receivedMessages.IsEmpty())
     {
-        midiQueue.Dequeue( &midiInput.input, 1 );
+        receivedMessages.Dequeue( &midiInput.input, 1 );
         packet = midiInput.packet;
         packetAvailable = true;
     }
@@ -88,7 +51,7 @@ bool UsbMidi::getPacket( MidiPacket& packet )
 
 bool UsbMidi::isPacketAvailable()
 {
-    return !midiQueue.IsEmpty();
+    return !receivedMessages.IsEmpty();
 }
 
 void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )
@@ -99,7 +62,7 @@ void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, c
     buffer[2] = kControlMask & control;
     buffer[3] = kControlValueMask & value;
 
-    MIDI_DataTx( buffer, kMidiPacketSize );
+    transmitData( buffer, kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
@@ -111,7 +74,7 @@ void UsbMidi::sendNoteOn( const uint8_t channel, const uint8_t note, const uint8
     buffer[2] = kNoteMask & note;
     buffer[3] = kVelocityMask & velocity;
 
-    MIDI_DataTx( buffer, kMidiPacketSize );
+    transmitData( buffer, kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
@@ -123,7 +86,7 @@ void UsbMidi::sendNoteOff( const uint8_t channel, const uint8_t note )
     buffer[2] = kNoteMask & note;
     buffer[3] = 0;
 
-    MIDI_DataTx( buffer, kMidiPacketSize );
+    transmitData( buffer, kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
@@ -161,9 +124,41 @@ void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t len
                 buffer[3] = data[dataIndex++];
                 break;
         }
-        MIDI_DataTx( buffer, kMidiPacketSize );
+        transmitData( buffer, kMidiPacketSize );
         USBD_MIDI_SendPacket();
     }
+}
+
+uint16_t UsbMidi::receiveData( uint8_t* const message, const uint16_t length )
+{
+    const uint16_t numberOfMessages = length / kMidiPacketSize;
+    const uint16_t lostBytes = length % kMidiPacketSize;
+    if (0 == lostBytes)
+    {
+        for(uint16_t count = 0; count < numberOfMessages; count++)
+        {
+            //b4arrq_push(&rxq,((uint32_t *)message)+count);
+            BaseType_t unused;
+            receivedMessages.EnqueueFromISR( reinterpret_cast<uint32_t*>(message + count*kMidiPacketSize), &unused );
+        }
+    }
+    return 0;
+}
+
+uint16_t UsbMidi::transmitData( uint8_t* const message, const uint16_t length )
+{
+    uint32_t index = 0;
+    while (index < length)
+    {
+        APP_Rx_Buffer[APP_Rx_ptr_in] = *(message + index);
+        APP_Rx_ptr_in++;
+        index++;
+        if (APP_RX_DATA_SIZE == APP_Rx_ptr_in)
+        {
+            APP_Rx_ptr_in = 0;
+        }
+    }
+    return USBD_OK;
 }
 
 } // namespace

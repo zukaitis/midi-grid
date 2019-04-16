@@ -62,7 +62,7 @@ void ApplicationMain::Run()
     while (!usbMidi_.isPacketAvailable())
     {
         grid::AdditionalButtons::Event event = {};
-        if (additionalButtons_.getEvent( event ))
+        if (additionalButtons_.waitForEvent( event ))
         {
             if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
             {
@@ -125,23 +125,85 @@ Color ApplicationMain::getBootAnimationColor( const uint8_t ledPositionX, const 
     return color;
 }
 
+Color ApplicationMain::getRandomColor()
+{
+    enum FullyLitColor
+    {
+        kRed = 0,
+        kGreen,
+        kBlue,
+        kRedAndGreen,
+        kRedAndBlue,
+        kGreenAndBlue,
+        kNumberOfVariants
+    };
+
+    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(rand() % kNumberOfVariants);
+    int8_t partlyLitColor1 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColor1 < gridDriver_.ledColorIntensityOff)
+    {
+        partlyLitColor1 = gridDriver_.ledColorIntensityOff;
+    }
+    int8_t partlyLitColor2 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
+    if (partlyLitColor2 < gridDriver_.ledColorIntensityOff)
+    {
+        partlyLitColor2 = gridDriver_.ledColorIntensityOff;
+    }
+
+    Color color = { 0, 0, 0 };
+
+    switch (fullyLitColor)
+    {
+        case kRed:
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = static_cast<uint8_t>(partlyLitColor1);
+            color.Blue = static_cast<uint8_t>(partlyLitColor2);
+            break;
+        case kGreen:
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = static_cast<uint8_t>(partlyLitColor2);
+            break;
+        case kBlue:
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = static_cast<uint8_t>(partlyLitColor2);
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
+            break;
+        case kRedAndGreen:
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = static_cast<uint8_t>(partlyLitColor1);
+            break;
+        case kRedAndBlue:
+            color.Red = gridDriver_.ledColorIntensityMaximum;
+            color.Green = static_cast<uint8_t>(partlyLitColor1);
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
+            break;
+        case kGreenAndBlue:
+            color.Red = static_cast<uint8_t>(partlyLitColor1);
+            color.Green = gridDriver_.ledColorIntensityMaximum;
+            color.Blue = gridDriver_.ledColorIntensityMaximum;
+            break;
+        default:
+            break;
+    }
+
+    return color;
+}
+
 void ApplicationMain::runGridInputTest()
 {
-    uint8_t buttonX, buttonY;
-    ButtonAction event;
+    grid::Grid::ButtonEvent event = {};
 
-    if (grid_.getButtonEvent( buttonX, buttonY, event ))
+    if (grid_.waitForButtonEvent( event ))
     {
         Color color = { 0, 0, 0 };
-        if (ButtonAction_PRESSED == event)
+        if (ButtonAction_PRESSED == event.action)
         {
-            color = grid_.getRandomColor();
+            color = getRandomColor();
         }
-        grid_.setLed( buttonX, buttonY, color );
+        grid_.setLed( event.positionX, event.positionY, color );
     }
-    uint32_t priority;
-    uint32_t subpriority;
-    HAL_NVIC_GetPriority(PendSV_IRQn, NVIC_PRIORITYGROUP_4, &priority, &subpriority);
 }
 
 void ApplicationMain::runInternalMenu()

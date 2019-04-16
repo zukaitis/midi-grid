@@ -51,26 +51,19 @@ bool Grid::areColorsEqual( const Color& color1, const Color& color2 ) const
 
 void Grid::discardAllPendingButtonEvents()
 {
-    uint8_t unusedUnsignedChar;
-    ButtonAction unusedEvent;
-
-    // call method while it has pending events
-    while (getButtonEvent( unusedUnsignedChar, unusedUnsignedChar, unusedEvent ))
-    {
-    }
+    buttonInputEvents_.Flush();
 }
 
-bool Grid::getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonAction& buttonEvent )
+bool Grid::waitForButtonEvent( ButtonEvent& event )
 {
+    // TO BE USED LATER
+    // const bool eventAvailable = inputEvents_.Dequeue( &event ); // block until event
+    // return eventAvailable;
     bool eventAvailable = false;
 
     if (!buttonInputEvents_.IsEmpty())
     {
-        ButtonEvent event = {};
         buttonInputEvents_.Dequeue( &event, 1 );
-        buttonPositionX = event.positionX;
-        buttonPositionY = event.positionY;
-        buttonEvent = event.action;
         eventAvailable = true;
     }
 
@@ -113,72 +106,6 @@ void Grid::Run()
 Color Grid::getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
 {
     return led_[ledPositionX][ledPositionY].color;
-}
-
-Color Grid::getRandomColor()
-{
-    enum FullyLitColor
-    {
-        kRed = 0,
-        kGreen,
-        kBlue,
-        kRedAndGreen,
-        kRedAndBlue,
-        kGreenAndBlue,
-        kNumberOfVariants
-    };
-
-    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(rand() % kNumberOfVariants);
-    int8_t partlyLitColor1 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColor1 < gridDriver_.ledColorIntensityOff)
-    {
-        partlyLitColor1 = gridDriver_.ledColorIntensityOff;
-    }
-    int8_t partlyLitColor2 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColor2 < gridDriver_.ledColorIntensityOff)
-    {
-        partlyLitColor2 = gridDriver_.ledColorIntensityOff;
-    }
-
-    Color color = { 0, 0, 0 };
-
-    switch (fullyLitColor)
-    {
-        case kRed:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kGreen:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = static_cast<uint8_t>(partlyLitColor2);
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        case kRedAndGreen:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = static_cast<uint8_t>(partlyLitColor1);
-            break;
-        case kRedAndBlue:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        case kGreenAndBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        default:
-            break;
-    }
-
-    return color;
 }
 
 void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )

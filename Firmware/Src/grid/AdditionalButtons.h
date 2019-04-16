@@ -31,7 +31,7 @@ public:
     };
 
     void discardAllPendingEvents();
-    bool getEvent( Event& event );
+    bool waitForEvent( Event& event );
 
 private:
     void Run();

@@ -25,8 +25,8 @@ void AdditionalButtonInputHandler::Run()
     {
         Delay( 10 ); // to be replaced with block from additional button queue
 
-        grid::AdditionalButtons::Event event;
-        if (additionalButtons_.getEvent( event ))
+        grid::AdditionalButtons::Event event = {};
+        if (additionalButtons_.waitForEvent( event ))
         {
             if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
             {
@@ -45,15 +45,13 @@ GridInputHandler::GridInputHandler( grid::Grid& grid, mcu::System& system ):
 
 void GridInputHandler::Run()
 {
-    uint8_t buttonX, buttonY;
-    ButtonAction event;
-
     while (true)
     {
+        grid::Grid::ButtonEvent event = {};
         Delay( 10 ); // to be replaced with block from additional button queue
-        if (grid_.getButtonEvent( buttonX, buttonY, event ))
+        if (grid_.waitForButtonEvent( event ))
         {
-            if ((kBootloaderButtonX == buttonX) && (kBootloaderButtonY == buttonY) && (ButtonAction_PRESSED == event))
+            if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionX) && (ButtonAction_PRESSED == event.action))
             {
                 // reset into DFU bootloader
                 system_.resetIntoBootloader();

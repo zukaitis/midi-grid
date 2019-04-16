@@ -62,6 +62,12 @@ public:
     void sendNoteOn( const uint8_t channel, const uint8_t note, const uint8_t velocity );
     void sendNoteOff( const uint8_t channel, const uint8_t note );
     void sendSystemExclussive( const uint8_t* const data, const uint8_t length );
+
+    static uint16_t receiveData( uint8_t* const message, const uint16_t length );
+    static uint16_t transmitData( uint8_t* const message, const uint16_t length );
+
+private:
+    static freertos::Queue receivedMessages;
 };
 
 } // namespace

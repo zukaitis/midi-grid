@@ -101,10 +101,17 @@ public:
     Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
     ~Grid();
 
+    struct ButtonEvent
+    {
+        ButtonAction action;
+        uint8_t positionX;
+        uint8_t positionY;
+    };
+
     bool areColorsEqual( const Color& color1, const Color& color2 ) const;
 
     void discardAllPendingButtonEvents();
-    bool getButtonEvent( uint8_t& buttonPositionX, uint8_t& buttonPositionY, ButtonAction& buttonEvent );
+    bool waitForButtonEvent( ButtonEvent& event );
     Color getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Color getRandomColor();
 
@@ -112,13 +119,6 @@ public:
     void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType );
 
     void turnAllLedsOff();
-
-    struct ButtonEvent
-    {
-        ButtonAction action;
-        uint8_t positionX;
-        uint8_t positionY;
-    };
 
 private:
     void updateButtonColumnInput();

@@ -302,7 +302,7 @@ bool Launchpad::handleAdditionalControlInput()
 
     grid::AdditionalButtons::Event additionalButtonEvent = {};
 
-    if (additionalButtons_.getEvent( additionalButtonEvent ))
+    if (additionalButtons_.waitForEvent( additionalButtonEvent ))
     {
         if (grid::AdditionalButtons::extraNoteButton == additionalButtonEvent.button) // only send note on the event of black button
         {
@@ -360,30 +360,28 @@ bool Launchpad::handleMidiInput()
 bool Launchpad::handleGridInput()
 {
     const bool stopApplication = false;
+    grid::Grid::ButtonEvent event = {};
 
-    uint8_t buttonX, buttonY;
-    ButtonAction event;
-
-    if (grid_.getButtonEvent( buttonX, buttonY, event ))
+    if (grid_.waitForButtonEvent( event ))
     {
-        const uint8_t controlValue = (ButtonAction_PRESSED == event) ? kControlValueHigh : kControlValueLow;
-        if (kDeviceControlColumn == buttonX) // control column
+        const uint8_t controlValue = (ButtonAction_PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
+        if (kDeviceControlColumn == event.positionX) // control column
         {
-            usbMidi_.sendControlChange( kDeviceControlMidiChannel, kDeviceControlColumnValue[buttonY], controlValue );
+            usbMidi_.sendControlChange( kDeviceControlMidiChannel, kDeviceControlColumnValue[event.positionY], controlValue );
         }
         else
         {
             switch (currentLayout_)
             {
                 case Layout_USER1:
-                    usbMidi_.sendNoteOn( kUser1LayoutMidiChannel, kDrumLayout[buttonX][buttonY], controlValue );
+                    usbMidi_.sendNoteOn( kUser1LayoutMidiChannel, kDrumLayout[event.positionX][event.positionY], controlValue );
                     break;
                 case Layout_USER2:
-                    usbMidi_.sendNoteOn( kUser2LayoutMidiChannel, kSessionLayout[buttonX][buttonY], controlValue );
+                    usbMidi_.sendNoteOn( kUser2LayoutMidiChannel, kSessionLayout[event.positionX][event.positionY], controlValue );
                     break;
                 case Layout_SESSION:
                 default:
-                    usbMidi_.sendNoteOn( kSessionLayoutMidiChannel, kSessionLayout[buttonX][buttonY], controlValue );
+                    usbMidi_.sendNoteOn( kSessionLayoutMidiChannel, kSessionLayout[event.positionX][event.positionY], controlValue );
                     break;
             }
         }
