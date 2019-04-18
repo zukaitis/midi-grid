@@ -61,19 +61,17 @@ void GridInputHandler::Run()
 }
 
 InternalMenu::InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(const uint8_t)> switchApplicationCallback ):
+        ApplicationBase(),
         grid_( grid ),
         gui_( gui ),
         additionalButtonInputHandler_( AdditionalButtonInputHandler( additionalButtons, std::bind( &InternalMenu::stopApplicationCallback, this ) ) ),
         gridInputHandler_( GridInputHandler( grid, system )),
         switchApplication_( switchApplicationCallback )
 {
-    additionalButtonInputHandler_.Start();
-    additionalButtonInputHandler_.Suspend();
-    gridInputHandler_.Start();
-    gridInputHandler_.Suspend();
+    initializeInputHandlers( { &additionalButtonInputHandler_, &gridInputHandler_ } );
 }
 
-void InternalMenu::enable()
+void InternalMenu::initialize()
 {
     grid_.discardAllPendingButtonEvents();
     // additionalButtons_.discardAllPendingEvents();
@@ -82,15 +80,6 @@ void InternalMenu::enable()
 
     static const Color red = {64U, 0U, 0U};
     grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, red );
-
-    additionalButtonInputHandler_.Resume();
-    gridInputHandler_.Resume();
-}
-
-void InternalMenu::disable()
-{
-    additionalButtonInputHandler_.Suspend();
-    gridInputHandler_.Suspend();
 }
 
 void InternalMenu::stopApplicationCallback()

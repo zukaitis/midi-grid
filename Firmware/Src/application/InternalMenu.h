@@ -1,8 +1,8 @@
 #ifndef APPLICATION_INTERNAL_MENU_H_
 #define APPLICATION_INTERNAL_MENU_H_
 
+#include "application/Application.h"
 #include "thread.hpp"
-
 #include <functional>
 
 namespace grid
@@ -45,14 +45,12 @@ private:
     mcu::System& system_;
 };
 
-class InternalMenu
+class InternalMenu : public ApplicationBase
 {
 public:
     InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(uint8_t)> switchApplicationCallback );
 
-    void enable();
-    void disable();
-
+    void initialize();
     void stopApplicationCallback();
 
 private:

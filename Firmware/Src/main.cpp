@@ -209,13 +209,13 @@ void ApplicationMain::runGridInputTest()
 void ApplicationMain::runInternalMenu()
 {
     internalMenuRunning = true;
-    internalMenu_.enable();
+    internalMenu_.openApplication();
 
     while (internalMenuRunning)
     {
     }
 
-    internalMenu_.disable();
+    internalMenu_.closeApplication();
 }
 
 void ApplicationMain::switchApplicationCallback( const uint8_t applicationIndex )
