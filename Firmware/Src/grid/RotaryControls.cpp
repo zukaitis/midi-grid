@@ -20,7 +20,7 @@ RotaryControls::RotaryControls( GridDriver& gridDriver ) :
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
 {
-    gridDriver_.addNotificationCallback( std::bind( &RotaryControls::notifyFromISRWrapper, this ) );
+    gridDriver_.addThreadToNotify( this );
     Start();
 }
 

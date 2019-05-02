@@ -120,15 +120,15 @@ public:
 
     void turnAllLedsOff();
 
+    inline bool waitForInput( ButtonEvent& event )
+    {
+        return waitForButtonEvent( event );
+    }
+
 private:
     void updateButtonColumnInput();
 
     virtual void Run();
-
-    inline void notifyFromISRWrapper()
-    {
-        NotifyFromISR();
-    }
 
     GridDriver& gridDriver_;
     GridLedOutput ledOutput_;

@@ -55,7 +55,8 @@ public:
     UsbMidi();
     ~UsbMidi();
 
-    bool getPacket( MidiPacket& packet);
+    bool waitForPacket( MidiPacket& packet );
+    bool waitUntilPacketIsAvailable();
     bool isPacketAvailable();
 
     void sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value );
@@ -65,6 +66,16 @@ public:
 
     static uint16_t receiveData( uint8_t* const message, const uint16_t length );
     static uint16_t transmitData( uint8_t* const message, const uint16_t length );
+
+    inline bool waitForInput()
+    {
+        return waitUntilPacketIsAvailable();
+    }
+
+    inline bool waitForInput( MidiPacket& packet )
+    {
+        return waitForPacket( packet );
+    }
 
 private:
     static freertos::Queue receivedMessages;

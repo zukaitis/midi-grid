@@ -18,7 +18,7 @@ AdditionalButtons::AdditionalButtons( GridDriver& gridDriver ) :
     registeredButtonInput_[0] = true;
     registeredButtonInput_[1] = true;
 
-    gridDriver_.addNotificationCallback( std::bind( &AdditionalButtons::notifyFromISRWrapper, this ) );
+    gridDriver_.addThreadToNotify( this );
     Start();
 }
 

@@ -33,13 +33,13 @@ public:
     void discardAllPendingEvents();
     bool waitForEvent( Event& event );
 
+    inline bool waitForInput( Event& event )
+    {
+        return waitForEvent( event );
+    }
+
 private:
     void Run();
-
-    inline void notifyFromISRWrapper()
-    {
-        NotifyFromISR();
-    }
 
     GridDriver& gridDriver_;
     freertos::Queue inputEvents_;

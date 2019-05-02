@@ -60,8 +60,8 @@ uint32_t GridDriver::pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalS
 uint32_t GridDriver::pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
 uint32_t GridDriver::pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
 
-std::function<void(void)> GridDriver::notify_[kMaximumNumberOfNotifications];
-uint8_t GridDriver::numberOfNotifications_;
+freertos::Thread* GridDriver::threadToNotify_[kMaximumNumberOfThreadsToNotify];
+uint8_t GridDriver::numberOfThreadsToNotify_;
 
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;
@@ -106,10 +106,13 @@ GridDriver::~GridDriver()
 {
 }
 
-void GridDriver::addNotificationCallback( std::function<void()> callback )
+void GridDriver::addThreadToNotify( freertos::Thread* const thread )
 {
-    notify_[numberOfNotifications_] = callback;
-    numberOfNotifications_++;
+    if (numberOfThreadsToNotify_ < kMaximumNumberOfThreadsToNotify)
+    {
+        threadToNotify_[numberOfThreadsToNotify_] = thread;
+        numberOfThreadsToNotify_++;
+    }
 }
 
 bool GridDriver::getButtonInput( const uint8_t button ) const

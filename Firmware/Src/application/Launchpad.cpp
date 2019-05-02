@@ -105,19 +105,20 @@ static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {7, 7, 13}, {56, 64, 21}, {30, 64, 47}, {38, 38, 64}, {35, 25, 64}, {17, 17, 17}, {30, 30, 30}, {56, 64, 64},
         {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
 
+static Layout currentLayout_; // TODO: move this variable into class
+
 Launchpad::Launchpad( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi ) :
+        Application(),
         grid_( grid ),
         additionalButtons_( additionalButtons ),
         rotaryControls_( rotaryControls ),
         gui_( gui ),
         usbMidi_( usbMidi ),
-        currentLaunchpad95Mode_( Launchpad95Mode_UNKNOWN ),
-        currentLayout_( Layout_SESSION ),
-        systemExclusiveInputMessageLength_( 0 )
+        additionalButtonInputHandler_( AdditionalButtonInputHandler( additionalButtons, std::bind( &Launchpad::stopApplicationCallback, this ) ) ),
+        gridInputHandler_( GridInputHandler( grid )),
+        rotaryControlInputHandler_( RotaryControlInputHandler( rotaryControls, gui, usbMidi ) )
 {
-    const int16_t initialControlValue = midi::kMaximumControlValue / 2;
-    rotaryControlValue_[0] = initialControlValue;
-    rotaryControlValue_[1] = initialControlValue;
+    initializeInputHandlers( { &additionalButtonInputHandler_, &gridInputHandler_, &rotaryControlInputHandler_ } );
 }
 
 void Launchpad::runProgram()
@@ -140,7 +141,12 @@ void Launchpad::runProgram()
     }
 }
 
-Launchpad95Mode Launchpad::determineLaunchpad95Mode()
+void Launchpad::stopApplicationCallback()
+{
+
+}
+
+Launchpad95Mode MidiInputHandler::determineLaunchpad95Mode()
 {
     Launchpad95Mode mode = Launchpad95Mode_UNKNOWN;
 
@@ -198,7 +204,7 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
     return mode;
 }
 
-Launchpad95Submode Launchpad::determineLaunchpad95Submode()
+Launchpad95Submode MidiInputHandler::determineLaunchpad95Submode()
 {
     Launchpad95Submode submode = Launchpad95Submode_DEFAULT;
     Color color;
@@ -276,85 +282,120 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     return submode;
 }
 
-bool Launchpad::handleAdditionalControlInput()
+RotaryControlInputHandler::RotaryControlInputHandler( grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi ):
+    Thread( "Launchpad_RotaryControlInputHandler", 200, 3 ),
+    rotaryControls_( rotaryControls ),
+    gui_( gui ),
+    usbMidi_( usbMidi )
 {
-    bool stopApplication = false;
+    const int16_t initialControlValue = midi::kMaximumControlValue / 2;
+    rotaryControlValue_[0] = initialControlValue;
+    rotaryControlValue_[1] = initialControlValue;
+}
 
-    grid::RotaryControls::Event rotaryControlEvent = {};
-
-    if (rotaryControls_.waitForEvent( rotaryControlEvent ))
+void RotaryControlInputHandler::Run()
+{
+    while (true)
     {
-        const uint8_t controlIndex = rotaryControlEvent.control;
-        rotaryControlValue_[controlIndex] += rotaryControlEvent.steps;
+        grid::RotaryControls::Event rotaryControlEvent = {};
+        if (rotaryControls_.waitForEvent( rotaryControlEvent ))
+        {
+            const uint8_t controlIndex = rotaryControlEvent.control;
+            rotaryControlValue_[controlIndex] += rotaryControlEvent.steps;
 
-        if (rotaryControlValue_[controlIndex] > midi::kMaximumControlValue)
-        {
-            rotaryControlValue_[controlIndex] = midi::kMaximumControlValue;
-        }
-        else if (rotaryControlValue_[controlIndex] < midi::kMinimumControlValue)
-        {
-            rotaryControlValue_[controlIndex] = midi::kMinimumControlValue;
-        }
-        usbMidi_.sendControlChange( kAdditionalControlMidiChannel, controlIndex, rotaryControlValue_[controlIndex] );
-        gui_.registerMidiOutputActivity();
-        gui_.displayRotaryControlValues( static_cast<uint8_t>(rotaryControlValue_[0]), static_cast<uint8_t>(rotaryControlValue_[1]) );
-    }
-
-    grid::AdditionalButtons::Event additionalButtonEvent = {};
-
-    if (additionalButtons_.waitForEvent( additionalButtonEvent ))
-    {
-        if (grid::AdditionalButtons::extraNoteButton == additionalButtonEvent.button) // only send note on the event of black button
-        {
-            const uint8_t controlValue = (ButtonAction_PRESSED == additionalButtonEvent.action) ? kControlValueHigh : kControlValueLow;
-            usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
-            gui_.registerMidiOutputActivity();
-        }
-        else if (additionalButtons_.internalMenuButton == additionalButtonEvent.button)
-        {
-            if (ButtonAction_PRESSED == additionalButtonEvent.action)
+            if (rotaryControlValue_[controlIndex] > midi::kMaximumControlValue)
             {
-                stopApplication = true; // break launchpad mode loop, enter internal menu
+                rotaryControlValue_[controlIndex] = midi::kMaximumControlValue;
+            }
+            else if (rotaryControlValue_[controlIndex] < midi::kMinimumControlValue)
+            {
+                rotaryControlValue_[controlIndex] = midi::kMinimumControlValue;
+            }
+            usbMidi_.sendControlChange( kAdditionalControlMidiChannel, controlIndex, rotaryControlValue_[controlIndex] );
+            gui_.registerMidiOutputActivity();
+            gui_.displayRotaryControlValues( static_cast<uint8_t>(rotaryControlValue_[0]), static_cast<uint8_t>(rotaryControlValue_[1]) );
+        }
+    }
+}
+
+AdditionalButtonInputHandler::AdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, midi::UsbMidi& usbMidi, std::function<void()> stopApplicationCallback ):
+    Thread( "Launchpad_AdditionalButtonInputHandler", 500, 3 ),
+    additionalButtons_( additionalButtons ),
+    gui_( gui ),
+    usbMidi_( usbMidi ),
+    stopApplication_( stopApplicationCallback )
+{
+}
+
+void AdditionalButtonInputHandler::Run()
+{
+    while (true)
+    {
+        grid::AdditionalButtons::Event additionalButtonEvent = {};
+
+        if (additionalButtons_.waitForEvent( additionalButtonEvent ))
+        {
+            if (grid::AdditionalButtons::extraNoteButton == additionalButtonEvent.button) // only send note on the event of black button
+            {
+                const uint8_t controlValue = (ButtonAction_PRESSED == additionalButtonEvent.action) ? kControlValueHigh : kControlValueLow;
+                usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
+                gui_.registerMidiOutputActivity();
+            }
+            else if (grid::AdditionalButtons::internalMenuButton == additionalButtonEvent.button)
+            {
+                if (ButtonAction_PRESSED == additionalButtonEvent.action)
+                {
+                    stopApplication_();
+                }
             }
         }
     }
-
-    return stopApplication;
 }
 
-bool Launchpad::handleMidiInput()
+MidiInputHandler::MidiInputHandler( midi::UsbMidi& usbMidi, grid::Grid& grid, lcd::Gui& gui ):
+        Thread( "Launchpad_MidiInputHandler", 200, 3 ),
+        grid_( grid ),
+        gui_( gui ),
+        usbMidi_( usbMidi ),
+        currentLaunchpad95Mode_( Launchpad95Mode_UNKNOWN ),
+        //currentLayout_( Layout_SESSION ),
+        incomingSystemExclusiveMessageLength_( 0 )
 {
-    const bool stopApplication = false;
 
-    midi::MidiPacket inputPacket;
+}
 
-    if (usbMidi_.getPacket( inputPacket ))
+void MidiInputHandler::Run()
+{
+    while (true)
     {
-        const uint8_t codeIndexNumber = inputPacket.header & midi::kCodeIndexNumberMask;
-        switch (codeIndexNumber)
-        {
-            case midi::kNoteOn:
-                processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
-                break;
-            case midi::kNoteOff:
-                processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], 0 );
-                break;
-            case midi::kControlChange:
-                processChangeControlMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
-                break;
-            case midi::kSystemExclusive:
-            case midi::kSystemExclusiveEnd1Byte:
-            case midi::kSystemExclusiveEnd2Bytes:
-            case midi::kSystemExclusiveEnd3Bytes:
-                processSystemExclusiveMidiPacket( inputPacket );
-                break;
-            default:
-                break;
-        }
-        gui_.registerMidiInputActivity();
-    }
+        midi::MidiPacket inputPacket = {};
 
-    return stopApplication;
+        if (usbMidi_.waitForPacket( inputPacket ))
+        {
+            const uint8_t codeIndexNumber = inputPacket.header & midi::kCodeIndexNumberMask;
+            switch (codeIndexNumber)
+            {
+                case midi::kNoteOn:
+                    processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
+                    break;
+                case midi::kNoteOff:
+                    processNoteOnMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], 0 );
+                    break;
+                case midi::kControlChange:
+                    processChangeControlMidiMessage( inputPacket.data[0] & midi::kChannelMask, inputPacket.data[1], inputPacket.data[2] );
+                    break;
+                case midi::kSystemExclusive:
+                case midi::kSystemExclusiveEnd1Byte:
+                case midi::kSystemExclusiveEnd2Bytes:
+                case midi::kSystemExclusiveEnd3Bytes:
+                    processSystemExclusiveMidiPacket( inputPacket );
+                    break;
+                default:
+                    break;
+            }
+            gui_.registerMidiInputActivity();
+        }
+    }
 }
 
 bool Launchpad::handleGridInput()
@@ -391,7 +432,7 @@ bool Launchpad::handleGridInput()
     return stopApplication;
 }
 
-void Launchpad::processDawInfoMessage( const char* const message, uint8_t length )
+void MidiInputHandler::processDawInfoMessage( const char* const message, uint8_t length )
 {
     switch (message[0])
     {
@@ -427,7 +468,7 @@ void Launchpad::processDawInfoMessage( const char* const message, uint8_t length
     }
 }
 
-void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value )
+void MidiInputHandler::processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value )
 {
     if ((control >= kMinimumDeviceControlValue) && (control <= kMaximumDeviceControlValue))
     {
@@ -464,7 +505,7 @@ void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const ui
     }
 }
 
-void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, const uint8_t velocity )
+void MidiInputHandler::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, const uint8_t velocity )
 {
     uint8_t ledPositionX, ledPositionY;
     bool ledPositionCorrect = false;
@@ -525,7 +566,7 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
     }
 }
 
-void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t length )
+void MidiInputHandler::processSystemExclusiveMessage( uint8_t* const message, uint8_t length )
 {
     if (length >= kStandardSystemExclussiveMessageMinimumLength)
     {
@@ -558,13 +599,13 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
     }
 }
 
-void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet )
+void MidiInputHandler::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet )
 {
     const uint8_t codeIndexNumber = packet.header & midi::kCodeIndexNumberMask;
 
-    if (systemExclusiveInputMessageLength_ >= (kSystemExclussiveMessageMaximumLength_ - 3))
+    if (incomingSystemExclusiveMessageLength_ >= (kSystemExclussiveMessageMaximumLength_ - 3))
     {
-        systemExclusiveInputMessageLength_ = 0; // discard this message, as it is too long
+        incomingSystemExclusiveMessageLength_ = 0; // discard this message, as it is too long
     }
     else
     {
@@ -572,16 +613,16 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
         {
             case midi::kSystemExclusive:
             case midi::kSystemExclusiveEnd3Bytes:
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[2];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[0];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[1];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[2];
                 break;
             case midi::kSystemExclusiveEnd1Byte:
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[0];
                 break;
             case midi::kSystemExclusiveEnd2Bytes:
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[0];
-                systemExclusiveInputMessage_[systemExclusiveInputMessageLength_++] = packet.data[1];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[0];
+                systemExclusiveInputMessage_[incomingSystemExclusiveMessageLength_++] = packet.data[1];
                 break;
             default:
                 break;
@@ -590,8 +631,8 @@ void Launchpad::processSystemExclusiveMidiPacket( const midi::MidiPacket& packet
         if ((midi::kSystemExclusiveEnd1Byte == codeIndexNumber) || (midi::kSystemExclusiveEnd2Bytes == codeIndexNumber) ||
                 (midi::kSystemExclusiveEnd3Bytes == codeIndexNumber))
         {
-            processSystemExclusiveMessage( &systemExclusiveInputMessage_[0], systemExclusiveInputMessageLength_ );
-            systemExclusiveInputMessageLength_ = 0; // reset message length
+            processSystemExclusiveMessage( &systemExclusiveInputMessage_[0], incomingSystemExclusiveMessageLength_ );
+            incomingSystemExclusiveMessageLength_ = 0; // reset message length
         }
     }
 }
@@ -603,7 +644,7 @@ void Launchpad::sendMixerModeControlMessage()
     gui_.registerMidiOutputActivity();
 }
 
-void Launchpad::setCurrentLayout( const Layout layout )
+void MidiInputHandler::setCurrentLayout( const Layout layout )
 {
     currentLayout_ = layout;
 }

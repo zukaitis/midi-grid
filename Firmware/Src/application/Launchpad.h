@@ -1,8 +1,9 @@
 #ifndef APPLICATION_LAUNCHPAD_H_
 #define APPLICATION_LAUNCHPAD_H_
 
+#include "application/Application.h"
 #include "Types.h"
-#include "usb/UsbMidi.h"
+//#include "usb/UsbMidi.h"
 
 namespace grid
 {
@@ -61,21 +62,57 @@ enum Launchpad95Submode : uint8_t
     Launchpad95Submode_VELOCITY // Melodic step sequencer
 };
 
-class Launchpad
+class AdditionalButtonInputHandler: public freertos::Thread
 {
 public:
-    Launchpad( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, grid::RotaryControls& rotaryControls,
-            lcd::Gui& gui, midi::UsbMidi& usbMidi );
+    AdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, midi::UsbMidi& usbMidi, std::function<void()> stopApplicationCallback );
 
-    void runProgram();
+    void Run();
+
+private:
+    grid::AdditionalButtons& additionalButtons_;
+    lcd::Gui& gui_;
+    midi::UsbMidi& usbMidi_;
+
+    std::function<void()> stopApplication_;
+};
+
+class GridInputHandler: public freertos::Thread
+{
+public:
+    GridInputHandler( grid::Grid& grid );
+
+    void Run();
+
+private:
+    grid::Grid& grid_;
+};
+
+class RotaryControlInputHandler: public freertos::Thread
+{
+public:
+    RotaryControlInputHandler( grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi );
+
+    void Run();
+
+private:
+    grid::RotaryControls& rotaryControls_;
+    lcd::Gui& gui_;
+    midi::UsbMidi& usbMidi_;
+
+    int16_t rotaryControlValue_[2];
+};
+
+class MidiInputHandler: public freertos::Thread
+{
+public:
+    MidiInputHandler( midi::UsbMidi& usbMidi, grid::Grid& grid, lcd::Gui& gui );
+
+    void Run();
 
 private:
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
-
-    bool handleAdditionalControlInput();
-    bool handleGridInput();
-    bool handleMidiInput();
 
     void processDawInfoMessage( const char* const message, uint8_t length );
     void processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value );
@@ -83,8 +120,34 @@ private:
     void processSystemExclusiveMessage( uint8_t* const message, uint8_t length );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
-    void sendMixerModeControlMessage();
     void setCurrentLayout( const Layout layout );
+
+    midi::UsbMidi& usbMidi_;
+    grid::Grid& grid_;
+    lcd::Gui& gui_;
+
+    Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
+
+    static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
+    uint8_t systemExclusiveInputMessage_[kSystemExclussiveMessageMaximumLength_];
+    uint8_t incomingSystemExclusiveMessageLength_;
+};
+
+class Launchpad : public application::Application
+{
+public:
+    Launchpad( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, grid::RotaryControls& rotaryControls,
+            lcd::Gui& gui, midi::UsbMidi& usbMidi );
+
+    void runProgram();
+    void stopApplicationCallback();
+
+private:
+    bool handleAdditionalControlInput();
+    bool handleGridInput();
+    bool handleMidiInput();
+
+    void sendMixerModeControlMessage();
 
     grid::Grid& grid_;
     grid::AdditionalButtons& additionalButtons_;
@@ -92,15 +155,10 @@ private:
     lcd::Gui& gui_;
     midi::UsbMidi& usbMidi_;
 
-    Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
-    Layout currentLayout_;
+    AdditionalButtonInputHandler additionalButtonInputHandler_;
+    GridInputHandler gridInputHandler_;
+    RotaryControlInputHandler rotaryControlInputHandler_;
 
-    static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
-
-    uint8_t systemExclusiveInputMessage_[kSystemExclussiveMessageMaximumLength_];
-    uint8_t systemExclusiveInputMessageLength_;
-
-    int16_t rotaryControlValue_[2];
 };
 
 } // namespace

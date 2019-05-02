@@ -36,7 +36,7 @@ UsbMidi::~UsbMidi()
 {
 }
 
-bool UsbMidi::getPacket( MidiPacket& packet )
+bool UsbMidi::waitForPacket( MidiPacket& packet )
 {
     MidiInput midiInput;
     bool packetAvailable = false;
@@ -47,6 +47,12 @@ bool UsbMidi::getPacket( MidiPacket& packet )
         packetAvailable = true;
     }
     return packetAvailable;
+}
+
+bool UsbMidi::waitUntilPacketIsAvailable()
+{
+    MidiInput unused;
+    return receivedMessages.Peek( &unused.input );
 }
 
 bool UsbMidi::isPacketAvailable()

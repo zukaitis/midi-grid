@@ -30,7 +30,6 @@ public:
     void initialize();
     virtual void Run();
 
-    Color getRandomColor();
     void randomLightAnimation();
     void runGridInputTest();
     void runInternalMenu();
@@ -38,7 +37,6 @@ public:
     void switchApplicationCallback( const uint8_t applicationIndex );
 
     void displayBootAnimation();
-    Color getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
 
 private:
     ApplicationMain();

@@ -180,14 +180,14 @@ class Thread {
             SchedulerActive = false;
         }
 
-        inline void Notify()
+        inline void Notify( const uint32_t value = 0 )
         {
-            xTaskNotify( GetHandle(), 0, eNoAction );
+            xTaskNotify( GetHandle(), value, eNoAction );
         }
 
-        inline void NotifyFromISR()
+        inline void NotifyFromISR( const uint32_t value = 0 )
         {
-            xTaskNotifyFromISR( GetHandle(), 0, eNoAction, pdFALSE );
+            xTaskNotifyFromISR( GetHandle(), value, eNoAction, pdFALSE );
         }
 
 #if (INCLUDE_vTaskSuspend == 1)

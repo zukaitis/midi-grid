@@ -113,84 +113,6 @@ void ApplicationMain::displayBootAnimation()
     }
 }
 
-/* calculates color value according to led position */
-Color ApplicationMain::getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY )
-{
-    Color color = {0, 0, 0};
-
-    color.Red = ((7 - std::max( ledPositionY, static_cast<uint8_t>(7U - ledPositionX) )) * 64) / 7;
-    color.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
-    color.Blue = ((7 - std::max( ledPositionX, static_cast<uint8_t>(7U - ledPositionY) )) * 64) / 7;
-
-    return color;
-}
-
-Color ApplicationMain::getRandomColor()
-{
-    enum FullyLitColor
-    {
-        kRed = 0,
-        kGreen,
-        kBlue,
-        kRedAndGreen,
-        kRedAndBlue,
-        kGreenAndBlue,
-        kNumberOfVariants
-    };
-
-    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(rand() % kNumberOfVariants);
-    int8_t partlyLitColor1 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColor1 < gridDriver_.ledColorIntensityOff)
-    {
-        partlyLitColor1 = gridDriver_.ledColorIntensityOff;
-    }
-    int8_t partlyLitColor2 = (rand() % (gridDriver_.ledColorIntensityMaximum + 32 + 1)) - 32;
-    if (partlyLitColor2 < gridDriver_.ledColorIntensityOff)
-    {
-        partlyLitColor2 = gridDriver_.ledColorIntensityOff;
-    }
-
-    Color color = { 0, 0, 0 };
-
-    switch (fullyLitColor)
-    {
-        case kRed:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kGreen:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = static_cast<uint8_t>(partlyLitColor2);
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        case kRedAndGreen:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = static_cast<uint8_t>(partlyLitColor1);
-            break;
-        case kRedAndBlue:
-            color.Red = gridDriver_.ledColorIntensityMaximum;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        case kGreenAndBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = gridDriver_.ledColorIntensityMaximum;
-            color.Blue = gridDriver_.ledColorIntensityMaximum;
-            break;
-        default:
-            break;
-    }
-
-    return color;
-}
-
 void ApplicationMain::runGridInputTest()
 {
     grid::Grid::ButtonEvent event = {};
@@ -209,13 +131,13 @@ void ApplicationMain::runGridInputTest()
 void ApplicationMain::runInternalMenu()
 {
     internalMenuRunning = true;
-    internalMenu_.openApplication();
+    internalMenu_.open();
 
     while (internalMenuRunning)
     {
     }
 
-    internalMenu_.closeApplication();
+    internalMenu_.close();
 }
 
 void ApplicationMain::switchApplicationCallback( const uint8_t applicationIndex )

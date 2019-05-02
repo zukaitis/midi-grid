@@ -25,6 +25,11 @@ public:
 
     bool waitForEvent( Event& event );
 
+    inline bool waitForInput( Event& event )
+    {
+        return waitForEvent( event );
+    }
+
 private:
     void Run();
 

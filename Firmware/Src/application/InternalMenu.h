@@ -45,7 +45,7 @@ private:
     mcu::System& system_;
 };
 
-class InternalMenu : public ApplicationBase
+class InternalMenu : public Application
 {
 public:
     InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(uint8_t)> switchApplicationCallback );

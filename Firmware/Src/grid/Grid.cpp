@@ -32,7 +32,7 @@ Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts ) :
         registeredButtonColumnInput_[index] = 0x00;
     }
 
-    gridDriver_.addNotificationCallback( std::bind( &Grid::notifyFromISRWrapper, this ) );
+    gridDriver_.addThreadToNotify( this );
     Start();
 }
 

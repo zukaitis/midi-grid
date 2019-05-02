@@ -2,7 +2,7 @@
 #define GRID_GRIDDRIVER_H_
 
 #include "Types.h"
-#include <functional>
+#include "thread.hpp"
 
 namespace grid
 {
@@ -14,7 +14,7 @@ public:
     GridDriver();
     ~GridDriver();
 
-    void addNotificationCallback( std::function<void()> callback );
+    void addThreadToNotify( freertos::Thread* const thread );
 
     bool getButtonInput( const uint8_t button ) const;
     uint8_t getGridButtonInput( const uint8_t column ) const;
@@ -62,9 +62,9 @@ public:
 
     static inline void callNotifications()
     {
-        for (uint8_t index = 0; index < numberOfNotifications_; index++)
+        for (uint8_t index = 0; index < numberOfThreadsToNotify_; index++)
         {
-            notify_[index]();
+            threadToNotify_[index]->NotifyFromISR();
         }
     }
 
@@ -100,9 +100,9 @@ private:
     static uint32_t pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
     static uint32_t pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
 
-    static const uint8_t kMaximumNumberOfNotifications = 3;
-    static std::function<void(void)> notify_[kMaximumNumberOfNotifications];
-    static uint8_t numberOfNotifications_;
+    static const uint8_t kMaximumNumberOfThreadsToNotify = 3;
+    static freertos::Thread* threadToNotify_[kMaximumNumberOfThreadsToNotify];
+    static uint8_t numberOfThreadsToNotify_;
 };
 
 } // namespace grid

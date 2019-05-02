@@ -28,9 +28,9 @@ void AdditionalButtonInputHandler::Run()
         grid::AdditionalButtons::Event event = {};
         if (additionalButtons_.waitForEvent( event ))
         {
-            if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+            if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
             {
-                stopApplication_(); // return from interal menu
+                stopApplication_(); // return from internal menu
             }
         }
     }
@@ -61,7 +61,7 @@ void GridInputHandler::Run()
 }
 
 InternalMenu::InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(const uint8_t)> switchApplicationCallback ):
-        ApplicationBase(),
+        Application(),
         grid_( grid ),
         gui_( gui ),
         additionalButtonInputHandler_( AdditionalButtonInputHandler( additionalButtons, std::bind( &InternalMenu::stopApplicationCallback, this ) ) ),
