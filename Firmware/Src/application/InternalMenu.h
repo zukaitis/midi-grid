@@ -3,7 +3,6 @@
 
 #include "application/Application.h"
 #include "thread.hpp"
-#include <functional>
 
 namespace grid
 {
@@ -21,46 +20,24 @@ namespace mcu
     class System;
 }
 
-namespace internal_menu {
-
-class AdditionalButtonInputHandler: public freertos::Thread
+namespace application
 {
-public:
-    AdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons, std::function<void()> stopApplicationCallback );
-
-    virtual void Run();
-private:
-    grid::AdditionalButtons& additionalButtons_;
-    std::function<void()> stopApplication_;
-};
-
-class GridInputHandler: public freertos::Thread
-{
-public:
-    GridInputHandler( grid::Grid& grid, mcu::System& system );
-
-    virtual void Run();
-private:
-    grid::Grid& grid_;
-    mcu::System& system_;
-};
 
 class InternalMenu : public Application
 {
 public:
-    InternalMenu( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, lcd::Gui& gui, mcu::System& system, std::function<void(uint8_t)> switchApplicationCallback );
+    InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
+        lcd::Gui& gui, mcu::System& system );
 
     void initialize();
-    void stopApplicationCallback();
+
+    void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
+    void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
 private:
     grid::Grid& grid_;
     lcd::Gui& gui_;
-
-    AdditionalButtonInputHandler additionalButtonInputHandler_;
-    GridInputHandler gridInputHandler_;
-
-    std::function<void(const uint8_t)> switchApplication_;
+    mcu::System& system_;
 };
 
 } // namespace

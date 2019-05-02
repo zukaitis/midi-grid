@@ -12,13 +12,13 @@ extern void initialise_monitor_handles(void);
 
 int main(void)
 {
-    ApplicationMain& applicationMain = ApplicationMain::getInstance();
-    applicationMain.initialize();
-    applicationMain.Start();
+    Main& main = Main::getInstance();
+    main.initialize();
+    main.Start();
     freertos::Thread::StartScheduler();
 }
 
-ApplicationMain::ApplicationMain() :
+Main::Main() :
         Thread("main", 500, 1),
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
@@ -30,19 +30,16 @@ ApplicationMain::ApplicationMain() :
         lcd_( lcd::Lcd() ),
         gui_( lcd::Gui( lcd_ ) ),
         launchpad_( launchpad::Launchpad( grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
-        internalMenu_( grid_, additionalButtons_, gui_, system_, std::bind( &ApplicationMain::switchApplicationCallback, this, std::placeholders::_1 ) )
+        internalMenu_( grid_, additionalButtons_, gui_, system_, std::bind( &Main::switchApplicationCallback, this, std::placeholders::_1 ) )
 {}
 
-ApplicationMain::~ApplicationMain()
-{}
-
-void ApplicationMain::initialize()
+void Main::initialize()
 {
     globalInterrupts_.disable();
     system_.initialize();
 }
 
-void ApplicationMain::Run()
+void Main::Run()
 {
     lcd_.initialize();
     lcd_.setBacklightIntensity( 60 );
@@ -85,7 +82,7 @@ void ApplicationMain::Run()
     }
 }
 
-void ApplicationMain::displayBootAnimation()
+void Main::displayBootAnimation()
 {
     static const uint8_t totalNumberOfSteps = 8;
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
@@ -113,7 +110,7 @@ void ApplicationMain::displayBootAnimation()
     }
 }
 
-void ApplicationMain::runGridInputTest()
+void Main::runGridInputTest()
 {
     grid::Grid::ButtonEvent event = {};
 
@@ -128,7 +125,7 @@ void ApplicationMain::runGridInputTest()
     }
 }
 
-void ApplicationMain::runInternalMenu()
+void Main::runInternalMenu()
 {
     internalMenuRunning = true;
     internalMenu_.open();
@@ -138,14 +135,6 @@ void ApplicationMain::runInternalMenu()
     }
 
     internalMenu_.close();
-}
-
-void ApplicationMain::switchApplicationCallback( const uint8_t applicationIndex )
-{
-    if (0 == applicationIndex)
-    {
-        internalMenuRunning = false;
-    }
 }
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )

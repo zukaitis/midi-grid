@@ -10,25 +10,23 @@
 #include "lcd/Lcd.h"
 #include "application/InternalMenu.h"
 #include "application/Launchpad.h"
+#include "application/Startup.h"
+#include "application/GridTest.h"
 #include "system/GlobalInterrupts.h"
 #include "usb/UsbMidi.h"
 
 #include "thread.hpp"
 
-class ApplicationMain: public freertos::Thread
+class Main
 {
 public:
-    // singleton, because class has to be called from main() function
-    static ApplicationMain& getInstance()
+    static inline Main& getInstance()
     {
-        static ApplicationMain instance;
+        static Main instance;
         return instance;
     }
 
-    ~ApplicationMain();
-
     void initialize();
-    virtual void Run();
 
     void randomLightAnimation();
     void runGridInputTest();
@@ -39,7 +37,7 @@ public:
     void displayBootAnimation();
 
 private:
-    ApplicationMain();
+    Main();
 
     mcu::System system_;
     mcu::GlobalInterrupts globalInterrupts_;
@@ -50,10 +48,11 @@ private:
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
     lcd::Gui gui_;
-    launchpad::Launchpad launchpad_;
-    internal_menu::InternalMenu internalMenu_;
-
-    bool internalMenuRunning; // temporary variable, to be removed
+    application::Launchpad launchpad_;
+    application::InternalMenu internalMenu_;
+    application::Startup startup_;
+    application::GridTest gridTest_;
+    application::ApplicationController applicationController_;
 };
 
 #endif // __MAIN_H__

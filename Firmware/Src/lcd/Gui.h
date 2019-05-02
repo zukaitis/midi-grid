@@ -33,8 +33,8 @@ public:
     void setDawTimingValues( const uint16_t tempo, const uint8_t signatureNumerator, const uint8_t signatureDenominator,
             const bool nudgeDown, const bool nudgeUp );
     void setDawTrackName( const char* const name, const uint8_t length );
-    void setLaunchpad95Mode( const launchpad::Launchpad95Mode mode );
-    void setLaunchpad95Submode( const launchpad::Launchpad95Submode submode );
+    void setLaunchpad95Mode( const application::Launchpad95Mode mode );
+    void setLaunchpad95Submode( const application::Launchpad95Submode submode );
 
 private:
     void displayClipName();
@@ -60,8 +60,8 @@ private:
     uint8_t dawSignatureNumerator_;
     uint8_t dawSignatureDenominator_;
 
-    launchpad::Launchpad95Mode launchpad95Mode_;
-    launchpad::Launchpad95Submode launchpad95Submode_;
+    application::Launchpad95Mode launchpad95Mode_;
+    application::Launchpad95Submode launchpad95Submode_;
     uint16_t midiInputTimeout_;
     uint16_t midiOutputTimeout_;
     uint16_t rotaryControlDisplayTimeout_;

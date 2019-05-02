@@ -19,10 +19,10 @@ namespace midi
 namespace application
 {
 
-class GridTest : private Application, private freertos::Thread
+class GridTest : public Application, private freertos::Thread
 {
 public:
-    GridTest( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi );
+    GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi );
 
 private:
     void initialize();
@@ -40,8 +40,6 @@ private:
     void Run();
 
     grid::Grid& grid_;
-    grid::AdditionalButtons& additionalButtons_;
-    midi::UsbMidi& usbMidi_;
 };
 
 } // namespace

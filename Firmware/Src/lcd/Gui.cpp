@@ -66,8 +66,8 @@ Gui::Gui( Lcd& lcd ) :
         dawTempo_( 0 ),
         dawSignatureNumerator_( 0 ),
         dawSignatureDenominator_( 0 ),
-        launchpad95Mode_( launchpad::Launchpad95Mode_UNKNOWN ),
-        launchpad95Submode_( launchpad::Launchpad95Submode_DEFAULT ),
+        launchpad95Mode_( application::Launchpad95Mode_UNKNOWN ),
+        launchpad95Submode_( application::Launchpad95Submode_DEFAULT ),
         midiInputTimeout_( 0 ),
         midiOutputTimeout_( 0 ),
         rotaryControlDisplayTimeout_( 0 ),
@@ -264,13 +264,13 @@ void Gui::setDawTrackName( const char* const name, const uint8_t length )
     displayLaunchpad95Info();
 }
 
-void Gui::setLaunchpad95Mode( const launchpad::Launchpad95Mode mode )
+void Gui::setLaunchpad95Mode( const application::Launchpad95Mode mode )
 {
     launchpad95Mode_ = mode;
     displayLaunchpad95Info();
 }
 
-void Gui::setLaunchpad95Submode( const launchpad::Launchpad95Submode submode )
+void Gui::setLaunchpad95Submode( const application::Launchpad95Submode submode )
 {
     launchpad95Submode_ = submode;
     displayLaunchpad95Info();
@@ -288,7 +288,7 @@ void Gui::displayDeviceName()
 
 void Gui::displayLaunchpad95Info()
 {
-    if (launchpad::Launchpad95Submode_DEFAULT == launchpad95Submode_)
+    if (application::Launchpad95Submode_DEFAULT == launchpad95Submode_)
     {
         displayLaunchpad95Mode();
     }
@@ -306,20 +306,20 @@ void Gui::displayLaunchpad95Info()
         lcd_.clearArea( 0, 32, 83, 47 );
         switch (launchpad95Mode_)
         {
-            case launchpad::Launchpad95Mode_INSTRUMENT:
-            case launchpad::Launchpad95Mode_DRUM_STEP_SEQUENCER:
-            case launchpad::Launchpad95Mode_MELODIC_SEQUENCER:
+            case application::Launchpad95Mode_INSTRUMENT:
+            case application::Launchpad95Mode_DRUM_STEP_SEQUENCER:
+            case application::Launchpad95Mode_MELODIC_SEQUENCER:
                 displayTrackName();
                 displayClipName();
                 break;
-            case launchpad::Launchpad95Mode_DEVICE_CONTROLLER:
+            case application::Launchpad95Mode_DEVICE_CONTROLLER:
                 displayTrackName();
                 displayDeviceName();
                 break;
-            case launchpad::Launchpad95Mode_SESSION:
-            case launchpad::Launchpad95Mode_MIXER:
-            case launchpad::Launchpad95Mode_USER1:
-            case launchpad::Launchpad95Mode_USER2:
+            case application::Launchpad95Mode_SESSION:
+            case application::Launchpad95Mode_MIXER:
+            case application::Launchpad95Mode_USER1:
+            case application::Launchpad95Mode_USER2:
             default:
                 displayTimingStatus();
                 break;
@@ -330,7 +330,7 @@ void Gui::displayLaunchpad95Info()
 void Gui::displayLaunchpad95Mode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    if (launchpad::Launchpad95Mode_UNKNOWN != launchpad95Mode_)
+    if (application::Launchpad95Mode_UNKNOWN != launchpad95Mode_)
     {
         lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd_.width/2, 8, lcd::Justification_CENTER );
     }

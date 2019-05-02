@@ -54,7 +54,6 @@ void InputHandler<InputSource, InputType>::Run()
     }
 }
 
-
 Application::Application( ApplicationController& applicationController ):
     additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons*, grid::AdditionalButtons::Event>( *this ) ),
     gridInputHandler_( InputHandler<grid::Grid*, grid::Grid::ButtonEvent>( *this ) ),

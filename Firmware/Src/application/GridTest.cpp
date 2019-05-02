@@ -9,11 +9,10 @@
 namespace application
 {
 
-GridTest::GridTest( grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi ):
+GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi ):
+    Application( applicationController ),
     Thread( "Application_GridTest", 200, 3 ),
-    grid_( grid ),
-    additionalButtons_( additionalButtons ),
-    usbMidi_( usbMidi )
+    grid_( grid )
 {
     initializeGridInputHandler( grid );
     initializeAdditionalButtonInputHandler( additionalButtons );
