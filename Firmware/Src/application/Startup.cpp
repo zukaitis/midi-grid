@@ -8,11 +8,13 @@
 namespace application
 {
 
-Startup::Startup( grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system ):
-    gridDriver_( gridDriver ),
-    gui_( gui ),
-    lcd_( lcd ),
-    system_( system )
+Startup::Startup( ApplicationController applicationController, grid::GridDriver& gridDriver,
+    lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system ):
+        Application( applicationController ),
+        gridDriver_( gridDriver ),
+        gui_( gui ),
+        lcd_( lcd ),
+        system_( system )
 {
 }
 

@@ -13,13 +13,10 @@ extern void initialise_monitor_handles(void);
 int main(void)
 {
     Main& main = Main::getInstance();
-    main.initialize();
-    main.Start();
-    freertos::Thread::StartScheduler();
+    main.run();
 }
 
 Main::Main() :
-        Thread("main", 500, 1),
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
         gridDriver_( grid::GridDriver() ),
@@ -29,112 +26,30 @@ Main::Main() :
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
         gui_( lcd::Gui( lcd_ ) ),
-        launchpad_( launchpad::Launchpad( grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
-        internalMenu_( grid_, additionalButtons_, gui_, system_, std::bind( &Main::switchApplicationCallback, this, std::placeholders::_1 ) )
-{}
+        applicationController_( application::ApplicationController() ),
+        startup_( application::Startup( applicationController_, gridDriver_, gui_, lcd_, system_ ) ),
+        gridTest_( application::GridTest( applicationController_, grid_, additionalButtons_, usbMidi_ ) ),
+        internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, gui_, system_ ) ),
+        launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) )
+{
+    application::Application* applicationList[application::kNumberOfApplications] = {
+        NULL, // ApplicationIndex_PREVIOUS
+        &startup_, // ApplicationIndex_STARTUP
+        &gridTest_, // ApplicationIndex_GRID_TEST
+        &internalMenu_, // ApplicationIndex_INTERNAL_MENU
+        &launchpad_ // ApplicationIndex_LAUNCHPAD
+    };
 
-void Main::initialize()
+    applicationController_.initialize( applicationList );
+}
+
+void Main::run()
 {
     globalInterrupts_.disable();
     system_.initialize();
-}
 
-void Main::Run()
-{
-    lcd_.initialize();
-    lcd_.setBacklightIntensity( 60 );
-
-    gridDriver_.initialize();
-    gridDriver_.start();
-
-    gui_.displayConnectingImage();
-
-    while (!system_.isUsbConnected())
-    {
-    }
-
-    gui_.displayWaitingForMidi();
-    displayBootAnimation();
-
-    while (!usbMidi_.isPacketAvailable())
-    {
-        grid::AdditionalButtons::Event event = {};
-        if (additionalButtons_.waitForEvent( event ))
-        {
-            if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
-            {
-                runInternalMenu();
-
-                // clear LEDs and display USB logo at the return from internal menu
-                grid_.turnAllLedsOff();
-                gui_.displayWaitingForMidi();
-            }
-        }
-        runGridInputTest();
-    }
-
-    while (true)
-    {
-        launchpad_.runProgram();
-
-        // program only returns here when red button is pressed
-        runInternalMenu();
-    }
-}
-
-void Main::displayBootAnimation()
-{
-    static const uint8_t totalNumberOfSteps = 8;
-    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
-
-    grid_.turnAllLedsOff();
-
-    for (uint8_t currentStepNumber = 0; currentStepNumber < totalNumberOfSteps; currentStepNumber++)
-    {
-        for (uint8_t x = 0; x <= currentStepNumber; x++)
-        {
-            const uint8_t y = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
-        }
-
-        for (uint8_t y = 0; y <= currentStepNumber; y++)
-        {
-            const uint8_t x = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
-        }
-        
-        DelayUntil( delayPeriod );
-        grid_.turnAllLedsOff();
-    }
-}
-
-void Main::runGridInputTest()
-{
-    grid::Grid::ButtonEvent event = {};
-
-    if (grid_.waitForButtonEvent( event ))
-    {
-        Color color = { 0, 0, 0 };
-        if (ButtonAction_PRESSED == event.action)
-        {
-            color = getRandomColor();
-        }
-        grid_.setLed( event.positionX, event.positionY, color );
-    }
-}
-
-void Main::runInternalMenu()
-{
-    internalMenuRunning = true;
-    internalMenu_.open();
-
-    while (internalMenuRunning)
-    {
-    }
-
-    internalMenu_.close();
+    applicationController_.selectApplication( application::ApplicationIndex_STARTUP );
+    freertos::Thread::StartScheduler();
 }
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )

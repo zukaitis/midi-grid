@@ -26,16 +26,7 @@ public:
         return instance;
     }
 
-    void initialize();
-
-    void randomLightAnimation();
-    void runGridInputTest();
-    void runInternalMenu();
-
-    void switchApplicationCallback( const uint8_t applicationIndex );
-
-    void displayBootAnimation();
-
+    void run();
 private:
     Main();
 
@@ -48,11 +39,11 @@ private:
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
     lcd::Gui gui_;
-    application::Launchpad launchpad_;
-    application::InternalMenu internalMenu_;
+    application::ApplicationController applicationController_;
     application::Startup startup_;
     application::GridTest gridTest_;
-    application::ApplicationController applicationController_;
+    application::InternalMenu internalMenu_;
+    application::Launchpad launchpad_;
 };
 
 #endif // __MAIN_H__

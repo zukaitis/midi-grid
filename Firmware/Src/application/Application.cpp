@@ -25,7 +25,7 @@ void InputHandler<InputSource, InputType>::initialize( InputSource inputSource )
 template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::enable()
 {
-    if (handlerUnused != usbMidi_)
+    if (handlerUnused != inputSource_)
     {
         Resume();
     }
@@ -34,7 +34,7 @@ void InputHandler<InputSource, InputType>::enable()
 template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::disable()
 {
-    if (handlerUnused != usbMidi_)
+    if (handlerUnused != inputSource_)
     {
         Suspend();
     }
@@ -55,12 +55,12 @@ void InputHandler<InputSource, InputType>::Run()
 }
 
 Application::Application( ApplicationController& applicationController ):
+    applicationController_( applicationController ),
     additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons*, grid::AdditionalButtons::Event>( *this ) ),
     gridInputHandler_( InputHandler<grid::Grid*, grid::Grid::ButtonEvent>( *this ) ),
     rotaryControlInputHandler_( InputHandler<grid::RotaryControls*, grid::RotaryControls::Event>( *this ) ),
-    midiInputAvailableHandler_( InputHandler<midi::UsbMidi*, void>( *this ) ),
-    midiInputHandler_( InputHandler<midi::UsbMidi*, midi::MidiPacket>( *this ) ),
-    applicationController_( applicationController )
+    midiInputAvailableHandler_( InputHandler<midi::UsbMidi*, bool>( *this ) ),
+    midiInputHandler_( InputHandler<midi::UsbMidi*, midi::MidiPacket>( *this ) )
 {
 }
 
@@ -117,7 +117,7 @@ void Application::initializeMidiInputHandler( midi::UsbMidi& usbMidi )
     midiInputHandler_.initialize( &usbMidi );
 }
 
-void Application::handleInput()
+void Application::handleInput( const bool dummy )
 {
     handleMidiPacketAvailable();
 }
@@ -177,9 +177,13 @@ void handleMidiPacket( const midi::MidiPacket packet )
     // do nothing by default, this method is to be overridden
 }
 
-ApplicationController::ApplicationController( Application** const applicationList ):
+ApplicationController::ApplicationController():
     Thread( "ApplicationController", 200, 4 ),
     currentlyOpenApplication_( NULL )
+{
+}
+
+void ApplicationController::initialize( Application** const applicationList )
 {
     for (uint8_t index = 0; index < kNumberOfApplications; index++)
     {

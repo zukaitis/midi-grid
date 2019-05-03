@@ -22,10 +22,10 @@ namespace mcu
 namespace application
 {
 
-class Startup : private Application
+class Startup : public Application
 {
 public:
-    Startup( grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system );
+    Startup( ApplicationController applicationController, grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system );
 
 private:
     void initialize();

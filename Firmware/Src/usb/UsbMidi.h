@@ -67,7 +67,7 @@ public:
     static uint16_t receiveData( uint8_t* const message, const uint16_t length );
     static uint16_t transmitData( uint8_t* const message, const uint16_t length );
 
-    inline bool waitForInput()
+    inline bool waitForInput( bool& dummy )
     {
         return waitUntilPacketIsAvailable();
     }

@@ -67,7 +67,7 @@ public:
     virtual void handleMidiPacket( const midi::MidiPacket packet );
     virtual void handleMidiPacketAvailable();
 
-    void handleInput();
+    void handleInput( const bool dummy );
     void handleInput( const grid::AdditionalButtons::Event event );
     void handleInput( const grid::Grid::ButtonEvent event );
     void handleInput( const grid::RotaryControls::Event event );
@@ -76,24 +76,24 @@ public:
 private:
     ApplicationController& applicationController_;
 
-    //MidiInputHandler midiInputHandler_;
     InputHandler<grid::AdditionalButtons*, grid::AdditionalButtons::Event> additionalButtonInputHandler_;
     InputHandler<grid::Grid*, grid::Grid::ButtonEvent> gridInputHandler_;
     InputHandler<grid::RotaryControls*, grid::RotaryControls::Event> rotaryControlInputHandler_;
-    InputHandler<midi::UsbMidi*, void /*bool*/> midiInputAvailableHandler_;
+    InputHandler<midi::UsbMidi*, bool> midiInputAvailableHandler_;
     InputHandler<midi::UsbMidi*, midi::MidiPacket> midiInputHandler_;
 };
 
 class ApplicationController : private freertos::Thread
 {
 public:
-    ApplicationController( Application** const applicationList );
+    ApplicationController();
+    void initialize( Application** const applicationList );
 
     void selectApplication( const ApplicationIndex applicationIndex );
-protected:
-    void Run();
 
 private:
+
+    void Run();
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
 };
