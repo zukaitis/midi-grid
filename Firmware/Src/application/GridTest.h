@@ -19,25 +19,22 @@ namespace midi
 namespace application
 {
 
-class GridTest : public Application, private freertos::Thread
+class GridTest : public Application
 {
 public:
     GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi );
 
 private:
-    void initialize();
-    void deinitialize();
+    void run( ApplicationThread& thread );
 
-    void displayBootAnimation();
+    void displayIntroAnimation( ApplicationThread& thread );
 
-    Color getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
+    Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
     Color getRandomColor();
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     void handleMidiPacketAvailable();
-
-    void Run();
 
     grid::Grid& grid_;
 };

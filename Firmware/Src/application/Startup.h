@@ -28,7 +28,7 @@ public:
     Startup( ApplicationController applicationController, grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system );
 
 private:
-    void initialize();
+    void run( ApplicationThread& thread );
 
     grid::GridDriver& gridDriver_;
     lcd::Gui& gui_;

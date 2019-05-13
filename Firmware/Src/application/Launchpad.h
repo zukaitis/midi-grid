@@ -67,15 +67,14 @@ public:
     Launchpad( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
         grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi );
 
-protected:
-    void initialize();
+private:
+    void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     void handleMidiPacket( const midi::MidiPacket packet );
     void handleRotaryControlEvent( const grid::RotaryControls::Event event );
 
-private:
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
 

@@ -26,7 +26,7 @@ Main::Main() :
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
         gui_( lcd::Gui( lcd_ ) ),
-        applicationController_( application::ApplicationController() ),
+        applicationController_( application::ApplicationController( additionalButtons_, grid_, rotaryControls_, usbMidi_ ) ),
         startup_( application::Startup( applicationController_, gridDriver_, gui_, lcd_, system_ ) ),
         gridTest_( application::GridTest( applicationController_, grid_, additionalButtons_, usbMidi_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, gui_, system_ ) ),
@@ -48,7 +48,7 @@ void Main::run()
     globalInterrupts_.disable();
     system_.initialize();
 
-    applicationController_.selectApplication( application::ApplicationIndex_STARTUP );
+    //applicationController_.selectApplication( application::ApplicationIndex_STARTUP );
     freertos::Thread::StartScheduler();
 }
 

@@ -29,12 +29,12 @@ public:
     InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
         lcd::Gui& gui, mcu::System& system );
 
-    void initialize();
+private:
+    void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
-private:
     grid::Grid& grid_;
     lcd::Gui& gui_;
     mcu::System& system_;

@@ -118,14 +118,9 @@ Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& 
     const int16_t initialControlValue = midi::kMaximumControlValue / 2;
     rotaryControlValue_[0] = initialControlValue;
     rotaryControlValue_[1] = initialControlValue;
-
-    initializeAdditionalButtonInputHandler( additionalButtons );
-    initializeGridInputHandler( grid );
-    initializeMidiInputHandler( usbMidi );
-    initializeRotaryControlInputHandler( rotaryControls );
 }
 
-void Launchpad::initialize()
+void Launchpad::run( ApplicationThread& thread )
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
@@ -133,6 +128,11 @@ void Launchpad::initialize()
     sendMixerModeControlMessage();
 
     gui_.enterLaunchpad95Mode();
+
+    enableAdditionalButtonInputHandler();
+    enableGridInputHandler();
+    enableMidiInputHandler();
+    enableRotaryControlInputHandler();
 }
 
 Launchpad95Mode Launchpad::determineLaunchpad95Mode()

@@ -74,7 +74,7 @@ void Grid::Run()
 {
     while (true)
     {
-        TakeNotification(); // blocking until grid driver gives notification
+        WaitForNotification(); // blocking until grid driver gives notification
 
         // interrupts are disabled, so that active buffer wouldn't change during reading
         globalInterrupts_.disable();

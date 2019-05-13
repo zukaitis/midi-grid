@@ -4,40 +4,25 @@ namespace application
 {
 
 template <class InputSource, class InputType>
-InputSource const InputHandler<InputSource, InputType>::handlerUnused = NULL;
-
-template <class InputSource, class InputType>
-InputHandler<InputSource, InputType>::InputHandler( Application& application ):
-    Thread( "InputHandler", 200, 3 ),
-    application_( application ),
-    inputSource_( handlerUnused )
+InputHandler<InputSource, InputType>::InputHandler( ApplicationController& applicationController, InputSource inputSource ):
+    Thread( "InputHandler", 500, 3 ),
+    applicationController_( applicationController ),
+    inputSource_( inputSource )
 {
     Start();
     Suspend();
 }
 
 template <class InputSource, class InputType>
-void InputHandler<InputSource, InputType>::initialize( InputSource inputSource )
-{
-    inputSource_ = inputSource;
-}
-
-template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::enable()
 {
-    if (handlerUnused != inputSource_)
-    {
-        Resume();
-    }
+    Resume();
 }
 
 template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::disable()
 {
-    if (handlerUnused != inputSource_)
-    {
-        Suspend();
-    }
+    Suspend();
 }
 
 template <class InputSource, class InputType>
@@ -47,139 +32,116 @@ void InputHandler<InputSource, InputType>::Run()
     {
         InputType input = {};
 
-        if (inputSource_->waitForInput( input ))
+        if (inputSource_.waitForInput( input ))
         {
-            application_.handleInput( input );
+            applicationController_.handleInput( input );
         }
     }
 }
 
+ApplicationThread::ApplicationThread( ApplicationController& applicationController ):
+    Thread( "ApplicationThread", 500, 3 ),
+    applicationController_( applicationController )
+{
+    Start();
+    Suspend();
+}
+
+void ApplicationThread::enable()
+{
+    Resume();
+}
+
+void ApplicationThread::disable()
+{
+    Suspend();
+}
+
+void ApplicationThread::Run()
+{
+    applicationController_.runApplicationThread( *this );
+}
+
 Application::Application( ApplicationController& applicationController ):
-    applicationController_( applicationController ),
-    additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons*, grid::AdditionalButtons::Event>( *this ) ),
-    gridInputHandler_( InputHandler<grid::Grid*, grid::Grid::ButtonEvent>( *this ) ),
-    rotaryControlInputHandler_( InputHandler<grid::RotaryControls*, grid::RotaryControls::Event>( *this ) ),
-    midiInputAvailableHandler_( InputHandler<midi::UsbMidi*, bool>( *this ) ),
-    midiInputHandler_( InputHandler<midi::UsbMidi*, midi::MidiPacket>( *this ) )
+    applicationController_( applicationController )
 {
 }
 
-void Application::open()
+Application::~Application()
 {
-    initialize();
-
-    additionalButtonInputHandler_.enable();
-    gridInputHandler_.enable();
-    rotaryControlInputHandler_.enable();
-    midiInputAvailableHandler_.enable();
-    midiInputHandler_.enable();
-}
-
-void Application::close()
-{
-    deinitialize();
-
-    additionalButtonInputHandler_.disable();
-    gridInputHandler_.disable();
-    rotaryControlInputHandler_.disable();
-    midiInputAvailableHandler_.disable();
-    midiInputHandler_.disable();
 }
 
 void Application::switchApplication( const ApplicationIndex applicationIndex )
 {
-    close();
     applicationController_.selectApplication( applicationIndex );
 }
 
-void Application::initializeAdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons )
+void Application::enableAdditionalButtonInputHandler()
 {
-    additionalButtonInputHandler_.initialize( &additionalButtons );
+    applicationController_.enableAdditionalButtonInputHandler();
 }
 
-void Application::initializeGridInputHandler( grid::Grid& grid )
+void Application::enableGridInputHandler()
 {
-    gridInputHandler_.initialize( &grid );
+    applicationController_.enableGridInputHandler();
 }
 
-void Application::initializeRotaryControlInputHandler( grid::RotaryControls& rotaryControls )
+void Application::enableRotaryControlInputHandler()
 {
-    rotaryControlInputHandler_.initialize( &rotaryControls );
+    applicationController_.enableRotaryControlInputHandler();
 }
 
-void Application::initializeMidiInputAvailableHandler( midi::UsbMidi& usbMidi )
+void Application::enableMidiInputAvailableHandler()
 {
-    midiInputAvailableHandler_.initialize( &usbMidi );
+    applicationController_.enableMidiInputAvailableHandler();
 }
 
-void Application::initializeMidiInputHandler( midi::UsbMidi& usbMidi )
+void Application::enableMidiInputHandler()
 {
-    midiInputHandler_.initialize( &usbMidi );
+    applicationController_.enableMidiInputHandler();
 }
 
-void Application::handleInput( const bool dummy )
-{
-    handleMidiPacketAvailable();
-}
-
-void Application::handleInput( const grid::AdditionalButtons::Event event )
-{
-    handleAdditionalButtonEvent( event );
-}
-
-void Application::handleInput( const grid::Grid::ButtonEvent event )
-{
-    handleGridButtonEvent( event );
-}
-
-void Application::handleInput( const grid::RotaryControls::Event event )
-{
-    handleRotaryControlEvent( event );
-}
-
-void Application::handleInput( const midi::MidiPacket packet )
-{
-    handleMidiPacket( packet );
-}
-
-void Application::initialize()
+void Application::run( ApplicationThread& thread )
 {
     // do nothing by default, this method is to be overridden
 }
 
-void Application::deinitialize()
+void Application::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
 
-void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void Application::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
     // do nothing by default, this method is to be overridden
 }
 
-void handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+void Application::handleRotaryControlEvent( const grid::RotaryControls::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
 
-void handleRotaryControlEvent( const grid::RotaryControls::Event event )
+void Application::handleMidiPacketAvailable()
 {
     // do nothing by default, this method is to be overridden
 }
 
-void handleMidiPacketAvailable()
+void Application::handleMidiPacket( const midi::MidiPacket packet )
 {
     // do nothing by default, this method is to be overridden
 }
 
-void handleMidiPacket( const midi::MidiPacket packet )
-{
-    // do nothing by default, this method is to be overridden
-}
-
-ApplicationController::ApplicationController():
-    Thread( "ApplicationController", 200, 4 ),
-    currentlyOpenApplication_( NULL )
+ApplicationController::ApplicationController( grid::AdditionalButtons& additionalButtons, grid::Grid& grid,
+    grid::RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
+        Thread( "ApplicationController", 500, 4 ),
+        currentlyOpenApplication_( NULL ),
+        nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
+        additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event>( *this, additionalButtons ) ),
+        gridInputHandler_( InputHandler<grid::Grid&, grid::Grid::ButtonEvent>( *this, grid ) ),
+        rotaryControlInputHandler_( InputHandler<grid::RotaryControls&, grid::RotaryControls::Event>( *this, rotaryControls ) ),
+        midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
+        midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
+        applicationThread_( ApplicationThread( *this ) )
 {
 }
 
@@ -196,15 +158,25 @@ void ApplicationController::initialize( Application** const applicationList )
 
 void ApplicationController::selectApplication( const ApplicationIndex applicationIndex )
 {
-    Notify( static_cast<uint32_t>(applicationIndex) );
+    disableAllHandlers();
+    applicationThread_.disable();
+    //Notify( static_cast<uint32_t>(applicationIndex) );
+    ApplicationIndex index = applicationIndex;
+    nextApplication_.Enqueue( &index );
 }
 
 void ApplicationController::Run()
 {
+    nextApplication_.Flush();
+    // open Startup application instantly
+    currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
+    applicationThread_.enable();
+
     while (true)
     {
         // block until notification
-        const uint32_t applicationIndex = TakeNotification();
+        /*const*/ ApplicationIndex applicationIndex = {}; //WaitForNotification();
+        nextApplication_.Dequeue( &applicationIndex );
 
         if (applicationIndex < kNumberOfApplications)
         {
@@ -212,8 +184,76 @@ void ApplicationController::Run()
             currentlyOpenApplication_ = application_[applicationIndex];
             application_[ApplicationIndex_PREVIOUS] = applicationBeingClosed;
 
-            currentlyOpenApplication_->open();
+            applicationThread_.enable();
         }
+    }
+}
+
+void ApplicationController::enableAdditionalButtonInputHandler()
+{
+    additionalButtonInputHandler_.enable();
+}
+
+void ApplicationController::enableGridInputHandler()
+{
+    gridInputHandler_.enable();
+}
+
+void ApplicationController::enableRotaryControlInputHandler()
+{
+    rotaryControlInputHandler_.enable();
+}
+
+void ApplicationController::enableMidiInputAvailableHandler()
+{
+    midiInputAvailableHandler_.enable();
+}
+
+void ApplicationController::enableMidiInputHandler()
+{
+    midiInputHandler_.enable();
+}
+
+void ApplicationController::disableAllHandlers()
+{
+    additionalButtonInputHandler_.disable();
+    gridInputHandler_.disable();
+    rotaryControlInputHandler_.disable();
+    midiInputAvailableHandler_.disable();
+    midiInputHandler_.disable();
+}
+
+void ApplicationController::handleInput( const bool dummy )
+{
+    currentlyOpenApplication_->handleMidiPacketAvailable();
+}
+
+void ApplicationController::handleInput( const grid::AdditionalButtons::Event event )
+{
+    currentlyOpenApplication_->handleAdditionalButtonEvent( event );
+}
+
+void ApplicationController::handleInput( const grid::Grid::ButtonEvent event )
+{
+    currentlyOpenApplication_->handleGridButtonEvent( event );
+}
+
+void ApplicationController::handleInput( const grid::RotaryControls::Event event )
+{
+    currentlyOpenApplication_->handleRotaryControlEvent( event );
+}
+
+void ApplicationController::handleInput( const midi::MidiPacket packet )
+{
+    currentlyOpenApplication_->handleMidiPacket( packet );
+}
+
+void ApplicationController::runApplicationThread( ApplicationThread& thread )
+{
+    while(true)
+    {
+        currentlyOpenApplication_->run( thread );
+        applicationThread_.disable();
     }
 }
 

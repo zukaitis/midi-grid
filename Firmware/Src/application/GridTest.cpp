@@ -11,34 +11,26 @@ namespace application
 
 GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
-    Thread( "Application_GridTest", 200, 3 ),
     grid_( grid )
 {
-    initializeGridInputHandler( grid );
-    initializeAdditionalButtonInputHandler( additionalButtons );
-    initializeMidiInputAvailableHandler( usbMidi );
 
-    Start();
-    Suspend();
 }
 
-void GridTest::initialize()
+void GridTest::run( ApplicationThread& thread )
 {
     static bool introAnimationDisplayed = false;
     if (!introAnimationDisplayed)
     {
-        Resume();
+        displayIntroAnimation( thread );
         introAnimationDisplayed = true;
     }
+
+    enableGridInputHandler();
+    enableAdditionalButtonInputHandler();
+    enableMidiInputAvailableHandler();
 }
 
-void GridTest::deinitialize()
-{
-    grid_.turnAllLedsOff();
-    Suspend();
-}
-
-void GridTest::Run()
+void GridTest::displayIntroAnimation( ApplicationThread& thread )
 {
     static const uint8_t totalNumberOfSteps = 8;
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
@@ -50,26 +42,24 @@ void GridTest::Run()
         for (uint8_t x = 0; x <= currentStepNumber; x++)
         {
             const uint8_t y = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( x, y, getIntroAnimationColor( x, y ) );
+            grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
 
         for (uint8_t y = 0; y <= currentStepNumber; y++)
         {
             const uint8_t x = currentStepNumber;
-            grid_.setLed( x, y, getBootAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getBootAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( x, y, getIntroAnimationColor( x, y ) );
+            grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
         
-        DelayUntil( delayPeriod );
+        thread.DelayUntil( delayPeriod );
         grid_.turnAllLedsOff();
     }
-
-    Suspend();
 }
 
 /* calculates color value according to led position */
-Color GridTest::getBootAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY )
+Color GridTest::getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY )
 {
     Color color = {0, 0, 0};
 

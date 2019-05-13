@@ -51,7 +51,7 @@ void AdditionalButtons::Run()
 {
     while (true)
     {
-        TakeNotification(); // blocking until grid driver gives notification
+        WaitForNotification(); // blocking until grid driver gives notification
 
         for (uint8_t buttonIndex = 0; buttonIndex < numberOfButtons; buttonIndex++)
         {

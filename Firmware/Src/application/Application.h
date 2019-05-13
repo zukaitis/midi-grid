@@ -2,6 +2,7 @@
 #define APPLICATION_H_
 
 #include "thread.hpp"
+#include "queue.hpp"
 
 #include "grid/AdditionalButtons.h"
 #include "grid/Grid.h"
@@ -25,12 +26,10 @@ class Application;
 class ApplicationController;
 
 template <class InputSource, class InputType>
-class InputHandler : public freertos::Thread
+class InputHandler : private freertos::Thread
 {
 public:
-    InputHandler( Application& application );
-
-    void initialize( InputSource inputSource );
+    InputHandler( ApplicationController& applicationController, InputSource inputSource );
 
     void enable();
     void disable();
@@ -38,64 +37,87 @@ public:
     void Run();
 
 private:
-    static InputSource const handlerUnused;
-
-    Application& application_;
+    ApplicationController& applicationController_;
     InputSource inputSource_;
+};
+
+class ApplicationThread : public freertos::Thread
+{
+public:
+    ApplicationThread( ApplicationController& applicationController );
+
+    void enable();
+    void disable();
+
+private:
+    void Run();
+
+    ApplicationController& applicationController_;
 };
 
 class Application
 {
 public:
     Application( ApplicationController& applicationController );
+    virtual ~Application();
 
-    void open();
-    void close();
-    void switchApplication( const ApplicationIndex application );
-
-    void initializeAdditionalButtonInputHandler( grid::AdditionalButtons& additionalButtons );
-    void initializeGridInputHandler( grid::Grid& grid );
-    void initializeRotaryControlInputHandler( grid::RotaryControls& rotaryControls );
-    void initializeMidiInputAvailableHandler( midi::UsbMidi& usbMidi );
-    void initializeMidiInputHandler( midi::UsbMidi& usbMidi );
-
-    virtual void initialize();
-    virtual void deinitialize();
+    virtual void run( ApplicationThread& thread );
     virtual void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     virtual void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     virtual void handleRotaryControlEvent( const grid::RotaryControls::Event event );
     virtual void handleMidiPacket( const midi::MidiPacket packet );
     virtual void handleMidiPacketAvailable();
 
-    void handleInput( const bool dummy );
-    void handleInput( const grid::AdditionalButtons::Event event );
-    void handleInput( const grid::Grid::ButtonEvent event );
-    void handleInput( const grid::RotaryControls::Event event );
-    void handleInput( const midi::MidiPacket packet );
+protected:
+    void switchApplication( const ApplicationIndex application );
+
+    void enableAdditionalButtonInputHandler();
+    void enableGridInputHandler();
+    void enableRotaryControlInputHandler();
+    void enableMidiInputAvailableHandler();
+    void enableMidiInputHandler();
 
 private:
     ApplicationController& applicationController_;
-
-    InputHandler<grid::AdditionalButtons*, grid::AdditionalButtons::Event> additionalButtonInputHandler_;
-    InputHandler<grid::Grid*, grid::Grid::ButtonEvent> gridInputHandler_;
-    InputHandler<grid::RotaryControls*, grid::RotaryControls::Event> rotaryControlInputHandler_;
-    InputHandler<midi::UsbMidi*, bool> midiInputAvailableHandler_;
-    InputHandler<midi::UsbMidi*, midi::MidiPacket> midiInputHandler_;
 };
 
 class ApplicationController : private freertos::Thread
 {
 public:
-    ApplicationController();
+    ApplicationController( grid::AdditionalButtons& additionalButtons, grid::Grid& grid, grid::RotaryControls& rotaryControls,
+        midi::UsbMidi& usbMidi );
+
     void initialize( Application** const applicationList );
 
     void selectApplication( const ApplicationIndex applicationIndex );
 
-private:
+    void enableAdditionalButtonInputHandler();
+    void enableGridInputHandler();
+    void enableRotaryControlInputHandler();
+    void enableMidiInputAvailableHandler();
+    void enableMidiInputHandler();
+    void disableAllHandlers();
 
+    void handleInput( const bool dummy );
+    void handleInput( const grid::AdditionalButtons::Event event );
+    void handleInput( const grid::Grid::ButtonEvent event );
+    void handleInput( const grid::RotaryControls::Event event );
+    void handleInput( const midi::MidiPacket packet );
+    void runApplicationThread( ApplicationThread& thread );
+
+private:
     void Run();
+
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
+    freertos::Queue nextApplication_;
+
+    InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event> additionalButtonInputHandler_;
+    InputHandler<grid::Grid&, grid::Grid::ButtonEvent> gridInputHandler_;
+    InputHandler<grid::RotaryControls&, grid::RotaryControls::Event> rotaryControlInputHandler_;
+    InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
+    InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;
+    ApplicationThread applicationThread_;
 };
 
 } // namespace

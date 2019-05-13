@@ -53,7 +53,7 @@ void RotaryControls::Run()
 {
     while (true)
     {
-        TakeNotification();
+        WaitForNotification();
         for (uint8_t encoder = 0; encoder < kNumberOfControls; encoder++)
         {
             static int8_t microstep[2] = {0, 0};

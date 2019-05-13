@@ -18,7 +18,7 @@ Startup::Startup( ApplicationController applicationController, grid::GridDriver&
 {
 }
 
-void Startup::initialize()
+void Startup::run( ApplicationThread& thread )
 {
     lcd_.initialize();
     lcd_.setBacklightIntensity( 60 );

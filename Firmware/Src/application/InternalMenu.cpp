@@ -19,11 +19,9 @@ InternalMenu::InternalMenu( ApplicationController& applicationController, grid::
         gui_( gui ),
         system_( system )
 {
-    initializeGridInputHandler( grid );
-    initializeAdditionalButtonInputHandler( additionalButtons );
 }
 
-void InternalMenu::initialize()
+void InternalMenu::run( ApplicationThread& thread )
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
@@ -31,6 +29,9 @@ void InternalMenu::initialize()
 
     static const Color red = {64U, 0U, 0U};
     grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, red );
+
+    enableGridInputHandler();
+    enableAdditionalButtonInputHandler();
 }
 
 void InternalMenu::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )

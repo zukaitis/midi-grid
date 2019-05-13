@@ -182,12 +182,12 @@ class Thread {
 
         inline void Notify( const uint32_t value = 0 )
         {
-            xTaskNotify( GetHandle(), value, eNoAction );
+            xTaskNotify( GetHandle(), value, eNoAction );//eSetValueWithOverwrite );
         }
 
         inline void NotifyFromISR( const uint32_t value = 0 )
         {
-            xTaskNotifyFromISR( GetHandle(), value, eNoAction, pdFALSE );
+            xTaskNotifyFromISR( GetHandle(), value, eSetValueWithOverwrite, pdFALSE );
         }
 
 #if (INCLUDE_vTaskSuspend == 1)
@@ -283,7 +283,7 @@ class Thread {
     //  callstack.
     //
     /////////////////////////////////////////////////////////////////////////
-    protected:
+    public:
         /**
          *  Implementation of your actual thread code.
          *  You must override this function.
@@ -369,7 +369,7 @@ class Thread {
 
 #endif
 
-        inline uint32_t TakeNotification( TickType_t Timeout = portMAX_DELAY )
+        inline uint32_t WaitForNotification( TickType_t Timeout = portMAX_DELAY )
         {
             return ulTaskNotifyTake( pdTRUE, Timeout );
         }
