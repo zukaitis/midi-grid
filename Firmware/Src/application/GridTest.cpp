@@ -16,7 +16,7 @@ GridTest::GridTest( ApplicationController& applicationController, grid::Grid& gr
 
 }
 
-void GridTest::run( ApplicationThread& thread )
+void GridTest::run( ApplicationController& thread )
 {
     static bool introAnimationDisplayed = false;
     if (!introAnimationDisplayed)
@@ -30,7 +30,7 @@ void GridTest::run( ApplicationThread& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::displayIntroAnimation( ApplicationThread& thread )
+void GridTest::displayIntroAnimation( ApplicationController& thread )
 {
     static const uint8_t totalNumberOfSteps = 8;
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
@@ -53,7 +53,7 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
             grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
         
-        thread.DelayUntil( delayPeriod );
+        // thread.DelayUntil( delayPeriod );
         grid_.turnAllLedsOff();
     }
 }

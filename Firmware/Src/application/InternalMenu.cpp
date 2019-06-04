@@ -21,7 +21,7 @@ InternalMenu::InternalMenu( ApplicationController& applicationController, grid::
 {
 }
 
-void InternalMenu::run( ApplicationThread& thread )
+void InternalMenu::run( ApplicationController& thread )
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();

@@ -25,9 +25,9 @@ public:
     GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi );
 
 private:
-    void run( ApplicationThread& thread );
+    void run( ApplicationController& thread );
 
-    void displayIntroAnimation( ApplicationThread& thread );
+    void displayIntroAnimation( ApplicationController& thread );
 
     Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
     Color getRandomColor();

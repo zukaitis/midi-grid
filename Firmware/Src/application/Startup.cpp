@@ -8,7 +8,7 @@
 namespace application
 {
 
-Startup::Startup( ApplicationController applicationController, grid::GridDriver& gridDriver,
+Startup::Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver,
     lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         gridDriver_( gridDriver ),
@@ -18,7 +18,7 @@ Startup::Startup( ApplicationController applicationController, grid::GridDriver&
 {
 }
 
-void Startup::run( ApplicationThread& thread )
+void Startup::run( ApplicationController& thread )
 {
     lcd_.initialize();
     lcd_.setBacklightIntensity( 60 );

@@ -101,7 +101,7 @@ void Application::enableMidiInputHandler()
     applicationController_.enableMidiInputHandler();
 }
 
-void Application::run( ApplicationThread& thread )
+void Application::run( ApplicationController& thread )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -133,15 +133,25 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
 
 ApplicationController::ApplicationController( grid::AdditionalButtons& additionalButtons, grid::Grid& grid,
     grid::RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
-        Thread( "ApplicationController", 500, 4 ),
+        Thread( "ApplicationController", 2048, 4 ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
-        additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event>( *this, additionalButtons ) ),
-        gridInputHandler_( InputHandler<grid::Grid&, grid::Grid::ButtonEvent>( *this, grid ) ),
-        rotaryControlInputHandler_( InputHandler<grid::RotaryControls&, grid::RotaryControls::Event>( *this, rotaryControls ) ),
-        midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
-        midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
-        applicationThread_( ApplicationThread( *this ) )
+        // additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event>( *this, additionalButtons ) ),
+        // gridInputHandler_( InputHandler<grid::Grid&, grid::Grid::ButtonEvent>( *this, grid ) ),
+        // rotaryControlInputHandler_( InputHandler<grid::RotaryControls&, grid::RotaryControls::Event>( *this, rotaryControls ) ),
+        // midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
+        // midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
+        // applicationThread_( ApplicationThread( *this ) )
+        //applicationFinished_( false ),
+        additionalButtonInputHandlerEnabled_( false ),
+        gridInputHandlerEnabled_( false ),
+        rotaryControlInputHandlerEnabled_( false ),
+        midiInputAvailableHandlerEnabled_( false ),
+        midiInputHandlerEnabled_( false ),
+        additionalButtons_( additionalButtons ),
+        grid_( grid ),
+        rotaryControls_( rotaryControls ),
+        usbMidi_( usbMidi )
 {
 }
 
@@ -158,69 +168,112 @@ void ApplicationController::initialize( Application** const applicationList )
 
 void ApplicationController::selectApplication( const ApplicationIndex applicationIndex )
 {
-    disableAllHandlers();
-    applicationThread_.disable();
-    //Notify( static_cast<uint32_t>(applicationIndex) );
-    ApplicationIndex index = applicationIndex;
-    nextApplication_.Enqueue( &index );
+    Application* applicationBeingClosed = currentlyOpenApplication_;
+    currentlyOpenApplication_ = application_[applicationIndex];
+    application_[ApplicationIndex_PREVIOUS] = applicationBeingClosed;
+    applicationFinished_ = true;
 }
+
+bool ApplicationController::applicationFinished_ = false;
 
 void ApplicationController::Run()
 {
-    nextApplication_.Flush();
     // open Startup application instantly
     currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
-    applicationThread_.enable();
 
     while (true)
     {
-        // block until notification
-        /*const*/ ApplicationIndex applicationIndex = {}; //WaitForNotification();
-        nextApplication_.Dequeue( &applicationIndex );
+        applicationFinished_ = false;
+        currentlyOpenApplication_->run( *this );
 
-        if (applicationIndex < kNumberOfApplications)
+        while(!applicationFinished_)
         {
-            Application* const applicationBeingClosed = currentlyOpenApplication_;
-            currentlyOpenApplication_ = application_[applicationIndex];
-            application_[ApplicationIndex_PREVIOUS] = applicationBeingClosed;
+            checkAndHandleInputs();
+        }
+    }
+}
 
-            applicationThread_.enable();
+void ApplicationController::checkAndHandleInputs()
+{
+    if (additionalButtonInputHandlerEnabled_)
+    {
+        grid::AdditionalButtons::Event event = {};
+        if (additionalButtons_.waitForEvent( event ))
+        {
+            currentlyOpenApplication_->handleAdditionalButtonEvent( event );
+        }
+    }
+    if (gridInputHandlerEnabled_)
+    {
+        grid::Grid::ButtonEvent event = {};
+        if (grid_.waitForButtonEvent( event ))
+        {
+            currentlyOpenApplication_->handleGridButtonEvent( event );
+        }
+    }
+    if (rotaryControlInputHandlerEnabled_)
+    {
+        grid::RotaryControls::Event event = {};
+        if (rotaryControls_.waitForEvent( event ))
+        {
+            currentlyOpenApplication_->handleRotaryControlEvent( event );
+        }
+    }
+
+    if (midiInputAvailableHandlerEnabled_)
+    {
+        midi::MidiPacket packet = {};
+        if (usbMidi_.waitForPacket( packet ))
+        {
+            currentlyOpenApplication_->handleMidiPacket( packet );
+        }
+    }
+    else if (midiInputHandlerEnabled_)
+    {
+        if (usbMidi_.waitUntilPacketIsAvailable())
+        {
+            currentlyOpenApplication_->handleMidiPacketAvailable();
         }
     }
 }
 
 void ApplicationController::enableAdditionalButtonInputHandler()
 {
-    additionalButtonInputHandler_.enable();
+    // additionalButtonInputHandler_.enable();
+    additionalButtonInputHandlerEnabled_ = true;
 }
 
 void ApplicationController::enableGridInputHandler()
 {
-    gridInputHandler_.enable();
+    // gridInputHandler_.enable();
+    gridInputHandlerEnabled_ = true;
 }
 
 void ApplicationController::enableRotaryControlInputHandler()
 {
-    rotaryControlInputHandler_.enable();
+    // rotaryControlInputHandler_.enable();
+    rotaryControlInputHandlerEnabled_ = true;
 }
 
 void ApplicationController::enableMidiInputAvailableHandler()
 {
-    midiInputAvailableHandler_.enable();
+    // midiInputAvailableHandler_.enable();
+    midiInputAvailableHandlerEnabled_ = true;
 }
 
 void ApplicationController::enableMidiInputHandler()
 {
-    midiInputHandler_.enable();
+    // midiInputHandler_.enable();
+    midiInputHandlerEnabled_ = true;
 }
 
 void ApplicationController::disableAllHandlers()
 {
-    additionalButtonInputHandler_.disable();
-    gridInputHandler_.disable();
-    rotaryControlInputHandler_.disable();
-    midiInputAvailableHandler_.disable();
-    midiInputHandler_.disable();
+    additionalButtonInputHandlerEnabled_ = false;
+    gridInputHandlerEnabled_ = false;
+    rotaryControlInputHandlerEnabled_ = false;
+    midiInputAvailableHandlerEnabled_ = false;
+    midiInputHandlerEnabled_ = false;
 }
 
 void ApplicationController::handleInput( const bool dummy )
@@ -250,11 +303,11 @@ void ApplicationController::handleInput( const midi::MidiPacket packet )
 
 void ApplicationController::runApplicationThread( ApplicationThread& thread )
 {
-    while(true)
-    {
-        currentlyOpenApplication_->run( thread );
-        applicationThread_.disable();
-    }
+    // while(true)
+    // {
+    //     currentlyOpenApplication_->run( thread );
+    //     applicationThread_.disable();
+    // }
 }
 
 }

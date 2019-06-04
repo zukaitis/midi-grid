@@ -25,10 +25,10 @@ namespace application
 class Startup : public Application
 {
 public:
-    Startup( ApplicationController applicationController, grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system );
+    Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver, lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system );
 
 private:
-    void run( ApplicationThread& thread );
+    void run( ApplicationController& thread );
 
     grid::GridDriver& gridDriver_;
     lcd::Gui& gui_;

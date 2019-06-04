@@ -61,7 +61,7 @@ public:
     Application( ApplicationController& applicationController );
     virtual ~Application();
 
-    virtual void run( ApplicationThread& thread );
+    virtual void run( ApplicationController& thread );
     virtual void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     virtual void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     virtual void handleRotaryControlEvent( const grid::RotaryControls::Event event );
@@ -107,17 +107,30 @@ public:
 
 private:
     void Run();
+    void checkAndHandleInputs();
 
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
     freertos::Queue nextApplication_;
+    static bool applicationFinished_;
 
-    InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event> additionalButtonInputHandler_;
-    InputHandler<grid::Grid&, grid::Grid::ButtonEvent> gridInputHandler_;
-    InputHandler<grid::RotaryControls&, grid::RotaryControls::Event> rotaryControlInputHandler_;
-    InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
-    InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;
-    ApplicationThread applicationThread_;
+    // InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event> additionalButtonInputHandler_;
+    // InputHandler<grid::Grid&, grid::Grid::ButtonEvent> gridInputHandler_;
+    // InputHandler<grid::RotaryControls&, grid::RotaryControls::Event> rotaryControlInputHandler_;
+    // InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
+    // InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;
+    // ApplicationThread applicationThread_;
+
+    bool additionalButtonInputHandlerEnabled_;
+    bool gridInputHandlerEnabled_;
+    bool rotaryControlInputHandlerEnabled_;
+    bool midiInputAvailableHandlerEnabled_;
+    bool midiInputHandlerEnabled_;
+
+    grid::AdditionalButtons& additionalButtons_;
+    grid::Grid& grid_;
+    grid::RotaryControls& rotaryControls_;
+    midi::UsbMidi& usbMidi_;
 };
 
 } // namespace

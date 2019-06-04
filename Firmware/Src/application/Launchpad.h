@@ -68,7 +68,7 @@ public:
         grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi );
 
 private:
-    void run( ApplicationThread& thread );
+    void run( ApplicationController& thread );
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
