@@ -55,7 +55,7 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
             grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
         
-        // thread.DelayUntil( delayPeriod );
+        thread.DelayUntil( delayPeriod );
         grid_.turnAllLedsOff();
     }
 }

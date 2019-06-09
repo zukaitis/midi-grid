@@ -44,7 +44,7 @@ void InternalMenu::handleAdditionalButtonEvent( const grid::AdditionalButtons::E
 
 void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
-    if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionX) && (ButtonAction_PRESSED == event.action))
+    if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionY) && (ButtonAction_PRESSED == event.action))
     {
         // reset into DFU bootloader
         system_.resetIntoBootloader();

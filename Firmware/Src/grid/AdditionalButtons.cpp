@@ -34,18 +34,8 @@ void AdditionalButtons::discardAllPendingEvents()
 
 bool AdditionalButtons::waitForEvent( Event& event )
 {
-    // TO BE USED LATER
     const bool eventAvailable = inputEvents_.Dequeue( &event );
     return eventAvailable;
-    // bool eventAvailable = false;
-
-    // if (!inputEvents_.IsEmpty())
-    // {
-    //     inputEvents_.Dequeue( &event, 1 );
-    //     eventAvailable = true;
-    // }
-
-    // return eventAvailable;
 }
 
 void AdditionalButtons::Run()

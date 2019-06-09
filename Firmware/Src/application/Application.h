@@ -107,7 +107,6 @@ public:
 
 private:
     void Run();
-    void checkAndHandleInputs();
 
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
@@ -120,17 +119,6 @@ private:
     InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
     InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;
     ApplicationThread applicationThread_;
-
-    bool additionalButtonInputHandlerEnabled_;
-    bool gridInputHandlerEnabled_;
-    bool rotaryControlInputHandlerEnabled_;
-    bool midiInputAvailableHandlerEnabled_;
-    bool midiInputHandlerEnabled_;
-
-    grid::AdditionalButtons& additionalButtons_;
-    grid::Grid& grid_;
-    grid::RotaryControls& rotaryControls_;
-    midi::UsbMidi& usbMidi_;
 };
 
 } // namespace

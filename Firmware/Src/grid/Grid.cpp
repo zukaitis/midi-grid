@@ -7,8 +7,6 @@
 #include <math.h>
 #include <functional>
 
-//#include "lcd/Lcd.h" // for debugging, to be removed
-
 namespace grid
 {
 
@@ -57,17 +55,7 @@ void Grid::discardAllPendingButtonEvents()
 
 bool Grid::waitForButtonEvent( ButtonEvent& event )
 {
-    // TO BE USED LATER
     const bool eventAvailable = buttonInputEvents_.Dequeue( &event ); // block until event
-    return eventAvailable;
-    // bool eventAvailable = false;
-
-    // if (!buttonInputEvents_.IsEmpty())
-    // {
-    //     buttonInputEvents_.Dequeue( &event, 1 );
-    //     eventAvailable = true;
-    // }
-
     return eventAvailable;
 }
 
