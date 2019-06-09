@@ -1,6 +1,7 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 #include "lcd/images.h"
+#include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
 
@@ -53,7 +54,7 @@ static const char launchpad95SubmodeString[9][15] = {
 };
 
 Gui::Gui( Lcd& lcd ) :
-        Thread( "Lcd_Gui", 100, 2 ),
+        Thread( "Gui", kGui.stackDepth, kGui.priority ),
         lcd_( lcd ),
         dawClipName_( " \0" ),
         dawDeviceName_( " \0" ),

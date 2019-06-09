@@ -4,7 +4,9 @@
             "name": "default",
             "defines": [
                 "USE_HAL_DRIVER",
-                "STM32F411xE"
+                "STM32F411xE",
+                "CPP_FREERTOS_NO_EXCEPTIONS",
+                "CPP_FREERTOS_NO_CPP_STRINGS"
             ],
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",

@@ -6,6 +6,8 @@
 
 #include "ticks.hpp"
 
+#include <cstdlib>
+
 namespace application
 {
 
@@ -16,7 +18,7 @@ GridTest::GridTest( ApplicationController& applicationController, grid::Grid& gr
 
 }
 
-void GridTest::run( ApplicationController& thread )
+void GridTest::run( ApplicationThread& thread )
 {
     static bool introAnimationDisplayed = false;
     if (!introAnimationDisplayed)
@@ -30,7 +32,7 @@ void GridTest::run( ApplicationController& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::displayIntroAnimation( ApplicationController& thread )
+void GridTest::displayIntroAnimation( ApplicationThread& thread )
 {
     static const uint8_t totalNumberOfSteps = 8;
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );

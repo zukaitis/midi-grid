@@ -1,6 +1,7 @@
 #include "grid/AdditionalButtons.h"
 #include "grid/GridDriver.h"
 #include "ticks.hpp"
+#include "ThreadConfigurations.h"
 
 #include <stdlib.h>
 
@@ -10,7 +11,7 @@ namespace grid
 static const uint8_t kInputEventQueueSize = 2;
 
 AdditionalButtons::AdditionalButtons( GridDriver& gridDriver ) :
-        Thread( "AdditionalButtons", 200, 4 ),
+        Thread( "AdditionalButtons", kAdditionalButtons.stackDepth, kAdditionalButtons.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
 {
@@ -34,17 +35,17 @@ void AdditionalButtons::discardAllPendingEvents()
 bool AdditionalButtons::waitForEvent( Event& event )
 {
     // TO BE USED LATER
-    // const bool eventAvailable = inputEvents_.Dequeue( &event, 1 );
-    // return eventAvailable;
-    bool eventAvailable = false;
-
-    if (!inputEvents_.IsEmpty())
-    {
-        inputEvents_.Dequeue( &event, 1 );
-        eventAvailable = true;
-    }
-
+    const bool eventAvailable = inputEvents_.Dequeue( &event );
     return eventAvailable;
+    // bool eventAvailable = false;
+
+    // if (!inputEvents_.IsEmpty())
+    // {
+    //     inputEvents_.Dequeue( &event, 1 );
+    //     eventAvailable = true;
+    // }
+
+    // return eventAvailable;
 }
 
 void AdditionalButtons::Run()

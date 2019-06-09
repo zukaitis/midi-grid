@@ -120,7 +120,7 @@ Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& 
     rotaryControlValue_[1] = initialControlValue;
 }
 
-void Launchpad::run( ApplicationController& thread )
+void Launchpad::run( ApplicationThread& thread )
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();

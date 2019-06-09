@@ -69,6 +69,7 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.9426681" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
 									<listOptionValue builtIn="false" value="CPP_FREERTOS_NO_EXCEPTIONS"/>
+									<listOptionValue builtIn="false" value="CPP_FREERTOS_NO_CPP_STRINGS"/>
 									<listOptionValue builtIn="false" value="__packed=__attribute__((__packed__))"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F411xE"/>

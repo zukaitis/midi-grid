@@ -1,6 +1,7 @@
 #include "grid/Grid.h"
 #include "grid/GridDriver.h"
 #include "system/GlobalInterrupts.h"
+#include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
 #include <math.h>
@@ -18,7 +19,7 @@ static const uint8_t kLedPulseStepCount = 15;
 static const uint32_t kButtonInputEventQueueSize = 16;
 
 Grid::Grid( GridDriver& gridDriver, mcu::GlobalInterrupts& globalInterrupts ) :
-        Thread( "Grid", 200, 4 ),
+        Thread( "Grid", kGrid.stackDepth, kGrid.priority ),
         gridDriver_( gridDriver ),
         ledOutput_( GridLedOutput( gridDriver ) ),
         flashingLeds_( FlashingLeds( ledOutput_ ) ),
@@ -57,15 +58,15 @@ void Grid::discardAllPendingButtonEvents()
 bool Grid::waitForButtonEvent( ButtonEvent& event )
 {
     // TO BE USED LATER
-    // const bool eventAvailable = inputEvents_.Dequeue( &event ); // block until event
-    // return eventAvailable;
-    bool eventAvailable = false;
+    const bool eventAvailable = buttonInputEvents_.Dequeue( &event ); // block until event
+    return eventAvailable;
+    // bool eventAvailable = false;
 
-    if (!buttonInputEvents_.IsEmpty())
-    {
-        buttonInputEvents_.Dequeue( &event, 1 );
-        eventAvailable = true;
-    }
+    // if (!buttonInputEvents_.IsEmpty())
+    // {
+    //     buttonInputEvents_.Dequeue( &event, 1 );
+    //     eventAvailable = true;
+    // }
 
     return eventAvailable;
 }
@@ -197,7 +198,7 @@ void GridLedOutput::set( uint8_t ledPositionX, uint8_t ledPositionY, const Color
 }
 
 FlashingLeds::FlashingLeds( GridLedOutput& gridLedOutput ):
-        Thread( "FlashingLeds", 200, 2 ),
+        Thread( "FlashingLeds", kFlashingLeds.stackDepth, kFlashingLeds.priority ),
         ledOutput_( gridLedOutput ),
         numberOfFlashingLeds_( 0 )
 {
@@ -261,7 +262,7 @@ void FlashingLeds::remove( const uint8_t ledPositionX, const uint8_t ledPosition
 }
 
 PulsingLeds::PulsingLeds( GridLedOutput& gridLedOutput ):
-        Thread( "PulsingLeds", 200, 2 ),
+        Thread( "PulsingLeds", kPulsingLeds.stackDepth, kPulsingLeds.priority ),
         ledOutput_( gridLedOutput ),
         numberOfPulsingLeds_( 0 )
 {

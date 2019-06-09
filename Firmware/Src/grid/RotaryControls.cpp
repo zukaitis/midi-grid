@@ -1,6 +1,7 @@
 #include "grid/RotaryControls.h"
 
 #include "grid/GridDriver.h"
+#include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
 #include <functional>
@@ -16,7 +17,7 @@ static const uint8_t kInputEventQueueSize = 8;
 static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
 RotaryControls::RotaryControls( GridDriver& gridDriver ) :
-        Thread( "RotaryControls", 100, 4 ),
+        Thread( "RotaryControls", kRotaryControls.stackDepth, kRotaryControls.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
 {
@@ -36,17 +37,17 @@ void RotaryControls::discardAllPendingEvents()
 bool RotaryControls::waitForEvent( Event& event )
 {
     // TO BE USED LATER
-    // const bool eventAvailable = inputEvents_.Dequeue( &event ); // block until event
-    // return eventAvailable;
-    bool eventAvailable = false;
-
-    if (!inputEvents_.IsEmpty())
-    {
-        inputEvents_.Dequeue( &event, 1 );
-        eventAvailable = true;
-    }
-
+    const bool eventAvailable = inputEvents_.Dequeue( &event ); // block until event
     return eventAvailable;
+    // bool eventAvailable = false;
+
+    // if (!inputEvents_.IsEmpty())
+    // {
+    //     inputEvents_.Dequeue( &event, 1 );
+    //     eventAvailable = true;
+    // }
+
+    // return eventAvailable;
 }
 
 void RotaryControls::Run()

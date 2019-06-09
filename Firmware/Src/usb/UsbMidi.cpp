@@ -38,15 +38,18 @@ UsbMidi::~UsbMidi()
 
 bool UsbMidi::waitForPacket( MidiPacket& packet )
 {
-    MidiInput midiInput;
-    bool packetAvailable = false;
-    if (!receivedMessages.IsEmpty())
-    {
-        receivedMessages.Dequeue( &midiInput.input, 1 );
-        packet = midiInput.packet;
-        packetAvailable = true;
-    }
+    const bool packetAvailable = receivedMessages.Dequeue( &packet ); // block until event
     return packetAvailable;
+
+    // MidiInput midiInput;
+    // bool packetAvailable = false;
+    // if (!receivedMessages.IsEmpty())
+    // {
+    //     receivedMessages.Dequeue( &midiInput.input, 1 );
+    //     packet = midiInput.packet;
+    //     packetAvailable = true;
+    // }
+    // return packetAvailable;
 }
 
 bool UsbMidi::waitUntilPacketIsAvailable()

@@ -2,6 +2,7 @@
 
 #include "lcd/font.h"
 #include "lcd/progressArc.h"
+#include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
 #include <string.h>
@@ -17,7 +18,7 @@ static const Image digitBig[10] = {
 };
 
 Lcd::Lcd() :
-        Thread("Lcd", 200, 2),
+        Thread( "Lcd", kLcd.stackDepth, kLcd.priority ),
         numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ), // from generated file
         backlight_( Backlight() ),
         lcdDriver_( LcdDriver() ),

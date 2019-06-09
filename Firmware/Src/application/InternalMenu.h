@@ -30,7 +30,7 @@ public:
         lcd::Gui& gui, mcu::System& system );
 
 private:
-    void run( ApplicationController& thread );
+    void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
