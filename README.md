@@ -24,3 +24,4 @@ More thorough information, regarding design and implementation, is available in 
 - [@mimuz](https://github.com/mimuz) - for sharing [STM32 USB MIDI library](https://github.com/mimuz/mimuz-tuch)
 - [@pidcodes](https://github.com/pidcodes) - for providing USB VID/PID pair for this application
 - [@hdavid](https://github.com/hdavid) - for making an amazing Ableton Live extension - [Launchpad95](https://github.com/hdavid/Launchpad95)
+- [@michaelbecker](https://github.com/michaelbecker) - for making [FreeRTOS C++ wrappers](https://michaelbecker.github.io/freertos-addons)
