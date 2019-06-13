@@ -1,8 +1,8 @@
 #include "application/GridTest.h"
 
-#include "grid/AdditionalButtons.h"
 #include "grid/Grid.h"
 #include "usb/UsbMidi.h"
+#include "lcd/Gui.h"
 
 #include "ticks.hpp"
 
@@ -11,11 +11,12 @@
 namespace application
 {
 
-GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi ):
+GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, midi::UsbMidi& usbMidi, lcd::Gui& gui ):
     Application( applicationController ),
-    grid_( grid )
+    grid_( grid ),
+    gui_( gui )
 {
-
+    std::srand( static_cast<uint16_t>(freertos::Ticks::GetTicks()) ); // change seed for that extra randomness
 }
 
 void GridTest::run( ApplicationThread& thread )
@@ -26,6 +27,9 @@ void GridTest::run( ApplicationThread& thread )
         displayIntroAnimation( thread );
         introAnimationDisplayed = true;
     }
+
+    gui_.displayWaitingForMidi();
+    grid_.turnAllLedsOff();
 
     enableGridInputHandler();
     enableAdditionalButtonInputHandler();
@@ -85,13 +89,13 @@ Color GridTest::getRandomColor()
         kNumberOfVariants
     };
 
-    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(rand() % kNumberOfVariants);
-    int8_t partlyLitColor1 = (rand() % (64 + 32 + 1)) - 32;
+    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(std::rand() % kNumberOfVariants);
+    int8_t partlyLitColor1 = (std::rand() % (64 + 32 + 1)) - 32;
     if (partlyLitColor1 < 0)
     {
         partlyLitColor1 = 0;
     }
-    int8_t partlyLitColor2 = (rand() % (64 + 32 + 1)) - 32;
+    int8_t partlyLitColor2 = (std::rand() % (64 + 32 + 1)) - 32;
     if (partlyLitColor2 < 0)
     {
         partlyLitColor2 = 0;

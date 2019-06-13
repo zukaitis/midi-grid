@@ -40,7 +40,25 @@
             "typeinfo": "cpp",
             "utility": "cpp",
             "functional": "cpp",
-            "deque": "cpp"
+            "deque": "cpp",
+            "csignal": "cpp",
+            "cstdarg": "cpp",
+            "cstddef": "cpp",
+            "ctime": "cpp",
+            "atomic": "cpp",
+            "bitset": "cpp",
+            "chrono": "cpp",
+            "complex": "cpp",
+            "condition_variable": "cpp",
+            "iomanip": "cpp",
+            "memory": "cpp",
+            "mutex": "cpp",
+            "numeric": "cpp",
+            "ratio": "cpp",
+            "thread": "cpp",
+            "cinttypes": "cpp",
+            "typeindex": "cpp",
+            "variant": "cpp"
         }
     },
 }

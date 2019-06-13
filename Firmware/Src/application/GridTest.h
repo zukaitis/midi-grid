@@ -16,13 +16,18 @@ namespace midi
     class UsbMidi;
 }
 
+namespace lcd
+{
+    class Gui;
+}
+
 namespace application
 {
 
 class GridTest : public Application
 {
 public:
-    GridTest( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons, midi::UsbMidi& usbMidi );
+    GridTest( ApplicationController& applicationController, grid::Grid& grid, midi::UsbMidi& usbMidi, lcd::Gui& gui );
 
 private:
     void run( ApplicationThread& thread );
@@ -37,6 +42,7 @@ private:
     void handleMidiPacketAvailable();
 
     grid::Grid& grid_;
+    lcd::Gui& gui_;
 };
 
 } // namespace

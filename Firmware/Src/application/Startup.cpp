@@ -32,8 +32,6 @@ void Startup::run( ApplicationThread& thread )
     {
     }
 
-    gui_.displayWaitingForMidi();
-    
     switchApplication( ApplicationIndex_GRID_TEST );
 }
 
