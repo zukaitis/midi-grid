@@ -58,11 +58,16 @@ void ApplicationThread::disable()
     Suspend();
 }
 
+void ApplicationThread::run()
+{
+    continueApplication_.Give();
+}
+
 void ApplicationThread::Run()
 {
     while (true)
     {
-        WaitForNotification();
+        continueApplication_.Take();
         applicationController_.runApplicationThread( *this );
     }
 }
@@ -177,7 +182,7 @@ void ApplicationController::Run()
 
     while (true)
     {
-        applicationThread_.Notify();
+        applicationThread_.run();
         WaitForNotification(); // block until notification from application
     }
 }

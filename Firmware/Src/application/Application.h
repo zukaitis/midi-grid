@@ -2,7 +2,7 @@
 #define APPLICATION_H_
 
 #include "thread.hpp"
-#include "queue.hpp"
+#include "semaphore.hpp"
 
 #include "grid/AdditionalButtons.h"
 #include "grid/Grid.h"
@@ -48,11 +48,13 @@ public:
 
     void enable();
     void disable();
+    void run();
 
 private:
     void Run();
 
     ApplicationController& applicationController_;
+    freertos::BinarySemaphore continueApplication_;
 };
 
 class Application
