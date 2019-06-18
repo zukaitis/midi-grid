@@ -30,14 +30,16 @@ Main::Main() :
         startup_( application::Startup( applicationController_, gridDriver_, gui_, lcd_, system_ ) ),
         gridTest_( application::GridTest( applicationController_, grid_, usbMidi_, gui_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, gui_, system_ ) ),
-        launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) )
+        launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
+        snake_( application::Snake( applicationController_, grid_, gui_ ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {
         NULL, // ApplicationIndex_PREVIOUS
         &startup_, // ApplicationIndex_STARTUP
         &gridTest_, // ApplicationIndex_GRID_TEST
         &internalMenu_, // ApplicationIndex_INTERNAL_MENU
-        &launchpad_ // ApplicationIndex_LAUNCHPAD
+        &launchpad_, // ApplicationIndex_LAUNCHPAD
+        &snake_ // ApplicationIndex_SNAKE
     };
 
     applicationController_.initialize( applicationList );

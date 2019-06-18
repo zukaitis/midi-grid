@@ -20,6 +20,12 @@ static const uint8_t numberOfRows = 8;
 static const uint8_t numberOfColumns = 10;
 static const uint8_t numberOfLeds = numberOfRows * numberOfColumns;
 
+static const uint8_t arrowButtonPositionX = 9;
+static const uint8_t upButtonPositionY = 4;
+static const uint8_t downButtonPositionY = 7;
+static const uint8_t leftButtonPositionY = 5;
+static const uint8_t rightButtonPositionY = 6;
+
 enum LedLightingType
 {
     LedLightingType_LIGHT = 0,

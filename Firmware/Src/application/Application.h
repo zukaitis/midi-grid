@@ -19,6 +19,7 @@ enum ApplicationIndex : uint8_t
     ApplicationIndex_GRID_TEST,
     ApplicationIndex_INTERNAL_MENU,
     ApplicationIndex_LAUNCHPAD,
+    ApplicationIndex_SNAKE,
     kNumberOfApplications
 };
 

@@ -11,24 +11,41 @@ namespace application {
 
 static const uint8_t kBootloaderButtonX = 7;
 static const uint8_t kBootloaderButtonY = 0;
+static const Color kBootloaderButtonColor = {64U, 0U, 0U};
+
+static const uint8_t kSnakeButtonX = 0;
+static const uint8_t kSnakeButtonY = 7;
+static const Color kSnakeButtonColor = {0U, 64U, 0U};
+
+static const uint8_t kLaunchpadButtonX = 1;
+static const uint8_t kLaunchpadButtonY = 7;
+static const Color kLaunchpadButtonColor = {0U, 64U, 64U};
+
+static const uint8_t kGridTestButtonX = 2;
+static const uint8_t kGridTestButtonY = 7;
+static const Color kGridTestButtonColor = {64U, 64U, 0U};
 
 InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
     lcd::Gui& gui, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
         gui_( gui ),
-        system_( system )
+        system_( system ),
+        applicationToFollow_( ApplicationIndex_PREVIOUS )
 {
 }
 
 void InternalMenu::run( ApplicationThread& thread )
 {
-    grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
     gui_.enterInternalMenu();
 
-    static const Color red = {64U, 0U, 0U};
-    grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, red );
+    grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, kBootloaderButtonColor );
+    grid_.setLed( kSnakeButtonX, kSnakeButtonY, kSnakeButtonColor );
+    grid_.setLed( kLaunchpadButtonX, kLaunchpadButtonY, kLaunchpadButtonColor );
+    grid_.setLed( kGridTestButtonX, kGridTestButtonY, kGridTestButtonColor );
+
+    applicationToFollow_ = ApplicationIndex_PREVIOUS;
 
     enableGridInputHandler();
     enableAdditionalButtonInputHandler();
@@ -38,17 +55,33 @@ void InternalMenu::handleAdditionalButtonEvent( const grid::AdditionalButtons::E
 {
     if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
     {
-        switchApplication( ApplicationIndex_PREVIOUS );
+        switchApplication( applicationToFollow_ );
     }
 }
 
 void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
-    if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionY) && (ButtonAction_PRESSED == event.action))
+    if (ButtonAction_PRESSED == event.action)
     {
-        // reset into DFU bootloader
-        system_.resetIntoBootloader();
+        if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionY))
+        {
+            // reset into DFU bootloader
+            system_.resetIntoBootloader();
+        }
+        else if ((kSnakeButtonX == event.positionX) && (kSnakeButtonY == event.positionY))
+        {
+            applicationToFollow_ = ApplicationIndex_SNAKE;
+        }
+        else if ((kLaunchpadButtonX == event.positionX) && (kLaunchpadButtonY == event.positionY))
+        {
+            applicationToFollow_ = ApplicationIndex_LAUNCHPAD;
+        }
+        else if ((kGridTestButtonX == event.positionX) && (kGridTestButtonY == event.positionY))
+        {
+            applicationToFollow_ = ApplicationIndex_GRID_TEST;
+        }
     }
+
 }
 
 }

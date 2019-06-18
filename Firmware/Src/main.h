@@ -12,6 +12,7 @@
 #include "application/Launchpad.h"
 #include "application/Startup.h"
 #include "application/GridTest.h"
+#include "application/Snake.h"
 #include "system/GlobalInterrupts.h"
 #include "usb/UsbMidi.h"
 
@@ -44,6 +45,7 @@ private:
     application::GridTest gridTest_;
     application::InternalMenu internalMenu_;
     application::Launchpad launchpad_;
+    application::Snake snake_;
 };
 
 #endif // __MAIN_H__

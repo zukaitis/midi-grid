@@ -38,6 +38,7 @@ private:
     grid::Grid& grid_;
     lcd::Gui& gui_;
     mcu::System& system_;
+    ApplicationIndex applicationToFollow_;
 };
 
 } // namespace

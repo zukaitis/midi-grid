@@ -165,4 +165,4 @@ void GridTest::handleMidiPacketAvailable()
     switchApplication( ApplicationIndex_LAUNCHPAD );
 }
 
-}
+} // namespace
