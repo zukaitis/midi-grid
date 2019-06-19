@@ -5,8 +5,8 @@
 
 #include "ticks.hpp"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 namespace lcd
 {
@@ -120,14 +120,6 @@ void Gui::enterLaunchpad95Mode()
     statusBarActive_ = true;
 
     displayLaunchpad95Info();
-}
-
-void Gui::enterInternalMenu()
-{
-    lcd_.clear();
-    lcd_.print( "Internal Menu", lcd_.width/2, 16, lcd::Justification_CENTER );
-    lcd_.print( "Active", lcd_.width/2, 24, lcd::Justification_CENTER );
-    statusBarActive_ = false;
 }
 
 void Gui::registerMidiInputActivity()

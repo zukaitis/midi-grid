@@ -12,7 +12,7 @@ namespace grid
 
 namespace lcd
 {
-    class Gui;
+    class Lcd;
 }
 
 namespace mcu
@@ -27,7 +27,7 @@ class InternalMenu : public Application
 {
 public:
     InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-        lcd::Gui& gui, mcu::System& system );
+        lcd::Lcd& lcd, mcu::System& system );
 
 private:
     void run( ApplicationThread& thread );
@@ -35,8 +35,10 @@ private:
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
+    void displayMessageOnLcd();
+
     grid::Grid& grid_;
-    lcd::Gui& gui_;
+    lcd::Lcd& lcd_;
     mcu::System& system_;
     ApplicationIndex applicationToFollow_;
 };

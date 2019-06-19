@@ -19,10 +19,10 @@ static const Color foodColor { 64U, 64U, 0U };
 
 static const Coordinates directionVector[numberOfDirections] = { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
 
-Snake::Snake( ApplicationController& applicationController, grid::Grid& grid, lcd::Gui& gui ):
+Snake::Snake( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd ):
     Application( applicationController ),
     grid_( grid ),
-    gui_( gui ),
+    lcd_( lcd ),
     applicationEnded_( false ),
     gameInProgress_( false ),
     direction_( Direction_UP ),
@@ -99,7 +99,8 @@ void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     }
     else
     {
-        if (ButtonAction_RELEASED == event.action)
+        // only restart game, when non-arrow button is released
+        if ((ButtonAction_RELEASED == event.action) && (grid::arrowButtonPositionX != event.positionX))
         {
             startNewGame();
         }

@@ -2,7 +2,7 @@
 
 #include "grid/Grid.h"
 #include "grid/AdditionalButtons.h"
-#include "lcd/Gui.h"
+#include "lcd/Lcd.h"
 #include "system/System.h"
 
 #include "Types.h"
@@ -26,10 +26,10 @@ static const uint8_t kGridTestButtonY = 7;
 static const Color kGridTestButtonColor = {64U, 64U, 0U};
 
 InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-    lcd::Gui& gui, mcu::System& system ):
+    lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
-        gui_( gui ),
+        lcd_( lcd ),
         system_( system ),
         applicationToFollow_( ApplicationIndex_PREVIOUS )
 {
@@ -37,9 +37,9 @@ InternalMenu::InternalMenu( ApplicationController& applicationController, grid::
 
 void InternalMenu::run( ApplicationThread& thread )
 {
-    grid_.turnAllLedsOff();
-    gui_.enterInternalMenu();
+    displayMessageOnLcd();
 
+    grid_.turnAllLedsOff();
     grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, kBootloaderButtonColor );
     grid_.setLed( kSnakeButtonX, kSnakeButtonY, kSnakeButtonColor );
     grid_.setLed( kLaunchpadButtonX, kLaunchpadButtonY, kLaunchpadButtonColor );
@@ -81,7 +81,13 @@ void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
             applicationToFollow_ = ApplicationIndex_GRID_TEST;
         }
     }
+}
 
+void InternalMenu::displayMessageOnLcd()
+{
+    lcd_.clear();
+    lcd_.print( "Internal Menu", lcd_.width/2, 16, lcd::Justification_CENTER );
+    lcd_.print( "Active", lcd_.width/2, 24, lcd::Justification_CENTER );
 }
 
 }

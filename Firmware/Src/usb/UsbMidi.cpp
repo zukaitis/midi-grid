@@ -53,6 +53,11 @@ bool UsbMidi::isPacketAvailable()
     return !receivedMessages.IsEmpty();
 }
 
+void UsbMidi::discardAllPendingPackets()
+{
+    receivedMessages.Flush();
+}
+
 void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )
 {
     static uint8_t buffer[kMidiPacketSize];

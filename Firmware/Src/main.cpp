@@ -29,7 +29,7 @@ Main::Main() :
         applicationController_( application::ApplicationController( additionalButtons_, grid_, rotaryControls_, usbMidi_ ) ),
         startup_( application::Startup( applicationController_, gridDriver_, gui_, lcd_, system_ ) ),
         gridTest_( application::GridTest( applicationController_, grid_, usbMidi_, gui_ ) ),
-        internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, gui_, system_ ) ),
+        internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, lcd_, system_ ) ),
         launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
         snake_( application::Snake( applicationController_, grid_, gui_ ) )
 {

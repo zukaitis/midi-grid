@@ -4,8 +4,7 @@
 #include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
-#include <math.h>
-#include <functional>
+#include <cmath>
 
 namespace grid
 {

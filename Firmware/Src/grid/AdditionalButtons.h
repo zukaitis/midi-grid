@@ -36,7 +36,12 @@ public:
     inline bool waitForInput( Event& event )
     {
         return waitForEvent( event );
-    }
+    };
+
+    inline void discardPendingInput()
+    {
+        discardAllPendingEvents();
+    };
 
 private:
     void Run();

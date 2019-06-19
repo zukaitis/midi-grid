@@ -129,7 +129,12 @@ public:
     inline bool waitForInput( ButtonEvent& event )
     {
         return waitForButtonEvent( event );
-    }
+    };
+
+    inline void discardPendingInput()
+    {
+        discardAllPendingButtonEvents();
+    };
 
 private:
     void updateButtonColumnInput();

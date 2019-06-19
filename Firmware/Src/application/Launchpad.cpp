@@ -6,7 +6,7 @@
 #include "lcd/Gui.h"
 #include "lcd/Lcd.h"
 
-#include <string.h>
+#include <cstring>
 
 namespace application
 {

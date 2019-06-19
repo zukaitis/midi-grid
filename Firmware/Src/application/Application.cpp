@@ -17,6 +17,7 @@ InputHandler<InputSource, InputType>::InputHandler( ApplicationController& appli
 template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::enable()
 {
+    inputSource_.discardPendingInput();
     Resume();
 }
 

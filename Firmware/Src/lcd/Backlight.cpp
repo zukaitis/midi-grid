@@ -2,7 +2,7 @@
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
-#include <string.h>
+#include <cstring>
 
 namespace lcd
 {

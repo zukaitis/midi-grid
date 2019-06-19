@@ -22,7 +22,6 @@ public:
     void displayRotaryControlValues( const uint8_t value1, const uint8_t value2 );
     void displayWaitingForMidi();
     void enterLaunchpad95Mode();
-    void enterInternalMenu();
     void registerMidiInputActivity();
     void registerMidiOutputActivity();
     void refreshStatusBar();

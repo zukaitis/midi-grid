@@ -58,6 +58,7 @@ public:
     bool waitForPacket( MidiPacket& packet );
     bool waitUntilPacketIsAvailable();
     bool isPacketAvailable();
+    void discardAllPendingPackets();
 
     void sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value );
     void sendNoteOn( const uint8_t channel, const uint8_t note, const uint8_t velocity );
@@ -70,12 +71,17 @@ public:
     inline bool waitForInput( bool& dummy )
     {
         return waitUntilPacketIsAvailable();
-    }
+    };
 
     inline bool waitForInput( MidiPacket& packet )
     {
         return waitForPacket( packet );
-    }
+    };
+
+    inline void discardPendingInput()
+    {
+        discardAllPendingPackets();
+    };
 
 private:
     static freertos::Queue receivedMessages;
