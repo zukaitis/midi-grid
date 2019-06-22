@@ -1,4 +1,4 @@
-#include "application/Application.h"
+#include "application/Application.hpp"
 #include "ThreadConfigurations.h"
 
 namespace application

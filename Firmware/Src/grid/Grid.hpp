@@ -1,5 +1,5 @@
-#ifndef GRID_BUTTONS_H_
-#define GRID_BUTTONS_H_
+#ifndef GRID_BUTTONS_HPP_
+#define GRID_BUTTONS_HPP_
 
 #include "Types.h"
 
@@ -154,4 +154,4 @@ private:
 };
 
 } // namespace
-#endif // GRID_BUTTONS_H_
+#endif // GRID_BUTTONS_HPP_

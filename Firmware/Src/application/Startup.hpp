@@ -1,7 +1,7 @@
-#ifndef APPLICATION_STARTUP_H_
-#define APPLICATION_STARTUP_H_
+#ifndef APPLICATION_STARTUP_HPP_
+#define APPLICATION_STARTUP_HPP_
 
-#include "application/Application.h"
+#include "application/Application.hpp"
 
 namespace grid
 {
@@ -38,4 +38,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_STARTUP_H_
+#endif // APPLICATION_STARTUP_HPP_

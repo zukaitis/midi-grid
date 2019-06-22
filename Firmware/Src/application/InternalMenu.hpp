@@ -1,7 +1,7 @@
-#ifndef APPLICATION_INTERNAL_MENU_H_
-#define APPLICATION_INTERNAL_MENU_H_
+#ifndef APPLICATION_INTERNAL_MENU_HPP_
+#define APPLICATION_INTERNAL_MENU_HPP_
 
-#include "application/Application.h"
+#include "application/Application.hpp"
 #include "thread.hpp"
 
 namespace grid
@@ -35,7 +35,7 @@ private:
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
-    void displayMessageOnLcd();
+    void updateLcd() const;
 
     grid::Grid& grid_;
     lcd::Lcd& lcd_;
@@ -45,4 +45,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_INTERNAL_MENU_H_
+#endif // APPLICATION_INTERNAL_MENU_HPP_

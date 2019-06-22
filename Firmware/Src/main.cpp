@@ -1,10 +1,7 @@
-#include "main.h"
+#include "main.hpp"
 #include "ticks.hpp"
 
 #include "stm32f4xx_hal.h"
-
-#include <functional>
-#include <algorithm>
 
 #ifdef USE_SEMIHOSTING
 extern void initialise_monitor_handles(void);
@@ -31,7 +28,7 @@ Main::Main() :
         gridTest_( application::GridTest( applicationController_, grid_, usbMidi_, gui_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, lcd_, system_ ) ),
         launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
-        snake_( application::Snake( applicationController_, grid_, gui_ ) )
+        snake_( application::Snake( applicationController_, grid_, lcd_ ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {
         NULL, // ApplicationIndex_PREVIOUS

@@ -1,4 +1,4 @@
-#include "lcd/Lcd.h"
+#include "lcd/Lcd.hpp"
 
 #include "lcd/font.h"
 #include "lcd/progressArc.h"
@@ -108,7 +108,7 @@ void Lcd::initialize()
     Start();
 }
 
-void Lcd::print( const char* string, uint8_t x, const uint8_t y )
+void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
 {
     if (y < height) // width is checked in putChar
     {
@@ -130,27 +130,27 @@ void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, con
         case Justification_RIGHT:
             if (textWidth < x)
             {
-                print( string, (x - textWidth), y );
+                putString( string, (x - textWidth), y );
             }
             break;
         case Justification_CENTER:
             textWidth = textWidth / 2;
             if ((textWidth <= x) && (textWidth <= (width - x)))
             {
-                print( string, (x - textWidth), y );
+                putString( string, (x - textWidth), y );
             }
             break;
         case Justification_LEFT:
         default:
             if (textWidth < (width - x))
             {
-                print( string, x, y );
+                putString( string, x, y );
             }
             break;
     }
 }
 
-void Lcd::printNumberInBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
+void Lcd::putBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
 {
     uint16_t divisor = pow( 10, numberOfDigits );
     while (divisor > 1)
@@ -183,21 +183,21 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
         case Justification_RIGHT:
             if (textWidth < x)
             {
-                printNumberInBigDigits( number, (x - textWidth), y, numberOfDigits );
+                putBigDigits( number, (x - textWidth), y, numberOfDigits );
             }
             break;
         case Justification_CENTER:
             textWidth = textWidth / 2;
             if ((textWidth <= x) && (textWidth <= (width - x)))
             {
-                printNumberInBigDigits( number, (x - textWidth), y, numberOfDigits );
+                putBigDigits( number, (x - textWidth), y, numberOfDigits );
             }
             break;
         case Justification_LEFT:
         default:
             if (textWidth < (width - x))
             {
-                printNumberInBigDigits( number, x, y, numberOfDigits );
+                putBigDigits( number, x, y, numberOfDigits );
             }
             break;
     }

@@ -1,4 +1,4 @@
-#include "system/GlobalInterrupts.h"
+#include "system/GlobalInterrupts.hpp"
 
 #include "stm32f4xx_hal.h"
 

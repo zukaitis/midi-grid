@@ -1,5 +1,5 @@
-#ifndef GRID_GRIDDRIVER_H_
-#define GRID_GRIDDRIVER_H_
+#ifndef GRID_GRIDDRIVER_HPP_
+#define GRID_GRIDDRIVER_HPP_
 
 #include "Types.h"
 #include "thread.hpp"
@@ -106,4 +106,4 @@ private:
 };
 
 } // namespace grid
-#endif // GRID_GRIDDRIVER_H_
+#endif // GRID_GRIDDRIVER_HPP_

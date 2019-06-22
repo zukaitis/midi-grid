@@ -1,4 +1,4 @@
-#include "usb/UsbMidi.h"
+#include "usb/UsbMidi.hpp"
 
 #include "stm32f4xx_hal.h"
 #include "queue.hpp"

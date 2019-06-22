@@ -1,5 +1,5 @@
-#ifndef LCD_LCDCONTROL_H_
-#define LCD_LCDCONTROL_H_
+#ifndef LCD_LCDCONTROL_HPP_
+#define LCD_LCDCONTROL_HPP_
 
 #include <stdint.h>
 
@@ -28,4 +28,4 @@ private:
 
 } // namespace lcd
 
-#endif // LCD_LCDCONTROL_H_
+#endif // LCD_LCDCONTROL_HPP_

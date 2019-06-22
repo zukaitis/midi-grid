@@ -1,7 +1,7 @@
-#ifndef LCD_GUI_H_
-#define LCD_GUI_H_
+#ifndef LCD_GUI_HPP_
+#define LCD_GUI_HPP_
 
-#include "application/Launchpad.h"
+#include "application/Launchpad.hpp"
 
 #include "thread.hpp"
 
@@ -69,4 +69,4 @@ private:
 
 } // namespace lcd
 
-#endif /* LCD_GUI_H_ */
+#endif // LCD_GUI_HPP_

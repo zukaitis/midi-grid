@@ -1,7 +1,7 @@
-#ifndef APPLICATION_LAUNCHPAD_H_
-#define APPLICATION_LAUNCHPAD_H_
+#ifndef APPLICATION_LAUNCHPAD_HPP_
+#define APPLICATION_LAUNCHPAD_HPP_
 
-#include "application/Application.h"
+#include "application/Application.hpp"
 #include "Types.h"
 
 namespace grid
@@ -102,4 +102,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_LAUNCHPAD_H_
+#endif // APPLICATION_LAUNCHPAD_HPP_

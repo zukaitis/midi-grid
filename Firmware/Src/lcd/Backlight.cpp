@@ -1,4 +1,4 @@
-#include "lcd/Backlight.h"
+#include "lcd/Backlight.hpp"
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"

@@ -1,5 +1,5 @@
-#ifndef LCD_BACKLIGHT_H_
-#define LCD_BACKLIGHT_H_
+#ifndef LCD_BACKLIGHT_HPP_
+#define LCD_BACKLIGHT_HPP_
 
 #include <stdint.h>
 
@@ -28,4 +28,4 @@ private:
 
 } // namespace lcd
 
-#endif // LCD_BACKLIGHT_H_
+#endif // LCD_BACKLIGHT_HPP_

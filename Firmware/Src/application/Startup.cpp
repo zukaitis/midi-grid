@@ -1,9 +1,9 @@
-#include "application/Startup.h"
+#include "application/Startup.hpp"
 
-#include "grid/GridDriver.h"
-#include "lcd/Gui.h"
-#include "lcd/Lcd.h"
-#include "system/System.h"
+#include "grid/GridDriver.hpp"
+#include "lcd/Gui.hpp"
+#include "lcd/Lcd.hpp"
+#include "system/System.hpp"
 
 namespace application
 {

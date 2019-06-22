@@ -1,8 +1,8 @@
-#include "application/GridTest.h"
+#include "application/GridTest.hpp"
 
-#include "grid/Grid.h"
-#include "usb/UsbMidi.h"
-#include "lcd/Gui.h"
+#include "grid/Grid.hpp"
+#include "usb/UsbMidi.hpp"
+#include "lcd/Gui.hpp"
 
 #include "ticks.hpp"
 

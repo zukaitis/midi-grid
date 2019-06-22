@@ -1,4 +1,4 @@
-#include "lcd/LcdDriver.h"
+#include "lcd/LcdDriver.hpp"
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"

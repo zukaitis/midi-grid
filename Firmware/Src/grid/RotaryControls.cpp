@@ -1,10 +1,11 @@
-#include "grid/RotaryControls.h"
+#include "grid/RotaryControls.hpp"
 
-#include "grid/GridDriver.h"
+#include "grid/GridDriver.hpp"
 #include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
-#include <functional>
+
+#include <cstdlib>
 
 namespace grid
 {
@@ -59,7 +60,7 @@ void RotaryControls::Run()
             }
 
             // only respond every 4 microsteps (1 physical step)
-            if (abs( microstep[encoder] ) >= kNumberOfMicrostepsInStep)
+            if (std::abs( microstep[encoder] ) >= kNumberOfMicrostepsInStep)
             {
                 static uint32_t previousEventTime[2] = {0, 0};
                 const uint32_t interval = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() ) - previousEventTime[encoder];

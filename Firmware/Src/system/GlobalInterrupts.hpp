@@ -1,5 +1,5 @@
-#ifndef SYSTEM_GLOBALINTERRUPTS_H_
-#define SYSTEM_GLOBALINTERRUPTS_H_
+#ifndef SYSTEM_GLOBALINTERRUPTS_HPP_
+#define SYSTEM_GLOBALINTERRUPTS_HPP_
 
 namespace mcu {
 
@@ -15,4 +15,4 @@ public:
 
 } // namespace hal
 
-#endif /* SYSTEM_GLOBALINTERRUPTS_H_ */
+#endif // SYSTEM_GLOBALINTERRUPTS_HPP_

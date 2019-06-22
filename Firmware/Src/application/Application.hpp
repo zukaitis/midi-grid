@@ -1,13 +1,13 @@
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
+#ifndef APPLICATION_HPP_
+#define APPLICATION_HPP_
 
 #include "thread.hpp"
 #include "semaphore.hpp"
 
-#include "grid/AdditionalButtons.h"
-#include "grid/Grid.h"
-#include "grid/RotaryControls.h"
-#include "usb/UsbMidi.h"
+#include "grid/AdditionalButtons.hpp"
+#include "grid/Grid.hpp"
+#include "grid/RotaryControls.hpp"
+#include "usb/UsbMidi.hpp"
 
 namespace application
 {
@@ -126,4 +126,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_H_
+#endif // APPLICATION_HPP_

@@ -1,5 +1,5 @@
-#include "grid/AdditionalButtons.h"
-#include "grid/GridDriver.h"
+#include "grid/AdditionalButtons.hpp"
+#include "grid/GridDriver.hpp"
 #include "ticks.hpp"
 #include "ThreadConfigurations.h"
 

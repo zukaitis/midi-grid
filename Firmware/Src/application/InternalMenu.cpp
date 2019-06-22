@@ -1,9 +1,9 @@
-#include "application/InternalMenu.h"
+#include "application/InternalMenu.hpp"
 
-#include "grid/Grid.h"
-#include "grid/AdditionalButtons.h"
-#include "lcd/Lcd.h"
-#include "system/System.h"
+#include "grid/Grid.hpp"
+#include "grid/AdditionalButtons.hpp"
+#include "lcd/Lcd.hpp"
+#include "system/System.hpp"
 
 #include "Types.h"
 
@@ -37,7 +37,7 @@ InternalMenu::InternalMenu( ApplicationController& applicationController, grid::
 
 void InternalMenu::run( ApplicationThread& thread )
 {
-    displayMessageOnLcd();
+    updateLcd();
 
     grid_.turnAllLedsOff();
     grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, kBootloaderButtonColor );
@@ -83,11 +83,11 @@ void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     }
 }
 
-void InternalMenu::displayMessageOnLcd()
+void InternalMenu::updateLcd() const
 {
     lcd_.clear();
-    lcd_.print( "Internal Menu", lcd_.width/2, 16, lcd::Justification_CENTER );
-    lcd_.print( "Active", lcd_.width/2, 24, lcd::Justification_CENTER );
+    lcd_.print( "Internal Menu", lcd_.horizontalCenter, 16, lcd::Justification_CENTER );
+    lcd_.print( "Active", lcd_.horizontalCenter, 24, lcd::Justification_CENTER );
 }
 
 }

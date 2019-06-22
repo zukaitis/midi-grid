@@ -1,5 +1,5 @@
-#ifndef USB_USB_MIDI_H_
-#define USB_USB_MIDI_H_
+#ifndef USB_USBMIDI_HPP_
+#define USB_USBMIDI_HPP_
 
 #include <stdint.h>
 
@@ -89,4 +89,4 @@ private:
 
 } // namespace
 
-#endif // USB_USB_MIDI_H_
+#endif // USB_USBMIDI_HPP_

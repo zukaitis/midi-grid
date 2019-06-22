@@ -1,5 +1,5 @@
-#ifndef SYSTEM_H_
-#define SYSTEM_H_
+#ifndef SYSTEM_HPP_
+#define SYSTEM_HPP_
 
 namespace mcu
 {
@@ -21,4 +21,4 @@ private:
 
 } // namespace hal
 
-#endif /* SYSTEM_H_ */
+#endif // SYSTEM_HPP_

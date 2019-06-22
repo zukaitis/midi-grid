@@ -1,6 +1,6 @@
-#include "grid/Grid.h"
-#include "grid/GridDriver.h"
-#include "system/GlobalInterrupts.h"
+#include "grid/Grid.hpp"
+#include "grid/GridDriver.hpp"
+#include "system/GlobalInterrupts.hpp"
 #include "ThreadConfigurations.h"
 
 #include "ticks.hpp"

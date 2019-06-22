@@ -1,7 +1,7 @@
-#ifndef APPLICATION_GRID_TEST_H_
-#define APPLICATION_GRID_TEST_H_
+#ifndef APPLICATION_GRID_TEST_HPP_
+#define APPLICATION_GRID_TEST_HPP_
 
-#include "application/Application.h"
+#include "application/Application.hpp"
 #include "Types.h"
 #include "thread.hpp"
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_GRID_TEST_H_
+#endif // APPLICATION_GRID_TEST_HPP_

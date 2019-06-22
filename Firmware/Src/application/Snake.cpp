@@ -1,7 +1,10 @@
-#include "application/Snake.h"
+#include "application/Snake.hpp"
+
+#include "lcd/Lcd.hpp"
 
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 namespace application
 {
@@ -28,6 +31,7 @@ Snake::Snake( ApplicationController& applicationController, grid::Grid& grid, lc
     direction_( Direction_UP ),
     directionCandidate_( Direction_UP ),
     length_( initialSnakeLength ),
+    bestScore_( getScore() ),
     stepPeriodMs_( initialStepPeriodMs),
     bodyColor_( initialBodyColor )
 {
@@ -41,7 +45,7 @@ void Snake::run( ApplicationThread& thread )
     enableAdditionalButtonInputHandler();
     enableGridInputHandler();
 
-    displayGame();
+    updateGrid();
 
     applicationEnded_ = false;
     while (!applicationEnded_)
@@ -125,6 +129,11 @@ void Snake::advance()
     {
         // game over
         gameInProgress_ = false;
+        if (getScore() > bestScore_)
+        {
+            bestScore_ = getScore();
+            updateLcd();
+        }
     }
     else if (head == food_)
     {
@@ -138,7 +147,9 @@ void Snake::advance()
         else
         {
             gameInProgress_ = false;
+            bestScore_ = getScore();
         }
+        updateLcd();
     }
     else
     {
@@ -146,16 +157,16 @@ void Snake::advance()
         move( head );
     }
 
-    displayGame();
+    updateGrid();
 }
 
-void Snake::blink()
+void Snake::blink() const
 {
     static bool lightUp = true;
 
     if (lightUp)
     {
-        displayGame();
+        updateGrid();
     }
     else
     {
@@ -165,7 +176,7 @@ void Snake::blink()
     lightUp = !lightUp;
 }
 
-void Snake::displayGame()
+void Snake::updateGrid() const
 {
     grid_.turnAllLedsOff();
     grid_.setLed( snake_[0].x, snake_[0].y, headColor );
@@ -175,6 +186,18 @@ void Snake::displayGame()
     }
 
     grid_.setLed( food_.x, food_.y, foodColor );
+}
+
+void Snake::updateLcd() const
+{
+    lcd_.clear();
+    lcd_.print( "Snake", lcd_.horizontalCenter, 0, lcd::Justification_CENTER );
+    lcd_.print( "Score:", 0, 16 );
+    lcd_.printNumberInBigDigits( getScore(), lcd_.width - 1, 16, lcd::Justification_RIGHT );
+    
+    char bestScoreString[lcd_.numberOfCharactersInLine] = {};
+    std::sprintf( bestScoreString, "Best: %i", bestScore_ );
+    lcd_.print( bestScoreString, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 void Snake::feed( const Coordinates headCoords )
@@ -207,7 +230,7 @@ void Snake::move( const Coordinates headCoords )
 
 void Snake::startNewGame()
 {
-    std::memcpy( snake_, initialSnake, initialSnakeLength );
+    std::memcpy( snake_, initialSnake, sizeof( Coordinates ) * initialSnakeLength );
     length_ = initialSnakeLength;
     bodyColor_ = initialBodyColor;
     direction_ = Direction_UP;
@@ -216,7 +239,8 @@ void Snake::startNewGame()
 
     placeFood();
     gameInProgress_ = true;
-    displayGame();
+    updateGrid();
+    updateLcd();
 }
 
 void Snake::placeFood()
@@ -266,6 +290,17 @@ bool Snake::isSnakeInGivenCoordinates( const Coordinates coords ) const
     }
 
     return snakeIsInCoordinates;
+}
+
+uint8_t Snake::getScore() const
+{
+    uint8_t score = 0;
+    if (length_ > 0)
+    {
+        score = length_ - 1;
+    }
+
+    return score;
 }
 
 } // namespace

@@ -1,5 +1,5 @@
-#ifndef ROTARY_CONTROLS_H_
-#define ROTARY_CONTROLS_H_
+#ifndef ROTARY_CONTROLS_HPP_
+#define ROTARY_CONTROLS_HPP_
 
 #include "thread.hpp"
 #include "queue.hpp"
@@ -51,4 +51,4 @@ private:
 
 } // namespace
 
-#endif // ROTARY_CONTROLS_H_
+#endif // ROTARY_CONTROLS_HPP_

@@ -1,7 +1,7 @@
-#ifndef APPLICATION_SNAKE_H_
-#define APPLICATION_SNAKE_H_
+#ifndef APPLICATION_SNAKE_HPP_
+#define APPLICATION_SNAKE_HPP_
 
-#include "application/Application.h"
+#include "application/Application.hpp"
 #include "Types.h"
 #include "thread.hpp"
 
@@ -71,8 +71,9 @@ private:
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
     void advance();
-    void blink();
-    void displayGame();
+    void blink() const;
+    void updateGrid() const;
+    void updateLcd() const;
     void feed( const Coordinates headCoords );
     void move( const Coordinates headCoords );
     void startNewGame();
@@ -80,6 +81,7 @@ private:
 
     bool areCoordinatesValid( const Coordinates coords ) const;
     bool isSnakeInGivenCoordinates( const Coordinates coords ) const;
+    uint8_t getScore() const;
 
     grid::Grid& grid_;
     lcd::Lcd& lcd_;
@@ -91,6 +93,7 @@ private:
     Direction directionCandidate_;
     Coordinates snake_[gridSize];
     uint8_t length_;
+    uint8_t bestScore_;
     uint16_t stepPeriodMs_;
     Color bodyColor_;
     Coordinates food_;
@@ -98,4 +101,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_SNAKE_H_
+#endif // APPLICATION_SNAKE_HPP_

@@ -1,4 +1,4 @@
-#include "grid/GridDriver.h"
+#include "grid/GridDriver.hpp"
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"

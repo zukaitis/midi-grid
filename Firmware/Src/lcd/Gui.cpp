@@ -1,5 +1,5 @@
-#include "lcd/Gui.h"
-#include "lcd/Lcd.h"
+#include "lcd/Gui.hpp"
+#include "lcd/Lcd.hpp"
 #include "lcd/images.h"
 #include "ThreadConfigurations.h"
 
@@ -84,7 +84,7 @@ void Gui::displayConnectingImage()
 {
     lcd_.clear();
     lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "USB Connecting", lcd_.width/2, 40, lcd::Justification_CENTER );
+    lcd_.print( "USB Connecting", lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayRotaryControlValues( const uint8_t value1, const uint8_t value2 )
@@ -107,13 +107,13 @@ void Gui::displayWaitingForMidi()
 {
     lcd_.clear();
     lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "Awaiting MIDI", lcd_.width/2, 40, lcd::Justification_CENTER );
+    lcd_.print( "Awaiting MIDI", lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 void Gui::enterLaunchpad95Mode()
 {
     lcd_.clear();
-    lcd_.print( "L95", lcd_.width/2, 0, lcd::Justification_CENTER );
+    lcd_.print( "L95", lcd_.horizontalCenter, 0, lcd::Justification_CENTER );
     lcd_.displayImage( 63, 0, usbSymbolSmall );
     lcd_.displayImage( 0, 0, midiSymbolSmall );
 
@@ -271,12 +271,12 @@ void Gui::setLaunchpad95Submode( const application::Launchpad95Submode submode )
 
 void Gui::displayClipName()
 {
-    lcd_.print( dawClipName_, lcd_.width/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawClipName_, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayDeviceName()
 {
-    lcd_.print( dawDeviceName_, lcd_.width/2, 40, lcd::Justification_CENTER );
+    lcd_.print( dawDeviceName_, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 void Gui::displayLaunchpad95Info()
@@ -325,14 +325,14 @@ void Gui::displayLaunchpad95Mode()
     lcd_.clearArea( 0, 8, 83, 15 );
     if (application::Launchpad95Mode_UNKNOWN != launchpad95Mode_)
     {
-        lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd_.width/2, 8, lcd::Justification_CENTER );
+        lcd_.print( launchpad95ModeString[launchpad95Mode_], lcd_.horizontalCenter, 8, lcd::Justification_CENTER );
     }
 }
 
 void Gui::displayLaunchpad95Submode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    lcd_.print( launchpad95SubmodeString[launchpad95Submode_], lcd_.width/2, 8, lcd::Justification_CENTER );
+    lcd_.print( launchpad95SubmodeString[launchpad95Submode_], lcd_.horizontalCenter, 8, lcd::Justification_CENTER );
 }
 
 void Gui::displayStatus()
@@ -379,7 +379,7 @@ void Gui::displayTimingStatus()
 
 void Gui::displayTrackName()
 {
-    lcd_.print( dawTrackName_, lcd_.width/2, 32, lcd::Justification_CENTER );
+    lcd_.print( dawTrackName_, lcd_.horizontalCenter, 32, lcd::Justification_CENTER );
 }
 
 } // namespace lcd

@@ -1,10 +1,10 @@
-#include "application/Launchpad.h"
+#include "application/Launchpad.hpp"
 
-#include "grid/Grid.h"
-#include "grid/AdditionalButtons.h"
-#include "grid/RotaryControls.h"
-#include "lcd/Gui.h"
-#include "lcd/Lcd.h"
+#include "grid/Grid.hpp"
+#include "grid/AdditionalButtons.hpp"
+#include "grid/RotaryControls.hpp"
+#include "lcd/Gui.hpp"
+#include "lcd/Lcd.hpp"
 
 #include <cstring>
 

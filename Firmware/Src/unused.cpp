@@ -1,6 +1,6 @@
 // stuff that might come into use later
 
-#include "main.h"
+#include "main.hpp"
 #include "stm32f4xx_hal.h"
 
 #define MIDI_OUT_Pin GPIO_PIN_6

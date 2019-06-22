@@ -1,20 +1,20 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef MAIN_HPP_
+#define MAIN_HPP_
 
-#include "system/System.h"
-#include "grid/GridDriver.h"
-#include "grid/Grid.h"
-#include "grid/AdditionalButtons.h"
-#include "grid/RotaryControls.h"
-#include "lcd/Gui.h"
-#include "lcd/Lcd.h"
-#include "application/InternalMenu.h"
-#include "application/Launchpad.h"
-#include "application/Startup.h"
-#include "application/GridTest.h"
-#include "application/Snake.h"
-#include "system/GlobalInterrupts.h"
-#include "usb/UsbMidi.h"
+#include "system/System.hpp"
+#include "grid/GridDriver.hpp"
+#include "grid/Grid.hpp"
+#include "grid/AdditionalButtons.hpp"
+#include "grid/RotaryControls.hpp"
+#include "lcd/Gui.hpp"
+#include "lcd/Lcd.hpp"
+#include "application/InternalMenu.hpp"
+#include "application/Launchpad.hpp"
+#include "application/Startup.hpp"
+#include "application/GridTest.hpp"
+#include "application/Snake.hpp"
+#include "system/GlobalInterrupts.hpp"
+#include "usb/UsbMidi.hpp"
 
 #include "thread.hpp"
 
@@ -48,4 +48,4 @@ private:
     application::Snake snake_;
 };
 
-#endif // __MAIN_H__
+#endif // MAIN_HPP_

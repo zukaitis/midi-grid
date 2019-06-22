@@ -1,5 +1,5 @@
-#ifndef GRID_SWITCHES_H_
-#define GRID_SWITCHES_H_
+#ifndef GRID_SWITCHES_HPP_
+#define GRID_SWITCHES_HPP_
 
 #include "Types.h"
 #include "thread.hpp"
@@ -54,4 +54,4 @@ private:
 
 } // namespace grid
 
-#endif // GRID_SWITCHES_H_
+#endif // GRID_SWITCHES_HPP_
