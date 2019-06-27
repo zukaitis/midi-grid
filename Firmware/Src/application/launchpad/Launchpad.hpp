@@ -2,6 +2,7 @@
 #define APPLICATION_LAUNCHPAD_HPP_
 
 #include "application/Application.hpp"
+#include "application/launchpad/LcdGui.hpp"
 #include "Types.h"
 
 namespace grid
@@ -11,17 +12,15 @@ namespace grid
     class RotaryControls;
 }
 
-namespace lcd
-{
-    class Gui;
-}
-
 namespace midi
 {
     class UsbMidi;
 }
 
 namespace application
+{
+
+namespace launchpad
 {
 
 enum Layout : uint8_t
@@ -64,8 +63,10 @@ enum Launchpad95Submode : uint8_t
 class Launchpad : public Application
 {
 public:
+    friend class LcdGui; // allow GUI to read info
+
     Launchpad( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-        grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi );
+        grid::RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
@@ -78,7 +79,7 @@ private:
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
 
-    void processDawInfoMessage( const char* const message, uint8_t length );
+    void processDawInfoMessage( const char* const message );
     void processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
     void processSystemExclusiveMessage( uint8_t* const message, uint8_t length );
@@ -87,19 +88,35 @@ private:
     void sendMixerModeControlMessage();
     void setCurrentLayout( const Layout layout );
 
+    LcdGui gui_;
     grid::Grid& grid_;
-    lcd::Gui& gui_;
     midi::UsbMidi& usbMidi_;
 
-    Launchpad95Mode currentLaunchpad95Mode_; // used only to identify submode
-    Layout currentLayout_;
+    bool applicationEnded_;
+    Launchpad95Mode mode_;
+    Launchpad95Submode submode_;
+    Layout layout_;
     int16_t rotaryControlValue_[2];
+    bool isPlaying_;
+    bool isRecording_;
+    bool isSessionRecording_;
+    static const uint8_t kMaximumDawInfoStringLength = 15;
+    char clipName_[kMaximumDawInfoStringLength];
+    char deviceName_[kMaximumDawInfoStringLength];
+    char trackName_[kMaximumDawInfoStringLength];
+    bool nudgeDownActive_;
+    bool nudgeUpActive_;
+    uint16_t tempo_;
+    uint8_t signatureNumerator_;
+    uint8_t signatureDenominator_;
+
 
     static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
     uint8_t systemExclusiveInputMessage_[kSystemExclussiveMessageMaximumLength_];
     uint8_t incomingSystemExclusiveMessageLength_;
 };
 
+}
 } // namespace
 
 #endif // APPLICATION_LAUNCHPAD_HPP_

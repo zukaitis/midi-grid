@@ -1,14 +1,15 @@
-#include "application/Launchpad.hpp"
+#include "application/launchpad/Launchpad.hpp"
 
 #include "grid/Grid.hpp"
 #include "grid/AdditionalButtons.hpp"
 #include "grid/RotaryControls.hpp"
-#include "lcd/Gui.hpp"
 #include "lcd/Lcd.hpp"
 
 #include <cstring>
 
 namespace application
+{
+namespace launchpad
 {
 
 /* MIDI */
@@ -106,13 +107,23 @@ static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
 
 Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-    grid::RotaryControls& rotaryControls, lcd::Gui& gui, midi::UsbMidi& usbMidi ) :
+    grid::RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
         Application( applicationController ),
+        gui_( LcdGui( *this, lcd ) ),
         grid_( grid ),
-        gui_( gui ),
         usbMidi_( usbMidi ),
-        currentLaunchpad95Mode_( Launchpad95Mode_SESSION ),
-        currentLayout_( Layout_SESSION ),
+        applicationEnded_( true ),
+        mode_( Launchpad95Mode_UNKNOWN ),
+        submode_( Launchpad95Submode_DEFAULT ),
+        layout_( Layout_SESSION ),
+        isPlaying_( false ),
+        isRecording_( false ),
+        isSessionRecording_( false ),
+        nudgeDownActive_( false ),
+        nudgeUpActive_( false ),
+        tempo_( 0 ),
+        signatureNumerator_( 0 ),
+        signatureDenominator_( 0 ),
         incomingSystemExclusiveMessageLength_( 0 )
 {
     const int16_t initialControlValue = midi::kMaximumControlValue / 2;
@@ -124,15 +135,21 @@ void Launchpad::run( ApplicationThread& thread )
 {
     grid_.discardAllPendingButtonEvents();
     grid_.turnAllLedsOff();
+    gui_.initialize();
 
     sendMixerModeControlMessage();
-
-    gui_.enterLaunchpad95Mode();
 
     enableAdditionalButtonInputHandler();
     enableGridInputHandler();
     enableMidiInputHandler();
     enableRotaryControlInputHandler();
+
+    applicationEnded_ = false;
+    while (!applicationEnded_)
+    {
+        gui_.refresh();
+        thread.DelayUntil( LcdGui::refreshPeriodMs );
+    }
 }
 
 Launchpad95Mode Launchpad::determineLaunchpad95Mode()
@@ -198,7 +215,7 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     Launchpad95Submode submode = Launchpad95Submode_DEFAULT;
     Color color;
 
-    switch (currentLaunchpad95Mode_)
+    switch (mode_)
     {
         case Launchpad95Mode_INSTRUMENT:
             color = grid_.getLedColor( kSubmodeColumn, 7 );
@@ -285,7 +302,7 @@ void Launchpad::handleRotaryControlEvent( const grid::RotaryControls::Event even
     }
     usbMidi_.sendControlChange( kAdditionalControlMidiChannel, event.control, rotaryControlValue_[event.control] );
     gui_.registerMidiOutputActivity();
-    gui_.displayRotaryControlValues( static_cast<uint8_t>(rotaryControlValue_[0]), static_cast<uint8_t>(rotaryControlValue_[1]) );
+    gui_.displayRotaryControlValues();
 }
 
 void Launchpad::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
@@ -300,6 +317,7 @@ void Launchpad::handleAdditionalButtonEvent( const grid::AdditionalButtons::Even
     {
         if (ButtonAction_PRESSED == event.action)
         {
+            applicationEnded_ = true;
             switchApplication( ApplicationIndex_INTERNAL_MENU );
         }
     }
@@ -340,7 +358,7 @@ void Launchpad::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     }
     else
     {
-        switch (currentLayout_)
+        switch (layout_)
         {
             case Layout_USER1:
                 usbMidi_.sendNoteOn( kUser1LayoutMidiChannel, kDrumLayout[event.positionX][event.positionY], controlValue );
@@ -357,39 +375,39 @@ void Launchpad::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     gui_.registerMidiOutputActivity();
 }
 
-void Launchpad::processDawInfoMessage( const char* const message, uint8_t length )
+void Launchpad::processDawInfoMessage( const char* const message )
 {
     switch (message[0])
     {
         case 't':
-            gui_.setDawTrackName( &message[1], length - 1 );
+            strncpy( trackName_, &message[1], kMaximumDawInfoStringLength );
             break;
         case 'c':
-            gui_.setDawClipName( &message[1], length - 1 );
+            strncpy( clipName_, &message[1], kMaximumDawInfoStringLength );
             break;
         case 'd':
-            gui_.setDawDeviceName( &message[1], length - 1 );
+            strncpy( deviceName_, &message[1], kMaximumDawInfoStringLength );
             break;
         case 's':
             {
-                const bool isPlaying = ('P' == message[1]);
-                const bool isRecording = ('R' == message[2]);
-                const bool isSessionRecording = ('S' == message[3]);
-                gui_.setDawStatus( isPlaying, isRecording, isSessionRecording );
+                isPlaying_ = ('P' == message[1]);
+                isRecording_ = ('R' == message[2]);
+                isSessionRecording_ = ('S' == message[3]);
             }
             break;
         case 'T':
             {
-                const uint16_t tempo = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
-                const uint8_t signatureNumerator = (message[4] - '0')*10 + (message[5] - '0');
-                const uint8_t signatureDenominator = (message[6] - '0')*10 + (message[7] - '0');
-                const bool nudgeDownActive = ('D' == message[8]);
-                const bool nudgeUpActive = ('U' == message[8]);
-                gui_.setDawTimingValues( tempo, signatureNumerator, signatureDenominator, nudgeDownActive, nudgeUpActive );
+                tempo_ = (message[1] - '0')*100 + (message[2] - '0')*10 + (message[3] - '0');
+                signatureNumerator_ = (message[4] - '0')*10 + (message[5] - '0');
+                signatureDenominator_ = (message[6] - '0')*10 + (message[7] - '0');
+                nudgeDownActive_ = ('D' == message[8]);
+                nudgeUpActive_ = ('U' == message[8]);
             }
             break;
         default:
             break;
+
+        gui_.refresh();
     }
 }
 
@@ -415,17 +433,11 @@ void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const ui
             (control == kMixer.controlValue) ||
             (control == kUser2.controlValue) )
         {
-            currentLaunchpad95Mode_ = determineLaunchpad95Mode();
-            gui_.setLaunchpad95Mode( currentLaunchpad95Mode_ );
-            if (Launchpad95Mode_MELODIC_SEQUENCER == currentLaunchpad95Mode_)
-            {
-                // only melodic step sequencer can stay in submode between mode changes
-                gui_.setLaunchpad95Submode( determineLaunchpad95Submode() );
-            }
-            else
-            {
-                gui_.setLaunchpad95Submode( Launchpad95Submode_DEFAULT );
-            }
+            mode_ = determineLaunchpad95Mode();
+            // only melodic step sequencer can stay in submode between mode changes
+            submode_ = (Launchpad95Mode_MELODIC_SEQUENCER == mode_) ? determineLaunchpad95Submode() : Launchpad95Submode_DEFAULT;
+
+            gui_.refresh();
         }
     }
 }
@@ -435,7 +447,7 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
     uint8_t ledPositionX, ledPositionY;
     bool ledPositionCorrect = false;
 
-    if (Layout_USER1 == currentLayout_)
+    if (Layout_USER1 == layout_)
     {
         // only this layout uses drum layout
         if (note >= kDrumLayout[0][0])
@@ -482,10 +494,11 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
 
             grid_.setLed( ledPositionX, ledPositionY, kLaunchpadColorPalette[velocity], lightingType );
 
-            if ((Layout_USER1 != currentLayout_) && (kSubmodeColumn == ledPositionX))
+            if ((Layout_USER1 != layout_) && (kSubmodeColumn == ledPositionX))
             {
                 // possible change in submode
-                gui_.setLaunchpad95Submode( determineLaunchpad95Submode() );
+                submode_ = determineLaunchpad95Submode();
+                gui_.refresh();
             }
         }
     }
@@ -515,7 +528,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
                     break;
                 case kTextScroll:
                     message[length-1] = 0; // put string terminator at the end
-                    processDawInfoMessage( reinterpret_cast<char*>(&message[7]), length - 7 - 1 );
+                    processDawInfoMessage( reinterpret_cast<char*>(&message[7]) );
                     break;
                 default:
                     break;
@@ -571,7 +584,8 @@ void Launchpad::sendMixerModeControlMessage()
 
 void Launchpad::setCurrentLayout( const Layout layout )
 {
-    currentLayout_ = layout;
+    layout_ = layout;
 }
 
+}
 } // namespace

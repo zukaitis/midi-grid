@@ -1,4 +1,4 @@
-#include "application/Snake.hpp"
+#include "application/snake/Snake.hpp"
 
 #include "lcd/Lcd.hpp"
 

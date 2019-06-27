@@ -6,13 +6,12 @@
 #include "grid/Grid.hpp"
 #include "grid/AdditionalButtons.hpp"
 #include "grid/RotaryControls.hpp"
-#include "lcd/Gui.hpp"
 #include "lcd/Lcd.hpp"
-#include "application/InternalMenu.hpp"
-#include "application/Launchpad.hpp"
-#include "application/Startup.hpp"
-#include "application/GridTest.hpp"
-#include "application/Snake.hpp"
+#include "application/internal_menu/InternalMenu.hpp"
+#include "application/launchpad/Launchpad.hpp"
+#include "application/startup/Startup.hpp"
+#include "application/grid_test/GridTest.hpp"
+#include "application/snake/Snake.hpp"
 #include "system/GlobalInterrupts.hpp"
 #include "usb/UsbMidi.hpp"
 
@@ -39,12 +38,11 @@ private:
     grid::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
-    lcd::Gui gui_;
     application::ApplicationController applicationController_;
     application::Startup startup_;
     application::GridTest gridTest_;
     application::InternalMenu internalMenu_;
-    application::Launchpad launchpad_;
+    application::launchpad::Launchpad launchpad_;
     application::Snake snake_;
 };
 

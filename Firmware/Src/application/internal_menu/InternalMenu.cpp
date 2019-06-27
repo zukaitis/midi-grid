@@ -1,4 +1,4 @@
-#include "application/InternalMenu.hpp"
+#include "application/internal_menu/InternalMenu.hpp"
 
 #include "grid/Grid.hpp"
 #include "grid/AdditionalButtons.hpp"

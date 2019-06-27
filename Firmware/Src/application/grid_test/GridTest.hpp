@@ -18,7 +18,7 @@ namespace midi
 
 namespace lcd
 {
-    class Gui;
+    class Lcd;
 }
 
 namespace application
@@ -27,22 +27,23 @@ namespace application
 class GridTest : public Application
 {
 public:
-    GridTest( ApplicationController& applicationController, grid::Grid& grid, midi::UsbMidi& usbMidi, lcd::Gui& gui );
+    GridTest( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
-
-    void displayIntroAnimation( ApplicationThread& thread );
-
-    Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
-    Color getRandomColor();
 
     void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     void handleMidiPacketAvailable();
 
+    void displayIntroAnimation( ApplicationThread& thread );
+    void displayWaitingForMidi();
+
+    Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
+    Color getRandomColor();
+
     grid::Grid& grid_;
-    lcd::Gui& gui_;
+    lcd::Lcd& lcd_;
 };
 
 } // namespace

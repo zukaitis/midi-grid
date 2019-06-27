@@ -1,18 +1,18 @@
-#include "application/Startup.hpp"
+#include "application/startup/Startup.hpp"
 
 #include "grid/GridDriver.hpp"
-#include "lcd/Gui.hpp"
 #include "lcd/Lcd.hpp"
+#include "lcd/images.h"
 #include "system/System.hpp"
 
 namespace application
 {
 
-Startup::Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver,
-    lcd::Gui& gui, lcd::Lcd& lcd, mcu::System& system ):
+static const lcd::Image usbLogo = { lcd::usbLogoArray, 180, 60, 24 };
+
+Startup::Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         gridDriver_( gridDriver ),
-        gui_( gui ),
         lcd_( lcd ),
         system_( system )
 {
@@ -26,13 +26,20 @@ void Startup::run( ApplicationThread& thread )
     gridDriver_.initialize();
     gridDriver_.start();
 
-    gui_.displayConnectingImage();
+    displayUsbConnecting();
 
     while (!system_.isUsbConnected())
     {
     }
 
     switchApplication( ApplicationIndex_GRID_TEST );
+}
+
+void Startup::displayUsbConnecting()
+{
+    lcd_.clear();
+    lcd_.displayImage( 12, 8, usbLogo );
+    lcd_.print( "USB Connecting", lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 } // namespace

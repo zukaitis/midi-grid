@@ -22,12 +22,11 @@ Main::Main() :
         rotaryControls_( grid::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
-        gui_( lcd::Gui( lcd_ ) ),
         applicationController_( application::ApplicationController( additionalButtons_, grid_, rotaryControls_, usbMidi_ ) ),
-        startup_( application::Startup( applicationController_, gridDriver_, gui_, lcd_, system_ ) ),
-        gridTest_( application::GridTest( applicationController_, grid_, usbMidi_, gui_ ) ),
+        startup_( application::Startup( applicationController_, gridDriver_, lcd_, system_ ) ),
+        gridTest_( application::GridTest( applicationController_, grid_, lcd_, usbMidi_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, lcd_, system_ ) ),
-        launchpad_( application::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, gui_, usbMidi_ ) ),
+        launchpad_( application::launchpad::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, lcd_, usbMidi_ ) ),
         snake_( application::Snake( applicationController_, grid_, lcd_ ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {

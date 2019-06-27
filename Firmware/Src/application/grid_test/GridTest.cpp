@@ -1,8 +1,9 @@
-#include "application/GridTest.hpp"
+#include "application/grid_test/GridTest.hpp"
 
 #include "grid/Grid.hpp"
 #include "usb/UsbMidi.hpp"
-#include "lcd/Gui.hpp"
+#include "lcd/Lcd.hpp"
+#include "lcd/images.h"
 
 #include "ticks.hpp"
 
@@ -11,10 +12,12 @@
 namespace application
 {
 
-GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, midi::UsbMidi& usbMidi, lcd::Gui& gui ):
+static const lcd::Image usbLogo = { lcd::usbLogoArray, 180, 60, 24 };
+
+GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
     grid_( grid ),
-    gui_( gui )
+    lcd_( lcd )
 {
     std::srand( static_cast<uint16_t>(freertos::Ticks::GetTicks()) ); // change seed for that extra randomness
 }
@@ -28,12 +31,35 @@ void GridTest::run( ApplicationThread& thread )
         introAnimationDisplayed = true;
     }
 
-    gui_.displayWaitingForMidi();
+    displayWaitingForMidi();
     grid_.turnAllLedsOff();
 
     enableGridInputHandler();
     enableAdditionalButtonInputHandler();
     enableMidiInputAvailableHandler();
+}
+
+void GridTest::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+{
+    if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    {
+        switchApplication( ApplicationIndex_INTERNAL_MENU );
+    }
+}
+
+void GridTest::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+{
+    Color color = { 0, 0, 0 };
+    if (ButtonAction_PRESSED == event.action)
+    {
+        color = getRandomColor();
+    }
+    grid_.setLed( event.positionX, event.positionY, color );
+}
+
+void GridTest::handleMidiPacketAvailable()
+{
+    switchApplication( ApplicationIndex_LAUNCHPAD );
 }
 
 void GridTest::displayIntroAnimation( ApplicationThread& thread )
@@ -142,27 +168,11 @@ Color GridTest::getRandomColor()
     return color;
 }
 
-void GridTest::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void GridTest::displayWaitingForMidi()
 {
-    if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
-    {
-        switchApplication( ApplicationIndex_INTERNAL_MENU );
-    }
-}
-
-void GridTest::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
-{
-    Color color = { 0, 0, 0 };
-    if (ButtonAction_PRESSED == event.action)
-    {
-        color = getRandomColor();
-    }
-    grid_.setLed( event.positionX, event.positionY, color );
-}
-
-void GridTest::handleMidiPacketAvailable()
-{
-    switchApplication( ApplicationIndex_LAUNCHPAD );
+    lcd_.clear();
+    lcd_.displayImage( 12, 8, usbLogo );
+    lcd_.print( "Awaiting MIDI", lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
 }
 
 } // namespace
