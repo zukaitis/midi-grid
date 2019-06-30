@@ -1,5 +1,5 @@
-#include "grid/Grid.hpp"
-#include "grid/GridDriver.hpp"
+#include "io/grid/Grid.hpp"
+#include "io/grid/GridDriver.hpp"
 #include "system/GlobalInterrupts.hpp"
 #include "ThreadConfigurations.h"
 

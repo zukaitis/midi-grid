@@ -1,9 +1,9 @@
 #include "application/grid_test/GridTest.hpp"
 
-#include "grid/Grid.hpp"
-#include "usb/UsbMidi.hpp"
-#include "lcd/Lcd.hpp"
-#include "lcd/images.h"
+#include "io/grid/Grid.hpp"
+#include "io/usb/UsbMidi.hpp"
+#include "io/lcd/Lcd.hpp"
+#include "application/images.h"
 
 #include "ticks.hpp"
 
@@ -12,7 +12,7 @@
 namespace application
 {
 
-static const lcd::Image usbLogo = { lcd::usbLogoArray, 180, 60, 24 };
+static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
 
 GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
@@ -39,9 +39,9 @@ void GridTest::run( ApplicationThread& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void GridTest::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
     {
         switchApplication( ApplicationIndex_INTERNAL_MENU );
     }

@@ -6,13 +6,13 @@
 
 namespace grid
 {
-
-class GridDriver;
+    class GridDriver;
+}
 
 class RotaryControls : private freertos::Thread
 {
 public:
-    RotaryControls( GridDriver& gridControl );
+    RotaryControls( grid::GridDriver& gridControl );
     ~RotaryControls();
 
     void discardAllPendingEvents();
@@ -45,10 +45,8 @@ private:
         NotifyFromISR();
     }
 
-    GridDriver& gridDriver_;
+    grid::GridDriver& gridDriver_;
     freertos::Queue inputEvents_;
 };
-
-} // namespace
 
 #endif // ROTARY_CONTROLS_HPP_

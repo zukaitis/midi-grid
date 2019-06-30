@@ -7,14 +7,14 @@
 
 namespace grid
 {
-
-class GridDriver;
+    class GridDriver;
+}
 
 // class used to acquire values from two additional buttons and rotary encoders
 class AdditionalButtons : private freertos::Thread
 {
 public:
-    AdditionalButtons( GridDriver& gridControl );
+    AdditionalButtons( grid::GridDriver& gridControl );
     ~AdditionalButtons();
 
     enum Button : uint8_t
@@ -46,12 +46,10 @@ public:
 private:
     void Run();
 
-    GridDriver& gridDriver_;
+    grid::GridDriver& gridDriver_;
     freertos::Queue inputEvents_;
 
     bool registeredButtonInput_[numberOfButtons];
 };
-
-} // namespace grid
 
 #endif // GRID_SWITCHES_HPP_

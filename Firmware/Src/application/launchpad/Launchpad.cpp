@@ -1,9 +1,9 @@
 #include "application/launchpad/Launchpad.hpp"
 
-#include "grid/Grid.hpp"
-#include "grid/AdditionalButtons.hpp"
-#include "grid/RotaryControls.hpp"
-#include "lcd/Lcd.hpp"
+#include "io/grid/Grid.hpp"
+#include "io/AdditionalButtons.hpp"
+#include "io/RotaryControls.hpp"
+#include "io/lcd/Lcd.hpp"
 
 #include <cstring>
 
@@ -106,8 +106,8 @@ static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
         {7, 7, 13}, {56, 64, 21}, {30, 64, 47}, {38, 38, 64}, {35, 25, 64}, {17, 17, 17}, {30, 30, 30}, {56, 64, 64},
         {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
 
-Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-    grid::RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
+Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
+    RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
         Application( applicationController ),
         gui_( LcdGui( *this, lcd ) ),
         grid_( grid ),
@@ -288,7 +288,7 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     return submode;
 }
 
-void Launchpad::handleRotaryControlEvent( const grid::RotaryControls::Event event )
+void Launchpad::handleRotaryControlEvent( const RotaryControls::Event event )
 {
     rotaryControlValue_[event.control] += event.steps;
 
@@ -305,15 +305,15 @@ void Launchpad::handleRotaryControlEvent( const grid::RotaryControls::Event even
     gui_.displayRotaryControlValues();
 }
 
-void Launchpad::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void Launchpad::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if (grid::AdditionalButtons::extraNoteButton == event.button) // only send note on the event of black button
+    if (AdditionalButtons::extraNoteButton == event.button) // only send note on the event of black button
     {
         const uint8_t controlValue = (ButtonAction_PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
         usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
         gui_.registerMidiOutputActivity();
     }
-    else if (grid::AdditionalButtons::internalMenuButton == event.button)
+    else if (AdditionalButtons::internalMenuButton == event.button)
     {
         if (ButtonAction_PRESSED == event.action)
         {
@@ -518,7 +518,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
                         const uint8_t layoutIndex = message[7];
                         if (layoutIndex <= kMaximumLayoutIndex)
                         {
-                            setCurrentLayout( static_cast<Layout>(layoutIndex) );
+                            layout_ = static_cast<Layout>(layoutIndex);
                         }
                     }
                     break;
@@ -580,11 +580,6 @@ void Launchpad::sendMixerModeControlMessage()
     usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer.controlValue, kControlValueHigh );
     usbMidi_.sendControlChange( kDeviceControlMidiChannel, kMixer.controlValue, kControlValueLow );
     gui_.registerMidiOutputActivity();
-}
-
-void Launchpad::setCurrentLayout( const Layout layout )
-{
-    layout_ = layout;
 }
 
 }

@@ -1,15 +1,5 @@
-/*
- * images.h
- *
- *  Created on: 2018-03-12
- *      Author: Gedas
- */
-
-#ifndef LCD_IMAGES_H_
-#define LCD_IMAGES_H_
-
-namespace lcd
-{
+#ifndef APPLICATION_IMAGES_H_
+#define APPLICATION_IMAGES_H_
 
 static const uint8_t usbLogoArray[180] = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -26,5 +16,4 @@ static const uint8_t usbLogoArray[180] = {
         0x00, 0x00, 0x00, 0x00
 };
 
-}
-#endif /* LCD_IMAGES_H_ */
+#endif // APPLICATION_IMAGES_H_

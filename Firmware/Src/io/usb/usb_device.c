@@ -49,11 +49,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "usb/usb_device.h"
+#include "io/usb/usb_device.h"
 #include "usbd_core.h"
-#include "usb/usbd_desc.h"
+#include "io/usb/usbd_desc.h"
 #include "usbd_midi.h"
-//#include "usb/usbd_midi_if.h"
 
 /* USB Device Core handle declaration */
 USBD_HandleTypeDef hUsbDeviceFS;

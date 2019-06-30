@@ -1,10 +1,10 @@
-#include "usb/UsbMidi.hpp"
+#include "io/usb/UsbMidi.hpp"
 
 #include "stm32f4xx_hal.h"
 #include "queue.hpp"
 
 #include "usbd_midi.h"
-#include "usb/usbd_desc.h"
+#include "io/usb/usbd_desc.h"
 
 extern "C" {
 extern uint8_t USBD_MIDI_SendData (USBD_HandleTypeDef *pdev, uint8_t *pBuf, uint16_t length);

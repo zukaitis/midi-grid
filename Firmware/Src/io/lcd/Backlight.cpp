@@ -1,7 +1,11 @@
-#include "lcd/Backlight.hpp"
-#include "system/gpio_definitions.h"
+#include "io/lcd/Backlight.hpp"
 
+#include "system/gpio_definitions.h"
 #include "stm32f4xx_hal.h"
+
+#include "ThreadConfigurations.h"
+#include "ticks.hpp"
+
 #include <cstring>
 
 namespace lcd
@@ -20,13 +24,12 @@ uint32_t Backlight::outputBuffer_[kOutputBufferSize_];
 static DMA_HandleTypeDef dmaConfiguration;
 static SPI_HandleTypeDef spiConfiguration;
 
-Backlight::Backlight()
+Backlight::Backlight():
+    Thread( "Backlight", kBacklight.stackDepth, kBacklight.priority ),
+    appointedIntensity_( 0 ),
+    currentIntensity_( 0 )
 {
-    setIntensity( 0 );
-}
-
-Backlight::~Backlight()
-{
+    setMomentaryIntensity( 0 );
 }
 
 void Backlight::initialize()
@@ -35,11 +38,44 @@ void Backlight::initialize()
     initializeSpi();
     initializeDma();
 
-    // start SPI transmission
-    __HAL_SPI_ENABLE( &spiConfiguration );
+    __HAL_SPI_ENABLE( &spiConfiguration ); // start SPI transmission
+    Start(); // start thread
+}
+
+void Backlight::Run()
+{
+    static const TickType_t updatePeriod = freertos::Ticks::MsToTicks( 50 );
+
+    while (true)
+    {
+        if (currentIntensity_ != appointedIntensity_)
+        {
+            if (currentIntensity_ > appointedIntensity_)
+            {
+                setMomentaryIntensity( --currentIntensity_ );
+            }
+            else
+            {
+                setMomentaryIntensity( ++currentIntensity_ );
+            }
+
+            DelayUntil( updatePeriod );
+        }
+        else
+        {
+            // block until intensity is changed
+            appointedIntensityChanged_.Take();
+        }
+    }
 }
 
 void Backlight::setIntensity( uint8_t intensity )
+{
+    appointedIntensity_ = intensity;
+    appointedIntensityChanged_.Give();
+}
+
+void Backlight::setMomentaryIntensity( uint8_t intensity )
 {
     uint8_t wordIndex = 0;
 
@@ -52,7 +88,7 @@ void Backlight::setIntensity( uint8_t intensity )
 
     while (wordIndex < numberOfFullySetWords)
     {
-        //fill fully set words with ones
+        //fill fully set words with binary ones
         outputBuffer_[wordIndex++] = 0xFFFFFFFF;
     }
 
@@ -63,7 +99,7 @@ void Backlight::setIntensity( uint8_t intensity )
 
     while (wordIndex < kOutputBufferSize_)
     {
-        // fill rest of the buffer with zeros
+        // fill rest of the buffer with binary zeros
         outputBuffer_[wordIndex++] = 0x00000000;
     }
 }

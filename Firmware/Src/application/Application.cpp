@@ -117,7 +117,7 @@ void Application::run( ApplicationThread& thread )
     // do nothing by default, this method is to be overridden
 }
 
-void Application::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void Application::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -127,7 +127,7 @@ void Application::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     // do nothing by default, this method is to be overridden
 }
 
-void Application::handleRotaryControlEvent( const grid::RotaryControls::Event event )
+void Application::handleRotaryControlEvent( const RotaryControls::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -142,14 +142,14 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
     // do nothing by default, this method is to be overridden
 }
 
-ApplicationController::ApplicationController( grid::AdditionalButtons& additionalButtons, grid::Grid& grid,
-    grid::RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
+ApplicationController::ApplicationController( AdditionalButtons& additionalButtons, grid::Grid& grid,
+    RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
-        additionalButtonInputHandler_( InputHandler<grid::AdditionalButtons&, grid::AdditionalButtons::Event>( *this, additionalButtons ) ),
+        additionalButtonInputHandler_( InputHandler<AdditionalButtons&, AdditionalButtons::Event>( *this, additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::Grid&, grid::Grid::ButtonEvent>( *this, grid ) ),
-        rotaryControlInputHandler_( InputHandler<grid::RotaryControls&, grid::RotaryControls::Event>( *this, rotaryControls ) ),
+        rotaryControlInputHandler_( InputHandler<RotaryControls&, RotaryControls::Event>( *this, rotaryControls ) ),
         midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
         midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
         applicationThread_( ApplicationThread( *this ) )
@@ -227,7 +227,7 @@ void ApplicationController::handleInput( const bool dummy )
     currentlyOpenApplication_->handleMidiPacketAvailable();
 }
 
-void ApplicationController::handleInput( const grid::AdditionalButtons::Event event )
+void ApplicationController::handleInput( const AdditionalButtons::Event event )
 {
     currentlyOpenApplication_->handleAdditionalButtonEvent( event );
 }
@@ -237,7 +237,7 @@ void ApplicationController::handleInput( const grid::Grid::ButtonEvent event )
     currentlyOpenApplication_->handleGridButtonEvent( event );
 }
 
-void ApplicationController::handleInput( const grid::RotaryControls::Event event )
+void ApplicationController::handleInput( const RotaryControls::Event event )
 {
     currentlyOpenApplication_->handleRotaryControlEvent( event );
 }

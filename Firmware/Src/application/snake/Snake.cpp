@@ -1,6 +1,6 @@
 #include "application/snake/Snake.hpp"
 
-#include "lcd/Lcd.hpp"
+#include "io/lcd/Lcd.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -35,9 +35,6 @@ Snake::Snake( ApplicationController& applicationController, grid::Grid& grid, lc
     stepPeriodMs_( initialStepPeriodMs),
     bodyColor_( initialBodyColor )
 {
-    // initialize all variables for a new game, but put the game on hold
-    startNewGame();
-    gameInProgress_ = false;
 }
 
 void Snake::run( ApplicationThread& thread )
@@ -45,7 +42,9 @@ void Snake::run( ApplicationThread& thread )
     enableAdditionalButtonInputHandler();
     enableGridInputHandler();
 
-    updateGrid();
+    // initialize all variables for a new game, but put the game on hold
+    startNewGame();
+    gameInProgress_ = false;
 
     applicationEnded_ = false;
     while (!applicationEnded_)
@@ -111,9 +110,9 @@ void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     }
 }
 
-void Snake::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void Snake::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
     {
         applicationEnded_ = true;
         switchApplication( ApplicationIndex_INTERNAL_MENU );

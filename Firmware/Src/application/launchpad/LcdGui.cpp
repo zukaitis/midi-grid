@@ -3,7 +3,7 @@
 #include "application/launchpad/Launchpad.hpp"
 #include "application/launchpad/Images.hpp"
 
-#include "lcd/Lcd.hpp"
+#include "io/lcd/Lcd.hpp"
 #include "ticks.hpp"
 
 #include <cstdio>
@@ -13,17 +13,17 @@ namespace application
 namespace launchpad
 {
 
-static const lcd::Image usbSymbolSmall = { usbSymbolSmallArray, 9, 9, 8 };
-static const lcd::Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8, 8 };
-static const lcd::Image arrowSmallUp = { arrowSmallUpArray, 5, 5, 8 };
-static const lcd::Image arrowSmallDown = { arrowSmallDownArray, 5, 5, 8 };
-static const lcd::Image play = { playArray, 32, 16, 16 };
-static const lcd::Image recordingOn = { recordingOnArray, 32, 16, 16 };
-static const lcd::Image sessionRecordingOn = { sessionRecordingOnArray, 32, 16, 16 };
-static const lcd::Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 10, 8};
-static const lcd::Image nudgeDownActive = { nudgeDownActiveArray, 10, 10, 8};
-static const lcd::Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 10, 8};
-static const lcd::Image nudgeUpActive = { nudgeUpActiveArray, 10, 10, 8};
+static const lcd::Image usbSymbolSmall = { usbSymbolSmallArray, 9, 8 };
+static const lcd::Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8 };
+static const lcd::Image arrowSmallUp = { arrowSmallUpArray, 5, 8 };
+static const lcd::Image arrowSmallDown = { arrowSmallDownArray, 5, 8 };
+static const lcd::Image play = { playArray, 16, 16 };
+static const lcd::Image recordingOn = { recordingOnArray, 16, 16 };
+static const lcd::Image sessionRecordingOn = { sessionRecordingOnArray, 16, 16 };
+static const lcd::Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 8};
+static const lcd::Image nudgeDownActive = { nudgeDownActiveArray, 10, 8};
+static const lcd::Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 8};
+static const lcd::Image nudgeUpActive = { nudgeUpActiveArray, 10, 8};
 
 static const char launchpad95ModeString[8][16] = {
         "Session",

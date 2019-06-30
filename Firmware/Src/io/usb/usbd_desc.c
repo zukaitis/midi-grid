@@ -49,8 +49,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_core.h"
-#include "usb/usbd_desc.h"
-#include "usb/usbd_conf.h"
+#include "io/usb/usbd_desc.h"
+#include "io/usb/usbd_conf.h"
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{

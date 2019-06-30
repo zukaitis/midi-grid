@@ -65,16 +65,16 @@ class Launchpad : public Application
 public:
     friend class LcdGui; // allow GUI to read info
 
-    Launchpad( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
-        grid::RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
+    Launchpad( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
+        RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
+    void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     void handleMidiPacket( const midi::MidiPacket packet );
-    void handleRotaryControlEvent( const grid::RotaryControls::Event event );
+    void handleRotaryControlEvent( const RotaryControls::Event event );
 
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
@@ -86,7 +86,6 @@ private:
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
     void sendMixerModeControlMessage();
-    void setCurrentLayout( const Layout layout );
 
     LcdGui gui_;
     grid::Grid& grid_;

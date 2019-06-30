@@ -32,7 +32,7 @@ public:
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
+    void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
     void handleMidiPacketAvailable();
 

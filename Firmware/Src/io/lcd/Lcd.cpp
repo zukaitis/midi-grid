@@ -1,7 +1,7 @@
-#include "lcd/Lcd.hpp"
+#include "io/lcd/Lcd.hpp"
 
-#include "lcd/font.h"
-#include "lcd/progressArc.h"
+#include "io/lcd/font.h"
+#include "io/lcd/progressArc.h"
 #include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
@@ -12,9 +12,9 @@ namespace lcd
 {
 
 static const Image digitBig[10] = {
-        { DIGITS_BIG[0], 24, 12, 16 }, { DIGITS_BIG[1], 24, 12, 16 }, { DIGITS_BIG[2], 24, 12, 16 }, { DIGITS_BIG[3], 24, 12, 16 },
-        { DIGITS_BIG[4], 24, 12, 16 }, { DIGITS_BIG[5], 24, 12, 16 }, { DIGITS_BIG[6], 24, 12, 16 }, { DIGITS_BIG[7], 24, 12, 16 },
-        { DIGITS_BIG[8], 24, 12, 16 }, { DIGITS_BIG[9], 24, 12, 16 }
+        { DIGITS_BIG[0], 12, 16 }, { DIGITS_BIG[1], 12, 16 }, { DIGITS_BIG[2], 12, 16 }, { DIGITS_BIG[3], 12, 16 },
+        { DIGITS_BIG[4], 12, 16 }, { DIGITS_BIG[5], 12, 16 }, { DIGITS_BIG[6], 12, 16 }, { DIGITS_BIG[7], 12, 16 },
+        { DIGITS_BIG[8], 12, 16 }, { DIGITS_BIG[9], 12, 16 }
 };
 
 Lcd::Lcd() :
@@ -22,8 +22,6 @@ Lcd::Lcd() :
         numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ), // from generated file
         backlight_( Backlight() ),
         lcdDriver_( LcdDriver() ),
-        appointedBacklightIntensity_( 0 ),
-        currentBacklightIntensity_( 0 ),
         updateRequired_( false )
 {
     for (uint8_t line = 0; line < numberOfLines; line++)
@@ -35,14 +33,22 @@ Lcd::Lcd() :
     }
 }
 
-Lcd::~Lcd()
+void Lcd::Run()
 {
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
+
+    while (true)
+    {
+        updateRequired_.Take(); // block until LCD update is required
+        DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another
+        lcdDriver_.transmit( &lcdBuffer_[0][0] );
+    }
 }
 
 void Lcd::clear()
 {
     memset( &lcdBuffer_[0][0], 0x00, lcdDriver_.bufferSize );
-    updateRequired_ = true;
+    updateRequired_.Give();
 }
 
 void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2 )
@@ -65,7 +71,7 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
             }
         }
     }
-    updateRequired_ = true;
+    updateRequired_.Give();
 }
 
 void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
@@ -81,22 +87,22 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
             else
             {
                 lcdBuffer_[j+y/8][x+i] &= ~(0xFF << (y % 8));
-                lcdBuffer_[j+y/8][x+i] |= image.image[j*image.width + i] << (y % 8);
+                lcdBuffer_[j+y/8][x+i] |= image.data[j*image.width + i] << (y % 8);
 
                 if (((j*8 + y) < (height - 8)) && (0 != (y % 8)))
                 {
                     lcdBuffer_[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
-                    lcdBuffer_[j+y/8+1][x+i] |= image.image[j*image.width + i] >> (8 - y % 8);
+                    lcdBuffer_[j+y/8+1][x+i] |= image.data[j*image.width + i] >> (8 - y % 8);
                 }
             }
         }
     }
-    updateRequired_ = true;
+    updateRequired_.Give();
 }
 
 void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
 {
-    const Image arc = { progressArcArray[position], 152, 38, 32 };
+    const Image arc = { progressArcArray[position], 38, 32 };
     displayImage( x, y, arc );
 }
 
@@ -118,7 +124,7 @@ void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
             x += 6;
         }
     }
-    updateRequired_ = true;
+    updateRequired_.Give();
 }
 
 void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification )
@@ -203,22 +209,9 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
     }
 }
 
-void Lcd::Run()
-{
-    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 20 );
-
-    while (1)
-    {
-        DelayUntil( delayPeriod );
-
-        updateScreenContent();
-        updateBacklightIntensity();
-    }
-}
-
 void Lcd::setBacklightIntensity( const uint8_t intensity )
 {
-    appointedBacklightIntensity_ = intensity;
+    backlight_.setIntensity( intensity );
 }
 
 void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
@@ -240,30 +233,6 @@ void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
                 lcdBuffer_[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
             }
         }
-    }
-}
-
-void Lcd::updateBacklightIntensity()
-{
-    if (currentBacklightIntensity_ != appointedBacklightIntensity_)
-    {
-        if (currentBacklightIntensity_ > appointedBacklightIntensity_)
-        {
-            backlight_.setIntensity( --currentBacklightIntensity_ );
-        }
-        else
-        {
-            backlight_.setIntensity( ++currentBacklightIntensity_ );
-        }
-    }
-}
-
-void Lcd::updateScreenContent()
-{
-    if (updateRequired_)
-    {
-        lcdDriver_.transmit( &lcdBuffer_[0][0] );
-        updateRequired_ = false;
     }
 }
 

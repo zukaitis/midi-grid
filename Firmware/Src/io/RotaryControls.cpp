@@ -1,4 +1,4 @@
-#include "grid/RotaryControls.hpp"
+#include "io/RotaryControls.hpp"
 
 #include "grid/GridDriver.hpp"
 #include "ThreadConfigurations.h"
@@ -7,9 +7,6 @@
 
 #include <cstdlib>
 
-namespace grid
-{
-
 static const uint8_t kNumberOfControls = 2;
 static const uint8_t kNumberOfTimeSteps = 10;
 static const int8_t kNumberOfMicrostepsInStep = 4;
@@ -17,7 +14,7 @@ static const uint8_t kInputEventQueueSize = 8;
 
 static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
-RotaryControls::RotaryControls( GridDriver& gridDriver ) :
+RotaryControls::RotaryControls( grid::GridDriver& gridDriver ) :
         Thread( "RotaryControls", kRotaryControls.stackDepth, kRotaryControls.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
@@ -98,6 +95,4 @@ int8_t RotaryControls::calculateVelocityMultiplier( const uint32_t intervalMs ) 
     }
 
     return multiplier;
-}
-
 }

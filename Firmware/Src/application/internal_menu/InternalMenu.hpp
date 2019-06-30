@@ -26,13 +26,13 @@ namespace application
 class InternalMenu : public Application
 {
 public:
-    InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
+    InternalMenu( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
         lcd::Lcd& lcd, mcu::System& system );
 
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event );
+    void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
     void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
 
     void updateLcd() const;

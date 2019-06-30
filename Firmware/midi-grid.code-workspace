@@ -58,7 +58,8 @@
             "thread": "cpp",
             "cinttypes": "cpp",
             "typeindex": "cpp",
-            "variant": "cpp"
+            "variant": "cpp",
+            "usbd_desc.h": "c"
         }
     },
 }

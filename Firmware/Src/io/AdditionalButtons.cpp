@@ -1,16 +1,13 @@
-#include "grid/AdditionalButtons.hpp"
-#include "grid/GridDriver.hpp"
+#include "io/AdditionalButtons.hpp"
+#include "io/grid/GridDriver.hpp"
 #include "ticks.hpp"
 #include "ThreadConfigurations.h"
 
 #include <stdlib.h>
 
-namespace grid
-{
-
 static const uint8_t kInputEventQueueSize = 2;
 
-AdditionalButtons::AdditionalButtons( GridDriver& gridDriver ) :
+AdditionalButtons::AdditionalButtons( grid::GridDriver& gridDriver ) :
         Thread( "AdditionalButtons", kAdditionalButtons.stackDepth, kAdditionalButtons.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
@@ -61,5 +58,3 @@ void AdditionalButtons::Run()
         }
     }
 }
-
-} // namespace grid

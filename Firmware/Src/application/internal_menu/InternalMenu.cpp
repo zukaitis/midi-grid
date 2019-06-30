@@ -1,8 +1,8 @@
 #include "application/internal_menu/InternalMenu.hpp"
 
-#include "grid/Grid.hpp"
-#include "grid/AdditionalButtons.hpp"
-#include "lcd/Lcd.hpp"
+#include "io/grid/Grid.hpp"
+#include "io/AdditionalButtons.hpp"
+#include "io/lcd/Lcd.hpp"
 #include "system/System.hpp"
 
 #include "Types.h"
@@ -25,7 +25,7 @@ static const uint8_t kGridTestButtonX = 2;
 static const uint8_t kGridTestButtonY = 7;
 static const Color kGridTestButtonColor = {64U, 64U, 0U};
 
-InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, grid::AdditionalButtons& additionalButtons,
+InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
     lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
@@ -51,9 +51,9 @@ void InternalMenu::run( ApplicationThread& thread )
     enableAdditionalButtonInputHandler();
 }
 
-void InternalMenu::handleAdditionalButtonEvent( const grid::AdditionalButtons::Event event )
+void InternalMenu::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if ((grid::AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
+    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
     {
         switchApplication( applicationToFollow_ );
     }
