@@ -6,6 +6,7 @@
 #include "io/lcd/Lcd.hpp"
 
 #include <cstring>
+#include <etl/array.h>
 
 namespace application
 {
@@ -87,24 +88,23 @@ static const uint8_t kDrumLayout[kNumberOfColumns][kNumberOfRows] = {
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
         {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
 
-static const uint8_t kLaunchpadColorPaletteSize = 128;
-static const Color kLaunchpadColorPalette[kLaunchpadColorPaletteSize] = {
-        {0, 0, 0}, {8, 8, 8}, {32, 32, 32}, {64, 64, 64}, {64, 20, 18}, {64, 3, 0}, {23, 1, 0}, {7, 0, 0},
-        {64, 48, 25}, {64, 22, 0}, {23, 8, 0}, {10, 7, 0}, {64, 64, 9}, {64, 64, 0}, {23, 23, 0}, {6, 6, 0},
-        {33, 64, 11}, {17, 64, 0}, {6, 23, 0}, {5, 11, 0}, {14, 64, 11}, {0, 64, 0}, {0, 23, 0}, {0, 7, 0},
-        {13, 64, 18}, {0, 64, 0}, {0, 23, 0}, {0, 7, 0}, {13, 64, 32}, {0, 64, 15}, {0, 23, 6}, {0, 8, 4},
-        {12, 64, 45}, {0, 64, 37}, {0, 23, 13}, {0, 7, 4}, {15, 48, 64}, {0, 42, 64}, {0, 17, 21}, {0, 5, 7},
-        {17, 34, 64}, {0, 21, 64}, {0, 7, 23}, {0, 2, 7}, {18, 18, 64}, {0, 0, 64}, {0, 0, 23}, {0, 0, 7},
-        {33, 18, 64}, {21, 0, 64}, {6, 0, 26}, {3, 0, 13}, {64, 19, 64}, {64, 0, 64}, {23, 0, 23}, {7, 0, 7},
-        {64, 20, 34}, {64, 2, 21}, {23, 1, 7}, {9, 0, 5}, {64, 7, 0}, {39, 14, 0}, {31, 21, 0}, {16, 26, 0},
-        {0, 15, 0}, {0, 22, 13}, {0, 21, 32}, {0, 0, 64}, {0, 18, 20}, {7, 0, 53}, {32, 32, 32}, {9, 9, 9},
-        {64, 3, 0}, {47, 64, 0}, {43, 60, 0}, {22, 64, 0}, {0, 35, 0}, {0, 64, 31}, {0, 42, 64}, {0, 7, 64},
-        {14, 0, 64}, {30, 0, 64}, {46, 6, 32}, {17, 9, 0}, {64, 19, 0}, {33, 57, 0}, {26, 64, 0}, {0, 64, 0},
-        {0, 64, 0}, {18, 64, 25}, {0, 64, 51}, {21, 34, 64}, {10, 20, 51}, {33, 31, 60}, {53, 4, 64}, {64, 2, 23},
-        {64, 32, 0}, {47, 45, 0}, {35, 64, 0}, {33, 24, 0}, {14, 11, 0}, {4, 20, 2}, {0, 21, 14}, {5, 5, 11},
-        {5, 8, 23}, {27, 16, 6}, {44, 2, 0}, {64, 21, 14}, {56, 27, 0}, {64, 64, 0}, {39, 57, 0}, {24, 46, 0},
-        {7, 7, 13}, {56, 64, 21}, {30, 64, 47}, {38, 38, 64}, {35, 25, 64}, {17, 17, 17}, {30, 30, 30}, {56, 64, 64},
-        {42, 2, 0}, {14, 0, 0}, {0, 53, 0}, {0, 17, 0}, {47, 45, 0}, {16, 13, 0}, {46, 24, 0}, {19, 6, 0} };
+static const etl::array<Color, 128> kLaunchpadColorPalette = {
+    Color(0, 0, 0), Color(8, 8, 8), Color(32, 32, 32), Color(64, 64, 64), Color(64, 20, 18), Color(64, 3, 0), Color(23, 1, 0), Color(7, 0, 0),
+    Color(64, 48, 25), Color(64, 22, 0), Color(23, 8, 0), Color(10, 7, 0), Color(64, 64, 9), Color(64, 64, 0), Color(23, 23, 0), Color(6, 6, 0),
+    Color(33, 64, 11), Color(17, 64, 0), Color(6, 23, 0), Color(5, 11, 0), Color(14, 64, 11), Color(0, 64, 0), Color(0, 23, 0), Color(0, 7, 0),
+    Color(13, 64, 18), Color(0, 64, 0), Color(0, 23, 0), Color(0, 7, 0), Color(13, 64, 32), Color(0, 64, 15), Color(0, 23, 6), Color(0, 8, 4),
+    Color(12, 64, 45), Color(0, 64, 37), Color(0, 23, 13), Color(0, 7, 4), Color(15, 48, 64), Color(0, 42, 64), Color(0, 17, 21), Color(0, 5, 7),
+    Color(17, 34, 64), Color(0, 21, 64), Color(0, 7, 23), Color(0, 2, 7), Color(18, 18, 64), Color(0, 0, 64), Color(0, 0, 23), Color(0, 0, 7),
+    Color(33, 18, 64), Color(21, 0, 64), Color(6, 0, 26), Color(3, 0, 13), Color(64, 19, 64), Color(64, 0, 64), Color(23, 0, 23), Color(7, 0, 7),
+    Color(64, 20, 34), Color(64, 2, 21), Color(23, 1, 7), Color(9, 0, 5), Color(64, 7, 0), Color(39, 14, 0), Color(31, 21, 0), Color(16, 26, 0),
+    Color(0, 15, 0), Color(0, 22, 13), Color(0, 21, 32), Color(0, 0, 64), Color(0, 18, 20), Color(7, 0, 53), Color(32, 32, 32), Color(9, 9, 9),
+    Color(64, 3, 0), Color(47, 64, 0), Color(43, 60, 0), Color(22, 64, 0), Color(0, 35, 0), Color(0, 64, 31), Color(0, 42, 64), Color(0, 7, 64),
+    Color(14, 0, 64), Color(30, 0, 64), Color(46, 6, 32), Color(17, 9, 0), Color(64, 19, 0), Color(33, 57, 0), Color(26, 64, 0), Color(0, 64, 0),
+    Color(0, 64, 0), Color(18, 64, 25), Color(0, 64, 51), Color(21, 34, 64), Color(10, 20, 51), Color(33, 31, 60), Color(53, 4, 64), Color(64, 2, 23),
+    Color(64, 32, 0), Color(47, 45, 0), Color(35, 64, 0), Color(33, 24, 0), Color(14, 11, 0), Color(4, 20, 2), Color(0, 21, 14), Color(5, 5, 11),
+    Color(5, 8, 23), Color(27, 16, 6), Color(44, 2, 0), Color(64, 21, 14), Color(56, 27, 0), Color(64, 64, 0), Color(39, 57, 0), Color(24, 46, 0),
+    Color(7, 7, 13), Color(56, 64, 21), Color(30, 64, 47), Color(38, 38, 64), Color(35, 25, 64), Color(17, 17, 17), Color(30, 30, 30), Color(56, 64, 64),
+    Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
 Launchpad::Launchpad( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
     RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
@@ -159,48 +159,48 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
     do
     {
         Color color = grid_.getLedColor( kDeviceControlColumn, kSession.positionY );
-        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[21] ))
+        if (kLaunchpadColorPalette[21] == color)
         {
             mode = Launchpad95Mode_SESSION;
             break;
         }
 
         color = grid_.getLedColor( kDeviceControlColumn, kUser1.positionY );
-        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[37] ))
+        if (kLaunchpadColorPalette[37] == color)
         {
             mode = Launchpad95Mode_INSTRUMENT;
             break;
         }
-        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[48] ))
+        else if (kLaunchpadColorPalette[48] == color)
         {
             mode = Launchpad95Mode_DEVICE_CONTROLLER;
             break;
         }
-        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[45] ))
+        else if (kLaunchpadColorPalette[45] == color)
         {
             mode = Launchpad95Mode_USER1;
             break;
         }
 
         color = grid_.getLedColor( kDeviceControlColumn, kUser2.positionY );
-        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[53] ))
+        if (kLaunchpadColorPalette[53] == color)
         {
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
             break;
         }
-        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[9] ))
+        else if (kLaunchpadColorPalette[9] == color)
         {
             mode = Launchpad95Mode_MELODIC_SEQUENCER;
             break;
         }
-        else if (grid_.areColorsEqual( color, kLaunchpadColorPalette[45] ))
+        else if (kLaunchpadColorPalette[45] == color)
         {
             mode = Launchpad95Mode_USER2;
             break;
         }
 
         color = grid_.getLedColor( kDeviceControlColumn, kMixer.positionY );
-        if (grid_.areColorsEqual( color, kLaunchpadColorPalette[29] ))
+        if (kLaunchpadColorPalette[29] == color)
         {
             mode = Launchpad95Mode_MIXER;
             break;
@@ -219,14 +219,14 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     {
         case Launchpad95Mode_INSTRUMENT:
             color = grid_.getLedColor( kSubmodeColumn, 7 );
-            if (grid_.areColorsEqual( color, kLaunchpadColorPalette[9] ))
+            if (kLaunchpadColorPalette[9] == color)
             {
                 submode = Launchpad95Submode_SCALE;
             }
             break;
         case Launchpad95Mode_DRUM_STEP_SEQUENCER:
             color = grid_.getLedColor( kSubmodeColumn, 7 );
-            if (grid_.areColorsEqual( color, kLaunchpadColorPalette[5] ))
+            if (kLaunchpadColorPalette[5] == color)
             {
                 submode = Launchpad95Submode_SCALE;
             }
@@ -235,25 +235,25 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
             do
             {
                 color = grid_.getLedColor( kSubmodeColumn, 7 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                if (kLaunchpadColorPalette[31] == color)
                 {
                     submode = Launchpad95Submode_VOLUME;
                     break;
                 }
                 color = grid_.getLedColor( kSubmodeColumn, 6 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                if (kLaunchpadColorPalette[31] == color)
                 {
                     submode = Launchpad95Submode_PAN;
                     break;
                 }
                 color = grid_.getLedColor( kSubmodeColumn, 5 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                if (kLaunchpadColorPalette[31] == color)
                 {
                     submode = Launchpad95Submode_SEND_A;
                     break;
                 }
                 color = grid_.getLedColor( kSubmodeColumn, 4 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[31] ))
+                if (kLaunchpadColorPalette[31] == color)
                 {
                     submode = Launchpad95Submode_SEND_B;
                 }
@@ -263,19 +263,19 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
             do
             {
                 color = grid_.getLedColor( kSubmodeColumn, 3 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[29] ))
+                if (kLaunchpadColorPalette[29] == color)
                 {
                     submode = Launchpad95Submode_LENGTH;
                     break;
                 }
                 color = grid_.getLedColor( kSubmodeColumn, 2 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[48] ))
+                if (kLaunchpadColorPalette[48] == color)
                 {
                     submode = Launchpad95Submode_OCTAVE;
                     break;
                 }
                 color = grid_.getLedColor( kSubmodeColumn, 1 );
-                if (grid_.areColorsEqual( color, kLaunchpadColorPalette[37] ))
+                if (kLaunchpadColorPalette[37] == color)
                 {
                     submode = Launchpad95Submode_VELOCITY;
                 }
@@ -484,7 +484,7 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
 
     if (ledPositionCorrect)
     {
-        if (velocity < kLaunchpadColorPaletteSize)
+        if (velocity < kLaunchpadColorPalette.size())
         {
             grid::LedLightingType lightingType = grid::LedLightingType_LIGHT;
             if (channel <= static_cast<uint8_t>(grid::LedLightingType_PULSE))

@@ -38,15 +38,6 @@ Grid::~Grid()
 {
 }
 
-bool Grid::areColorsEqual( const Color& color1, const Color& color2 ) const
-{
-    bool equal = true;
-    equal &= (color1.Red == color2.Red);
-    equal &= (color1.Green == color2.Green);
-    equal &= (color1.Blue == color2.Blue);
-    return equal;
-}
-
 void Grid::discardAllPendingButtonEvents()
 {
     buttonInputEvents_.Flush();
@@ -96,12 +87,12 @@ Color Grid::getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY 
     return led_[ledPositionX][ledPositionY].color;
 }
 
-void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color )
 {
     setLed( ledPositionX, ledPositionY, color, LedLightingType_LIGHT );
 }
 
-void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType )
+void Grid::setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color, const LedLightingType lightingType )
 {
     // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
     if (LedLightingType_FLASH == led_[ledPositionX][ledPositionY].lightingType)
@@ -170,7 +161,7 @@ GridLedOutput::~GridLedOutput()
 {
 }
 
-void GridLedOutput::set( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const
+void GridLedOutput::set( uint8_t ledPositionX, uint8_t ledPositionY, const Color& color ) const
 {
     // evaluate if led is mounted under pad (more intensity), or to illuminate directly (less intensity)
     const bool directLed = (ledPositionX >= kNumberOfPadColumns);
@@ -214,7 +205,7 @@ void FlashingLeds::Run()
     }
 }
 
-void FlashingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color1, const Color color2 )
+void FlashingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color1, const Color& color2 )
 {
     led_[numberOfFlashingLeds_].positionX = ledPositionX;
     led_[numberOfFlashingLeds_].positionY = ledPositionY;
@@ -278,23 +269,19 @@ void PulsingLeds::Run()
             if (ledPulseStepNumber <= 3)
             {
                 // y = x / 4
-                dimmedColor.Red = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColor.Green = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
-                dimmedColor.Blue = (dimmedColor.Red * (ledPulseStepNumber + 1)) / 4;
+                dimmedColor = (dimmedColor * (ledPulseStepNumber + 1)) / 4;
             }
             else
             {
                 // y = -x / 16
-                dimmedColor.Red = (dimmedColor.Red * (19 - ledPulseStepNumber)) / 16;
-                dimmedColor.Green = (dimmedColor.Green * (19 - ledPulseStepNumber)) / 16;
-                dimmedColor.Blue = (dimmedColor.Blue * (19 - ledPulseStepNumber)) / 16;
+                dimmedColor = (dimmedColor * (19 - ledPulseStepNumber)) / 16;
             }
             ledOutput_.set( led_[i].positionX, led_[i].positionY, dimmedColor );
         }
     }
 }
 
-void PulsingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color )
+void PulsingLeds::add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color )
 {
     //save current color to have an alternate
     led_[numberOfPulsingLeds_].positionX = ledPositionX;

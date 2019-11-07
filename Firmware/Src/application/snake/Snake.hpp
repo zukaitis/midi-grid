@@ -2,7 +2,7 @@
 #define APPLICATION_SNAKE_HPP_
 
 #include "application/Application.hpp"
-#include "Types.h"
+#include "Color.h"
 #include "thread.hpp"
 
 namespace grid

@@ -160,21 +160,21 @@ void GridDriver::resetSwitchInputUpdatedFlag()
     switchInputUpdated_ = false;
 }
 
-void GridDriver::setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color color )
+void GridDriver::setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color& color )
 {
     ledPositionX = (ledPositionX + numberOfVerticalSegments - kTimerFrameOffset) % numberOfVerticalSegments;
 
     if (directLed)
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[color.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getRed()];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getGreen()];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getBlue()];
     }
     else
     {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Red];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Green];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.Blue];
+        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getRed()];
+        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getGreen()];
+        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getBlue()];
     }
 }
 

@@ -1,7 +1,7 @@
 #ifndef GRID_GRIDDRIVER_HPP_
 #define GRID_GRIDDRIVER_HPP_
 
-#include "Types.h"
+#include "Color.h"
 #include "thread.hpp"
 
 namespace grid
@@ -74,7 +74,7 @@ public:
     bool isSwitchInputUpdated() const;
     void resetSwitchInputUpdatedFlag();
 
-    void setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color color );
+    void setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color& color );
     void start();
     void turnAllLedsOff();
 

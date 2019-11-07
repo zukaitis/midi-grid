@@ -2,7 +2,7 @@
 #define APPLICATION_GRID_TEST_HPP_
 
 #include "application/Application.hpp"
-#include "Types.h"
+#include "Color.h"
 #include "thread.hpp"
 
 namespace grid
@@ -39,7 +39,7 @@ private:
     void displayIntroAnimation( ApplicationThread& thread );
     void displayWaitingForMidi();
 
-    Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY );
+    Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Color getRandomColor();
 
     grid::Grid& grid_;

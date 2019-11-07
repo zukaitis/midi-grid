@@ -1,7 +1,8 @@
 #ifndef GRID_SWITCHES_HPP_
 #define GRID_SWITCHES_HPP_
 
-#include "Types.h"
+#include "Color.h"
+#include "ButtonAction.h"
 #include "thread.hpp"
 #include "queue.hpp"
 

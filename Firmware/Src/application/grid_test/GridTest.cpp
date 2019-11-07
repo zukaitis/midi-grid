@@ -8,6 +8,7 @@
 #include "ticks.hpp"
 
 #include <cstdlib>
+#include <etl/array.h>
 
 namespace application
 {
@@ -49,7 +50,7 @@ void GridTest::handleAdditionalButtonEvent( const AdditionalButtons::Event event
 
 void GridTest::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
-    Color color = { 0, 0, 0 };
+    Color color( 0, 0, 0 );
     if (ButtonAction_PRESSED == event.action)
     {
         color = getRandomColor();
@@ -91,81 +92,34 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
 }
 
 /* calculates color value according to led position */
-Color GridTest::getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY )
+Color GridTest::getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const
 {
-    Color color = {0, 0, 0};
-
-    color.Red = ((7 - std::max( ledPositionY, static_cast<uint8_t>(7U - ledPositionX) )) * 64) / 7;
-    color.Green = (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7;
-    color.Blue = ((7 - std::max( ledPositionX, static_cast<uint8_t>(7U - ledPositionY) )) * 64) / 7;
+    const Color color(
+        ((7 - std::max( ledPositionY, static_cast<uint8_t>(7U - ledPositionX) )) * 64) / 7,
+        (abs( 7 - ledPositionX - ledPositionY ) * 64) / 7,
+        ((7 - std::max( ledPositionX, static_cast<uint8_t>(7U - ledPositionY) )) * 64) / 7 );
 
     return color;
 }
 
 Color GridTest::getRandomColor()
 {
-    enum FullyLitColor
-    {
-        kRed = 0,
-        kGreen,
-        kBlue,
-        kRedAndGreen,
-        kRedAndBlue,
-        kGreenAndBlue,
-        kNumberOfVariants
-    };
+    const etl::array<Color, 13> color = {
+    color::RED,
+    color::GREEN,
+    color::BLUE,
+    color::YELLOW,
+    color::MAGENTA,
+    color::CYAN,
+    color::WHITE,
+    color::ORANGE,
+    color::SPRING_GREEN,
+    color::TURQUOISE,
+    color::OCEAN,
+    color::VIOLET,
+    color::RASPBERRY };
 
-    const FullyLitColor fullyLitColor = static_cast<FullyLitColor>(std::rand() % kNumberOfVariants);
-    int8_t partlyLitColor1 = (std::rand() % (64 + 32 + 1)) - 32;
-    if (partlyLitColor1 < 0)
-    {
-        partlyLitColor1 = 0;
-    }
-    int8_t partlyLitColor2 = (std::rand() % (64 + 32 + 1)) - 32;
-    if (partlyLitColor2 < 0)
-    {
-        partlyLitColor2 = 0;
-    }
-
-    Color color = { 0, 0, 0 };
-
-    switch (fullyLitColor)
-    {
-        case kRed:
-            color.Red = 64;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kGreen:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = 64;
-            color.Blue = static_cast<uint8_t>(partlyLitColor2);
-            break;
-        case kBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = static_cast<uint8_t>(partlyLitColor2);
-            color.Blue = 64;
-            break;
-        case kRedAndGreen:
-            color.Red = 64;
-            color.Green = 64;
-            color.Blue = static_cast<uint8_t>(partlyLitColor1);
-            break;
-        case kRedAndBlue:
-            color.Red = 64;
-            color.Green = static_cast<uint8_t>(partlyLitColor1);
-            color.Blue = 64;
-            break;
-        case kGreenAndBlue:
-            color.Red = static_cast<uint8_t>(partlyLitColor1);
-            color.Green = 64;
-            color.Blue = 64;
-            break;
-        default:
-            break;
-    }
-
-    return color;
+    return color[std::rand() % color.size()];
 }
 
 void GridTest::displayWaitingForMidi()

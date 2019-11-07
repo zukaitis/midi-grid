@@ -1,7 +1,8 @@
 #ifndef GRID_BUTTONS_HPP_
 #define GRID_BUTTONS_HPP_
 
-#include "Types.h"
+#include "Color.h"
+#include "ButtonAction.h"
 
 #include "thread.hpp"
 #include "queue.hpp"
@@ -39,7 +40,7 @@ public:
     GridLedOutput( GridDriver& gridDriver );
     ~GridLedOutput();
 
-    void set( uint8_t ledPositionX, uint8_t ledPositionY, const Color color ) const;
+    void set( uint8_t ledPositionX, uint8_t ledPositionY, const Color& color ) const;
 
 private:
     GridDriver& gridDriver_;
@@ -51,7 +52,7 @@ public:
     FlashingLeds( GridLedOutput& gridLedOutput );
     ~FlashingLeds();
 
-    void add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color1, const Color color2 );
+    void add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color1, const Color& color2 );
     void remove( const uint8_t ledPositionX, const uint8_t ledPositionY );
 
 private:
@@ -76,7 +77,7 @@ public:
     PulsingLeds( GridLedOutput& gridLedOutput );
     ~PulsingLeds();
 
-    void add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color );
+    void add( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color );
     void remove( const uint8_t ledPositionX, const uint8_t ledPositionY );
 
 private:
@@ -114,15 +115,13 @@ public:
         uint8_t positionY;
     };
 
-    bool areColorsEqual( const Color& color1, const Color& color2 ) const;
-
     void discardAllPendingButtonEvents();
     bool waitForButtonEvent( ButtonEvent& event );
     Color getLedColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Color getRandomColor();
 
-    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color );
-    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color color, const LedLightingType lightingType );
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color );
+    void setLed( const uint8_t ledPositionX, const uint8_t ledPositionY, const Color& color, const LedLightingType lightingType );
 
     void turnAllLedsOff();
 

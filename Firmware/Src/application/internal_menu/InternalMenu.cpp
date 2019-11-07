@@ -5,25 +5,25 @@
 #include "io/lcd/Lcd.hpp"
 #include "system/System.hpp"
 
-#include "Types.h"
+#include "Color.h"
 
 namespace application {
 
 static const uint8_t kBootloaderButtonX = 7;
 static const uint8_t kBootloaderButtonY = 0;
-static const Color kBootloaderButtonColor = {64U, 0U, 0U};
+static const Color kBootloaderButtonColor = color::RED;
 
 static const uint8_t kSnakeButtonX = 0;
 static const uint8_t kSnakeButtonY = 7;
-static const Color kSnakeButtonColor = {0U, 64U, 0U};
+static const Color kSnakeButtonColor = color::SPRING_GREEN;
 
 static const uint8_t kLaunchpadButtonX = 1;
 static const uint8_t kLaunchpadButtonY = 7;
-static const Color kLaunchpadButtonColor = {0U, 64U, 64U};
+static const Color kLaunchpadButtonColor = color::ORANGE;
 
 static const uint8_t kGridTestButtonX = 2;
 static const uint8_t kGridTestButtonY = 7;
-static const Color kGridTestButtonColor = {64U, 64U, 0U};
+static const Color kGridTestButtonColor = color::YELLOW;
 
 InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
     lcd::Lcd& lcd, mcu::System& system ):

@@ -3,7 +3,7 @@
 
 #include "application/Application.hpp"
 #include "application/launchpad/LcdGui.hpp"
-#include "Types.h"
+#include "Color.h"
 
 namespace grid
 {

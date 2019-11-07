@@ -16,9 +16,9 @@ static const uint16_t stepPeriodDecreaseMs = 16;
 static const Coordinates initialSnake[2] = { {7, 1}, {7, 0} };
 static const uint8_t initialSnakeLength = 2;
 
-static const Color headColor = { 64U, 0, 0 };
-static const Color initialBodyColor = { 0, 64U, 0U }; 
-static const Color foodColor { 64U, 64U, 0U };
+static const Color headColor = color::RED;
+static const Color initialBodyColor = color::GREEN; 
+static const Color foodColor = color::YELLOW;
 
 static const Coordinates directionVector[numberOfDirections] = { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
 
@@ -211,10 +211,8 @@ void Snake::feed( const Coordinates headCoords )
 
     // increase speed and change color, when feeding
     stepPeriodMs_ = stepPeriodMs_ - stepPeriodDecreaseMs;
-    if (bodyColor_.Blue < 64U) // turn cyan
-    {
-        bodyColor_.Blue++;
-    }
+
+    bodyColor_ = bodyColor_ + Color( 0, 0, 1 );
 }
 
 void Snake::move( const Coordinates headCoords )

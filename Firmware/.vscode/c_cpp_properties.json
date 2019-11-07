@@ -20,7 +20,8 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Middlewares/USBMIDI/Inc",
                 "${workspaceFolder}/Src",
-                "${workspaceFolder}/Drivers/FreeRTOS/include"
+                "${workspaceFolder}/Drivers/FreeRTOS/include",
+                "/opt/etl/include"
             ]
         }
     ],
