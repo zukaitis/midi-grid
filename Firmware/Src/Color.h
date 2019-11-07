@@ -76,12 +76,11 @@ public:
         return quotient;
     }
 
+    static const uint8_t maxValue = 64;
 private:
     uint8_t red_;
     uint8_t green_;
     uint8_t blue_;
-
-    static const uint8_t maxValue = 64;
 };
 
 namespace color
