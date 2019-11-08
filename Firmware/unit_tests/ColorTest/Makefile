@@ -9,6 +9,7 @@ G++_FLAGS = -c -Wall -I $(GOOGLE_TEST_INCLUDE) -I $(SOURCE_DIR)
 LD_FLAGS = -L /usr/src/googletest/googletest/lib/ -l $(GOOGLE_TEST_LIB) -l pthread
 
 OBJECTS = ColorTest.o
+OBJECTS += Color.o
 TARGET = ColorTest
 
 all: $(TARGET)
@@ -17,6 +18,9 @@ $(TARGET): $(OBJECTS)
 	g++ -o $(TARGET) $(OBJECTS) $(LD_FLAGS)
 
 %.o : %.cpp
+	$(G++) $(G++_FLAGS) $<
+
+Color.o : $(SOURCE_DIR)/types/Color.cpp
 	$(G++) $(G++_FLAGS) $<
 
 clean:

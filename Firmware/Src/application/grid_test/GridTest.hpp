@@ -2,7 +2,7 @@
 #define APPLICATION_GRID_TEST_HPP_
 
 #include "application/Application.hpp"
-#include "Color.h"
+#include "types/Color.h"
 #include "thread.hpp"
 
 namespace grid

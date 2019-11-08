@@ -1,7 +1,7 @@
 #ifndef GRID_GRIDDRIVER_HPP_
 #define GRID_GRIDDRIVER_HPP_
 
-#include "Color.h"
+#include "types/Color.h"
 #include "thread.hpp"
 
 namespace grid

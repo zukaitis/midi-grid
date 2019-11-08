@@ -21,7 +21,8 @@
                 "${workspaceFolder}/Middlewares/USBMIDI/Inc",
                 "${workspaceFolder}/Src",
                 "${workspaceFolder}/Drivers/FreeRTOS/include",
-                "/opt/etl/include"
+                "/opt/etl/include",
+                "/usr/src/googletest/googletest/include"
             ]
         }
     ],

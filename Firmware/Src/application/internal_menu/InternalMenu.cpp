@@ -5,7 +5,7 @@
 #include "io/lcd/Lcd.hpp"
 #include "system/System.hpp"
 
-#include "Color.h"
+#include "types/Color.h"
 
 namespace application {
 
