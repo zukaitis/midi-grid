@@ -66,7 +66,7 @@ void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
     if (gameInProgress_)
     {
-        if ((ButtonAction_PRESSED == event.action) && (grid::arrowButtonPositionX == event.positionX))
+        if ((ButtonAction::PRESSED == event.action) && (grid::arrowButtonPositionX == event.positionX))
         {
             switch (event.positionY)
             {
@@ -103,7 +103,7 @@ void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
     else
     {
         // only restart game, when non-arrow button is released
-        if ((ButtonAction_RELEASED == event.action) && (grid::arrowButtonPositionX != event.positionX))
+        if ((ButtonAction::RELEASED == event.action) && (grid::arrowButtonPositionX != event.positionX))
         {
             startNewGame();
         }
@@ -112,7 +112,7 @@ void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 
 void Snake::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction::PRESSED == event.action))
     {
         applicationEnded_ = true;
         switchApplication( ApplicationIndex_INTERNAL_MENU );

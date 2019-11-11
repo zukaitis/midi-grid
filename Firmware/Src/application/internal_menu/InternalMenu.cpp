@@ -53,7 +53,7 @@ void InternalMenu::run( ApplicationThread& thread )
 
 void InternalMenu::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
 {
-    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
+    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction::RELEASED == event.action))
     {
         switchApplication( applicationToFollow_ );
     }
@@ -61,7 +61,7 @@ void InternalMenu::handleAdditionalButtonEvent( const AdditionalButtons::Event e
 
 void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
 {
-    if (ButtonAction_PRESSED == event.action)
+    if (ButtonAction::PRESSED == event.action)
     {
         if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionY))
         {

@@ -49,7 +49,7 @@ void AdditionalButtons::Run()
                 if (registeredButtonInput_[buttonIndex] != buttonInput)
                 {
                     Event event = {};
-                    event.action = buttonInput ? ButtonAction_RELEASED : ButtonAction_PRESSED; // active low
+                    event.action = buttonInput ? ButtonAction::RELEASED : ButtonAction::PRESSED; // active low
                     event.button = static_cast<Button>(buttonIndex);
                     registeredButtonInput_[buttonIndex] = buttonInput;
                     inputEvents_.Enqueue( &event );
