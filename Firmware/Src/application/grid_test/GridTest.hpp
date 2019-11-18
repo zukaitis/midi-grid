@@ -7,7 +7,7 @@
 
 namespace grid
 {
-    class Grid;
+    class GridInterface;
     class AdditionalButtons;
 }
 
@@ -27,13 +27,13 @@ namespace application
 class GridTest : public Application
 {
 public:
-    GridTest( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
+    GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
-    void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
+    void handleGridButtonEvent( const grid::ButtonEvent event );
     void handleMidiPacketAvailable();
 
     void displayIntroAnimation( ApplicationThread& thread );
@@ -42,7 +42,7 @@ private:
     Color getIntroAnimationColor( const uint8_t ledPositionX, const uint8_t ledPositionY ) const;
     Color getRandomColor();
 
-    grid::Grid& grid_;
+    grid::GridInterface& grid_;
     lcd::Lcd& lcd_;
 };
 

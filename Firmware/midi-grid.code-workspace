@@ -59,7 +59,18 @@
             "cinttypes": "cpp",
             "typeindex": "cpp",
             "variant": "cpp",
-            "usbd_desc.h": "c"
+            "usbd_desc.h": "c",
+            "forward_list": "cpp",
+            "unordered_set": "cpp",
+            "algorithm": "cpp",
+            "iterator": "cpp",
+            "map": "cpp",
+            "memory_resource": "cpp",
+            "random": "cpp",
+            "set": "cpp",
+            "string": "cpp",
+            "future": "cpp",
+            "iostream": "cpp"
         }
     },
 }

@@ -5,7 +5,7 @@
 #include "semaphore.hpp"
 
 #include "io/AdditionalButtons.hpp"
-#include "io/grid/Grid.hpp"
+#include "io/grid/GridInterface.h"
 #include "io/RotaryControls.hpp"
 #include "io/usb/UsbMidi.hpp"
 
@@ -66,7 +66,7 @@ public:
 
     virtual void run( ApplicationThread& thread );
     virtual void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
-    virtual void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
+    virtual void handleGridButtonEvent( const grid::ButtonEvent event );
     virtual void handleRotaryControlEvent( const RotaryControls::Event event );
     virtual void handleMidiPacket( const midi::MidiPacket packet );
     virtual void handleMidiPacketAvailable();
@@ -87,7 +87,7 @@ private:
 class ApplicationController : private freertos::Thread
 {
 public:
-    ApplicationController( AdditionalButtons& additionalButtons, grid::Grid& grid, RotaryControls& rotaryControls,
+    ApplicationController( AdditionalButtons& additionalButtons, grid::GridInterface& grid, RotaryControls& rotaryControls,
         midi::UsbMidi& usbMidi );
 
     void initialize( Application** const applicationList );
@@ -103,7 +103,7 @@ public:
 
     void handleInput( const bool dummy );
     void handleInput( const AdditionalButtons::Event event );
-    void handleInput( const grid::Grid::ButtonEvent event );
+    void handleInput( const grid::ButtonEvent event );
     void handleInput( const RotaryControls::Event event );
     void handleInput( const midi::MidiPacket packet );
     void runApplicationThread( ApplicationThread& thread );
@@ -117,7 +117,7 @@ private:
     static bool applicationFinished_;
 
     InputHandler<AdditionalButtons&, AdditionalButtons::Event> additionalButtonInputHandler_;
-    InputHandler<grid::Grid&, grid::Grid::ButtonEvent> gridInputHandler_;
+    InputHandler<grid::GridInterface&, grid::ButtonEvent> gridInputHandler_;
     InputHandler<RotaryControls&, RotaryControls::Event> rotaryControlInputHandler_;
     InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
     InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;

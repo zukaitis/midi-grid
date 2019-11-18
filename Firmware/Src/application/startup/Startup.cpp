@@ -1,6 +1,6 @@
 #include "application/startup/Startup.hpp"
 
-#include "io/grid/GridDriver.hpp"
+#include "hardware/grid/GridDriver.h"
 #include "io/lcd/Lcd.hpp"
 #include "application/images.h"
 #include "system/System.hpp"
@@ -10,7 +10,7 @@ namespace application
 
 static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
 
-Startup::Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system ):
+Startup::Startup( ApplicationController& applicationController, hardware::grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         gridDriver_( gridDriver ),
         lcd_( lcd ),

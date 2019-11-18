@@ -2,8 +2,8 @@
 #define MAIN_HPP_
 
 #include "system/System.hpp"
-#include "io/grid/GridDriver.hpp"
-#include "io/grid/Grid.hpp"
+#include "hardware/grid/GridDriver.h"
+#include "io/grid/Grid.h"
 #include "io/AdditionalButtons.hpp"
 #include "io/RotaryControls.hpp"
 #include "io/lcd/Lcd.hpp"
@@ -32,7 +32,7 @@ private:
 
     mcu::System system_;
     mcu::GlobalInterrupts globalInterrupts_;
-    grid::GridDriver gridDriver_;
+    hardware::grid::GridDriver gridDriver_;
     grid::Grid grid_;
     AdditionalButtons additionalButtons_;
     RotaryControls rotaryControls_;

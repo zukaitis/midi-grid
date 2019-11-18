@@ -1,6 +1,6 @@
 #include "application/internal_menu/InternalMenu.hpp"
 
-#include "io/grid/Grid.hpp"
+#include "io/grid/GridInterface.h"
 #include "io/AdditionalButtons.hpp"
 #include "io/lcd/Lcd.hpp"
 #include "system/System.hpp"
@@ -11,21 +11,25 @@ namespace application {
 
 static const uint8_t kBootloaderButtonX = 7;
 static const uint8_t kBootloaderButtonY = 0;
+static const Coordinates kBootloaderButton = {7,0};
 static const Color kBootloaderButtonColor = color::RED;
 
 static const uint8_t kSnakeButtonX = 0;
 static const uint8_t kSnakeButtonY = 7;
+static const Coordinates kSnakeButton = {0,7};
 static const Color kSnakeButtonColor = color::SPRING_GREEN;
 
 static const uint8_t kLaunchpadButtonX = 1;
 static const uint8_t kLaunchpadButtonY = 7;
+static const Coordinates kLaunchpadButton = {1,7};
 static const Color kLaunchpadButtonColor = color::ORANGE;
 
 static const uint8_t kGridTestButtonX = 2;
 static const uint8_t kGridTestButtonY = 7;
+static const Coordinates kGridTestButton = {2,7};
 static const Color kGridTestButtonColor = color::YELLOW;
 
-InternalMenu::InternalMenu( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
+InternalMenu::InternalMenu( ApplicationController& applicationController, grid::GridInterface& grid, AdditionalButtons& additionalButtons,
     lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
@@ -40,10 +44,10 @@ void InternalMenu::run( ApplicationThread& thread )
     updateLcd();
 
     grid_.turnAllLedsOff();
-    grid_.setLed( kBootloaderButtonX, kBootloaderButtonY, kBootloaderButtonColor );
-    grid_.setLed( kSnakeButtonX, kSnakeButtonY, kSnakeButtonColor );
-    grid_.setLed( kLaunchpadButtonX, kLaunchpadButtonY, kLaunchpadButtonColor );
-    grid_.setLed( kGridTestButtonX, kGridTestButtonY, kGridTestButtonColor );
+    grid_.setLed( {kBootloaderButtonX, kBootloaderButtonY}, kBootloaderButtonColor );
+    grid_.setLed( {kSnakeButtonX, kSnakeButtonY}, kSnakeButtonColor );
+    grid_.setLed( {kLaunchpadButtonX, kLaunchpadButtonY}, kLaunchpadButtonColor );
+    grid_.setLed( {kGridTestButtonX, kGridTestButtonY}, kGridTestButtonColor );
 
     applicationToFollow_ = ApplicationIndex_PREVIOUS;
 
@@ -59,24 +63,24 @@ void InternalMenu::handleAdditionalButtonEvent( const AdditionalButtons::Event e
     }
 }
 
-void InternalMenu::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent event )
 {
     if (ButtonAction_PRESSED == event.action)
     {
-        if ((kBootloaderButtonX == event.positionX) && (kBootloaderButtonY == event.positionY))
+        if ((kBootloaderButton == event.coordinates))
         {
             // reset into DFU bootloader
             system_.resetIntoBootloader();
         }
-        else if ((kSnakeButtonX == event.positionX) && (kSnakeButtonY == event.positionY))
+        else if (kSnakeButton == event.coordinates)
         {
             applicationToFollow_ = ApplicationIndex_SNAKE;
         }
-        else if ((kLaunchpadButtonX == event.positionX) && (kLaunchpadButtonY == event.positionY))
+        else if (kLaunchpadButton == event.coordinates)
         {
             applicationToFollow_ = ApplicationIndex_LAUNCHPAD;
         }
-        else if ((kGridTestButtonX == event.positionX) && (kGridTestButtonY == event.positionY))
+        else if (kGridTestButton == event.coordinates)
         {
             applicationToFollow_ = ApplicationIndex_GRID_TEST;
         }

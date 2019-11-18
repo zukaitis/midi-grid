@@ -16,8 +16,8 @@ int main(void)
 Main::Main() :
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
-        gridDriver_( grid::GridDriver() ),
-        grid_( grid::Grid( gridDriver_, globalInterrupts_ ) ),
+        gridDriver_( hardware::grid::GridDriver() ),
+        grid_( grid::Grid( gridDriver_, gridDriver_, globalInterrupts_ ) ),
         additionalButtons_( AdditionalButtons( gridDriver_ ) ),
         rotaryControls_( RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),

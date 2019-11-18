@@ -1,8 +1,12 @@
-#include "io/grid/GridDriver.hpp"
+#include "hardware/grid/GridDriver.h"
 #include "system/gpio_definitions.h"
+#include "types/Coordinates.h"
+#include "thread.hpp"
 
 #include "stm32f4xx_hal.h"
 
+namespace hardware
+{
 namespace grid
 {
 
@@ -13,55 +17,17 @@ static const uint32_t kBaseInterruptClockPeriod = 48000; // 500us
 static const uint32_t kPwmClockPrescaler = 1;
 static const uint16_t kPwmClockPeriod = 47000; // <500us - has to be shorter than base period
 
-static const uint16_t kGridButtonMask = 0x000F;
-static const uint16_t kAdditionalButtonMask[2] = {0x2000, 0x0400};
-static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
-static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
-
-static const uint8_t kNumberOfLedColorIntensityLevels = 65;
-
 static TIM_TypeDef* const pwmTimerRedInstance = TIM2;
 static TIM_TypeDef* const pwmTimerGreenInstance = TIM4;
 static TIM_TypeDef* const pwmTimerBlueInstance = TIM3;
 static TIM_TypeDef* const baseTimerInstance = TIM1;
 
-static const uint16_t kBrightnessThroughPad[kNumberOfLedColorIntensityLevels] = {
-        0, 338, 635, 943, 1273, 1627, 2001, 2393,
-        2805, 3237, 3683, 4149, 4627, 5121, 5641, 6157,
-        6713, 7259, 7823, 8400, 9007, 9603, 10229, 10856,
-        11501, 12149, 12815, 13499, 14204, 14892, 15571, 16279,
-        17027, 17769, 18506, 19267, 20048, 20844, 21617, 22436,
-        23219, 24066, 24897, 25725, 26599, 27430, 28301, 29198,
-        30041, 30947, 31835, 32790, 33683, 34601, 35567, 36579,
-        37515, 38478, 39415, 40403, 41358, 42373, 43359, 44409, 46000 };
-
-static const uint16_t kBrightnessDirect[kNumberOfLedColorIntensityLevels] = {
-        0, 223, 308, 397, 494, 598, 709, 825,
-        947, 1075, 1208, 1348, 1491, 1639, 1793, 1950,
-        2113, 2279, 2448, 2621, 2802, 2981, 3164, 3354,
-        3542, 3738, 3931, 4133, 4337, 4542, 4748, 4952,
-        5166, 5382, 5591, 5809, 6032, 6259, 6473, 6699,
-        6922, 7155, 7385, 7607, 7856, 8079, 8319, 8551,
-        8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
-        10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
-
-static const uint32_t kColumnSelectValue[GridDriver::numberOfVerticalSegments] = {
-        0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
-        0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
-        0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
-        0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
-        0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
-
-uint8_t GridDriver::currentlyStableInputBufferIndex_ = 1;
-bool GridDriver::switchInputUpdated_ = false;
-
-uint32_t GridDriver::buttonInput_[numberOfButtonDebouncingCycles][numberOfVerticalSegments];
-uint32_t GridDriver::pwmOutputRed_[numberOfVerticalSegments][numberOfHorizontalSegments];
-uint32_t GridDriver::pwmOutputGreen_[numberOfVerticalSegments][numberOfHorizontalSegments];
-uint32_t GridDriver::pwmOutputBlue_[numberOfVerticalSegments][numberOfHorizontalSegments];
-
-freertos::Thread* GridDriver::threadToNotify_[kMaximumNumberOfThreadsToNotify];
-uint8_t GridDriver::numberOfThreadsToNotify_;
+static const etl::array<uint32_t, numberOfColumns> kColumnSelectValue = {
+    0xF8DF, 0xF9DF, 0xFADF, 0xFBDF,
+    0xFCDF, 0xFDDF, 0xFEDF, 0xFFDF,
+    0x78FF, 0x7AFF, 0xF8EF, 0xF9EF,
+    0xFAEF, 0xFBEF, 0xFCEF, 0xFDEF,
+    0xFEEF, 0xFFEF, 0x79FF, 0x7BFF };
 
 static TIM_HandleTypeDef pwmTimerRed;
 static TIM_HandleTypeDef pwmTimerGreen;
@@ -78,57 +44,67 @@ extern "C" void DMA2_Stream5_IRQHandler()
     HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
 }
 
-static void inputReadoutToMemory0CompleteCallbackWrapper( __DMA_HandleTypeDef* hdma )
+static void inputReadoutCompleteCallback( __DMA_HandleTypeDef* hdma )
 {
-    GridDriver::inputReadoutToMemory0CompleteCallback();
-}
-
-static void inputReadoutToMemory1CompleteCallbackWrapper( __DMA_HandleTypeDef* hdma )
-{
-    GridDriver::inputReadoutToMemory1CompleteCallback();
+    GridDriver::notifyThreads();
 }
 
 static void dmaErrorCallback( __DMA_HandleTypeDef* hdma ) // unused
 {
 }
 
+InputDebouncingBuffers GridDriver::input_ = {};
+etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::redOutput_ = {};
+etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::greenOutput_ = {};
+etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::blueOutput_ = {};
+
+etl::vector<freertos::Thread*, 7> GridDriver::threadToNotify_;
+
 GridDriver::GridDriver()
 {
-    for (uint8_t segment = 0; segment < numberOfVerticalSegments; segment++)
-    {
-        buttonInput_[0][segment] = 0x0000;
-        buttonInput_[1][segment] = 0x0000;
-    }
-    turnAllLedsOff();
 }
 
-GridDriver::~GridDriver()
+void GridDriver::notifyThreadsIfInputChanged()
 {
+    static uint32_t previousChecksum = 0xFFFFFFFF;
+    const uint32_t currentChecksum = calculateInputBufferChecksum();
+    if (currentChecksum != previousChecksum)
+    {
+        previousChecksum = currentChecksum;
+        notifyThreads();
+    }
 }
 
 void GridDriver::addThreadToNotify( freertos::Thread* const thread )
 {
-    if (numberOfThreadsToNotify_ < kMaximumNumberOfThreadsToNotify)
-    {
-        threadToNotify_[numberOfThreadsToNotify_] = thread;
-        numberOfThreadsToNotify_++;
-    }
+    threadToNotify_.push_back( thread );
 }
 
-bool GridDriver::getButtonInput( const uint8_t button ) const
+const InputDebouncingBuffers& GridDriver::getInput() const
 {
-    return (0 != (kAdditionalButtonMask[button] & buttonInput_[currentlyStableInputBufferIndex_][0]));
+    return input_;
 }
 
-uint8_t GridDriver::getGridButtonInput( const uint8_t column ) const
+void GridDriver::setRedOutput( const Coordinates& coords, const std::uint32_t value )
 {
-    return static_cast<uint8_t>(kGridButtonMask & buttonInput_[currentlyStableInputBufferIndex_][column]);
+    redOutput_[coords.x][coords.y] = value;
 }
 
-uint8_t GridDriver::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
+void GridDriver::setGreenOutput( const Coordinates& coords, const std::uint32_t value )
 {
-    const uint8_t index = timeStep * 2;
-    return (kRotaryEncoderMask[encoder] & buttonInput_[currentlyStableInputBufferIndex_][index])>>kRotaryEncoderBitShift[encoder];
+    greenOutput_[coords.x][coords.y] = value;
+}
+
+void GridDriver::setBlueOutput( const Coordinates& coords, const std::uint32_t value )
+{
+    blueOutput_[coords.x][coords.y] = value;
+}
+
+void GridDriver::setAllOff()
+{
+    redOutput_ = {};
+    greenOutput_ = {};
+    blueOutput_ = {};
 }
 
 void GridDriver::initialize()
@@ -138,44 +114,6 @@ void GridDriver::initialize()
     initializePwmGpio();
     initializeBaseTimer();
     initializeDma();
-}
-
-bool GridDriver::isButtonInputStable( const uint8_t button ) const
-{
-    return (0 == (kAdditionalButtonMask[button] & (buttonInput_[0][0] ^ buttonInput_[1][0])));
-}
-
-bool GridDriver::isGridVerticalSegmentInputStable( const uint8_t segment ) const
-{
-    return (0 == (kGridButtonMask & (buttonInput_[0][segment] ^ buttonInput_[1][segment])));
-}
-
-bool GridDriver::isSwitchInputUpdated() const
-{
-    return switchInputUpdated_;
-}
-
-void GridDriver::resetSwitchInputUpdatedFlag()
-{
-    switchInputUpdated_ = false;
-}
-
-void GridDriver::setLedColor( uint8_t ledPositionX, const uint8_t ledPositionY, const bool directLed, const Color& color )
-{
-    ledPositionX = (ledPositionX + numberOfVerticalSegments - kTimerFrameOffset) % numberOfVerticalSegments;
-
-    if (directLed)
-    {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getRed()];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getGreen()];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessDirect[color.getBlue()];
-    }
-    else
-    {
-        pwmOutputRed_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getRed()];
-        pwmOutputGreen_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getGreen()];
-        pwmOutputBlue_[ledPositionX][ledPositionY] = kBrightnessThroughPad[color.getBlue()];
-    }
 }
 
 void GridDriver::start()
@@ -205,16 +143,26 @@ void GridDriver::start()
     HAL_TIM_Base_Start( &baseInterruptTimer );
 }
 
-void GridDriver::turnAllLedsOff()
+uint32_t GridDriver::calculateInputBufferChecksum()
 {
-    for (uint8_t x = 0; x < numberOfVerticalSegments; x++)
+    uint32_t checksum = 0;
+
+    for (const auto& buffer : input_)
     {
-        for (uint8_t y = 0; y < numberOfHorizontalSegments; y++)
+        for (const auto& element : buffer)
         {
-            pwmOutputRed_[x][y] = kBrightnessDirect[0];
-            pwmOutputGreen_[x][y] = kBrightnessDirect[0];
-            pwmOutputBlue_[x][y] = kBrightnessDirect[0];
+            checksum ^= element;
         }
+    }
+
+    return checksum;
+}
+
+void GridDriver::notifyThreads()
+{
+    for (freertos::Thread* thread : threadToNotify_)
+    {
+        thread->NotifyFromISR();
     }
 }
 
@@ -282,9 +230,9 @@ void GridDriver::initializeDma()
     HAL_DMA_Init( &columnSelectDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC1], columnSelectDmaConfiguration );
     HAL_DMA_Start( &columnSelectDmaConfiguration,
-            reinterpret_cast<uint32_t>(&kColumnSelectValue[0]),
+            reinterpret_cast<uint32_t>(&kColumnSelectValue),
             reinterpret_cast<uint32_t>(&mcu::COLUMN_OUT_GPIO_PORT->ODR),
-            numberOfVerticalSegments );
+            kColumnSelectValue.size() );
 
     ledOutputDmaInitConfiguration.Channel = DMA_CHANNEL_6;
     ledOutputDmaInitConfiguration.Direction = DMA_MEMORY_TO_PERIPH;
@@ -303,27 +251,27 @@ void GridDriver::initializeDma()
     HAL_DMA_Init( &pwmOutputRedDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC2], pwmOutputRedDmaConfiguration );
     HAL_DMA_Start( &pwmOutputRedDmaConfiguration,
-            reinterpret_cast<uint32_t>(&pwmOutputRed_[0][0]),
+            reinterpret_cast<uint32_t>(&redOutput_),
             reinterpret_cast<uint32_t>(&pwmTimerRedInstance->DMAR),
-            numberOfVerticalSegments * numberOfHorizontalSegments );
+            numberOfColumns * numberOfRows );
 
     pwmOutputGreenDmaConfiguration.Instance = DMA2_Stream6;
     pwmOutputGreenDmaConfiguration.Init = ledOutputDmaInitConfiguration;
     HAL_DMA_Init(&pwmOutputGreenDmaConfiguration);
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC3], pwmOutputGreenDmaConfiguration );
     HAL_DMA_Start( &pwmOutputGreenDmaConfiguration,
-            reinterpret_cast<uint32_t>(&pwmOutputGreen_[0][0]),
+            reinterpret_cast<uint32_t>(&greenOutput_),
             reinterpret_cast<uint32_t>(&pwmTimerGreenInstance->DMAR),
-            numberOfVerticalSegments * numberOfHorizontalSegments );
+            numberOfColumns * numberOfRows );
 
     pwmOutputBlueDmaConfiguration.Instance = DMA2_Stream4;
     pwmOutputBlueDmaConfiguration.Init = ledOutputDmaInitConfiguration;
     HAL_DMA_Init( &pwmOutputBlueDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_CC4], pwmOutputBlueDmaConfiguration );
     HAL_DMA_Start( &pwmOutputBlueDmaConfiguration,
-            reinterpret_cast<uint32_t>(&pwmOutputBlue_[0][0]),
+            reinterpret_cast<uint32_t>(&blueOutput_),
             reinterpret_cast<uint32_t>(&pwmTimerBlueInstance->DMAR),
-            numberOfVerticalSegments * numberOfHorizontalSegments );
+            numberOfColumns * numberOfRows );
 
     buttonInputDmaConfiguration.Instance = DMA2_Stream5;
     buttonInputDmaConfiguration.Init.Channel = DMA_CHANNEL_6;
@@ -337,8 +285,8 @@ void GridDriver::initializeDma()
     buttonInputDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     buttonInputDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
     buttonInputDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutToMemory0CompleteCallbackWrapper;
-    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallbackWrapper;
+    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutCompleteCallback;
+    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutCompleteCallback;
     buttonInputDmaConfiguration.XferErrorCallback = &dmaErrorCallback;
     HAL_DMA_Init( &buttonInputDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
@@ -348,9 +296,9 @@ void GridDriver::initializeDma()
 
     HAL_DMAEx_MultiBufferStart_IT( &buttonInputDmaConfiguration,
             reinterpret_cast<uint32_t>(&mcu::GRID_BUTTON_IN_GPIO_PORT->IDR),
-            reinterpret_cast<uint32_t>(&buttonInput_[0][0]),
-            reinterpret_cast<uint32_t>(&buttonInput_[1][0]),
-            numberOfVerticalSegments );
+            reinterpret_cast<uint32_t>(&input_[0]),
+            reinterpret_cast<uint32_t>(&input_[1]),
+            numberOfColumns );
 }
 
 void GridDriver::initializeGpio()
@@ -434,7 +382,7 @@ void GridDriver::initializePwmTimers()
     timerSlaveConfiguration.InputTrigger = TIM_TS_ITR0; // would not work with TIM5
 
     timerOutputCompareConfiguration.OCMode = TIM_OCMODE_PWM1;
-    timerOutputCompareConfiguration.Pulse = kBrightnessDirect[0]; // start with passive output
+    timerOutputCompareConfiguration.Pulse = 0; // start with passive output
     timerOutputCompareConfiguration.OCPolarity = TIM_OCPOLARITY_HIGH;
     timerOutputCompareConfiguration.OCFastMode = TIM_OCFAST_DISABLE;
 
@@ -491,4 +439,27 @@ void GridDriver::initializePwmTimers()
     pwmTimerBlue.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
 }
 
+// TODO: legacy - remove
+static const uint16_t kGridButtonMask = 0x000F;
+static const uint16_t kAdditionalButtonMask[2] = {0x2000, 0x0400};
+static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
+static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
+
+bool GridDriver::getButtonInput( const uint8_t button ) const
+{
+    return (0 != (kAdditionalButtonMask[button] & input_[0][0]));
+}
+
+uint8_t GridDriver::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
+{
+    const uint8_t index = timeStep * 2;
+    return (kRotaryEncoderMask[encoder] & input_[0][index])>>kRotaryEncoderBitShift[encoder];
+}
+
+bool GridDriver::isButtonInputStable( const uint8_t button ) const
+{
+    return (0 == (kAdditionalButtonMask[button] & (input_[0][0] ^ input_[1][0])));
+}
+
 } // namespace grid
+} // namespace hardware

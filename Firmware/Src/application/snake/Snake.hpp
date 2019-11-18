@@ -7,7 +7,7 @@
 
 namespace grid
 {
-    class Grid;
+    class GridInterface;
     class AdditionalButtons;
 }
 
@@ -62,13 +62,13 @@ static const uint8_t gridSize = gridHeigth * gridWidth;
 class Snake : public Application
 {
 public:
-    Snake( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd );
+    Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd );
 
 private:
     void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
-    void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
+    void handleGridButtonEvent( const grid::ButtonEvent event );
 
     void advance();
     void blink() const;
@@ -83,7 +83,7 @@ private:
     bool isSnakeInGivenCoordinates( const Coordinates coords ) const;
     uint8_t getScore() const;
 
-    grid::Grid& grid_;
+    grid::GridInterface& grid_;
     lcd::Lcd& lcd_;
 
     bool applicationEnded_;

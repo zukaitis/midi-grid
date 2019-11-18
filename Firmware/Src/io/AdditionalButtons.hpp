@@ -6,16 +6,19 @@
 #include "thread.hpp"
 #include "queue.hpp"
 
-namespace grid
+namespace hardware
 {
-    class GridDriver;
+    namespace grid
+    {
+        class GridDriver;
+    }
 }
 
 // class used to acquire values from two additional buttons and rotary encoders
 class AdditionalButtons : private freertos::Thread
 {
 public:
-    AdditionalButtons( grid::GridDriver& gridControl );
+    AdditionalButtons( hardware::grid::GridDriver& gridControl );
     ~AdditionalButtons();
 
     enum Button : uint8_t
@@ -47,7 +50,7 @@ public:
 private:
     void Run();
 
-    grid::GridDriver& gridDriver_;
+    hardware::grid::GridDriver& gridDriver_;
     freertos::Queue inputEvents_;
 
     bool registeredButtonInput_[numberOfButtons];

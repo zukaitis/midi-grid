@@ -1,6 +1,6 @@
 #include "application/grid_test/GridTest.hpp"
 
-#include "io/grid/Grid.hpp"
+#include "io/grid/GridInterface.h"
 #include "io/usb/UsbMidi.hpp"
 #include "io/lcd/Lcd.hpp"
 #include "application/images.h"
@@ -15,7 +15,7 @@ namespace application
 
 static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
 
-GridTest::GridTest( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ):
+GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
     grid_( grid ),
     lcd_( lcd )
@@ -48,14 +48,14 @@ void GridTest::handleAdditionalButtonEvent( const AdditionalButtons::Event event
     }
 }
 
-void GridTest::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+void GridTest::handleGridButtonEvent( const grid::ButtonEvent event )
 {
     Color color( 0, 0, 0 );
     if (ButtonAction_PRESSED == event.action)
     {
         color = getRandomColor();
     }
-    grid_.setLed( event.positionX, event.positionY, color );
+    grid_.setLed( event.coordinates, color );
 }
 
 void GridTest::handleMidiPacketAvailable()
@@ -75,15 +75,15 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
         for (uint8_t x = 0; x <= currentStepNumber; x++)
         {
             const uint8_t y = currentStepNumber;
-            grid_.setLed( x, y, getIntroAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( {x, y}, getIntroAnimationColor( x, y ) );
+            grid_.setLed( {7U - x, 7U - y}, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
 
         for (uint8_t y = 0; y <= currentStepNumber; y++)
         {
             const uint8_t x = currentStepNumber;
-            grid_.setLed( x, y, getIntroAnimationColor( x, y ) );
-            grid_.setLed( 7U - x, 7U - y, getIntroAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( {x, y}, getIntroAnimationColor( x, y ) );
+            grid_.setLed( {7U - x, 7U - y}, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
         
         thread.DelayUntil( delayPeriod );

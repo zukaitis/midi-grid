@@ -122,7 +122,7 @@ void Application::handleAdditionalButtonEvent( const AdditionalButtons::Event ev
     // do nothing by default, this method is to be overridden
 }
 
-void Application::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+void Application::handleGridButtonEvent( const grid::ButtonEvent event )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -142,13 +142,13 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
     // do nothing by default, this method is to be overridden
 }
 
-ApplicationController::ApplicationController( AdditionalButtons& additionalButtons, grid::Grid& grid,
+ApplicationController::ApplicationController( AdditionalButtons& additionalButtons, grid::GridInterface& grid,
     RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
         additionalButtonInputHandler_( InputHandler<AdditionalButtons&, AdditionalButtons::Event>( *this, additionalButtons ) ),
-        gridInputHandler_( InputHandler<grid::Grid&, grid::Grid::ButtonEvent>( *this, grid ) ),
+        gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
         rotaryControlInputHandler_( InputHandler<RotaryControls&, RotaryControls::Event>( *this, rotaryControls ) ),
         midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
         midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
@@ -232,7 +232,7 @@ void ApplicationController::handleInput( const AdditionalButtons::Event event )
     currentlyOpenApplication_->handleAdditionalButtonEvent( event );
 }
 
-void ApplicationController::handleInput( const grid::Grid::ButtonEvent event )
+void ApplicationController::handleInput( const grid::ButtonEvent event )
 {
     currentlyOpenApplication_->handleGridButtonEvent( event );
 }

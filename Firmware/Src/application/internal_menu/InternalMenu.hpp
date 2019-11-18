@@ -6,7 +6,7 @@
 
 namespace grid
 {
-    class Grid;
+    class GridInterface;
     class AdditionalButtons;
 }
 
@@ -26,18 +26,18 @@ namespace application
 class InternalMenu : public Application
 {
 public:
-    InternalMenu( ApplicationController& applicationController, grid::Grid& grid, AdditionalButtons& additionalButtons,
+    InternalMenu( ApplicationController& applicationController, grid::GridInterface& grid, AdditionalButtons& additionalButtons,
         lcd::Lcd& lcd, mcu::System& system );
 
 private:
     void run( ApplicationThread& thread );
 
     void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
-    void handleGridButtonEvent( const grid::Grid::ButtonEvent event );
+    void handleGridButtonEvent( const grid::ButtonEvent event );
 
     void updateLcd() const;
 
-    grid::Grid& grid_;
+    grid::GridInterface& grid_;
     lcd::Lcd& lcd_;
     mcu::System& system_;
     ApplicationIndex applicationToFollow_;

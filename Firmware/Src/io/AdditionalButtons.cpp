@@ -1,5 +1,5 @@
 #include "io/AdditionalButtons.hpp"
-#include "io/grid/GridDriver.hpp"
+#include "hardware/grid/GridDriver.h"
 #include "ticks.hpp"
 #include "ThreadConfigurations.h"
 
@@ -7,7 +7,7 @@
 
 static const uint8_t kInputEventQueueSize = 2;
 
-AdditionalButtons::AdditionalButtons( grid::GridDriver& gridDriver ) :
+AdditionalButtons::AdditionalButtons( hardware::grid::GridDriver& gridDriver ) :
         Thread( "AdditionalButtons", kAdditionalButtons.stackDepth, kAdditionalButtons.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )
@@ -34,6 +34,8 @@ bool AdditionalButtons::waitForEvent( Event& event )
     const bool eventAvailable = inputEvents_.Dequeue( &event );
     return eventAvailable;
 }
+
+static const uint16_t kAdditionalButtonMask[2] = {0x2000, 0x0400};
 
 void AdditionalButtons::Run()
 {

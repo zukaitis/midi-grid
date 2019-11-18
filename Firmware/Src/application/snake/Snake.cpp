@@ -22,7 +22,7 @@ static const Color foodColor = color::YELLOW;
 
 static const Coordinates directionVector[numberOfDirections] = { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
 
-Snake::Snake( ApplicationController& applicationController, grid::Grid& grid, lcd::Lcd& lcd ):
+Snake::Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd ):
     Application( applicationController ),
     grid_( grid ),
     lcd_( lcd ),
@@ -62,48 +62,34 @@ void Snake::run( ApplicationThread& thread )
     }
 }
 
-void Snake::handleGridButtonEvent( const grid::Grid::ButtonEvent event )
+void Snake::handleGridButtonEvent( const grid::ButtonEvent event )
 {
     if (gameInProgress_)
     {
-        if ((ButtonAction_PRESSED == event.action) && (grid::arrowButtonPositionX == event.positionX))
+        if (ButtonAction_PRESSED == event.action)
         {
-            switch (event.positionY)
+            if ((grid::button::ARROW_UP == event.coordinates) && (Direction_DOWN != direction_))
             {
-                // set direction according to arrow key pressed, unless desired direction is backwards
-                case grid::upButtonPositionY:
-                    if (Direction_DOWN != direction_)
-                    {
-                        directionCandidate_ = Direction_UP;
-                    }
-                    break;
-                case grid::downButtonPositionY:
-                    if (Direction_UP != direction_)
-                    {
-                        directionCandidate_ = Direction_DOWN;
-                    }
-                    break;
-                case grid::leftButtonPositionY:
-                    if (Direction_RIGHT != direction_)
-                    {
-                        directionCandidate_ = Direction_LEFT;
-                    }
-                    break;
-                case grid::rightButtonPositionY:
-                    if (Direction_LEFT != direction_)
-                    {
-                        directionCandidate_ = Direction_RIGHT;
-                    }
-                    break;
-                default:
-                    break;
+                directionCandidate_ = Direction_UP;
+            }
+            else if ((grid::button::ARROW_DOWN == event.coordinates) && (Direction_UP != direction_))
+            {
+                directionCandidate_ = Direction_DOWN;
+            }
+            else if ((grid::button::ARROW_LEFT == event.coordinates) && (Direction_RIGHT != direction_))
+            {
+                directionCandidate_ = Direction_LEFT;
+            }
+            else if ((grid::button::ARROW_RIGHT == event.coordinates) && (Direction_LEFT != direction_))
+            {
+                directionCandidate_ = Direction_RIGHT;
             }
         }
     }
     else
     {
         // only restart game, when non-arrow button is released
-        if ((ButtonAction_RELEASED == event.action) && (grid::arrowButtonPositionX != event.positionX))
+        if ((ButtonAction_RELEASED == event.action) && (event.coordinates.x < 9))
         {
             startNewGame();
         }
@@ -178,13 +164,13 @@ void Snake::blink() const
 void Snake::updateGrid() const
 {
     grid_.turnAllLedsOff();
-    grid_.setLed( snake_[0].x, snake_[0].y, headColor );
+    grid_.setLed( {snake_[0].x, snake_[0].y}, headColor );
     for (uint8_t i = 1; i < length_; i++)
     {
-        grid_.setLed( snake_[i].x, snake_[i].y, bodyColor_ );
+        grid_.setLed( {snake_[i].x, snake_[i].y}, bodyColor_ );
     }
 
-    grid_.setLed( food_.x, food_.y, foodColor );
+    grid_.setLed( {food_.x, food_.y}, foodColor );
 }
 
 void Snake::updateLcd() const

@@ -1,6 +1,6 @@
 #include "io/RotaryControls.hpp"
 
-#include "grid/GridDriver.hpp"
+#include "hardware/grid/GridDriver.h"
 #include "ThreadConfigurations.h"
 
 #include "ticks.hpp"
@@ -14,7 +14,7 @@ static const uint8_t kInputEventQueueSize = 8;
 
 static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 
-RotaryControls::RotaryControls( grid::GridDriver& gridDriver ) :
+RotaryControls::RotaryControls( hardware::grid::GridDriver& gridDriver ) :
         Thread( "RotaryControls", kRotaryControls.stackDepth, kRotaryControls.priority ),
         gridDriver_( gridDriver ),
         inputEvents_( freertos::Queue( kInputEventQueueSize, sizeof( Event ) ) )

@@ -4,15 +4,18 @@
 #include "thread.hpp"
 #include "queue.hpp"
 
-namespace grid
+namespace hardware
 {
-    class GridDriver;
+    namespace grid
+    {
+        class GridDriver;
+    }
 }
 
 class RotaryControls : private freertos::Thread
 {
 public:
-    RotaryControls( grid::GridDriver& gridControl );
+    RotaryControls( hardware::grid::GridDriver& gridControl );
     ~RotaryControls();
 
     void discardAllPendingEvents();
@@ -45,7 +48,7 @@ private:
         NotifyFromISR();
     }
 
-    grid::GridDriver& gridDriver_;
+    hardware::grid::GridDriver& gridDriver_;
     freertos::Queue inputEvents_;
 };
 

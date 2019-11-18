@@ -3,9 +3,12 @@
 
 #include "application/Application.hpp"
 
-namespace grid
+namespace hardware
 {
-    class GridDriver;
+    namespace grid
+    {
+        class GridDriver;
+    }
 }
 
 namespace lcd
@@ -24,14 +27,14 @@ namespace application
 class Startup : public Application
 {
 public:
-    Startup( ApplicationController& applicationController, grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system );
+    Startup( ApplicationController& applicationController, hardware::grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system );
 
 private:
     void run( ApplicationThread& thread );
 
     void displayUsbConnecting();
 
-    grid::GridDriver& gridDriver_;
+    hardware::grid::GridDriver& gridDriver_;
     lcd::Lcd& lcd_;
     mcu::System& system_;
 };
