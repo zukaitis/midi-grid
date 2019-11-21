@@ -21,7 +21,7 @@ ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::Globa
     events_( freertos::Queue( 16, sizeof( ButtonEvent )))
 {
     gridDriver_.addThreadToNotify( this );
-    Start();
+    Thread::Start();
 }
 
 bool ButtonInput::waitForEvent( ButtonEvent& event )
@@ -43,7 +43,7 @@ void ButtonInput::Run()
 
     while (true)
     {
-        freertos::Thread::WaitForNotification(); // blocking until grid driver gives notification
+        Thread::WaitForNotification(); // blocking until grid driver gives notification
 
         globalInterrupts_.disable();
         copyInputBuffers();
@@ -99,7 +99,7 @@ void ButtonInput::fillDebouncingBuffer( InputBuffer& debouncingBuffer ) const
 #endif
 }
 
-void ButtonInput::fillChangesBuffer( hardware::grid::InputBuffer& changesBuffer )
+void ButtonInput::fillChangesBuffer( InputBuffer& changesBuffer ) const
 {
     const InputBuffer& inputBuffer = inputBuffers_[0];
 

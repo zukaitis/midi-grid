@@ -1,7 +1,7 @@
 #include "application/launchpad/Launchpad.hpp"
 
 #include "io/grid/GridInterface.h"
-#include "io/AdditionalButtons.hpp"
+#include "io/additional_buttons/AdditionalButtonsInterface.h"
 #include "io/RotaryControls.hpp"
 #include "io/lcd/Lcd.hpp"
 
@@ -106,7 +106,7 @@ static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(7, 7, 13), Color(56, 64, 21), Color(30, 64, 47), Color(38, 38, 64), Color(35, 25, 64), Color(17, 17, 17), Color(30, 30, 30), Color(56, 64, 64),
     Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
-Launchpad::Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, AdditionalButtons& additionalButtons,
+Launchpad::Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
     RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
         Application( applicationController ),
         gui_( LcdGui( *this, lcd ) ),
@@ -305,15 +305,15 @@ void Launchpad::handleRotaryControlEvent( const RotaryControls::Event event )
     gui_.displayRotaryControlValues();
 }
 
-void Launchpad::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
+void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
-    if (AdditionalButtons::extraNoteButton == event.button) // only send note on the event of black button
+    if (additional_buttons::Button::extraNote == event.button) // only send note on the event of black button
     {
         const uint8_t controlValue = (ButtonAction_PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
         usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
         gui_.registerMidiOutputActivity();
     }
-    else if (AdditionalButtons::internalMenuButton == event.button)
+    else if (additional_buttons::Button::internalMenu == event.button)
     {
         if (ButtonAction_PRESSED == event.action)
         {

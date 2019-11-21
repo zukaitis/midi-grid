@@ -1,7 +1,7 @@
 #include "application/internal_menu/InternalMenu.hpp"
 
 #include "io/grid/GridInterface.h"
-#include "io/AdditionalButtons.hpp"
+#include "io/additional_buttons/AdditionalButtonsInterface.h"
 #include "io/lcd/Lcd.hpp"
 #include "system/System.hpp"
 
@@ -29,7 +29,7 @@ static const uint8_t kGridTestButtonY = 7;
 static const Coordinates kGridTestButton = {2,7};
 static const Color kGridTestButtonColor = color::YELLOW;
 
-InternalMenu::InternalMenu( ApplicationController& applicationController, grid::GridInterface& grid, AdditionalButtons& additionalButtons,
+InternalMenu::InternalMenu( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
     lcd::Lcd& lcd, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
@@ -55,9 +55,9 @@ void InternalMenu::run( ApplicationThread& thread )
     enableAdditionalButtonInputHandler();
 }
 
-void InternalMenu::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
+void InternalMenu::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
-    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_RELEASED == event.action))
+    if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction_RELEASED == event.action))
     {
         switchApplication( applicationToFollow_ );
     }

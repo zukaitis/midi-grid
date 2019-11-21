@@ -33,7 +33,7 @@ private:
 
     void copyInputBuffers();
     void fillDebouncingBuffer( InputBuffer& buffer ) const;
-    void fillChangesBuffer( InputBuffer& buffer );
+    void fillChangesBuffer( InputBuffer& buffer ) const;
 
     etl::array<InputBuffer, 2> inputBuffers_;
     InputBuffer registeredInputBuffer_;

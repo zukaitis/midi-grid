@@ -96,9 +96,9 @@ void Snake::handleGridButtonEvent( const grid::ButtonEvent event )
     }
 }
 
-void Snake::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
+void Snake::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
-    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction_PRESSED == event.action))
     {
         applicationEnded_ = true;
         switchApplication( ApplicationIndex_INTERNAL_MENU );

@@ -16,7 +16,6 @@ class LedOutput;
 
 static const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
 typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
-static const uint32_t FLASHING_PERIOD = 250; // 120bpm - default flashing rate
 
 class FlashingLeds: private freertos::Thread
 {

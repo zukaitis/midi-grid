@@ -9,13 +9,15 @@
 namespace grid
 {
 
+static const uint32_t FLASHING_PERIOD = 250; // 120bpm - default flashing rate
+
 FlashingLeds::FlashingLeds( LedOutput& ledOutput ):
         Thread( "FlashingLeds", kFlashingLeds.stackDepth, kFlashingLeds.priority ),
         ledOutput_( ledOutput ),
         led_( 0 )
 {
-    Start();
-    Suspend();
+    Thread::Start();
+    Thread::Suspend();
 }
 
 void FlashingLeds::Run()
@@ -25,7 +27,7 @@ void FlashingLeds::Run()
 
     while (true)
     {
-        DelayUntil( delayPeriod );
+        Thread::DelayUntil( delayPeriod );
 
         for (const auto& l : led_)
         {
@@ -42,7 +44,7 @@ void FlashingLeds::add( const Coordinates& coordinates, const FlashingColors& co
 
     if (1 == led_.size())
     {
-        Resume();
+        Thread::Resume();
     }
     // don't change output value, it will be set on next flash period
 }
@@ -59,7 +61,7 @@ void FlashingLeds::remove( const Coordinates& coordinates )
 
             if (led_.empty())
             {
-                Suspend();
+                Thread::Suspend();
             }
             break;
         }

@@ -16,7 +16,6 @@ class GridDriver : public InputInterface, public OutputInterface
 public:
     GridDriver();
 
-    static void notifyThreadsIfInputChanged();
     static void notifyThreads();
 
     void addThreadToNotify( freertos::Thread* const thread ) override;
@@ -28,22 +27,18 @@ public:
 
     void setAllOff() override;
 
-    void initialize();
-    void start();
+    void initialize() const;
+    void start() const;
 
     // TODO: remove this legacy stuff
-    bool getButtonInput( const uint8_t button ) const;
     uint8_t getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const;
-    bool isButtonInputStable( const uint8_t button ) const;
 
 private:
-    static uint32_t calculateInputBufferChecksum();
-
-    void initializeBaseTimer();
-    void initializeDma();
-    void initializeGpio();
-    void initializePwmGpio();
-    void initializePwmTimers();
+    void initializeBaseTimer() const;
+    void initializeDma() const;
+    void initializeGpio() const;
+    void initializePwmGpio() const;
+    void initializePwmTimers() const;
 
     static InputDebouncingBuffers input_;
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> redOutput_;

@@ -4,7 +4,7 @@
 #include "system/System.hpp"
 #include "hardware/grid/GridDriver.h"
 #include "io/grid/Grid.h"
-#include "io/AdditionalButtons.hpp"
+#include "io/additional_buttons/AdditionalButtons.h"
 #include "io/RotaryControls.hpp"
 #include "io/lcd/Lcd.hpp"
 #include "application/internal_menu/InternalMenu.hpp"
@@ -34,7 +34,7 @@ private:
     mcu::GlobalInterrupts globalInterrupts_;
     hardware::grid::GridDriver gridDriver_;
     grid::Grid grid_;
-    AdditionalButtons additionalButtons_;
+    additional_buttons::AdditionalButtons additionalButtons_;
     RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;

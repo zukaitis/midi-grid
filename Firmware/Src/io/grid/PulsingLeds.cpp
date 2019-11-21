@@ -17,8 +17,8 @@ PulsingLeds::PulsingLeds( LedOutput& ledOutput ):
         ledOutput_( ledOutput ),
         led_( 0 )
 {
-    Start();
-    Suspend();
+    Thread::Start();
+    Thread::Suspend();
 }
 
 void PulsingLeds::Run()
@@ -28,7 +28,7 @@ void PulsingLeds::Run()
 
     while (true)
     {
-        DelayUntil( delayPeriod );
+        Thread::DelayUntil( delayPeriod );
 
         stepNumber = (stepNumber + 1) % PULSE_STEP_COUNT;
 
@@ -56,7 +56,7 @@ void PulsingLeds::add( const Coordinates& coordinates, const Color& color )
 
     if (1 == led_.size())
     {
-        Resume();
+        Thread::Resume();
     }
     // don't change output value, it will be set on next flash period
 }
@@ -73,7 +73,7 @@ void PulsingLeds::remove( const Coordinates& coordinates )
 
             if (led_.empty())
             {
-                Suspend();
+                Thread::Suspend();
             }
             break;
         }

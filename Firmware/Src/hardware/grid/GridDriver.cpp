@@ -64,17 +64,6 @@ GridDriver::GridDriver()
 {
 }
 
-void GridDriver::notifyThreadsIfInputChanged()
-{
-    static uint32_t previousChecksum = 0xFFFFFFFF;
-    const uint32_t currentChecksum = calculateInputBufferChecksum();
-    if (currentChecksum != previousChecksum)
-    {
-        previousChecksum = currentChecksum;
-        notifyThreads();
-    }
-}
-
 void GridDriver::addThreadToNotify( freertos::Thread* const thread )
 {
     threadToNotify_.push_back( thread );
@@ -107,7 +96,7 @@ void GridDriver::setAllOff()
     blueOutput_ = {};
 }
 
-void GridDriver::initialize()
+void GridDriver::initialize() const
 {
     initializeGpio();
     initializePwmTimers();
@@ -116,7 +105,7 @@ void GridDriver::initialize()
     initializeDma();
 }
 
-void GridDriver::start()
+void GridDriver::start() const
 {
     TIM_CCxChannelCmd( pwmTimerRed.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE );
     TIM_CCxChannelCmd( pwmTimerRed.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE );
@@ -143,21 +132,6 @@ void GridDriver::start()
     HAL_TIM_Base_Start( &baseInterruptTimer );
 }
 
-uint32_t GridDriver::calculateInputBufferChecksum()
-{
-    uint32_t checksum = 0;
-
-    for (const auto& buffer : input_)
-    {
-        for (const auto& element : buffer)
-        {
-            checksum ^= element;
-        }
-    }
-
-    return checksum;
-}
-
 void GridDriver::notifyThreads()
 {
     for (freertos::Thread* thread : threadToNotify_)
@@ -166,7 +140,7 @@ void GridDriver::notifyThreads()
     }
 }
 
-void GridDriver::initializeBaseTimer()
+void GridDriver::initializeBaseTimer() const
 {
     TIM_ClockConfigTypeDef timerClockSourceConfiguration;
     TIM_MasterConfigTypeDef timerMasterConfiguration;
@@ -209,7 +183,7 @@ void GridDriver::initializeBaseTimer()
     __HAL_TIM_ENABLE_DMA( &baseInterruptTimer, TIM_DMA_UPDATE );
 }
 
-void GridDriver::initializeDma()
+void GridDriver::initializeDma() const
 {
     static DMA_InitTypeDef ledOutputDmaInitConfiguration;
 
@@ -301,7 +275,7 @@ void GridDriver::initializeDma()
             numberOfColumns );
 }
 
-void GridDriver::initializeGpio()
+void GridDriver::initializeGpio() const
 {
       static GPIO_InitTypeDef gpioConfiguration;
 
@@ -335,7 +309,7 @@ void GridDriver::initializeGpio()
       HAL_GPIO_Init( mcu::COLUMN_OUT_GPIO_PORT, &gpioConfiguration );
 }
 
-void GridDriver::initializePwmGpio()
+void GridDriver::initializePwmGpio() const
 {
     // initialize GPIO
     static GPIO_InitTypeDef gpioConfiguration;
@@ -366,7 +340,7 @@ void GridDriver::initializePwmGpio()
     HAL_GPIO_Init( mcu::PWM_BLUE3_4_GPIO_PORT, &gpioConfiguration );
 }
 
-void GridDriver::initializePwmTimers()
+void GridDriver::initializePwmTimers() const
 {
     static TIM_Base_InitTypeDef timerBaseInitConfiguration;
     static TIM_OC_InitTypeDef timerOutputCompareConfiguration;
@@ -440,25 +414,13 @@ void GridDriver::initializePwmTimers()
 }
 
 // TODO: legacy - remove
-static const uint16_t kGridButtonMask = 0x000F;
-static const uint16_t kAdditionalButtonMask[2] = {0x2000, 0x0400};
 static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
 static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
-
-bool GridDriver::getButtonInput( const uint8_t button ) const
-{
-    return (0 != (kAdditionalButtonMask[button] & input_[0][0]));
-}
 
 uint8_t GridDriver::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
 {
     const uint8_t index = timeStep * 2;
     return (kRotaryEncoderMask[encoder] & input_[0][index])>>kRotaryEncoderBitShift[encoder];
-}
-
-bool GridDriver::isButtonInputStable( const uint8_t button ) const
-{
-    return (0 == (kAdditionalButtonMask[button] & (input_[0][0] ^ input_[1][0])));
 }
 
 } // namespace grid

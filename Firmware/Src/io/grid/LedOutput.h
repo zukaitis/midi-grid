@@ -23,7 +23,7 @@ public:
     void setAllOff();
 
 private:
-    Coordinates calculateHardwareCoordinates( const Coordinates& coordinates );
+    Coordinates calculateHardwareCoordinates( const Coordinates& coordinates ) const;
 
     hardware::grid::OutputInterface& gridDriver_;
 };

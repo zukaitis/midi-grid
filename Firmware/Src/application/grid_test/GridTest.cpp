@@ -40,9 +40,9 @@ void GridTest::run( ApplicationThread& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
+void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
-    if ((AdditionalButtons::internalMenuButton == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction_PRESSED == event.action))
     {
         switchApplication( ApplicationIndex_INTERNAL_MENU );
     }

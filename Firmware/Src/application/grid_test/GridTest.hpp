@@ -8,7 +8,7 @@
 namespace grid
 {
     class GridInterface;
-    class AdditionalButtons;
+    class AdditionalButtonsInterface;
 }
 
 namespace midi
@@ -32,7 +32,7 @@ public:
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event event );
     void handleGridButtonEvent( const grid::ButtonEvent event );
     void handleMidiPacketAvailable();
 

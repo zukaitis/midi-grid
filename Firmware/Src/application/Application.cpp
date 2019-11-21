@@ -117,7 +117,7 @@ void Application::run( ApplicationThread& thread )
     // do nothing by default, this method is to be overridden
 }
 
-void Application::handleAdditionalButtonEvent( const AdditionalButtons::Event event )
+void Application::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -142,12 +142,12 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
     // do nothing by default, this method is to be overridden
 }
 
-ApplicationController::ApplicationController( AdditionalButtons& additionalButtons, grid::GridInterface& grid,
+ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid,
     RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
-        additionalButtonInputHandler_( InputHandler<AdditionalButtons&, AdditionalButtons::Event>( *this, additionalButtons ) ),
+        additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
         rotaryControlInputHandler_( InputHandler<RotaryControls&, RotaryControls::Event>( *this, rotaryControls ) ),
         midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
@@ -227,7 +227,7 @@ void ApplicationController::handleInput( const bool dummy )
     currentlyOpenApplication_->handleMidiPacketAvailable();
 }
 
-void ApplicationController::handleInput( const AdditionalButtons::Event event )
+void ApplicationController::handleInput( const additional_buttons::Event event )
 {
     currentlyOpenApplication_->handleAdditionalButtonEvent( event );
 }

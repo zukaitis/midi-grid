@@ -60,7 +60,7 @@ void LedOutput::setAllOff()
     gridDriver_.setAllOff();
 }
 
-Coordinates LedOutput::calculateHardwareCoordinates( const Coordinates& coordinates )
+Coordinates LedOutput::calculateHardwareCoordinates( const Coordinates& coordinates ) const
 {
     Coordinates hardwareCoordinates = coordinates;
 

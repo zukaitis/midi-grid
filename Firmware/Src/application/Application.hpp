@@ -1,10 +1,9 @@
-#ifndef APPLICATION_HPP_
-#define APPLICATION_HPP_
+#pragma once
 
 #include "thread.hpp"
 #include "semaphore.hpp"
 
-#include "io/AdditionalButtons.hpp"
+#include "io/additional_buttons/AdditionalButtonsInterface.h"
 #include "io/grid/GridInterface.h"
 #include "io/RotaryControls.hpp"
 #include "io/usb/UsbMidi.hpp"
@@ -65,7 +64,7 @@ public:
     virtual ~Application();
 
     virtual void run( ApplicationThread& thread );
-    virtual void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
+    virtual void handleAdditionalButtonEvent( const additional_buttons::Event event );
     virtual void handleGridButtonEvent( const grid::ButtonEvent event );
     virtual void handleRotaryControlEvent( const RotaryControls::Event event );
     virtual void handleMidiPacket( const midi::MidiPacket packet );
@@ -87,7 +86,7 @@ private:
 class ApplicationController : private freertos::Thread
 {
 public:
-    ApplicationController( AdditionalButtons& additionalButtons, grid::GridInterface& grid, RotaryControls& rotaryControls,
+    ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid, RotaryControls& rotaryControls,
         midi::UsbMidi& usbMidi );
 
     void initialize( Application** const applicationList );
@@ -102,7 +101,7 @@ public:
     void disableAllHandlers();
 
     void handleInput( const bool dummy );
-    void handleInput( const AdditionalButtons::Event event );
+    void handleInput( const additional_buttons::Event event );
     void handleInput( const grid::ButtonEvent event );
     void handleInput( const RotaryControls::Event event );
     void handleInput( const midi::MidiPacket packet );
@@ -116,7 +115,7 @@ private:
     freertos::Queue nextApplication_;
     static bool applicationFinished_;
 
-    InputHandler<AdditionalButtons&, AdditionalButtons::Event> additionalButtonInputHandler_;
+    InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event> additionalButtonInputHandler_;
     InputHandler<grid::GridInterface&, grid::ButtonEvent> gridInputHandler_;
     InputHandler<RotaryControls&, RotaryControls::Event> rotaryControlInputHandler_;
     InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
@@ -125,5 +124,3 @@ private:
 };
 
 } // namespace
-
-#endif // APPLICATION_HPP_

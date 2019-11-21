@@ -8,7 +8,7 @@
 namespace grid
 {
     class GridInterface;
-    class AdditionalButtons;
+    class AdditionalButtonsInterface;
     class RotaryControls;
 }
 
@@ -65,13 +65,13 @@ class Launchpad : public Application
 public:
     friend class LcdGui; // allow GUI to read info
 
-    Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, AdditionalButtons& additionalButtons,
+    Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
         RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const AdditionalButtons::Event event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event event );
     void handleGridButtonEvent( const grid::ButtonEvent event );
     void handleMidiPacket( const midi::MidiPacket packet );
     void handleRotaryControlEvent( const RotaryControls::Event event );
