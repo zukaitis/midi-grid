@@ -58,7 +58,7 @@ void AdditionalButtons::Run()
                 if (input != registeredInput_[buttonIndex]) // checking for changes
                 {
                     Event event = {
-                        .action = input ? ButtonAction_PRESSED : ButtonAction_RELEASED,
+                        .action = input ? ButtonAction::PRESSED : ButtonAction::RELEASED,
                         .button = static_cast<Button>(buttonIndex) };
                     registeredInput_[buttonIndex] = input;
                     events_.Enqueue( &event );

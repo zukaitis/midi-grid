@@ -309,13 +309,13 @@ void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event eve
 {
     if (additional_buttons::Button::extraNote == event.button) // only send note on the event of black button
     {
-        const uint8_t controlValue = (ButtonAction_PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
+        const uint8_t controlValue = (ButtonAction::PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
         usbMidi_.sendNoteOn( kAdditionalControlMidiChannel, kAdditionalNoteButtonNote, controlValue );
         gui_.registerMidiOutputActivity();
     }
     else if (additional_buttons::Button::internalMenu == event.button)
     {
-        if (ButtonAction_PRESSED == event.action)
+        if (ButtonAction::PRESSED == event.action)
         {
             applicationEnded_ = true;
             switchApplication( ApplicationIndex_INTERNAL_MENU );
@@ -351,7 +351,7 @@ void Launchpad::handleMidiPacket( const midi::MidiPacket packet )
 
 void Launchpad::handleGridButtonEvent( const grid::ButtonEvent event )
 {
-    const uint8_t controlValue = (ButtonAction_PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
+    const uint8_t controlValue = (ButtonAction::PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
     if (kDeviceControlColumn == event.coordinates.x)
     {
         usbMidi_.sendControlChange( kDeviceControlMidiChannel, kDeviceControlColumnValue[event.coordinates.y], controlValue );

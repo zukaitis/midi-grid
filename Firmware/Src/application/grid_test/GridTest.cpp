@@ -42,7 +42,7 @@ void GridTest::run( ApplicationThread& thread )
 
 void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event event )
 {
-    if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction_PRESSED == event.action))
+    if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction::PRESSED == event.action))
     {
         switchApplication( ApplicationIndex_INTERNAL_MENU );
     }
@@ -51,7 +51,7 @@ void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event even
 void GridTest::handleGridButtonEvent( const grid::ButtonEvent event )
 {
     Color color( 0, 0, 0 );
-    if (ButtonAction_PRESSED == event.action)
+    if (ButtonAction::PRESSED == event.action)
     {
         color = getRandomColor();
     }
