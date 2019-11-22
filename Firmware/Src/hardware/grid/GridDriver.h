@@ -16,10 +16,9 @@ class GridDriver : public InputInterface, public OutputInterface
 public:
     GridDriver();
 
-    static void notifyThreads();
-
     void addThreadToNotify( freertos::Thread* const thread ) override;
-    const InputDebouncingBuffers& getInput() const override;
+    const InputDebouncingBuffers& getInputDebouncingBuffers() const override;
+    const InputBuffer& getStableInputBuffer() const override;
 
     void setRedOutput( const Coordinates& coords, const std::uint32_t value ) override;
     void setGreenOutput( const Coordinates& coords, const std::uint32_t value ) override;
@@ -30,8 +29,8 @@ public:
     void initialize() const;
     void start() const;
 
-    // TODO: remove this legacy stuff
-    uint8_t getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const;
+    static void notifyInputReadoutToBuffer0Complete();
+    static void notifyInputReadoutToBuffer1Complete();
 
 private:
     void initializeBaseTimer() const;
@@ -40,6 +39,9 @@ private:
     void initializePwmGpio() const;
     void initializePwmTimers() const;
 
+    static void notifyThreads();
+
+    static uint8_t stableBufferIndex_;
     static InputDebouncingBuffers input_;
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> redOutput_;
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> greenOutput_;

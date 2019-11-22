@@ -127,7 +127,7 @@ void Application::handleGridButtonEvent( const grid::ButtonEvent event )
     // do nothing by default, this method is to be overridden
 }
 
-void Application::handleRotaryControlEvent( const RotaryControls::Event event )
+void Application::handleRotaryControlEvent( const rotary_controls::Event event )
 {
     // do nothing by default, this method is to be overridden
 }
@@ -143,13 +143,13 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
 }
 
 ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid,
-    RotaryControls& rotaryControls, midi::UsbMidi& usbMidi ):
+        rotary_controls::RotaryControlsInterface& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
         additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
-        rotaryControlInputHandler_( InputHandler<RotaryControls&, RotaryControls::Event>( *this, rotaryControls ) ),
+        rotaryControlInputHandler_( InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event>( *this, rotaryControls ) ),
         midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
         midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
         applicationThread_( ApplicationThread( *this ) )
@@ -237,7 +237,7 @@ void ApplicationController::handleInput( const grid::ButtonEvent event )
     currentlyOpenApplication_->handleGridButtonEvent( event );
 }
 
-void ApplicationController::handleInput( const RotaryControls::Event event )
+void ApplicationController::handleInput( const rotary_controls::Event event )
 {
     currentlyOpenApplication_->handleRotaryControlEvent( event );
 }

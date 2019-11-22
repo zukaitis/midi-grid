@@ -32,7 +32,7 @@ bool AdditionalButtons::waitForInput( Event& event )
 
 void AdditionalButtons::copyInput()
 {
-    const hardware::grid::InputDebouncingBuffers& inputBuffers = gridDriver_.getInput();
+    const hardware::grid::InputDebouncingBuffers& inputBuffers = gridDriver_.getInputDebouncingBuffers();
 
     for (uint8_t buttonIndex = 0; buttonIndex < NUMBER_OF_BUTTONS; buttonIndex++)
     {

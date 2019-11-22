@@ -5,7 +5,7 @@
 #include "hardware/grid/GridDriver.h"
 #include "io/grid/Grid.h"
 #include "io/additional_buttons/AdditionalButtons.h"
-#include "io/RotaryControls.hpp"
+#include "io/rotary_controls/RotaryControls.h"
 #include "io/lcd/Lcd.hpp"
 #include "application/internal_menu/InternalMenu.hpp"
 #include "application/launchpad/Launchpad.hpp"
@@ -35,7 +35,7 @@ private:
     hardware::grid::GridDriver gridDriver_;
     grid::Grid grid_;
     additional_buttons::AdditionalButtons additionalButtons_;
-    RotaryControls rotaryControls_;
+    rotary_controls::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
     lcd::Lcd lcd_;
     application::ApplicationController applicationController_;

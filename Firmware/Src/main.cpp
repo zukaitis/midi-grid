@@ -19,7 +19,7 @@ Main::Main() :
         gridDriver_( hardware::grid::GridDriver() ),
         grid_( grid::Grid( gridDriver_, gridDriver_, globalInterrupts_ ) ),
         additionalButtons_( additional_buttons::AdditionalButtons( gridDriver_ ) ),
-        rotaryControls_( RotaryControls( gridDriver_ ) ),
+        rotaryControls_( rotary_controls::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
         applicationController_( application::ApplicationController( additionalButtons_, grid_, rotaryControls_, usbMidi_ ) ),

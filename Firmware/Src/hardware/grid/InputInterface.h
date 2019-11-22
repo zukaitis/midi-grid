@@ -22,7 +22,8 @@ class InputInterface
 {
 public:
     virtual void addThreadToNotify( freertos::Thread* const thread ) = 0;
-    virtual const InputDebouncingBuffers& getInput() const = 0;
+    virtual const InputDebouncingBuffers& getInputDebouncingBuffers() const = 0;
+    virtual const InputBuffer& getStableInputBuffer() const = 0;
 };
 
 }

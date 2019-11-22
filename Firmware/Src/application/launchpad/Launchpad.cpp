@@ -2,7 +2,7 @@
 
 #include "io/grid/GridInterface.h"
 #include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "io/RotaryControls.hpp"
+#include "io/rotary_controls/RotaryControlsInterface.h"
 #include "io/lcd/Lcd.hpp"
 
 #include <cstring>
@@ -107,7 +107,7 @@ static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
 Launchpad::Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-    RotaryControls& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
+        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ) :
         Application( applicationController ),
         gui_( LcdGui( *this, lcd ) ),
         grid_( grid ),
@@ -288,7 +288,7 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     return submode;
 }
 
-void Launchpad::handleRotaryControlEvent( const RotaryControls::Event event )
+void Launchpad::handleRotaryControlEvent( const rotary_controls::Event event )
 {
     rotaryControlValue_[event.control] += event.steps;
 

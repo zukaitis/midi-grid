@@ -44,14 +44,21 @@ extern "C" void DMA2_Stream5_IRQHandler()
     HAL_DMA_IRQHandler(&buttonInputDmaConfiguration);
 }
 
-static void inputReadoutCompleteCallback( __DMA_HandleTypeDef* hdma )
+static void inputReadoutToMemory0CompleteCallback( __DMA_HandleTypeDef* hdma )
 {
-    GridDriver::notifyThreads();
+    GridDriver::notifyInputReadoutToBuffer0Complete();
+}
+
+static void inputReadoutToMemory1CompleteCallback( __DMA_HandleTypeDef* hdma )
+{
+    GridDriver::notifyInputReadoutToBuffer1Complete();
 }
 
 static void dmaErrorCallback( __DMA_HandleTypeDef* hdma ) // unused
 {
 }
+
+uint8_t GridDriver::stableBufferIndex_ = 0;
 
 InputDebouncingBuffers GridDriver::input_ = {};
 etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::redOutput_ = {};
@@ -69,9 +76,14 @@ void GridDriver::addThreadToNotify( freertos::Thread* const thread )
     threadToNotify_.push_back( thread );
 }
 
-const InputDebouncingBuffers& GridDriver::getInput() const
+const InputDebouncingBuffers& GridDriver::getInputDebouncingBuffers() const
 {
     return input_;
+}
+
+const InputBuffer& GridDriver::getStableInputBuffer() const
+{
+    return input_[stableBufferIndex_];
 }
 
 void GridDriver::setRedOutput( const Coordinates& coords, const std::uint32_t value )
@@ -130,6 +142,18 @@ void GridDriver::start() const
     TIM_CCxChannelCmd( baseInterruptTimer.Instance, TIM_CHANNEL_3, TIM_CCx_ENABLE );
     TIM_CCxChannelCmd( baseInterruptTimer.Instance, TIM_CHANNEL_4, TIM_CCx_ENABLE );
     HAL_TIM_Base_Start( &baseInterruptTimer );
+}
+
+void GridDriver::notifyInputReadoutToBuffer0Complete()
+{
+    stableBufferIndex_ = 0;
+    notifyThreads();
+}
+
+void GridDriver::notifyInputReadoutToBuffer1Complete()
+{
+    stableBufferIndex_ = 1;
+    notifyThreads();
 }
 
 void GridDriver::notifyThreads()
@@ -259,8 +283,8 @@ void GridDriver::initializeDma() const
     buttonInputDmaConfiguration.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     buttonInputDmaConfiguration.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;
     buttonInputDmaConfiguration.Init.PeriphBurst = DMA_PBURST_SINGLE;
-    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutCompleteCallback;
-    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutCompleteCallback;
+    buttonInputDmaConfiguration.XferCpltCallback = &inputReadoutToMemory0CompleteCallback;
+    buttonInputDmaConfiguration.XferM1CpltCallback = &inputReadoutToMemory1CompleteCallback;
     buttonInputDmaConfiguration.XferErrorCallback = &dmaErrorCallback;
     HAL_DMA_Init( &buttonInputDmaConfiguration );
     __HAL_LINKDMA( &baseInterruptTimer, hdma[TIM_DMA_ID_UPDATE], buttonInputDmaConfiguration );
@@ -411,16 +435,6 @@ void GridDriver::initializePwmTimers() const
     HAL_TIM_PWM_ConfigChannel( &pwmTimerBlue, &timerOutputCompareConfiguration, TIM_CHANNEL_4 );
     // set up timer's DMA input register (DMAR) to pass data into 4 registers starting with CCR1
     pwmTimerBlue.Instance->DCR = TIM_DMABURSTLENGTH_4TRANSFERS | TIM_DMABASE_CCR1;
-}
-
-// TODO: legacy - remove
-static const uint16_t kRotaryEncoderMask[2] = {0xC000, 0x1800};
-static const uint16_t kRotaryEncoderBitShift[2] = {14, 11};
-
-uint8_t GridDriver::getRotaryEncodersInput( const uint8_t encoder, const uint8_t timeStep ) const
-{
-    const uint8_t index = timeStep * 2;
-    return (kRotaryEncoderMask[encoder] & input_[0][index])>>kRotaryEncoderBitShift[encoder];
 }
 
 } // namespace grid

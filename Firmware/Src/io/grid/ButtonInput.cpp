@@ -75,7 +75,7 @@ void ButtonInput::Run()
 
 void ButtonInput::copyInputBuffers()
 {
-    inputBuffers_ = gridDriver_.getInput();
+    inputBuffers_ = gridDriver_.getInputDebouncingBuffers();
 }
 
 void ButtonInput::fillDebouncingBuffer( InputBuffer& debouncingBuffer ) const
