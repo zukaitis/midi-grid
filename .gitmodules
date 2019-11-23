@@ -1,0 +1,4 @@
+[submodule "Firmware/submodules/etl"]
+	path = Firmware/submodules/etl
+	url = https://github.com/ETLCPP/etl.git
+	branch = 14.37.1
