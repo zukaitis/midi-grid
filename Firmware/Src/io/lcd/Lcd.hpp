@@ -4,8 +4,8 @@
 #include "io/lcd/Backlight.hpp"
 #include "io/lcd/LcdDriver.hpp"
 
-#include "freertos/thread.hpp"
-#include "freertos/semaphore.hpp"
+#include <freertos/thread.hpp>
+#include <freertos/semaphore.hpp>
 
 namespace lcd
 {

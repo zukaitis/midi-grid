@@ -1,2 +1,26 @@
 {
+    "files.exclude": {
+        "**/.git": true,
+        "**/.xml": true,
+        "**/.cproject": true,
+        "**/.project": true,
+        "**/.mxproject": true,
+        ".settings": true,
+        "Debug/" : true,
+        "submodules/etl/*.*": true,
+        "submodules/etl/examples/": true,
+        "submodules/etl/support/": true,
+        "submodules/etl/temp/": true,
+        "submodules/etl/test/": true,
+        "submodules/etl/uml/": true,
+        
+        "submodules/freertos-addons/*.*": true,
+        "submodules/freertos-addons/c/": true,
+        "submodules/freertos-addons/Linux/": true
+    },
+    "search.exclude": {
+        "submodules/": true,
+        "Drivers/": true,
+        "Middlewares/": true,
+    }
 }

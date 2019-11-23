@@ -3,7 +3,7 @@
 
 #include "application/Application.hpp"
 #include "types/Color.h"
-#include "freertos/thread.hpp"
+#include <freertos/thread.hpp>
 
 namespace grid
 {

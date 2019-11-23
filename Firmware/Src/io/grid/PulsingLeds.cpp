@@ -3,7 +3,7 @@
 #include "io/grid/LedOutput.h"
 #include "ThreadConfigurations.h"
 
-#include "freertos/ticks.hpp"
+#include <freertos/ticks.hpp>
 #include <iterator>
 
 namespace grid

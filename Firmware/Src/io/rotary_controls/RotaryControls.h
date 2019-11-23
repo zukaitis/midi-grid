@@ -3,8 +3,8 @@
 #include "io/rotary_controls/RotaryControlsInterface.h"
 #include "hardware/grid/InputInterface.h"
 
-#include "freertos/thread.hpp"
-#include "freertos/queue.hpp"
+#include <freertos/thread.hpp>
+#include <freertos/queue.hpp>
 
 #include <etl/array.h>
 

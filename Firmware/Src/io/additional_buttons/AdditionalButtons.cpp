@@ -1,6 +1,6 @@
 #include "io/additional_buttons/AdditionalButtons.h"
 #include "hardware/grid/InputInterface.h"
-#include "freertos/ticks.hpp"
+#include <freertos/ticks.hpp>
 #include "ThreadConfigurations.h"
 
 namespace additional_buttons

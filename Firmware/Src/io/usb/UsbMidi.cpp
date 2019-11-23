@@ -1,7 +1,7 @@
 #include "io/usb/UsbMidi.hpp"
 
 #include "stm32f4xx_hal.h"
-#include "freertos/queue.hpp"
+#include <freertos/queue.hpp>
 
 #include "usbd_midi.h"
 #include "io/usb/usbd_desc.h"

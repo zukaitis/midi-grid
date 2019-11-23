@@ -5,7 +5,7 @@
 #include "io/lcd/Lcd.hpp"
 #include "application/images.h"
 
-#include "freertos/ticks.hpp"
+#include <freertos/ticks.hpp>
 
 #include <cstdlib>
 #include <etl/array.h>

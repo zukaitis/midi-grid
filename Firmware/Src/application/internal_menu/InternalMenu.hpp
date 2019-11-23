@@ -2,7 +2,7 @@
 #define APPLICATION_INTERNAL_MENU_HPP_
 
 #include "application/Application.hpp"
-#include "freertos/thread.hpp"
+#include <freertos/thread.hpp>
 
 namespace grid
 {

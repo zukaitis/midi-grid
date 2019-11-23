@@ -15,7 +15,7 @@
 #include "system/GlobalInterrupts.hpp"
 #include "io/usb/UsbMidi.hpp"
 
-#include "freertos/thread.hpp"
+#include <freertos/thread.hpp>
 
 class Main
 {
