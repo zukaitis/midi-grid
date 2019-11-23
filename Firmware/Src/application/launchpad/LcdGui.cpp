@@ -4,7 +4,7 @@
 #include "application/launchpad/Images.hpp"
 
 #include "io/lcd/Lcd.hpp"
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 
 #include <cstdio>
 

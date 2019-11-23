@@ -1,7 +1,7 @@
 #include "io/rotary_controls/RotaryControls.h"
 
 #include "ThreadConfigurations.h"
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 #include <cstdlib>
 
 namespace rotary_controls

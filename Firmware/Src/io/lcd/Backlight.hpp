@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "thread.hpp"
-#include "semaphore.hpp"
+#include "freertos/thread.hpp"
+#include "freertos/semaphore.hpp"
 
 namespace lcd
 {

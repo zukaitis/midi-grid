@@ -5,7 +5,7 @@
 #include "types/Color.h"
 #include "types/Coordinates.h"
 
-#include "thread.hpp"
+#include "freertos/thread.hpp"
 #include <etl/array.h>
 #include <etl/vector.h>
 

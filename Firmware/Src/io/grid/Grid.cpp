@@ -3,7 +3,7 @@
 #include "system/GlobalInterrupts.hpp"
 #include "ThreadConfigurations.h"
 
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 #include <cmath>
 
 namespace grid

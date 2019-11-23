@@ -1,8 +1,8 @@
 #pragma once
 
-#include "thread.hpp"
-#include "semaphore.hpp"
-#include "queue.hpp"
+#include "freertos/thread.hpp"
+#include "freertos/semaphore.hpp"
+#include "freertos/queue.hpp"
 
 #include "io/additional_buttons/AdditionalButtonsInterface.h"
 #include "io/grid/GridInterface.h"

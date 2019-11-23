@@ -3,8 +3,8 @@
 #include "io/grid/GridInterface.h"
 #include "hardware/grid/InputInterface.h"
 
-#include "thread.hpp"
-#include "queue.hpp"
+#include "freertos/thread.hpp"
+#include "freertos/queue.hpp"
 
 #include "types/Coordinates.h"
 

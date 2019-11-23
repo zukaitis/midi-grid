@@ -1,7 +1,7 @@
 #include "hardware/grid/GridDriver.h"
 #include "system/gpio_definitions.h"
 #include "types/Coordinates.h"
-#include "thread.hpp"
+#include "freertos/thread.hpp"
 
 #include "stm32f4xx_hal.h"
 

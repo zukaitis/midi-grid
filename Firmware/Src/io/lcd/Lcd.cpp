@@ -4,7 +4,7 @@
 #include "io/lcd/progressArc.h"
 #include "ThreadConfigurations.h"
 
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 #include <cstring>
 #include <cmath>
 

@@ -1,5 +1,5 @@
 #include "main.hpp"
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 
 #include "stm32f4xx_hal.h"
 

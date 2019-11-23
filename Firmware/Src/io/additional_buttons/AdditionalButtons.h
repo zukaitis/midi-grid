@@ -1,8 +1,8 @@
 #pragma once
 
 #include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "thread.hpp"
-#include "queue.hpp"
+#include "freertos/thread.hpp"
+#include "freertos/queue.hpp"
 
 #include <etl/array.h>
 

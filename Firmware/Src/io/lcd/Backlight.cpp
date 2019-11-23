@@ -4,7 +4,7 @@
 #include "stm32f4xx_hal.h"
 
 #include "ThreadConfigurations.h"
-#include "ticks.hpp"
+#include "freertos/ticks.hpp"
 
 #include <cstring>
 
