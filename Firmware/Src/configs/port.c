@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel V10.2.0
+ * FreeRTOS Kernel V10.2.1
  * Copyright (C) 2019 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -32,8 +32,6 @@
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-
-#include "stm32f4xx_hal.h"
 
 #ifndef __VFP_FP__
 	#error This port can only be used when the project options are configured to enable hardware floating point support.
@@ -119,19 +117,12 @@ debugger. */
  */
 void vPortSetupTimerInterrupt( void );
 
-#ifdef __cplusplus
- extern "C" {
-#endif 
 /*
  * Exception handlers.
  */
 void xPortPendSVHandler( void ) __attribute__ (( naked ));
 void xPortSysTickHandler( void );
 void vPortSVCHandler( void ) __attribute__ (( naked ));
-
-#ifdef __cplusplus
-}
-#endif
 
 /*
  * Start first task is a separate function so it can be tested in isolation.
@@ -673,7 +664,7 @@ void xPortSysTickHandler( void )
 			vTaskStepTick( ulCompleteTickPeriods );
 			portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
 
-			/* Exit with interrpts enabled. */
+			/* Exit with interrupts enabled. */
 			__asm volatile( "cpsie i" ::: "memory" );
 		}
 	}

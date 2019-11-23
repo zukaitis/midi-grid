@@ -34,6 +34,8 @@
 								<option id="gnu.c.compiler.option.debugging.level.1532814214" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.211533779" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="../Src/configs"/>
+									<listOptionValue builtIn="false" value="../submodules/FreeRTOS-Kernel/include"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
@@ -60,6 +62,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Src/configs"/>
 									<listOptionValue builtIn="false" value="../submodules/etl/include"/>
+									<listOptionValue builtIn="false" value="../submodules/FreeRTOS-Kernel/include"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
@@ -110,11 +113,28 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.667280912.1742496866" name="/" resourcePath="submodules/FreeRTOS-Kernel/portable">
+						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.668635627" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug" unusedChildren="">
+							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.1501421589.1866904821" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix.1501421589"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1529656919.1973296765" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.1529656919"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.2130409599.1300588677" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.2130409599"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832.1715577706" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483.1965543071" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027.542948607" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1091839214" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1569766646"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.99008861" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1160169074"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1567575058" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.566818637"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1629292176" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1564031035"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.566817850" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.1024448490"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.1394256891" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.2021341057"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
+						<entry excluding="portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="submodules/FreeRTOS-Kernel"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
