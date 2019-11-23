@@ -64,6 +64,11 @@ void ApplicationThread::run()
     continueApplication_.Give();
 }
 
+void ApplicationThread::delay( const uint32_t periodMs )
+{
+    Thread::DelayUntil( periodMs );
+}
+
 void ApplicationThread::Run()
 {
     while (true)
@@ -142,11 +147,13 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
     // do nothing by default, this method is to be overridden
 }
 
+
+
 ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid,
         rotary_controls::RotaryControlsInterface& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
-        nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
+        nextApplication_( cpp_freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
         additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
         rotaryControlInputHandler_( InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event>( *this, rotaryControls ) ),

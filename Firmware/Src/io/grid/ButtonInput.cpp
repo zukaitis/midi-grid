@@ -18,7 +18,7 @@ ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::Globa
     Thread( "grid::ButtonInput", kGrid.stackDepth, kGrid.priority ),
     globalInterrupts_( globalInterrupts ),
     gridDriver_( gridDriver ),
-    events_( freertos::Queue( 16, sizeof( ButtonEvent )))
+    events_( cpp_freertos::Queue( 16, sizeof( ButtonEvent )))
 {
     gridDriver_.addThreadToNotify( this );
     Thread::Start();

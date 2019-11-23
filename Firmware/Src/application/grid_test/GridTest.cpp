@@ -20,7 +20,7 @@ GridTest::GridTest( ApplicationController& applicationController, grid::GridInte
     grid_( grid ),
     lcd_( lcd )
 {
-    std::srand( static_cast<uint16_t>(freertos::Ticks::GetTicks()) ); // change seed for that extra randomness
+    std::srand( static_cast<uint16_t>(cpp_freertos::Ticks::GetTicks()) ); // change seed for that extra randomness
 }
 
 void GridTest::run( ApplicationThread& thread )
@@ -66,7 +66,7 @@ void GridTest::handleMidiPacketAvailable()
 void GridTest::displayIntroAnimation( ApplicationThread& thread )
 {
     static const uint8_t totalNumberOfSteps = 8;
-    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 70 );
+    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( 70 );
 
     grid_.turnAllLedsOff();
 
@@ -86,7 +86,7 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
             grid_.setLed( {7U - x, 7U - y}, getIntroAnimationColor( 7U - x, 7U - y ) );
         }
         
-        thread.DelayUntil( delayPeriod );
+        thread.delay( delayPeriod );
         grid_.turnAllLedsOff();
     }
 }

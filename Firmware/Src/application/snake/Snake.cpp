@@ -32,7 +32,7 @@ Snake::Snake( ApplicationController& applicationController, grid::GridInterface&
     directionCandidate_( Direction_UP ),
     length_( initialSnakeLength ),
     bestScore_( getScore() ),
-    stepPeriodMs_( initialStepPeriodMs),
+    stepPeriodMs_( initialStepPeriodMs ),
     bodyColor_( initialBodyColor )
 {
 }
@@ -51,12 +51,12 @@ void Snake::run( ApplicationThread& thread )
     {
         if (gameInProgress_)
         {
-            thread.DelayUntil( stepPeriodMs_ );
+            thread.delay( stepPeriodMs_ );
             advance();
         }
         else
         {
-            thread.DelayUntil( offGameBlinkPeriodMs );
+            thread.delay( offGameBlinkPeriodMs );
             blink();
         }
     }

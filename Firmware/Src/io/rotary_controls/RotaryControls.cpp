@@ -15,7 +15,7 @@ static const uint32_t kEncoderMask = 0x03; // two LSBs
 RotaryControls::RotaryControls( hardware::grid::InputInterface& gridDriver ) :
         Thread( "RotaryControls", kRotaryControls.stackDepth, kRotaryControls.priority ),
         gridDriver_( gridDriver ),
-        events_( freertos::Queue( 8, sizeof( Event ) ) )
+        events_( cpp_freertos::Queue( 8, sizeof( Event ) ) )
 {
     gridDriver_.addThreadToNotify( this );
     Start();
@@ -49,8 +49,8 @@ void RotaryControls::Run()
 
             if (std::abs( microsteps[controlIndex] ) >= kNumberOfMicrostepsInStep)
             {
-                const uint32_t interval = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() - previousEventTime[controlIndex] );
-                previousEventTime[controlIndex] = freertos::Ticks::GetTicks();
+                const uint32_t interval = cpp_freertos::Ticks::TicksToMs( cpp_freertos::Ticks::GetTicks() - previousEventTime[controlIndex] );
+                previousEventTime[controlIndex] = cpp_freertos::Ticks::GetTicks();
                 const int8_t velocityMultiplier = calculateVelocityMultiplier( interval );
 
                 Event event = {

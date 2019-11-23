@@ -65,13 +65,13 @@ etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::redO
 etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::greenOutput_ = {};
 etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::blueOutput_ = {};
 
-etl::vector<freertos::Thread*, 7> GridDriver::threadToNotify_;
+etl::vector<cpp_freertos::Thread*, 7> GridDriver::threadToNotify_;
 
 GridDriver::GridDriver()
 {
 }
 
-void GridDriver::addThreadToNotify( freertos::Thread* const thread )
+void GridDriver::addThreadToNotify( cpp_freertos::Thread* const thread )
 {
     threadToNotify_.push_back( thread );
 }
@@ -158,7 +158,7 @@ void GridDriver::notifyInputReadoutToBuffer1Complete()
 
 void GridDriver::notifyThreads()
 {
-    for (freertos::Thread* thread : threadToNotify_)
+    for (cpp_freertos::Thread* thread : threadToNotify_)
     {
         thread->NotifyFromISR();
     }

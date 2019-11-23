@@ -42,7 +42,6 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Middlewares/USBMIDI/Inc"/>
 									<listOptionValue builtIn="false" value="../Src"/>
-									<listOptionValue builtIn="false" value="../Drivers/FreeRTOS/include"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.205463552" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
@@ -69,7 +68,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Middlewares/USBMIDI/Inc"/>
 									<listOptionValue builtIn="false" value="../Src"/>
-									<listOptionValue builtIn="false" value="../Drivers/FreeRTOS/include"/>
+									<listOptionValue builtIn="false" value="../submodules/freertos-addons/c++/Source/include"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.9426681" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
@@ -121,12 +120,38 @@
 							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832.1715577706" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832"/>
 							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483.1965543071" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483"/>
 							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027.542948607" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027"/>
-							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1091839214" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1569766646"/>
-							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.99008861" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1160169074"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="fr.ac6.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="fr.ac6.managedbuild.targetPlatform.gnu.cross"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1091839214" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1569766646">
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.549770051" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.1422268650" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
+							</tool>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.99008861" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1160169074">
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp.2049070150" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.cpp"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s.760272413" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.input.s"/>
+							</tool>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1567575058" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.566818637"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1629292176" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1564031035"/>
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.566817850" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.1024448490"/>
-							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.1394256891" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.2021341057"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.1394256891" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.2021341057">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.311317089" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1008491124" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.667280912.241407353" name="/" resourcePath="submodules/freertos-addons/c++/Source">
+						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug.496729102" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.debug" unusedChildren="">
+							<option id="fr.ac6.managedbuild.option.gnu.cross.prefix.1501421589.715698880" name="Prefix" superClass="fr.ac6.managedbuild.option.gnu.cross.prefix.1501421589"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.1529656919.6247155" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.1529656919"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.2130409599.2091015892" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.2130409599"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832.1701185685" name="Instruction Set" superClass="fr.ac6.managedbuild.option.gnu.cross.instructionSet.1971573832"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483.459808734" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.1526187483"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027.1308883375" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.281370027"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1899136642" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1569766646"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.879960448" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1160169074"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1441479635" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.566818637"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.431794630" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1564031035"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1060325074" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.1024448490"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.177620973" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.2021341057"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
@@ -135,6 +160,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 						<entry excluding="portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="submodules/FreeRTOS-Kernel"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="submodules/freertos-addons/c++/Source"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

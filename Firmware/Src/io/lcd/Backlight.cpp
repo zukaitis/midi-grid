@@ -44,7 +44,7 @@ void Backlight::initialize()
 
 void Backlight::Run()
 {
-    static const TickType_t updatePeriod = freertos::Ticks::MsToTicks( 50 );
+    static const TickType_t updatePeriod = cpp_freertos::Ticks::MsToTicks( 50 );
 
     while (true)
     {

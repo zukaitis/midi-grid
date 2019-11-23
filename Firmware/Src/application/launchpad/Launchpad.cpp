@@ -148,7 +148,7 @@ void Launchpad::run( ApplicationThread& thread )
     while (!applicationEnded_)
     {
         gui_.refresh();
-        thread.DelayUntil( LcdGui::refreshPeriodMs );
+        thread.delay( LcdGui::refreshPeriodMs );
     }
 }
 

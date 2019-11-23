@@ -20,7 +20,7 @@ namespace additional_buttons
 typedef etl::array<bool, NUMBER_OF_BUTTONS> InputArray;
 
 // class used to acquire values from two additional buttons and rotary encoders
-class AdditionalButtons : private freertos::Thread, public AdditionalButtonsInterface
+class AdditionalButtons : private cpp_freertos::Thread, public AdditionalButtonsInterface
 {
 public:
     AdditionalButtons( hardware::grid::InputInterface& gridDriver );
@@ -34,7 +34,7 @@ private:
     void copyInput();
 
     hardware::grid::InputInterface& gridDriver_;
-    freertos::Queue events_;
+    cpp_freertos::Queue events_;
 
     etl::array<InputArray, 2> input_;
     InputArray registeredInput_;

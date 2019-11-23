@@ -26,7 +26,7 @@ static const uint8_t kVelocityMask = 0x7F;
 static const uint8_t kControlMask = 0x7F;
 static const uint8_t kControlValueMask = 0x7F;
 
-freertos::Queue UsbMidi::receivedMessages = freertos::Queue( 256, sizeof(uint32_t) );
+cpp_freertos::Queue UsbMidi::receivedMessages = cpp_freertos::Queue( 256, sizeof(uint32_t) );
 
 UsbMidi::UsbMidi()
 {

@@ -11,7 +11,7 @@
 namespace rotary_controls
 {
 
-class RotaryControls : private freertos::Thread, public RotaryControlsInterface
+class RotaryControls : private cpp_freertos::Thread, public RotaryControlsInterface
 {
 public:
     RotaryControls( hardware::grid::InputInterface& gridDriver );
@@ -28,7 +28,7 @@ private:
     int8_t getRecentMicrosteps( const uint8_t controlIndex ) const;
 
     hardware::grid::InputInterface& gridDriver_;
-    freertos::Queue events_;
+    cpp_freertos::Queue events_;
     etl::array<etl::array<uint8_t, hardware::grid::numberOfColumns>, NUMBER_OF_CONTROLS> input_;
 };
 

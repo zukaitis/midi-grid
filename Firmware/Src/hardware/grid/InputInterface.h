@@ -3,7 +3,7 @@
 #include "hardware/grid/Constants.h"
 #include <etl/array.h>
 
-namespace freertos
+namespace cpp_freertos
 {
     class Thread;
 }
@@ -21,7 +21,7 @@ typedef etl::array<InputBuffer, numberOfInputBuffers> InputDebouncingBuffers;
 class InputInterface
 {
 public:
-    virtual void addThreadToNotify( freertos::Thread* const thread ) = 0;
+    virtual void addThreadToNotify( cpp_freertos::Thread* const thread ) = 0;
     virtual const InputDebouncingBuffers& getInputDebouncingBuffers() const = 0;
     virtual const InputBuffer& getStableInputBuffer() const = 0;
 };

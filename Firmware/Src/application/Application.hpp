@@ -27,7 +27,7 @@ class Application;
 class ApplicationController;
 
 template <class InputSource, class InputType>
-class InputHandler : private freertos::Thread
+class InputHandler : private cpp_freertos::Thread
 {
 public:
     InputHandler( ApplicationController& applicationController, InputSource inputSource );
@@ -42,7 +42,7 @@ private:
     InputSource inputSource_;
 };
 
-class ApplicationThread : public freertos::Thread
+class ApplicationThread : public cpp_freertos::Thread
 {
 public:
     ApplicationThread( ApplicationController& applicationController );
@@ -51,11 +51,13 @@ public:
     void disable();
     void run();
 
+    void delay( const uint32_t periodMs );
+
 private:
     void Run();
 
     ApplicationController& applicationController_;
-    freertos::BinarySemaphore continueApplication_;
+    cpp_freertos::BinarySemaphore continueApplication_;
 };
 
 class Application
@@ -84,7 +86,7 @@ private:
     ApplicationController& applicationController_;
 };
 
-class ApplicationController : private freertos::Thread
+class ApplicationController : private cpp_freertos::Thread
 {
 public:
     ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid, rotary_controls::RotaryControlsInterface& rotaryControls,
@@ -113,7 +115,7 @@ private:
 
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
-    freertos::Queue nextApplication_;
+    cpp_freertos::Queue nextApplication_;
     static bool applicationFinished_;
 
     InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event> additionalButtonInputHandler_;

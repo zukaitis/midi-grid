@@ -9,7 +9,7 @@
 namespace lcd
 {
 
-class Backlight : private freertos::Thread
+class Backlight : private cpp_freertos::Thread
 {
 public:
     Backlight();
@@ -34,7 +34,7 @@ private:
     uint8_t appointedIntensity_;
     uint8_t currentIntensity_;
 
-    freertos::BinarySemaphore appointedIntensityChanged_;
+    cpp_freertos::BinarySemaphore appointedIntensityChanged_;
 };
 
 } // namespace lcd

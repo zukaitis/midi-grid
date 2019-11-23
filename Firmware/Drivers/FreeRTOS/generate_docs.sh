@@ -1,1 +1,0 @@
-doxywizard Doxyfile &

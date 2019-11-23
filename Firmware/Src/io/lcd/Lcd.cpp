@@ -35,7 +35,7 @@ Lcd::Lcd() :
 
 void Lcd::Run()
 {
-    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
+    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( 10 );
 
     while (true)
     {

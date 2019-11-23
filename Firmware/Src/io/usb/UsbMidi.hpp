@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace freertos
+namespace cpp_freertos
 {
     class Queue;
 }
@@ -84,7 +84,7 @@ public:
     };
 
 private:
-    static freertos::Queue receivedMessages;
+    static cpp_freertos::Queue receivedMessages;
 };
 
 } // namespace
