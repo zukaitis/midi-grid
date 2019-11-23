@@ -24,7 +24,7 @@ struct Image
     uint8_t height;
 };
 
-class Lcd: private cpp_freertos::Thread
+class Lcd: private freertos::Thread
 {
 public:
     Lcd();
@@ -58,7 +58,7 @@ private:
     LcdDriver lcdDriver_;
 
     uint8_t lcdBuffer_[numberOfLines][width];
-    cpp_freertos::BinarySemaphore updateRequired_;
+    freertos::BinarySemaphore updateRequired_;
 };
 
 } // namespace

@@ -18,7 +18,7 @@ namespace grid
 
 typedef hardware::grid::InputBuffer InputBuffer;
 
-class ButtonInput : public cpp_freertos::Thread
+class ButtonInput : public freertos::Thread
 {
 public:
     ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
@@ -41,7 +41,7 @@ private:
     mcu::GlobalInterrupts& globalInterrupts_;
     hardware::grid::InputInterface& gridDriver_;
 
-    cpp_freertos::Queue events_;
+    freertos::Queue events_;
 };
 
 }

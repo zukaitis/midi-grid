@@ -22,7 +22,7 @@ FlashingLeds::FlashingLeds( LedOutput& ledOutput ):
 
 void FlashingLeds::Run()
 {
-    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( FLASHING_PERIOD );
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( FLASHING_PERIOD );
     static uint8_t flashColorIndex = 0;
 
     while (true)

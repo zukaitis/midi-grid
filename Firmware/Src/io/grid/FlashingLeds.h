@@ -17,7 +17,7 @@ class LedOutput;
 static const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
 typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
 
-class FlashingLeds: private cpp_freertos::Thread
+class FlashingLeds: private freertos::Thread
 {
 public:
     FlashingLeds( LedOutput& ledOutput );

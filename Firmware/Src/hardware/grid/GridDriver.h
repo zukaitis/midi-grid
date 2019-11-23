@@ -16,7 +16,7 @@ class GridDriver : public InputInterface, public OutputInterface
 public:
     GridDriver();
 
-    void addThreadToNotify( cpp_freertos::Thread* const thread ) override;
+    void addThreadToNotify( freertos::Thread* const thread ) override;
     const InputDebouncingBuffers& getInputDebouncingBuffers() const override;
     const InputBuffer& getStableInputBuffer() const override;
 
@@ -47,7 +47,7 @@ private:
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> greenOutput_;
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> blueOutput_;
 
-    static etl::vector<cpp_freertos::Thread*, 7> threadToNotify_;
+    static etl::vector<freertos::Thread*, 7> threadToNotify_;
 };
 
 }

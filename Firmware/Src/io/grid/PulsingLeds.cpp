@@ -23,7 +23,7 @@ PulsingLeds::PulsingLeds( LedOutput& ledOutput ):
 
 void PulsingLeds::Run()
 {
-    static const TickType_t delayPeriod = cpp_freertos::Ticks::MsToTicks( PULSE_STEP_INTERVAL );
+    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( PULSE_STEP_INTERVAL );
     static uint8_t stepNumber = 0;
 
     while (true)

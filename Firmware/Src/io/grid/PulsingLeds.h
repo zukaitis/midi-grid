@@ -14,7 +14,7 @@ namespace grid
 
 class LedOutput;
 
-class PulsingLeds: private cpp_freertos::Thread
+class PulsingLeds: private freertos::Thread
 {
 public:
     PulsingLeds( LedOutput& ledOutput );

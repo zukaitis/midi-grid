@@ -77,7 +77,7 @@ void LcdGui::refreshStatusBar()
 {
     if (midiInputActivityIcon_.isOn)
     {
-        if (cpp_freertos::Ticks::GetTicks() >= midiInputActivityIcon_.timeToDisable)
+        if (freertos::Ticks::GetTicks() >= midiInputActivityIcon_.timeToDisable)
         {
             lcd_.clearArea( 73, 0, 77, 7 );
             midiInputActivityIcon_.isOn = false;
@@ -86,7 +86,7 @@ void LcdGui::refreshStatusBar()
 
     if (midiOutputActivityIcon_.isOn)
     {
-        if (cpp_freertos::Ticks::GetTicks() >= midiOutputActivityIcon_.timeToDisable)
+        if (freertos::Ticks::GetTicks() >= midiOutputActivityIcon_.timeToDisable)
         {
             lcd_.clearArea( 78, 0, 83, 7 );
             midiOutputActivityIcon_.isOn = false;
@@ -98,7 +98,7 @@ void LcdGui::refreshMainArea()
 {
     if (rotaryControlValues_.isOn)
     {
-        if (cpp_freertos::Ticks::GetTicks() >= rotaryControlValues_.timeToDisable)
+        if (freertos::Ticks::GetTicks() >= rotaryControlValues_.timeToDisable)
         {
             rotaryControlValues_.isOn = false;
         }
@@ -111,7 +111,7 @@ void LcdGui::registerMidiInputActivity()
 {
     lcd_.displayImage( 73, 0, arrowSmallDown );
     midiInputActivityIcon_.isOn = true;
-    midiInputActivityIcon_.timeToDisable = cpp_freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
+    midiInputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
 }
 
 
@@ -119,7 +119,7 @@ void LcdGui::registerMidiOutputActivity()
 {
     lcd_.displayImage( 78, 0, arrowSmallUp );
     midiOutputActivityIcon_.isOn = true;
-    midiOutputActivityIcon_.timeToDisable = cpp_freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
+    midiOutputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
 }
 
 void LcdGui::displayLaunchpad95Info()
@@ -248,7 +248,7 @@ void LcdGui::displayRotaryControlValues()
     lcd_.print( str, 63, 32, lcd::Justification_CENTER );
 
     rotaryControlValues_.isOn = true;
-    rotaryControlValues_.timeToDisable = cpp_freertos::Ticks::GetTicks() + kRotaryControlTimeoutMs;
+    rotaryControlValues_.timeToDisable = freertos::Ticks::GetTicks() + kRotaryControlTimeoutMs;
 }
 
 } // namespace

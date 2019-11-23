@@ -153,7 +153,7 @@ ApplicationController::ApplicationController( additional_buttons::AdditionalButt
         rotary_controls::RotaryControlsInterface& rotaryControls, midi::UsbMidi& usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
-        nextApplication_( cpp_freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
+        nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
         additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
         rotaryControlInputHandler_( InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event>( *this, rotaryControls ) ),

@@ -47,7 +47,7 @@ void Main::run()
     system_.initialize();
 
     //applicationController_.selectApplication( application::ApplicationIndex_STARTUP );
-    cpp_freertos::Thread::StartScheduler();
+    freertos::Thread::StartScheduler();
 }
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )

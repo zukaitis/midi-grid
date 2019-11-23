@@ -11,7 +11,7 @@ static const etl::array<uint32_t, 2> BUTTON_MASK = {0x2000, 0x0400};
 AdditionalButtons::AdditionalButtons( hardware::grid::InputInterface& gridDriver ) :
         Thread( "AdditionalButtons", kAdditionalButtons.stackDepth, kAdditionalButtons.priority ),
         gridDriver_( gridDriver ),
-        events_( cpp_freertos::Queue( 3, sizeof( Event ) ) )
+        events_( freertos::Queue( 3, sizeof( Event ) ) )
 {
     registeredInput_.fill( false );
 
