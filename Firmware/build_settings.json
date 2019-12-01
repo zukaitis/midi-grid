@@ -1,0 +1,143 @@
+{
+    "output_directory": "output",
+    "target": "output/test07.elf",
+
+    "additional_outputs": [
+        "output/test11.hex",
+        "output/test33.bin",
+        "output/test42.map"
+    ],
+
+    "include_directories": [
+        "Drivers/CMSIS/Include",
+        "Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+        "Drivers/STM32F4xx_HAL_Driver/Inc",
+        "Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+        "Middlewares/USBMIDI/Inc",
+        "Src",
+        "Src/configs",
+        "submodules/etl/include",
+        "submodules/FreeRTOS-Kernel/include",
+        "submodules/freertos-addons/c++/Source/include",
+        "Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
+    ],
+
+    "c_source_files": [
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c",
+        "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c",
+        "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c",
+        "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c",
+        "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c",
+        "Middlewares/USBMIDI/Src/usbd_midi.c",
+        "Src/configs/heap_2.c",
+        "Src/configs/port.c",
+        "Src/io/usb/usbd_conf.c",
+        "Src/io/usb/usbd_desc.c",
+        "Src/io/usb/usb_device.c",
+        "Src/system/stm32f4xx_it.c",
+        "Src/system/system_stm32f4xx.c",
+        "submodules/FreeRTOS-Kernel/croutine.c",
+        "submodules/FreeRTOS-Kernel/event_groups.c",
+        "submodules/FreeRTOS-Kernel/list.c",
+        "submodules/FreeRTOS-Kernel/queue.c",
+        "submodules/FreeRTOS-Kernel/stream_buffer.c",
+        "submodules/FreeRTOS-Kernel/tasks.c",
+        "submodules/FreeRTOS-Kernel/timers.c"
+    ],
+
+    "cxx_source_files": [
+        "Src/application/Application.cpp",
+        "Src/application/grid_test/GridTest.cpp",
+        "Src/application/internal_menu/InternalMenu.cpp",
+        "Src/application/launchpad/Launchpad.cpp",
+        "Src/application/launchpad/LcdGui.cpp",
+        "Src/application/snake/Snake.cpp",
+        "Src/application/startup/Startup.cpp",
+        "Src/hardware/grid/GridDriver.cpp",
+        "Src/io/additional_buttons/AdditionalButtons.cpp",
+        "Src/io/grid/ButtonInput.cpp",
+        "Src/io/grid/FlashingLeds.cpp",
+        "Src/io/grid/Grid.cpp",
+        "Src/io/grid/LedOutput.cpp",
+        "Src/io/grid/PulsingLeds.cpp",
+        "Src/io/lcd/Backlight.cpp",
+        "Src/io/lcd/Lcd.cpp",
+        "Src/io/lcd/LcdDriver.cpp",
+        "Src/io/rotary_controls/RotaryControls.cpp",
+        "Src/io/usb/UsbMidi.cpp",
+        "Src/main.cpp",
+        "Src/system/GlobalInterrupts.cpp",
+        "Src/system/System.cpp",
+        "Src/types/Color.cpp",
+        "submodules/freertos-addons/c++/Source/cqueue.cpp",
+        "submodules/freertos-addons/c++/Source/csemaphore.cpp",
+        "submodules/freertos-addons/c++/Source/cthread.cpp",
+        "submodules/freertos-addons/c++/Source/cmutex.cpp"
+    ],
+
+    "asm_source_files": [
+        "startup/startup_stm32f411xe.s"
+    ],
+
+    "linker_script": "STM32F411RCTx_FLASH.ld",
+
+    "c_compiler": "arm-none-eabi-gcc",
+    "cxx_compiler": "arm-none-eabi-g++",
+    "asm_compiler": "arm-none-eabi-gcc",
+    "linker": "arm-none-eabi-g++",
+    "object_copy_utility": "arm-none-eabi-objcopy",
+    "object_information_utility": "arm-none-eabi-objdump",
+    "output_size_report_utility": "arm-none-eabi-size",
+
+    "arch_flags": [
+        "-mcpu=cortex-m4",
+        "-DUSE_HAL_DRIVER",
+        "-DSTM32F411xE",
+        "-mthumb",
+        "-specs=nano.specs",
+        "-specs=nosys.specs",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv4-sp-d16"
+    ],
+
+    "c_flags": [
+        "-O0",
+        "-ggdb3",
+        "-ffunction-sections",
+        "-fdata-sections"
+    ],
+
+    "cxx_flags": [
+        "-fno-rtti",
+        "-fno-exceptions",
+        "-fno-strict-aliasing",
+        "-std=c++11",
+        "-DCPP_FREERTOS_NO_EXCEPTIONS",
+        "-DCPP_FREERTOS_NO_CPP_STRINGS"
+    ],
+
+    "linker_flags": [
+        "-Wl,-Map=output.map",
+        "-Wl,--gc-sections"
+    ]
+
+}
