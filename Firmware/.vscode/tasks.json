@@ -6,7 +6,7 @@
         {
             "label": "Flash using DFU",
             "type": "shell",
-            "command": "./flash_using_dfu.sh Debug midi-grid",
+            "command": "./flash_using_dfu.sh output midi-grid",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -16,7 +16,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "cd Debug && make all && cd ..",
+            "command": "ninja",
             "group": "build",
             "presentation": {
                 "reveal": "always",

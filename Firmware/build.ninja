@@ -4,10 +4,13 @@
 
 ninja_required_version = 1.8
 
+# Directory, which will store all .o and .d files
 out_dir = output/
 
-target = output/test07.elf
+# Primary target file
+target = output/midi-grid.elf
 
+# Compilers and utilities to be used in the build
 cc = arm-none-eabi-gcc
 cxx = arm-none-eabi-g++
 as = arm-none-eabi-gcc
@@ -15,7 +18,9 @@ ld = arm-none-eabi-g++
 objcopy = arm-none-eabi-objcopy
 objdump = arm-none-eabi-objdump
 size = arm-none-eabi-size
+dfu = submodules/dfuse-tool/dfu-convert
 
+# Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
     -specs=nano.specs -specs=nosys.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16
 c_flags = -O0 -ggdb3 -ffunction-sections -fdata-sections
@@ -29,12 +34,13 @@ inc_flags = -IDrivers/CMSIS/Include $
     -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
-ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -T STM32F411RCTx_FLASH.ld
+ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -T STM32F411RCTx_FLASH.ld $
+    -Wl,-Map=output/midi-grid.map
 
+# Rules for different types of inputs and outputs
 rule as
-  command = $as -MMD -MT $out -MF $out.d $arch_flags $c_flags -c $in -o $out
+  command = $as -MMD $arch_flags $c_flags -c $in -o $out
   description = AS $out
-  depfile = $out.d
 
 rule cc
   command = $cc -MMD -MT $out -MF $out.d $arch_flags $c_flags $inc_flags -c $
@@ -53,7 +59,7 @@ rule link
   description = LINK $out
 
 rule size
-  command = $size $in
+  command = $size $in | tee $out
   description = Size report
 
 rule bin
@@ -64,13 +70,21 @@ rule hex
   command = $objcopy -O ihex $in $out
   description = HEX $out
 
+# DFU build generates temporary .hex file from target and deletes it after
+# .dfu output is generated
+rule dfu
+  command = $objcopy -O ihex $in temp.hex && $dfu -i temp.hex $out && rm $
+      temp.hex
+  description = HEX $out
+
 # Regenerate build files if build script changes.
 rule configure
   command = python3 generate_build_file.py
   description = Generating $out file
   generator = 1
 
-build output/startup/startup_stm32f411xe.o: as startup/startup_stm32f411xe.s
+# Instructions to build each file
+build output/startup/startup_stm32f411xe.o: as startup/startup_stm32f411xe.S
 
 build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: cc $
     Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
@@ -189,6 +203,7 @@ build output/submodules/freertos-addons/c++/Source/cthread.o: cxx $
 build output/submodules/freertos-addons/c++/Source/cmutex.o: cxx $
     submodules/freertos-addons/c++/Source/cmutex.cpp
 
+# Target linker instruction
 build $target: link output/startup/startup_stm32f411xe.o $
     output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o $
     output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o $
@@ -246,9 +261,14 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/submodules/freertos-addons/c++/Source/csemaphore.o $
     output/submodules/freertos-addons/c++/Source/cthread.o $
     output/submodules/freertos-addons/c++/Source/cmutex.o
-build size_report: size $target
-build output/trrash.bin: bin $target
-build Debug/midi-grid.hex: hex $target
+
+# Size report instruction
+build $out_dir/size.txt: size $target
+
+build output/midi-grid.hex: hex $target
+build output/midi-grid.bin: bin $target
+build output/midi-grid.dfu: dfu $target
 build build.ninja: configure | generate_build_file.py build_settings.json
-build all: phony build.ninja $target size_report Debug/midi-grid.hex
+build all: phony build.ninja $target $out_dir/size.txt output/midi-grid.hex $
+    output/midi-grid.bin output/midi-grid.dfu
 default all

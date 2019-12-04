@@ -9,3 +9,6 @@
 [submodule "Firmware/submodules/freertos-addons"]
 	path = Firmware/submodules/freertos-addons
 	url = https://github.com/zukaitis/freertos-addons.git
+[submodule "Firmware/submodules/dfuse-tool"]
+	path = Firmware/submodules/dfuse-tool
+	url = https://github.com/plietar/dfuse-tool.git

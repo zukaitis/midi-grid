@@ -1,11 +1,12 @@
 {
     "output_directory": "output",
-    "target": "output/test07.elf",
+    "target": "output/midi-grid.elf",
 
     "additional_outputs": [
-        "output/test11.hex",
-        "output/test33.bin",
-        "output/test42.map"
+        "output/midi-grid.hex",
+        "output/midi-grid.bin",
+        "output/midi-grid.map",
+        "output/midi-grid.dfu"
     ],
 
     "include_directories": [
@@ -95,7 +96,7 @@
     ],
 
     "asm_source_files": [
-        "startup/startup_stm32f411xe.s"
+        "startup/startup_stm32f411xe.S"
     ],
 
     "linker_script": "STM32F411RCTx_FLASH.ld",
@@ -107,6 +108,7 @@
     "object_copy_utility": "arm-none-eabi-objcopy",
     "object_information_utility": "arm-none-eabi-objdump",
     "output_size_report_utility": "arm-none-eabi-size",
+    "dfu_conversion_utility": "submodules/dfuse-tool/dfu-convert",
 
     "arch_flags": [
         "-mcpu=cortex-m4",
