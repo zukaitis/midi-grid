@@ -59,6 +59,14 @@ Color Color::operator*(const uint8_t multiplier) const
     return product;
 }
 
+Color Color::operator*(const float multiplier) const
+{
+    const Color product( static_cast<uint8_t>(this->red_ * multiplier),
+        static_cast<uint8_t>(this->green_ * multiplier),
+        static_cast<uint8_t>(this->blue_ * multiplier) );
+    return product;
+}
+
 Color Color::operator/(const uint8_t divisor) const
 {
     const Color quotient( this->red_ / divisor, this->green_ / divisor, this->blue_ / divisor );

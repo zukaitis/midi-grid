@@ -16,6 +16,7 @@ public:
     bool operator==(const Color& color) const;
     Color operator+(const Color& color) const;
     Color operator*(const uint8_t multiplier) const;
+    Color operator*(const float multiplier) const;
     Color operator/(const uint8_t divisor) const;
 
 private:

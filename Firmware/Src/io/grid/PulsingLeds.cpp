@@ -38,12 +38,12 @@ void PulsingLeds::Run()
             if (stepNumber <= 3)
             {
                 // y = x / 4
-                dimmedColor = (dimmedColor * (stepNumber + 1)) / 4;
+                dimmedColor = dimmedColor * (static_cast<float>(stepNumber + 1) / 4);
             }
             else
             {
                 // y = -x / 16
-                dimmedColor = (dimmedColor * (19 - stepNumber)) / 16;
+                dimmedColor = dimmedColor * (static_cast<float>(19 - stepNumber) / 16);
             }
             ledOutput_.set( l.coordinates, dimmedColor );
         }
