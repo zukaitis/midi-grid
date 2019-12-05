@@ -1,8 +1,8 @@
 {
-	"folders": [
-		{
-			"path": "/mnt/hdd/Documents/projects/midi-grid/Firmware/"
-		}
+    "folders": [
+        {
+            "path": "/mnt/hdd/Documents/projects/midi-grid/Firmware"
+        }
     ],
     "settings": {
         "files.associations": {
@@ -72,5 +72,5 @@
             "future": "cpp",
             "iostream": "cpp"
         }
-    },
+    }
 }

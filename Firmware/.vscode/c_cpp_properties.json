@@ -9,7 +9,7 @@
                 "CPP_FREERTOS_NO_CPP_STRINGS"
             ],
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "arm-none-eabi-g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "includePath": [

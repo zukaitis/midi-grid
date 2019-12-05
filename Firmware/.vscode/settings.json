@@ -6,7 +6,7 @@
         "**/.project": true,
         "**/.mxproject": true,
         ".settings": true,
-        "Debug/" : true,
+        "output/" : true,
         "submodules/etl/*.*": true,
         "submodules/etl/examples/": true,
         "submodules/etl/support/": true,
