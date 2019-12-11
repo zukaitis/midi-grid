@@ -12,19 +12,20 @@
 namespace grid
 {
 
-class LedOutput;
+class LedOutputInterface;
 
 class PulsingLeds: private freertos::Thread
 {
 public:
-    PulsingLeds( LedOutput& ledOutput );
+    PulsingLeds( LedOutputInterface& ledOutput );
+    virtual ~PulsingLeds() {};
 
     void add( const Coordinates& coordinates, const Color& color );
     void remove( const Coordinates& coordinates );
     void removeAll();
 
 private:
-    virtual void Run();
+    void Run() override;
 
     struct PulsingLed
     {
@@ -32,7 +33,7 @@ private:
         Color color;
     };
 
-    LedOutput& ledOutput_;
+    LedOutputInterface& ledOutput_;
     etl::vector<PulsingLed, grid::NUMBER_OF_LEDS> led_;
 };
 

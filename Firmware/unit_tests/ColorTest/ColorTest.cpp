@@ -95,6 +95,18 @@ TEST( MultiplicationOperator, MultiplicationTruncated )
     EXPECT_EQ( colorMaxValue, product.getBlue() );
 }
 
+TEST( MultiplicationOperator, MultiplicationWithFloat )
+{
+    const Color color( 60, 25, 16 );
+    const float multiplier = 0.5;
+
+    const Color product = color * multiplier;
+
+    EXPECT_EQ( product.getRed(), color.getRed() / 2 );
+    EXPECT_EQ( product.getGreen(), color.getGreen() / 2 );
+    EXPECT_EQ( product.getBlue(), color.getBlue() / 2 );
+}
+
 TEST( DivisionOperator, Division )
 {
     const Color color( 54, 62, 16 );

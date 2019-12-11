@@ -1,6 +1,6 @@
 #include "io/grid/FlashingLeds.h"
 
-#include "io/grid/LedOutput.h"
+#include "io/grid/LedOutputInterface.h"
 #include "ThreadConfigurations.h"
 
 #include <freertos/ticks.hpp>
@@ -11,7 +11,7 @@ namespace grid
 
 static const uint32_t FLASHING_PERIOD = 250; // 120bpm - default flashing rate
 
-FlashingLeds::FlashingLeds( LedOutput& ledOutput ):
+FlashingLeds::FlashingLeds( LedOutputInterface& ledOutput ):
         Thread( "FlashingLeds", kFlashingLeds.stackDepth, kFlashingLeds.priority ),
         ledOutput_( ledOutput ),
         led_( 0 )

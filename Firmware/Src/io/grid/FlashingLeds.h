@@ -12,7 +12,7 @@
 namespace grid
 {
 
-class LedOutput;
+class LedOutputInterface;
 
 static const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
 typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
@@ -20,7 +20,7 @@ typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
 class FlashingLeds: private freertos::Thread
 {
 public:
-    FlashingLeds( LedOutput& ledOutput );
+    FlashingLeds( LedOutputInterface& ledOutput );
 
     void add( const Coordinates& coordinates, const FlashingColors& color );
     void remove( const Coordinates& coordinates );
@@ -35,7 +35,7 @@ private:
         FlashingColors color;
     };
 
-    LedOutput& ledOutput_;
+    LedOutputInterface& ledOutput_;
     etl::vector<FlashingLed, grid::NUMBER_OF_LEDS> led_;
 };
 
