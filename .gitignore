@@ -1,2 +1,9 @@
 *.dxf
 *.o
+*.ninja_deps
+*.ninja_log
+.directory
+Firmware/unit_tests/objects/
+Firmware/unit_tests/tests/*/*
+!Firmware/unit_tests/tests/*/*.cpp
+!Firmware/unit_tests/tests/*/build_settings.json

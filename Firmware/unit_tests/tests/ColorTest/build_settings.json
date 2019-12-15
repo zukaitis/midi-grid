@@ -1,0 +1,6 @@
+{
+    "source_files": [
+        "ColorTest.cpp",
+        "${source_dir}/types/Color.cpp"
+    ]
+}

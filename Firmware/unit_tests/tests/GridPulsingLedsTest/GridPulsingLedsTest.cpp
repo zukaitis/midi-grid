@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "io/grid/PulsingLeds.h"
 
-#include "mocks/io/grid/MockLedOutput.h"
+#include "io/grid/MockLedOutput.h"
 
 int main( int argc, char **argv)
 {

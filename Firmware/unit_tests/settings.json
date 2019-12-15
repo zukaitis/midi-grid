@@ -1,0 +1,25 @@
+{
+    "directories": {
+        "ut_dir": ".",
+        "object_dir": "objects",
+        "source_dir": "../Src",
+        "mock_dir": "mocks",
+        "lib_dir": "/usr/lib"
+    },
+
+    "ninja_variables": {
+        "compiler": "g++",
+        "compiler_flags": "-c -Wall",
+        "linker": "g++",
+        "linker_flags": "-L ${lib_dir} -l gtest -l pthread -l gmock"
+    },
+
+    "include_directories": [
+        "${mock_dir}",
+        "${source_dir}",
+        "${source_dir}/configs",
+        "${ut_dir}/../submodules/etl/include",
+        "/usr/src/googletest/googletest/include",
+        "/usr/src/googletest/googlemock/include"
+    ]
+}
