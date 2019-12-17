@@ -17,7 +17,35 @@
             "label": "Build",
             "type": "shell",
             "command": "ninja",
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run UTs",
+            "type": "shell",
+            "command": "unit_tests/run.sh -m",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run ALL UTs",
+            "type": "shell",
+            "command": "unit_tests/run.sh",
+            "group": "test",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"

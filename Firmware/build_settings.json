@@ -118,7 +118,8 @@
         "-specs=nano.specs",
         "-specs=nosys.specs",
         "-mfloat-abi=hard",
-        "-mfpu=fpv4-sp-d16"
+        "-mfpu=fpv4-sp-d16",
+        "-fdiagnostics-color=always"
     ],
 
     "c_flags": [

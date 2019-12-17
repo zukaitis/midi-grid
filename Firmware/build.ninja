@@ -22,7 +22,8 @@ dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
-    -specs=nano.specs -specs=nosys.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16
+    -specs=nano.specs -specs=nosys.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16 $
+    -fdiagnostics-color=always
 c_flags = -O0 -ggdb3 -ffunction-sections -fdata-sections
 cxx_flags = -fno-rtti -fno-exceptions -fno-strict-aliasing -std=c++11 $
     -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS

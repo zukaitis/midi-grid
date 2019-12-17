@@ -22,20 +22,28 @@ def generate_single_build_file( test_path: str ):
     if not os.path.isabs( test_path ):
         test_path = os.getcwd() + os.path.sep + test_path
 
+    common_settings_filename = 'settings.json'
+    common_settings_full_filename = unit_test_root_dir + common_settings_filename
+    try:
+        with open( common_settings_full_filename, 'r' ) as read_file:
+            common_settings = json.load( read_file )
+    except FileNotFoundError:
+        print( common_settings_filename + ' file does not exist, generation failed')
+        return
+
+    settings_filename = 'build_settings.json'
+    settings_full_filename = test_path + settings_filename
+    try:
+        with open( settings_full_filename, 'r' ) as read_file:
+            settings = json.load( read_file )
+    except FileNotFoundError:
+        print( settings_full_filename + ' file does not exist, generation failed')
+        return
+
     build_filename = 'build.ninja'
     build_full_filename = test_path + build_filename
     ninja_writer = ninja_syntax.Writer( open( build_full_filename, 'w' ) )
     n = ninja_writer
-
-    common_settings_filename = 'settings.json'
-    common_settings_full_filename = unit_test_root_dir + common_settings_filename
-    with open( common_settings_full_filename, 'r' ) as read_file:
-        common_settings = json.load( read_file )
-
-    settings_filename = 'build_settings.json'
-    settings_full_filename = test_path + settings_filename
-    with open( settings_full_filename, 'r' ) as read_file:
-        settings = json.load( read_file )
 
     script_full_filename = __file__
     script_filename = os.path.basename( script_full_filename )
@@ -100,6 +108,11 @@ def generate_single_build_file( test_path: str ):
         description='Generating ${out} file' )
     n.newline()
 
+    n.rule( 'run',
+        command='$in --gtest_color=yes | tee $out',
+        description='Running the test' )
+    n.newline()
+
     n.comment( 'Build instructions' )
     objs = list()
     for f in settings['source_files']:
@@ -112,7 +125,14 @@ def generate_single_build_file( test_path: str ):
     n.build( '${target}', 'link', objs )
     n.newline()
 
+    n.comment( 'Build file generation instruction' )
     n.build( build_filename, 'configure', implicit=[script_full_filename, settings_filename, common_settings_full_filename] )
+    n.newline()
+
+    n.comment( 'Test run instruction' )
+    n.build( '${target_path}/result.txt', 'run', '${target}' )
+    n.build( 'run', 'phony ${target_path}/result.txt' )
+    n.newline()
 
     n.build( 'all', 'phony ' + build_filename + ' ${target}' )
     n.default( 'all' )
