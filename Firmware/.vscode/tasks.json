@@ -30,7 +30,7 @@
         {
             "label": "Run UTs",
             "type": "shell",
-            "command": "unit_tests/run.sh -m",
+            "command": "unit_tests/run -m",
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -44,7 +44,7 @@
         {
             "label": "Run ALL UTs",
             "type": "shell",
-            "command": "unit_tests/run.sh",
+            "command": "unit_tests/run",
             "group": "test",
             "presentation": {
                 "reveal": "always",

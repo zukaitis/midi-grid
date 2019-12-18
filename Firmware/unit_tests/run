@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+# Run unit tests
+
+print_usage() {
+    printf "Usage:
+  -m flag specifies, that only tests, affected by recent changes shall be ran
+  -n flag specifies, that if build.ninja file is not found in test_path directory, the script shouldn't regenerate it"
+}
+
+readonly WORKING_DIR=$pwd
+readonly UNIT_TESTS_DIR=$(dirname $(readlink -f $0))
+
+readonly BUILD_FILENAME=build.ninja
+
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly NC='\033[0m' # No Color
+
+modified_flag=false
+no_generation_flag=false
+
+while getopts 'mn' flag; do
+    case "${flag}" in
+        m) modified_flag=true ;;
+        n) no_generation_flag=true ;;
+        *) print_usage
+            exit 1 ;;
+    esac
+done
+
+passed_tests=()
+failed_tests=()
+
+for test_path in ${UNIT_TESTS_DIR}/tests/*/
+do
+    test_name=${test_path%*/} # remove the trailing "/"
+    test_name=${test_name##*/} # print everything after the final "/"
+
+    if ! [[ -f ${test_path}${BUILD_FILENAME} ]]; then
+        if [[ "${no_generation_flag}" = false ]]; then
+            ${UNIT_TESTS_DIR}/generate.py ${test_path}
+            if [[ $? -ne 0 ]]; then
+                printf "generation of ${BUILD_FILENAME} file for ${test_name} failed, use -n flag to ignore it\n"
+                continue
+            fi
+        fi
+    fi
+
+    if [[ -f ${test_path}${BUILD_FILENAME} ]]; then
+        cd ${test_path}
+        build_output=$(ninja all)
+        if [[ $? -ne 0 ]]; then
+            printf "build of ${test_name} failed\n"
+            continue
+        else
+            if [[ "${build_output}" = "ninja: no work to do." ]]; then
+                if [[ "${modified_flag}" = true ]]; then
+                    continue
+                fi
+            else
+                printf "${build_output}\n\n"
+            fi
+        fi
+    fi
+
+    if [[ -f ${test_path}${test_name} ]]; then
+        printf "${test_name}\n"
+        ${test_path}${test_name}
+        if [[ $? -ne 0 ]]; then
+            failed_tests+=("${test_name}")
+        else
+            passed_tests+=("${test_name}")
+        fi
+        printf "\n"
+    fi
+done
+
+number_of_failed_tests=${#failed_tests[@]}
+number_of_passed_tests=${#passed_tests[@]}
+((number_of_tests_ran=number_of_failed_tests+number_of_passed_tests))
+
+passed_str="${number_of_passed_tests}"
+if [[ "${number_of_passed_tests}" = "0" ]]; then
+    passed_str="none"
+elif [[ "${number_of_passed_tests}" = "${number_of_tests_ran}" ]]; then
+    passed_str="all"
+fi
+
+printf "${number_of_tests_ran} unit tests were ran, ${passed_str} of them have passed.\n"
+
+for test in ${passed_tests[*]}
+do
+    printf "${GREEN}[  PASSED  ]${NC} ${test}\n"
+done
+
+for test in ${failed_tests[*]}
+do
+    printf "${RED}[  FAILED  ]${NC} ${test}\n"
+done
+
+cd ${WORKING_DIR}
