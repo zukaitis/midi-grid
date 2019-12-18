@@ -118,20 +118,19 @@
         "-specs=nano.specs",
         "-specs=nosys.specs",
         "-mfloat-abi=hard",
-        "-mfpu=fpv4-sp-d16",
-        "-fdiagnostics-color=always"
+        "-mfpu=fpv4-sp-d16"
     ],
 
     "c_flags": [
         "-O0",
         "-ggdb3",
         "-ffunction-sections",
-        "-fdata-sections"
+        "-fdata-sections",
+        "-fdiagnostics-color=always"
     ],
 
     "cxx_flags": [
         "-fno-rtti",
-        "-fno-exceptions",
         "-fno-strict-aliasing",
         "-std=c++11",
         "-DCPP_FREERTOS_NO_EXCEPTIONS",
@@ -140,7 +139,8 @@
 
     "linker_flags": [
         "-Wl,-Map=output.map",
-        "-Wl,--gc-sections"
+        "-Wl,--gc-sections",
+        "-fdiagnostics-color=always"
     ]
 
 }

@@ -5,6 +5,7 @@
 #undef private
 
 #include "io/grid/MockLedOutput.h"
+#include "freertos/MockThread.h"
 
 int main( int argc, char **argv)
 {
@@ -16,6 +17,9 @@ int main( int argc, char **argv)
 TEST( PulsingLedsConstructor, Create )
 {
     grid::MockLedOutput mockLedOutput;
+
+    EXPECT_CALL( freertos::MockThread::getInstance(), Start ).Times(1);
+    EXPECT_CALL( freertos::MockThread::getInstance(), Suspend ).Times(1);
     const grid::PulsingLeds pulsingLeds( mockLedOutput );
     SUCCEED();
 }
@@ -23,6 +27,9 @@ TEST( PulsingLedsConstructor, Create )
 TEST( setOutputValues, CheckDimming )
 {
     grid::MockLedOutput mockLedOutput;
+
+    EXPECT_CALL( freertos::MockThread::getInstance(), Start ).Times(1);
+    EXPECT_CALL( freertos::MockThread::getInstance(), Suspend ).Times(1);
     grid::PulsingLeds pulsingLeds( mockLedOutput );
 
     const uint8_t valueRed = 64;
@@ -30,7 +37,7 @@ TEST( setOutputValues, CheckDimming )
     const uint8_t valueBlue = 52;
     const Coordinates coords = {0, 0};
 
-    EXPECT_CALL( pulsingLeds, Resume ).Times(1);
+    EXPECT_CALL( freertos::MockThread::getInstance(), Resume ).Times(1);
     pulsingLeds.add( coords, {valueRed, valueGreen, valueBlue} );
 
     for (uint8_t step = 0; step < 4; step++)
@@ -59,10 +66,12 @@ TEST( setOutputValues, CheckDimming )
 TEST( setOutputValues_add, CheckVectorLooping )
 {
     grid::MockLedOutput mockLedOutput;
+
+    EXPECT_CALL( freertos::MockThread::getInstance(), Start ).Times(1);
+    EXPECT_CALL( freertos::MockThread::getInstance(), Suspend ).Times(1);
     grid::PulsingLeds pulsingLeds( mockLedOutput );
 
-
-    EXPECT_CALL( pulsingLeds, Resume ).Times(1);
+    EXPECT_CALL( freertos::MockThread::getInstance(), Resume ).Times(1);
     for (uint8_t i = 0; i < 8; i++)
     {
         pulsingLeds.add( {2, 2}, {4, 2, 0} );

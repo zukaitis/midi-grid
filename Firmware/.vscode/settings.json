@@ -1,12 +1,16 @@
 {
     "files.exclude": {
         "**/.git": true,
+        "**/.gitignore": true,
         "**/.xml": true,
         "**/.cproject": true,
         "**/.project": true,
         "**/.mxproject": true,
+        "**/.ninja_deps": true,
+        "**/.ninja_log": true,
         ".settings": true,
         "output/" : true,
+        "unit_tests/objects/" : true,
         "submodules/etl/*.*": true,
         "submodules/etl/examples/": true,
         "submodules/etl/support/": true,

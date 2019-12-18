@@ -22,10 +22,10 @@ dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
-    -specs=nano.specs -specs=nosys.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16 $
+    -specs=nano.specs -specs=nosys.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16
+c_flags = -O0 -ggdb3 -ffunction-sections -fdata-sections $
     -fdiagnostics-color=always
-c_flags = -O0 -ggdb3 -ffunction-sections -fdata-sections
-cxx_flags = -fno-rtti -fno-exceptions -fno-strict-aliasing -std=c++11 $
+cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
     -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS
 inc_flags = -IDrivers/CMSIS/Include $
     -IDrivers/CMSIS/Device/ST/STM32F4xx/Include $
@@ -35,8 +35,8 @@ inc_flags = -IDrivers/CMSIS/Include $
     -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
-ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -T STM32F411RCTx_FLASH.ld $
-    -Wl,-Map=output/midi-grid.map
+ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -fdiagnostics-color=always $
+    -T STM32F411RCTx_FLASH.ld -Wl,-Map=output/midi-grid.map
 
 # Rules for different types of inputs and outputs
 rule as

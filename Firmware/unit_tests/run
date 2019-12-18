@@ -51,7 +51,8 @@ do
         cd ${test_path}
         build_output=$(ninja all)
         if [[ $? -ne 0 ]]; then
-            printf "build of ${test_name} failed\n"
+            printf "${build_output}\n"
+            printf "${RED}Build of ${test_name} failed${NC}\n\n"
             continue
         else
             if [[ "${build_output}" = "ninja: no work to do." ]]; then

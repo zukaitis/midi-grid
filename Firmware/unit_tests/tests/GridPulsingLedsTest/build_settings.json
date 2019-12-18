@@ -2,6 +2,7 @@
     "source_files": [
         "GridPulsingLedsTest.cpp",
         "${source_dir}/io/grid/PulsingLeds.cpp",
-        "${source_dir}/types/Color.cpp"
+        "${source_dir}/types/Color.cpp",
+        "${mock_dir}/freertos/MockThread.cpp"
     ]
 }

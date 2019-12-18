@@ -9,7 +9,7 @@
 
     "ninja_variables": {
         "compiler": "g++",
-        "compiler_flags": "-c -Wall",
+        "compiler_flags": "-c -Wall -fdiagnostics-color=always",
         "linker": "g++",
         "linker_flags": "-L ${lib_dir} -l gtest -l pthread -l gmock"
     },

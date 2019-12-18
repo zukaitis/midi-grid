@@ -2,22 +2,20 @@
 
 #include "freertos/ticks.hpp"
 
-#include <gmock/gmock.h>
-
 namespace freertos
 {
 
 class Thread
 {
 public:
-    Thread( const char* const name, const uint16_t stackDepth, const uint8_t priority ) {};
-    virtual ~Thread() {};
+    Thread( const char* Name, uint16_t StackDepth, uint32_t Priority );
+    virtual ~Thread();
     virtual void Run() = 0;
 
-    MOCK_METHOD( void, Start, () );
-    MOCK_METHOD( void, Suspend, () );
-    MOCK_METHOD( void, Resume, () );
-    MOCK_METHOD( void, DelayUntil, (const TickType_t delay) );
+    bool Start();
+    void Suspend();
+    void Resume();
+    void DelayUntil( const TickType_t delay );
 };
 
 }
