@@ -15,6 +15,7 @@ class GridDriver : public InputInterface, public OutputInterface
 {
 public:
     GridDriver();
+    virtual ~GridDriver();
 
     void addThreadToNotify( freertos::Thread* const thread ) override;
     const InputDebouncingBuffers& getInputDebouncingBuffers() const override;

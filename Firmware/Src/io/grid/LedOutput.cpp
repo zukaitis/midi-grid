@@ -4,7 +4,7 @@
 #include "hardware/grid/OutputInterface.h"
 #include "types/Color.h"
 #include "types/Coordinates.h"
-#include "etl/array.h"
+#include <etl/array.h>
 
 namespace grid
 {

@@ -66,6 +66,7 @@ void PulsingLeds::remove( const Coordinates& coordinates )
 void PulsingLeds::removeAll()
 {
     led_.clear();
+    Thread::Suspend();
 }
 
 void PulsingLeds::setOutputValues()
