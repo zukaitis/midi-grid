@@ -29,6 +29,8 @@ public:
 private:
     virtual void Run();
 
+    void setOutputValues();
+
     struct FlashingLed
     {
         Coordinates coordinates;

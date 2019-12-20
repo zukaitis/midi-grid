@@ -1,0 +1,8 @@
+{
+    "source_files": [
+        "GridFlashingLedsTest.cpp",
+        "${source_dir}/io/grid/FlashingLeds.cpp",
+        "${source_dir}/types/Color.cpp",
+        "${mock_dir}/freertos/MockThread.cpp"
+    ]
+}
