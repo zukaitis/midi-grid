@@ -32,9 +32,9 @@ void FlashingLeds::Run()
     }
 }
 
-void FlashingLeds::add( const Coordinates& coordinates, const FlashingColors& color )
+void FlashingLeds::add( const Coordinates& coordinates, const FlashingColors& colors )
 {
-    led_.push_back( {coordinates, color} );
+    led_.push_back( {coordinates, colors} );
 
     if (1 == led_.size())
     {

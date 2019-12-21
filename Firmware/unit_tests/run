@@ -3,7 +3,7 @@
 # Run unit tests
 
 print_usage() {
-    printf "Usage:
+    echo "Usage:
   -m flag specifies, that only tests, affected by recent changes shall be ran
   -n flag specifies, that if build.ninja file is not found in test_path directory, the script shouldn't regenerate it"
 }
@@ -41,7 +41,7 @@ do
         if [[ "${no_generation_flag}" = false ]]; then
             ${UNIT_TESTS_DIR}/generate.py ${test_path}
             if [[ $? -ne 0 ]]; then
-                printf "generation of ${BUILD_FILENAME} file for ${test_name} failed, use -n flag to ignore it\n"
+                echo "generation of ${BUILD_FILENAME} file for ${test_name} failed, use -n flag to ignore it"
                 continue
             fi
         fi
@@ -51,8 +51,8 @@ do
         cd ${test_path}
         build_output=$(ninja all)
         if [[ $? -ne 0 ]]; then
-            printf "${build_output}\n"
-            printf "${RED}Build of ${test_name} failed${NC}\n\n"
+            echo "${build_output}"
+            echo "${RED}Build of ${test_name} failed${NC}\n"
             continue
         else
             if [[ "${build_output}" = "ninja: no work to do." ]]; then
@@ -60,20 +60,20 @@ do
                     continue
                 fi
             else
-                printf "${build_output}\n\n"
+                echo "${build_output}\n"
             fi
         fi
     fi
 
     if [[ -f ${test_path}${test_name} ]]; then
-        printf "${test_name}\n"
+        echo "${test_name}"
         ${test_path}${test_name}
         if [[ $? -ne 0 ]]; then
             failed_tests+=("${test_name}")
         else
             passed_tests+=("${test_name}")
         fi
-        printf "\n"
+        echo ""
     fi
 done
 
@@ -88,7 +88,7 @@ elif [[ "${number_of_passed_tests}" = "${number_of_tests_ran}" ]]; then
     passed_str="all"
 fi
 
-printf "${number_of_tests_ran} unit tests were ran, ${passed_str} of them have passed.\n"
+echo "${number_of_tests_ran} unit tests were ran, ${passed_str} of them have passed."
 
 for test in ${passed_tests[*]}
 do

@@ -62,8 +62,9 @@ TEST( set, CheckOutputCoordinates )
         for (uint8_t y = 0; y < 8; y++)
         {
             const Coordinates expectedCoordinates = {
-                .x = (x + (y / 4) * 10 + 20 - 1) % 20,
-                .y = y % 4 };
+                .x = static_cast<uint8_t>((x + (y / 4) * 10 + 20 - 1) % 20),
+                .y = static_cast<uint8_t>(y % 4) };
+
 
             EXPECT_CALL( mockGridDriver, setRedOutput( expectedCoordinates, testing::_ ) ).Times( 1 );
             EXPECT_CALL( mockGridDriver, setGreenOutput( expectedCoordinates, testing::_ ) ).Times( 1 );

@@ -17,7 +17,8 @@ Grid::Grid( ButtonInputInterface& buttonInput,
         buttonInput_( buttonInput ),
         ledOutput_( ledOutput ),
         flashingLeds_( flashingLeds ),
-        pulsingLeds_( pulsingLeds )
+        pulsingLeds_( pulsingLeds ),
+        led_()
 {
 }
 
@@ -33,7 +34,7 @@ void Grid::discardPendingInput()
 
 Color Grid::getLedColor( const Coordinates& coordinates ) const
 {
-    return led_[coordinates.x][coordinates.y].color;
+    return led_.at(coordinates.x).at(coordinates.y).color;
 }
 
 void Grid::setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType )

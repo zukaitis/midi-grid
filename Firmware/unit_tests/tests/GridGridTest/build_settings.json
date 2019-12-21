@@ -1,0 +1,7 @@
+{
+    "source_files": [
+        "GridGridTest.cpp",
+        "${source_dir}/io/grid/Grid.cpp",
+        "${source_dir}/types/Color.cpp"
+    ]
+}

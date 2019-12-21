@@ -16,7 +16,7 @@ class FlashingLedsInterface
 public:
     virtual ~FlashingLedsInterface() {};
 
-    virtual void add( const Coordinates& coordinates, const FlashingColors& color ) = 0;
+    virtual void add( const Coordinates& coordinates, const FlashingColors& colors ) = 0;
     virtual void remove( const Coordinates& coordinates ) = 0;
     virtual void removeAll() = 0;
 };

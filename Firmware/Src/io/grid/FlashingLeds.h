@@ -18,7 +18,7 @@ class FlashingLeds: public FlashingLedsInterface, private freertos::Thread
 public:
     FlashingLeds( LedOutputInterface& ledOutput );
 
-    void add( const Coordinates& coordinates, const FlashingColors& color ) override;
+    void add( const Coordinates& coordinates, const FlashingColors& colors ) override;
     void remove( const Coordinates& coordinates ) override;
     void removeAll() override;
 
