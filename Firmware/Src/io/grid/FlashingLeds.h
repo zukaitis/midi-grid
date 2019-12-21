@@ -1,12 +1,11 @@
 #pragma once
 
+#include "io/grid/FlashingLedsInterface.h"
 #include "io/grid/GridInterface.h"
 
-#include "types/Color.h"
 #include "types/Coordinates.h"
 
 #include <freertos/thread.hpp>
-#include <etl/array.h>
 #include <etl/vector.h>
 
 namespace grid
@@ -14,17 +13,14 @@ namespace grid
 
 class LedOutputInterface;
 
-static const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
-typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
-
-class FlashingLeds: private freertos::Thread
+class FlashingLeds: public FlashingLedsInterface, private freertos::Thread
 {
 public:
     FlashingLeds( LedOutputInterface& ledOutput );
 
-    void add( const Coordinates& coordinates, const FlashingColors& color );
-    void remove( const Coordinates& coordinates );
-    void removeAll();
+    void add( const Coordinates& coordinates, const FlashingColors& color ) override;
+    void remove( const Coordinates& coordinates ) override;
+    void removeAll() override;
 
 private:
     virtual void Run();

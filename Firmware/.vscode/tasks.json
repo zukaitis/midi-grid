@@ -9,7 +9,8 @@
             "command": "dfu-util --alt 0 --download output/midi-grid.dfu",
             "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": []
         },
@@ -23,7 +24,8 @@
             },
             "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": []
         },
@@ -37,7 +39,8 @@
             },
             "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": []
         },
@@ -48,7 +51,8 @@
             "group": "test",
             "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true
             },
             "problemMatcher": []
         }

@@ -78,6 +78,7 @@
         "Src/io/grid/ButtonInput.cpp",
         "Src/io/grid/FlashingLeds.cpp",
         "Src/io/grid/Grid.cpp",
+        "Src/io/grid/GridContainer.cpp",
         "Src/io/grid/LedOutput.cpp",
         "Src/io/grid/PulsingLeds.cpp",
         "Src/io/lcd/Backlight.cpp",

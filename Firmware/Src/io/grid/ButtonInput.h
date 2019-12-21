@@ -1,5 +1,6 @@
 #pragma once
 
+#include "io/grid/ButtonInputInterface.h"
 #include "io/grid/GridInterface.h"
 #include "hardware/grid/InputInterface.h"
 
@@ -18,16 +19,16 @@ namespace grid
 
 typedef hardware::grid::InputBuffer InputBuffer;
 
-class ButtonInput : public freertos::Thread
+class ButtonInput : public ButtonInputInterface, private freertos::Thread
 {
 public:
     ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
 
-    bool waitForEvent( ButtonEvent& event );
-    void discardPendingEvents();
+    bool waitForEvent( ButtonEvent& event ) override;
+    void discardPendingEvents() override;
 
-    void Run() override;
 private:
+    void Run() override;
 
     Coordinates calculatePhysicalCoordinates( const Coordinates& hardwareCoordinates ) const;
 

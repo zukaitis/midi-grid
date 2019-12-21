@@ -1,5 +1,6 @@
 #pragma once
 
+#include "io/grid/PulsingLedsInterface.h"
 #include "io/grid/GridInterface.h"
 
 #include "types/Color.h"
@@ -14,15 +15,15 @@ namespace grid
 
 class LedOutputInterface;
 
-class PulsingLeds: private freertos::Thread
+class PulsingLeds: public PulsingLedsInterface, private freertos::Thread
 {
 public:
     PulsingLeds( LedOutputInterface& ledOutput );
     virtual ~PulsingLeds() {};
 
-    void add( const Coordinates& coordinates, const Color& color );
-    void remove( const Coordinates& coordinates );
-    void removeAll();
+    void add( const Coordinates& coordinates, const Color& color ) override;
+    void remove( const Coordinates& coordinates ) override;
+    void removeAll() override;
 
 private:
     void Run() override;

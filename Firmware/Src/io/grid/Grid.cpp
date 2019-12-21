@@ -1,21 +1,23 @@
 #include "io/grid/Grid.h"
 
-#include "system/GlobalInterrupts.hpp"
-#include "ThreadConfigurations.h"
-
-#include <freertos/ticks.hpp>
-#include <cmath>
+#include "io/grid/ButtonInputInterface.h"
+#include "io/grid/LedOutputInterface.h"
+#include "io/grid/FlashingLedsInterface.h"
+#include "io/grid/PulsingLedsInterface.h"
 
 namespace grid
 {
 
 Coordinates GRID_LIMITS = { numberOfColumns, numberOfRows };
 
-Grid::Grid( hardware::grid::InputInterface& gridDriverInput, hardware::grid::OutputInterface& gridDriverOutput, mcu::GlobalInterrupts& globalInterrupts ) :
-        buttonInput_( ButtonInput( gridDriverInput, globalInterrupts ) ),
-        ledOutput_( LedOutput( gridDriverOutput ) ),
-        flashingLeds_( FlashingLeds( ledOutput_ ) ),
-        pulsingLeds_( PulsingLeds( ledOutput_ ) )
+Grid::Grid( ButtonInputInterface& buttonInput,
+    LedOutputInterface& ledOutput,
+    FlashingLedsInterface& flashingLeds,
+    PulsingLedsInterface& pulsingLeds ) :
+        buttonInput_( buttonInput ),
+        ledOutput_( ledOutput ),
+        flashingLeds_( flashingLeds ),
+        pulsingLeds_( pulsingLeds )
 {
 }
 
@@ -74,9 +76,8 @@ void Grid::turnAllLedsOff()
     flashingLeds_.removeAll();
     pulsingLeds_.removeAll();
 
-    // todo: also remove flashing, pulsing leds and reset colors to zeros
+    led_ = {};
 }
 
-
-}// namespace
+} // namespace
 

@@ -17,17 +17,19 @@ Main::Main() :
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
         gridDriver_( hardware::grid::GridDriver() ),
-        grid_( grid::Grid( gridDriver_, gridDriver_, globalInterrupts_ ) ),
+        gridContainer_( grid::GridContainer( gridDriver_, gridDriver_, globalInterrupts_ ) ),
         additionalButtons_( additional_buttons::AdditionalButtons( gridDriver_ ) ),
         rotaryControls_( rotary_controls::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcd_( lcd::Lcd() ),
-        applicationController_( application::ApplicationController( additionalButtons_, grid_, rotaryControls_, usbMidi_ ) ),
+        applicationController_( application::ApplicationController(
+            additionalButtons_, gridContainer_.getGrid(), rotaryControls_, usbMidi_ ) ),
         startup_( application::Startup( applicationController_, gridDriver_, lcd_, system_ ) ),
-        gridTest_( application::GridTest( applicationController_, grid_, lcd_, usbMidi_ ) ),
-        internalMenu_( application::InternalMenu( applicationController_, grid_, additionalButtons_, lcd_, system_ ) ),
-        launchpad_( application::launchpad::Launchpad( applicationController_, grid_, additionalButtons_, rotaryControls_, lcd_, usbMidi_ ) ),
-        snake_( application::Snake( applicationController_, grid_, lcd_ ) )
+        gridTest_( application::GridTest( applicationController_, gridContainer_.getGrid(), lcd_, usbMidi_ ) ),
+        internalMenu_( application::InternalMenu( applicationController_, gridContainer_.getGrid(), additionalButtons_, lcd_, system_ ) ),
+        launchpad_( application::launchpad::Launchpad(
+            applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcd_, usbMidi_ ) ),
+        snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcd_ ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {
         NULL, // ApplicationIndex_PREVIOUS

@@ -182,6 +182,7 @@ build output/Src/io/additional_buttons/AdditionalButtons.o: cxx $
 build output/Src/io/grid/ButtonInput.o: cxx Src/io/grid/ButtonInput.cpp
 build output/Src/io/grid/FlashingLeds.o: cxx Src/io/grid/FlashingLeds.cpp
 build output/Src/io/grid/Grid.o: cxx Src/io/grid/Grid.cpp
+build output/Src/io/grid/GridContainer.o: cxx Src/io/grid/GridContainer.cpp
 build output/Src/io/grid/LedOutput.o: cxx Src/io/grid/LedOutput.cpp
 build output/Src/io/grid/PulsingLeds.o: cxx Src/io/grid/PulsingLeds.cpp
 build output/Src/io/lcd/Backlight.o: cxx Src/io/lcd/Backlight.cpp
@@ -251,9 +252,10 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/Src/hardware/grid/GridDriver.o $
     output/Src/io/additional_buttons/AdditionalButtons.o $
     output/Src/io/grid/ButtonInput.o output/Src/io/grid/FlashingLeds.o $
-    output/Src/io/grid/Grid.o output/Src/io/grid/LedOutput.o $
-    output/Src/io/grid/PulsingLeds.o output/Src/io/lcd/Backlight.o $
-    output/Src/io/lcd/Lcd.o output/Src/io/lcd/LcdDriver.o $
+    output/Src/io/grid/Grid.o output/Src/io/grid/GridContainer.o $
+    output/Src/io/grid/LedOutput.o output/Src/io/grid/PulsingLeds.o $
+    output/Src/io/lcd/Backlight.o output/Src/io/lcd/Lcd.o $
+    output/Src/io/lcd/LcdDriver.o $
     output/Src/io/rotary_controls/RotaryControls.o $
     output/Src/io/usb/UsbMidi.o output/Src/main.o $
     output/Src/system/GlobalInterrupts.o output/Src/system/System.o $

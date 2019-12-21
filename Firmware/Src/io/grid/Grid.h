@@ -1,18 +1,23 @@
 #pragma once
 
 #include "io/grid/GridInterface.h"
-#include "io/grid/ButtonInput.h"
-#include "io/grid/LedOutput.h"
-#include "io/grid/FlashingLeds.h"
-#include "io/grid/PulsingLeds.h"
+#include <etl/array.h>
 
 namespace grid
 {
 
+class ButtonInputInterface;
+class LedOutputInterface;
+class FlashingLedsInterface;
+class PulsingLedsInterface;
+
 class Grid : public GridInterface
 {
 public:
-    Grid( hardware::grid::InputInterface& gridDriverInput, hardware::grid::OutputInterface& gridDriverOutput, mcu::GlobalInterrupts& globalInterrupts );
+    Grid( ButtonInputInterface& buttonInput,
+        LedOutputInterface& ledOutput,
+        FlashingLedsInterface& flashingLeds,
+        PulsingLedsInterface& pulsingLeds );
 
     bool waitForInput( ButtonEvent& event ) override;
     void discardPendingInput() override;
@@ -24,10 +29,10 @@ public:
     void turnAllLedsOff() override;
 
 private:
-    ButtonInput buttonInput_;
-    LedOutput ledOutput_;
-    FlashingLeds flashingLeds_;
-    PulsingLeds pulsingLeds_;
+    ButtonInputInterface& buttonInput_;
+    LedOutputInterface& ledOutput_;
+    FlashingLedsInterface& flashingLeds_;
+    PulsingLedsInterface& pulsingLeds_;
 
     struct Led
     {
