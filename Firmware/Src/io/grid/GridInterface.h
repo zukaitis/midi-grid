@@ -36,7 +36,7 @@ enum class LedLightingType : uint8_t
 class GridInterface : public HardwareInputInterface<ButtonEvent>
 {
 public:
-    virtual ~GridInterface() {};
+    virtual ~GridInterface() = default;
 
     virtual bool waitForInput( ButtonEvent& event ) override = 0;
     virtual void discardPendingInput() override = 0;

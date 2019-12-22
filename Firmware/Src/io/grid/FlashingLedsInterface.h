@@ -14,7 +14,7 @@ typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
 class FlashingLedsInterface
 {
 public:
-    virtual ~FlashingLedsInterface() {};
+    virtual ~FlashingLedsInterface() = default;
 
     virtual void add( const Coordinates& coordinates, const FlashingColors& colors ) = 0;
     virtual void remove( const Coordinates& coordinates ) = 0;

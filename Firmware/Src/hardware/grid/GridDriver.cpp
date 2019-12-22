@@ -71,10 +71,6 @@ GridDriver::GridDriver()
 {
 }
 
-GridDriver::~GridDriver()
-{
-}
-
 void GridDriver::addThreadToNotify( freertos::Thread* const thread )
 {
     threadToNotify_.push_back( thread );

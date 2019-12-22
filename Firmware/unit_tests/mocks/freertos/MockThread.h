@@ -18,8 +18,8 @@ public:
     MOCK_METHOD( void, DelayUntil, (const TickType_t delay) );
 
 private:
-    MockThread();
-    virtual ~MockThread();
+    MockThread() = default;
+    virtual ~MockThread() = default;
 };
 
 }

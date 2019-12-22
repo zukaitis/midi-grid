@@ -8,6 +8,8 @@
         "**/.mxproject": true,
         "**/.ninja_deps": true,
         "**/.ninja_log": true,
+        "**.html": true,
+        "**/.gcov": true,
         ".settings": true,
         "output/" : true,
         "unit_tests/objects/" : true,

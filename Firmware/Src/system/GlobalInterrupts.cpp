@@ -9,10 +9,6 @@ GlobalInterrupts::GlobalInterrupts()
 {
 }
 
-GlobalInterrupts::~GlobalInterrupts()
-{
-}
-
 void GlobalInterrupts::disable()
 {
     __disable_irq();

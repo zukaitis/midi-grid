@@ -53,16 +53,15 @@ void Grid::setLed( const Coordinates& coordinates, const Color& color, const Led
 
         switch (lightingType)
         {
-            case LedLightingType::LIGHT:
-                ledOutput_.set( coordinates, color );
-                break;
             case LedLightingType::FLASH:
                 flashingLeds_.add( coordinates, { led_[coordinates.x][coordinates.y].color, color } );
                 break;
             case LedLightingType::PULSE:
                 pulsingLeds_.add( coordinates, color );
                 break;
+            case LedLightingType::LIGHT:
             default:
+                ledOutput_.set( coordinates, color );
                 break;
         }
 

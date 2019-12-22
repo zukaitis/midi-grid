@@ -10,23 +10,7 @@ MockThread& MockThread::getInstance()
     return instance;
 }
 
-MockThread::MockThread()
-{
-}
-
-MockThread::~MockThread()
-{
-}
-
 Thread::Thread( const char* Name, uint16_t StackDepth, uint32_t Priority )
-{
-}
-
-Thread::Thread()
-{
-}
-
-Thread::~Thread()
 {
 }
 

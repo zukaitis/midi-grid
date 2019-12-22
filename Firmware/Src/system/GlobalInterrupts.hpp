@@ -7,7 +7,7 @@ class GlobalInterrupts
 {
 public:
     GlobalInterrupts();
-    virtual ~GlobalInterrupts();
+    virtual ~GlobalInterrupts() = default;
 
     void disable();
     void enable();

@@ -16,7 +16,7 @@ namespace grid
 class MockGridDriver : public InputInterface, public OutputInterface
 {
 public:
-    virtual ~MockGridDriver() {};
+    virtual ~MockGridDriver() = default;
 
     MOCK_METHOD( void, addThreadToNotify, (freertos::Thread* const thread), (override) );
     MOCK_METHOD( const InputDebouncingBuffers&, getInputDebouncingBuffers, (), (const, override) );

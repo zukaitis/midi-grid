@@ -19,7 +19,6 @@ class PulsingLeds: public PulsingLedsInterface, private freertos::Thread
 {
 public:
     PulsingLeds( LedOutputInterface& ledOutput );
-    virtual ~PulsingLeds() {};
 
     void add( const Coordinates& coordinates, const Color& color ) override;
     void remove( const Coordinates& coordinates ) override;

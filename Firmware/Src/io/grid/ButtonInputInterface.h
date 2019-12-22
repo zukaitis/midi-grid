@@ -8,7 +8,7 @@ struct ButtonEvent;
 class ButtonInputInterface
 {
 public:
-    virtual ~ButtonInputInterface() {};
+    virtual ~ButtonInputInterface() = default;
 
     virtual bool waitForEvent( ButtonEvent& event ) = 0;
     virtual void discardPendingEvents() = 0;

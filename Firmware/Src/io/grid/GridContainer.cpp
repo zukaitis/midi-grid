@@ -15,10 +15,6 @@ GridContainer::GridContainer(
 {
 }
 
-GridContainer::~GridContainer()
-{
-}
-
 GridInterface& GridContainer::getGrid()
 {
     return grid_;

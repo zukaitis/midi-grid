@@ -13,7 +13,7 @@ class GridContainer
 {
 public:
     GridContainer( hardware::grid::InputInterface& gridDriverInput, hardware::grid::OutputInterface& gridDriverOutput, mcu::GlobalInterrupts& globalInterrupts );
-    virtual ~GridContainer();
+    virtual ~GridContainer() = default;
 
     GridInterface& getGrid();
 

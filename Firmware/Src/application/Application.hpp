@@ -64,7 +64,7 @@ class Application
 {
 public:
     Application( ApplicationController& applicationController );
-    virtual ~Application();
+    virtual ~Application() = default;
 
     virtual void run( ApplicationThread& thread );
     virtual void handleAdditionalButtonEvent( const additional_buttons::Event event );

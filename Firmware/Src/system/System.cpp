@@ -9,10 +9,6 @@ System::System()
 {
 }
 
-System::~System()
-{
-}
-
 void System::initialize()
 {
     HAL_Init();

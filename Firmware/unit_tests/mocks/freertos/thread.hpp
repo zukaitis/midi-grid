@@ -9,8 +9,8 @@ class Thread
 {
 public:
     Thread( const char* Name, uint16_t StackDepth, uint32_t Priority );
-    Thread();
-    virtual ~Thread();
+    Thread() = default;
+    virtual ~Thread() = default;
     virtual void Run() = 0;
 
     bool Start();

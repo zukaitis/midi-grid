@@ -8,7 +8,7 @@ class System
 {
 public:
     System();
-    virtual ~System();
+    virtual ~System() = default;
 
     void initialize();
     bool isUsbConnected();

@@ -83,10 +83,6 @@ Application::Application( ApplicationController& applicationController ):
 {
 }
 
-Application::~Application()
-{
-}
-
 void Application::switchApplication( const ApplicationIndex applicationIndex )
 {
     applicationController_.selectApplication( applicationIndex );

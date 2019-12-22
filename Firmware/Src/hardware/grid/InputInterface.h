@@ -21,7 +21,7 @@ typedef etl::array<InputBuffer, numberOfInputBuffers> InputDebouncingBuffers;
 class InputInterface
 {
 public:
-    virtual ~InputInterface() {};
+    virtual ~InputInterface() = default;
 
     virtual void addThreadToNotify( freertos::Thread* const thread ) = 0;
     virtual const InputDebouncingBuffers& getInputDebouncingBuffers() const = 0;
