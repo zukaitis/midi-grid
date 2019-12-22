@@ -10,6 +10,9 @@ print_usage() {
 
 readonly WORKING_DIR=$pwd
 readonly UNIT_TESTS_DIR=$(dirname $(readlink -f $0))
+readonly OBJECT_DIR_NAME='objects'
+readonly COVERAGE_DIR_NAME='coverage_report'
+readonly BROWSER='firefox'
 
 readonly BUILD_FILENAME=build.ninja
 
@@ -19,11 +22,13 @@ readonly NC='\033[0m' # No Color
 
 modified_flag=false
 no_generation_flag=false
+coverage_flag=false
 
-while getopts 'mn' flag; do
+while getopts 'mnc' flag; do
     case "${flag}" in
         m) modified_flag=true ;;
         n) no_generation_flag=true ;;
+        c) coverage_flag=true ;;
         *) print_usage
             exit 1 ;;
     esac
@@ -99,5 +104,23 @@ for test in ${failed_tests[*]}
 do
     printf "${RED}[  FAILED  ]${NC} ${test}\n"
 done
+
+if [[ "${coverage_flag}" = true ]]; then
+    echo ""
+    echo "Generating unit test coverage report..."
+
+    cd ${UNIT_TESTS_DIR}
+    mkdir -p ${COVERAGE_DIR_NAME}
+
+    lcov --c --directory ${OBJECT_DIR_NAME} --output-file ${COVERAGE_DIR_NAME}/coverage_unfiltered.info >/dev/null 2>&1
+    cd ${COVERAGE_DIR_NAME}
+    lcov --remove coverage_unfiltered.info -o coverage_filtered.info \
+        '/usr/include/*' '/usr/src/*' '*submodules/*' '*unit_tests/*' >/dev/null 2>&1
+    genhtml coverage_filtered.info --output-directory . >/dev/null 2>&1
+
+    echo "Coverage report generated, it can be accessed at:"
+    echo "${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html"
+    ${BROWSER} ${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html
+fi
 
 cd ${WORKING_DIR}

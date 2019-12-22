@@ -9,9 +9,9 @@
 
     "ninja_variables": {
         "compiler": "g++",
-        "compiler_flags": "-c -Wall -fdiagnostics-color=always",
+        "compiler_flags": "-c -Wall -fprofile-arcs -ftest-coverage -fdiagnostics-color=always",
         "linker": "g++",
-        "linker_flags": "-L ${lib_dir} -l gtest -l pthread -l gmock"
+        "linker_flags": "-fprofile-arcs -ftest-coverage -fdiagnostics-color=always -L ${lib_dir} -l gtest -l pthread -l gmock"
     },
 
     "include_directories": [
