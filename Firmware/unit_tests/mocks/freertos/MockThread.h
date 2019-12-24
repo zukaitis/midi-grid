@@ -1,5 +1,6 @@
 #pragma once
 
+#include "freertos/thread.hpp"
 #include "freertos/ticks.hpp"
 
 #include <gmock/gmock.h>
@@ -20,6 +21,22 @@ public:
 private:
     MockThread() = default;
     virtual ~MockThread() = default;
+};
+
+class ThreadCaller
+{
+public:
+    static ThreadCaller& getInstance();
+
+    void setThread( freertos::Thread& thread );
+
+    void Run();
+
+private:
+    ThreadCaller() = default;
+    ~ThreadCaller() = default;
+
+    freertos::Thread* currentThread_;
 };
 
 }

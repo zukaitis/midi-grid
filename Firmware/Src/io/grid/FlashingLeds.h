@@ -23,9 +23,7 @@ public:
     void removeAll() override;
 
 private:
-    virtual void Run();
-
-    void setOutputValues();
+    void Run() override;
 
     struct FlashingLed
     {

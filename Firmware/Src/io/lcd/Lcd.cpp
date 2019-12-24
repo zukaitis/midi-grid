@@ -37,12 +37,9 @@ void Lcd::Run()
 {
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
 
-    while (true)
-    {
-        updateRequired_.Take(); // block until LCD update is required
-        DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another
-        lcdDriver_.transmit( &lcdBuffer_[0][0] );
-    }
+    updateRequired_.Take(); // block until LCD update is required
+    DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another
+    lcdDriver_.transmit( &lcdBuffer_[0][0] );
 }
 
 void Lcd::clear()

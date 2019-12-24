@@ -23,13 +23,16 @@ FlashingLeds::FlashingLeds( LedOutputInterface& ledOutput ):
 void FlashingLeds::Run()
 {
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( FLASHING_PERIOD );
+    static uint8_t flashColorIndex = 0;
 
-    while (true)
+    Thread::DelayUntil( delayPeriod );
+
+    for (const auto& l : led_)
     {
-        Thread::DelayUntil( delayPeriod );
-
-        setOutputValues();
+        ledOutput_.set( l.coordinates, l.color[flashColorIndex] );
     }
+
+    flashColorIndex = (flashColorIndex + 1) % NUMBER_OF_FLASHING_COLORS;
 }
 
 void FlashingLeds::add( const Coordinates& coordinates, const FlashingColors& colors )
@@ -66,18 +69,6 @@ void FlashingLeds::removeAll()
 {
     led_.clear();
     Thread::Suspend();
-}
-
-void FlashingLeds::setOutputValues()
-{
-    static uint8_t flashColorIndex = 0;
-
-    for (const auto& l : led_)
-    {
-        ledOutput_.set( l.coordinates, l.color[flashColorIndex] );
-    }
-
-    flashColorIndex = (flashColorIndex + 1) % NUMBER_OF_FLASHING_COLORS;
 }
 
 }

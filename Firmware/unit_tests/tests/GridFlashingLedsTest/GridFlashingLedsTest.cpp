@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#define private public
 #include "io/grid/FlashingLeds.h"
-#undef private
 
 #include "io/grid/MockLedOutput.h"
 #include "freertos/MockThread.h"
+
+static const uint32_t delayPeriod = 250; // [ms]
 
 int main( int argc, char **argv)
 {
@@ -24,7 +24,7 @@ TEST( PulsingLedsConstructor, Create )
     SUCCEED();
 }
 
-TEST( setOutputValues, CheckDimming )
+TEST( Run, CheckDimming )
 {
     grid::MockLedOutput mockLedOutput;
 
@@ -44,15 +44,17 @@ TEST( setOutputValues, CheckDimming )
 
     for (uint8_t i = 0; i < 3; i++)
     {
+        EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
         EXPECT_CALL( mockLedOutput, set( testing::_, color1 ) ).Times( 8 );
-        flashingLeds.setOutputValues();
+        freertos::ThreadCaller::getInstance().Run();
 
+        EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
         EXPECT_CALL( mockLedOutput, set( testing::_, color2 ) ).Times( 8 );
-        flashingLeds.setOutputValues();
+        freertos::ThreadCaller::getInstance().Run();
     }
 }
 
-TEST( setOutputValues_add, CheckVectorLooping )
+TEST( Run_add, CheckVectorLooping )
 {
     grid::MockLedOutput mockLedOutput;
 
@@ -67,8 +69,9 @@ TEST( setOutputValues_add, CheckVectorLooping )
         flashingLeds.add( {2, 2}, colors );
     }
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 8 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     for (uint8_t i = 0; i < 22; i++)
     {
@@ -76,8 +79,9 @@ TEST( setOutputValues_add, CheckVectorLooping )
         flashingLeds.add( {3, 3}, colors );
     }
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 30 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     for (uint8_t i = 0; i < 50; i++)
     {
@@ -85,8 +89,9 @@ TEST( setOutputValues_add, CheckVectorLooping )
         flashingLeds.add( {4, 4}, colors );
     }
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 80 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     const grid::FlashingColors colors = {Color(6, 6, 6), Color(9, 9, 9)};
     EXPECT_THROW( flashingLeds.add( {4, 4}, colors ), etl::vector_full );
@@ -107,28 +112,32 @@ TEST( remove, removeValues )
         flashingLeds.add( {i, 0}, colors );
     }
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 8 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     flashingLeds.remove( {3, 3} );
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     // expecting, that no elements were removed
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 8 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     for (uint8_t i = 0; i < 7; i++)
     {
         flashingLeds.remove( {i, 0} );
 
+        EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
         EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 7 - i );
-        flashingLeds.setOutputValues();
+        freertos::ThreadCaller::getInstance().Run();
     }
 
     EXPECT_CALL( freertos::MockThread::getInstance(), Suspend ).Times( 1 );
     flashingLeds.remove( {7, 0} );
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 0 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 }
 
 TEST( removeAll, removeEverything )
@@ -146,12 +155,14 @@ TEST( removeAll, removeEverything )
         flashingLeds.add( {i, 0}, colors );
     }
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 8 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 
     EXPECT_CALL( freertos::MockThread::getInstance(), Suspend ).Times( 1 );
     flashingLeds.removeAll();
 
+    EXPECT_CALL( freertos::MockThread::getInstance(), DelayUntil( delayPeriod ) ).Times( 1 );
     EXPECT_CALL( mockLedOutput, set( testing::_, testing::_ ) ).Times( 0 );
-    flashingLeds.setOutputValues();
+    freertos::ThreadCaller::getInstance().Run();
 }

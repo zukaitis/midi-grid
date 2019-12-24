@@ -37,36 +37,33 @@ void ButtonInput::discardPendingEvents()
 
 void ButtonInput::Run()
 {
-    const InputBuffer& inputBuffer = inputBuffers_[0];
+    static const InputBuffer& inputBuffer = inputBuffers_[0];
+
+    Thread::WaitForNotification(); // blocking until grid driver gives notification
+
+    globalInterrupts_.disable();
+    copyInputBuffers();
+    globalInterrupts_.enable();
+
     InputBuffer debouncingBuffer;
+    fillDebouncingBuffer( debouncingBuffer );
     InputBuffer changesBuffer;
+    fillChangesBuffer( changesBuffer );
 
-    while (true)
+    for (uint8_t x = 0; x < inputBuffer.size(); x++)
     {
-        Thread::WaitForNotification(); // blocking until grid driver gives notification
-
-        globalInterrupts_.disable();
-        copyInputBuffers();
-        globalInterrupts_.enable();
-
-        fillDebouncingBuffer( debouncingBuffer );
-        fillChangesBuffer( changesBuffer );
-
-        for (uint8_t x = 0; x < inputBuffer.size(); x++)
+        if ((0 == debouncingBuffer[x]) && (0 != changesBuffer[x]))
         {
-            if ((0 == debouncingBuffer[x]) && (0 != changesBuffer[x]))
+            for (uint8_t y = 0; y < hardware::grid::numberOfRows; y++)
             {
-                for (uint8_t y = 0; y < hardware::grid::numberOfRows; y++)
+                if (0 != ((changesBuffer[x] >> y) & 0x01))
                 {
-                    if (0 != ((changesBuffer[x] >> y) & 0x01))
-                    {
-                        ButtonEvent event = {
-                            .action = static_cast<ButtonAction>((inputBuffer[x] >> y) & 0x01),
-                            .coordinates = calculatePhysicalCoordinates({ x, y }) };
+                    ButtonEvent event = {
+                        .action = static_cast<ButtonAction>((inputBuffer[x] >> y) & 0x01),
+                        .coordinates = calculatePhysicalCoordinates({ x, y }) };
 
-                        events_.Enqueue( &event );
-                        registeredInputBuffer_[x] ^= (1 << y); // toggle bit that was registered
-                    }
+                    events_.Enqueue( &event );
+                    registeredInputBuffer_[x] ^= (1 << y); // toggle bit that was registered
                 }
             }
         }

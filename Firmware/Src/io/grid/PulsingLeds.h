@@ -26,7 +26,6 @@ public:
 
 private:
     void Run() override;
-    void setOutputValues();
 
     struct PulsingLed
     {

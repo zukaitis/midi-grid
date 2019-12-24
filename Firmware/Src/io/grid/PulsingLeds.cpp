@@ -24,13 +24,27 @@ PulsingLeds::PulsingLeds( LedOutputInterface& ledOutput ):
 void PulsingLeds::Run()
 {
     static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( PULSE_STEP_INTERVAL );
+    static uint8_t stepNumber = 0;
 
-    while (true)
+    Thread::DelayUntil( delayPeriod );
+
+    for (const auto& l : led_)
     {
-        Thread::DelayUntil( delayPeriod );
-
-        setOutputValues();
+        Color dimmedColor = l.color;
+        if (stepNumber <= 3)
+        {
+            // y = x / 4
+            dimmedColor = dimmedColor * (static_cast<float>(stepNumber + 1) / 4);
+        }
+        else
+        {
+            // y = -x / 16
+            dimmedColor = dimmedColor * (static_cast<float>(19 - stepNumber) / 16);
+        }
+        ledOutput_.set( l.coordinates, dimmedColor );
     }
+
+    stepNumber = (stepNumber + 1) % PULSE_STEP_COUNT;
 }
 
 void PulsingLeds::add( const Coordinates& coordinates, const Color& color )
@@ -67,29 +81,6 @@ void PulsingLeds::removeAll()
 {
     led_.clear();
     Thread::Suspend();
-}
-
-void PulsingLeds::setOutputValues()
-{
-    static uint8_t stepNumber = 0;
-
-    for (const auto& l : led_)
-    {
-        Color dimmedColor = l.color;
-        if (stepNumber <= 3)
-        {
-            // y = x / 4
-            dimmedColor = dimmedColor * (static_cast<float>(stepNumber + 1) / 4);
-        }
-        else
-        {
-            // y = -x / 16
-            dimmedColor = dimmedColor * (static_cast<float>(19 - stepNumber) / 16);
-        }
-        ledOutput_.set( l.coordinates, dimmedColor );
-    }
-
-    stepNumber = (stepNumber + 1) % PULSE_STEP_COUNT;
 }
 
 }

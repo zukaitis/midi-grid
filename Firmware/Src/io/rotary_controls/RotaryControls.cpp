@@ -37,29 +37,26 @@ void RotaryControls::Run()
     static etl::array<int8_t, NUMBER_OF_CONTROLS> microsteps = {};
     static etl::array<TickType_t, NUMBER_OF_CONTROLS> previousEventTime = {};
 
-    while (true)
+    Thread::WaitForNotification();
+
+    copyInput();
+
+    for (uint8_t controlIndex = 0; controlIndex < NUMBER_OF_CONTROLS; controlIndex++)
     {
-        Thread::WaitForNotification();
+        microsteps[controlIndex] += getRecentMicrosteps( controlIndex );
 
-        copyInput();
-
-        for (uint8_t controlIndex = 0; controlIndex < NUMBER_OF_CONTROLS; controlIndex++)
+        if (std::abs( microsteps[controlIndex] ) >= kNumberOfMicrostepsInStep)
         {
-            microsteps[controlIndex] += getRecentMicrosteps( controlIndex );
+            const uint32_t interval = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() - previousEventTime[controlIndex] );
+            previousEventTime[controlIndex] = freertos::Ticks::GetTicks();
+            const int8_t velocityMultiplier = calculateVelocityMultiplier( interval );
 
-            if (std::abs( microsteps[controlIndex] ) >= kNumberOfMicrostepsInStep)
-            {
-                const uint32_t interval = freertos::Ticks::TicksToMs( freertos::Ticks::GetTicks() - previousEventTime[controlIndex] );
-                previousEventTime[controlIndex] = freertos::Ticks::GetTicks();
-                const int8_t velocityMultiplier = calculateVelocityMultiplier( interval );
+            Event event = {
+                .steps = static_cast<int8_t>((microsteps[controlIndex] / kNumberOfMicrostepsInStep) * velocityMultiplier),
+                .control = controlIndex };
+            microsteps[controlIndex] %= kNumberOfMicrostepsInStep;
 
-                Event event = {
-                    .steps = static_cast<int8_t>((microsteps[controlIndex] / kNumberOfMicrostepsInStep) * velocityMultiplier),
-                    .control = controlIndex };
-                microsteps[controlIndex] %= kNumberOfMicrostepsInStep;
-
-                events_.Enqueue( &event );
-            }
+            events_.Enqueue( &event );
         }
     }
 }

@@ -44,25 +44,22 @@ void AdditionalButtons::copyInput()
 
 void AdditionalButtons::Run()
 {
-    while (true)
+    Thread::WaitForNotification(); // blocking until grid driver gives notification
+
+    copyInput();
+
+    for (uint8_t buttonIndex = 0; buttonIndex < NUMBER_OF_BUTTONS; buttonIndex++)
     {
-        Thread::WaitForNotification(); // blocking until grid driver gives notification
-
-        copyInput();
-
-        for (uint8_t buttonIndex = 0; buttonIndex < NUMBER_OF_BUTTONS; buttonIndex++)
+        if (input_[0][buttonIndex] == input_[1][buttonIndex]) // debouncing
         {
-            if (input_[0][buttonIndex] == input_[1][buttonIndex]) // debouncing
+            const bool input = input_[0][buttonIndex];
+            if (input != registeredInput_[buttonIndex]) // checking for changes
             {
-                const bool input = input_[0][buttonIndex];
-                if (input != registeredInput_[buttonIndex]) // checking for changes
-                {
-                    Event event = {
-                        .action = input ? ButtonAction::PRESSED : ButtonAction::RELEASED,
-                        .button = static_cast<Button>(buttonIndex) };
-                    registeredInput_[buttonIndex] = input;
-                    events_.Enqueue( &event );
-                }
+                Event event = {
+                    .action = input ? ButtonAction::PRESSED : ButtonAction::RELEASED,
+                    .button = static_cast<Button>(buttonIndex) };
+                registeredInput_[buttonIndex] = input;
+                events_.Enqueue( &event );
             }
         }
     }

@@ -46,26 +46,23 @@ void Backlight::Run()
 {
     static const TickType_t updatePeriod = freertos::Ticks::MsToTicks( 50 );
 
-    while (true)
+    if (currentIntensity_ != appointedIntensity_)
     {
-        if (currentIntensity_ != appointedIntensity_)
+        if (currentIntensity_ > appointedIntensity_)
         {
-            if (currentIntensity_ > appointedIntensity_)
-            {
-                setMomentaryIntensity( --currentIntensity_ );
-            }
-            else
-            {
-                setMomentaryIntensity( ++currentIntensity_ );
-            }
-
-            DelayUntil( updatePeriod );
+            setMomentaryIntensity( --currentIntensity_ );
         }
         else
         {
-            // block until intensity is changed
-            appointedIntensityChanged_.Take();
+            setMomentaryIntensity( ++currentIntensity_ );
         }
+
+        DelayUntil( updatePeriod );
+    }
+    else
+    {
+        // block until intensity is changed
+        appointedIntensityChanged_.Take();
     }
 }
 

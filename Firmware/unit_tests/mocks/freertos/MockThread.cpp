@@ -12,6 +12,12 @@ MockThread& MockThread::getInstance()
 
 Thread::Thread( const char* Name, uint16_t StackDepth, uint32_t Priority )
 {
+    ThreadCaller::getInstance().setThread( *this );
+}
+
+Thread::Thread()
+{
+    ThreadCaller::getInstance().setThread( *this );
 }
 
 bool Thread::Start()
@@ -32,6 +38,22 @@ void Thread::Resume()
 void Thread::DelayUntil( const TickType_t delay )
 {
     MockThread::getInstance().DelayUntil( delay );
+}
+
+ThreadCaller& ThreadCaller::getInstance()
+{
+    static ThreadCaller instance;
+    return instance;
+}
+
+void ThreadCaller::setThread( freertos::Thread& thread )
+{
+    currentThread_ = &thread;
+}
+
+void ThreadCaller::Run()
+{
+    currentThread_->Run();
 }
 
 }

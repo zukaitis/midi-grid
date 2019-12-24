@@ -30,14 +30,11 @@ void InputHandler<InputSource, InputType>::disable()
 template <class InputSource, class InputType>
 void InputHandler<InputSource, InputType>::Run()
 {
-    while (true)
-    {
-        InputType input = {};
+    InputType input = {};
 
-        if (inputSource_.waitForInput( input ))
-        {
-            applicationController_.handleInput( input );
-        }
+    if (inputSource_.waitForInput( input ))
+    {
+        applicationController_.handleInput( input );
     }
 }
 
@@ -71,11 +68,8 @@ void ApplicationThread::delay( const uint32_t periodMs )
 
 void ApplicationThread::Run()
 {
-    while (true)
-    {
-        continueApplication_.Take();
-        applicationController_.runApplicationThread( *this );
-    }
+    continueApplication_.Take();
+    applicationController_.runApplicationThread( *this );
 }
 
 Application::Application( ApplicationController& applicationController ):
@@ -181,8 +175,13 @@ void ApplicationController::selectApplication( const ApplicationIndex applicatio
 void ApplicationController::Run()
 {
     // open Startup application at first
-    currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
-    applicationThread_.enable();
+    static bool firstCall = true;
+    if (firstCall)
+    {
+        currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
+        applicationThread_.enable();
+        firstCall = false;
+    }
 
     while (true)
     {
