@@ -2,7 +2,7 @@
 
 #include "io/grid/GridInterface.h"
 #include "hardware/grid/InputInterface.h"
-#include "system/GlobalInterrupts.hpp"
+#include "system/GlobalInterruptsInterface.h"
 #include "ThreadConfigurations.h"
 #include "types/ButtonAction.h"
 
@@ -14,7 +14,7 @@ namespace grid
 
 static const uint16_t INPUT_MASK = 0x000F;
 
-ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterrupts& globalInterrupts ):
+ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterruptsInterface& globalInterrupts ):
     Thread( "grid::ButtonInput", kGrid.stackDepth, kGrid.priority ),
     globalInterrupts_( globalInterrupts ),
     gridDriver_( gridDriver ),

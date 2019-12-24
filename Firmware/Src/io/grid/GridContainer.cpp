@@ -6,7 +6,7 @@ namespace grid
 GridContainer::GridContainer( 
     hardware::grid::InputInterface& gridDriverInput,
     hardware::grid::OutputInterface& gridDriverOutput,
-    mcu::GlobalInterrupts& globalInterrupts ):
+    mcu::GlobalInterruptsInterface& globalInterrupts ):
         buttonInput_( ButtonInput( gridDriverInput, globalInterrupts ) ),
         ledOutput_( LedOutput( gridDriverOutput ) ),
         flashingLeds_( FlashingLeds( ledOutput_ ) ),

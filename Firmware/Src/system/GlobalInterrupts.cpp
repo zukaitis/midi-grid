@@ -5,18 +5,14 @@
 namespace mcu
 {
 
-GlobalInterrupts::GlobalInterrupts()
+void GlobalInterrupts::enable()
 {
+    __enable_irq();
 }
 
 void GlobalInterrupts::disable()
 {
     __disable_irq();
-}
-
-void GlobalInterrupts::enable()
-{
-    __enable_irq();
 }
 
 } // namespace hal

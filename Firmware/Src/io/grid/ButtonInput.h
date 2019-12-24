@@ -11,7 +11,7 @@
 
 namespace mcu
 {
-    class GlobalInterrupts;
+    class GlobalInterruptsInterface;
 }
 
 namespace grid
@@ -22,7 +22,7 @@ typedef hardware::grid::InputBuffer InputBuffer;
 class ButtonInput : public ButtonInputInterface, private freertos::Thread
 {
 public:
-    ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterrupts& globalInterrupts );
+    ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterruptsInterface& globalInterrupts );
 
     bool waitForEvent( ButtonEvent& event ) override;
     void discardPendingEvents() override;
@@ -39,7 +39,7 @@ private:
     etl::array<InputBuffer, 2> inputBuffers_;
     InputBuffer registeredInputBuffer_;
 
-    mcu::GlobalInterrupts& globalInterrupts_;
+    mcu::GlobalInterruptsInterface& globalInterrupts_;
     hardware::grid::InputInterface& gridDriver_;
 
     freertos::Queue events_;

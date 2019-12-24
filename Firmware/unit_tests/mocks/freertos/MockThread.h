@@ -16,7 +16,8 @@ public:
     MOCK_METHOD( bool, Start, () );
     MOCK_METHOD( void, Suspend, () );
     MOCK_METHOD( void, Resume, () );
-    MOCK_METHOD( void, DelayUntil, (const TickType_t delay) );
+    MOCK_METHOD( void, DelayUntil, ( const TickType_t delay ) );
+    MOCK_METHOD( uint32_t, WaitForNotification, () );
 
 private:
     MockThread() = default;

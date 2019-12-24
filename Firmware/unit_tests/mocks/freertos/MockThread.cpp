@@ -40,6 +40,11 @@ void Thread::DelayUntil( const TickType_t delay )
     MockThread::getInstance().DelayUntil( delay );
 }
 
+uint32_t Thread::WaitForNotification( TickType_t Timeout )
+{
+    return MockThread::getInstance().WaitForNotification();
+}
+
 ThreadCaller& ThreadCaller::getInstance()
 {
     static ThreadCaller instance;

@@ -21,6 +21,7 @@ public:
     void Suspend();
     void Resume();
     void DelayUntil( const TickType_t delay );
+    uint32_t WaitForNotification( TickType_t Timeout = 0xFFFFFFFF );
 };
 
 }

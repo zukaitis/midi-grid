@@ -1,0 +1,9 @@
+{
+    "source_files": [
+        "GridButtonInputTest.cpp",
+        "${source_dir}/io/grid/ButtonInput.cpp",
+        "${source_dir}/types/Color.cpp",
+        "${mock_dir}/freertos/MockThread.cpp",
+        "${mock_dir}/freertos/MockQueue.cpp"
+    ]
+}

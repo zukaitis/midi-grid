@@ -1,18 +1,17 @@
-#ifndef SYSTEM_GLOBALINTERRUPTS_HPP_
-#define SYSTEM_GLOBALINTERRUPTS_HPP_
+#pragma once
+
+#include "system/GlobalInterruptsInterface.h"
 
 namespace mcu {
 
-class GlobalInterrupts
+class GlobalInterrupts : public GlobalInterruptsInterface
 {
 public:
-    GlobalInterrupts();
+    GlobalInterrupts() = default;
     virtual ~GlobalInterrupts() = default;
 
-    void disable();
-    void enable();
+    void disable() override;
+    void enable() override;
 };
 
-} // namespace hal
-
-#endif // SYSTEM_GLOBALINTERRUPTS_HPP_
+} // namespace
