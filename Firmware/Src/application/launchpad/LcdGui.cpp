@@ -3,7 +3,7 @@
 #include "application/launchpad/Launchpad.hpp"
 #include "application/launchpad/Images.hpp"
 
-#include "io/lcd/Lcd.hpp"
+#include "io/lcd/LcdInterface.h"
 #include <freertos/ticks.hpp>
 
 #include <cstdio>
@@ -51,7 +51,7 @@ static const char launchpad95SubmodeString[9][15] = {
 static const uint32_t kMidiActivityTimeoutMs = 1000;
 static const uint32_t kRotaryControlTimeoutMs = 1000;
 
-LcdGui::LcdGui( Launchpad& launchpad, lcd::Lcd& lcd ):
+LcdGui::LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd ):
         launchpad_( launchpad ),
         lcd_( lcd )
 {
@@ -60,7 +60,7 @@ LcdGui::LcdGui( Launchpad& launchpad, lcd::Lcd& lcd ):
 void LcdGui::initialize()
 {
     lcd_.clear();
-    lcd_.print( "L95", lcd_.horizontalCenter, 0, lcd::Justification_CENTER );
+    lcd_.print( "L95", lcd_.horizontalCenter(), 0, lcd::Justification::CENTER );
     lcd_.displayImage( 63, 0, usbSymbolSmall );
     lcd_.displayImage( 0, 0, midiSymbolSmall );
 
@@ -165,17 +165,17 @@ void LcdGui::displayLaunchpad95Info()
 
 void LcdGui::displayClipName()
 {
-    lcd_.print( launchpad_.clipName_, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
+    lcd_.print( launchpad_.clipName_, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayDeviceName()
 {
-    lcd_.print( launchpad_.deviceName_, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
+    lcd_.print( launchpad_.deviceName_, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayTrackName()
 {
-    lcd_.print( launchpad_.trackName_, lcd_.horizontalCenter, 32, lcd::Justification_CENTER );
+    lcd_.print( launchpad_.trackName_, lcd_.horizontalCenter(), 32, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayMode()
@@ -183,14 +183,14 @@ void LcdGui::displayMode()
     lcd_.clearArea( 0, 8, 83, 15 );
     if (Launchpad95Mode_UNKNOWN != launchpad_.mode_)
     {
-        lcd_.print( launchpad95ModeString[launchpad_.mode_], lcd_.horizontalCenter, 8, lcd::Justification_CENTER );
+        lcd_.print( launchpad95ModeString[launchpad_.mode_], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
     }
 }
 
 void LcdGui::displaySubmode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    lcd_.print( launchpad95SubmodeString[launchpad_.submode_], lcd_.horizontalCenter, 8, lcd::Justification_CENTER );
+    lcd_.print( launchpad95SubmodeString[launchpad_.submode_], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayStatus()
@@ -225,7 +225,7 @@ void LcdGui::displayTimingStatus()
         lcd_.displayImage( 0, 40, (launchpad_.nudgeDownActive_ ? nudgeDownActive : nudgeDownInactive) );
         lcd_.displayImage( 10, 40, (launchpad_.nudgeUpActive_ ? nudgeUpActive : nudgeUpInactive) );
 
-        lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification_RIGHT );
+        lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification::RIGHT );
         lcd_.print( "bpm", 66, 32 );
 
         char signatureString[6];
@@ -236,16 +236,17 @@ void LcdGui::displayTimingStatus()
 
 void LcdGui::displayRotaryControlValues()
 {
+    const uint8_t numberOfProgressArcPositions = 51;
     char str[4];
     lcd_.clearArea( 0, 16, 83, 47 );
 
-    lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_[0] * (lcd_.numberOfProgressArcPositions - 1)) / 127 );
+    lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_[0] * (numberOfProgressArcPositions - 1)) / 127 );
     sprintf( str, "%d", launchpad_.rotaryControlValue_[0] );
-    lcd_.print( str, 18, 32, lcd::Justification_CENTER );
+    lcd_.print( str, 18, 32, lcd::Justification::CENTER );
 
-    lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_[1] * (lcd_.numberOfProgressArcPositions - 1)) / 127 );
+    lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_[1] * (numberOfProgressArcPositions - 1)) / 127 );
     sprintf( str, "%d", launchpad_.rotaryControlValue_[1] );
-    lcd_.print( str, 63, 32, lcd::Justification_CENTER );
+    lcd_.print( str, 63, 32, lcd::Justification::CENTER );
 
     rotaryControlValues_.isOn = true;
     rotaryControlValues_.timeToDisable = freertos::Ticks::GetTicks() + kRotaryControlTimeoutMs;

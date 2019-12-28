@@ -34,7 +34,7 @@ inc_flags = -IDrivers/CMSIS/Include $
     -IMiddlewares/USBMIDI/Inc -ISrc -ISrc/configs -Isubmodules/etl/include $
     -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/freertos-addons/c++/Source/include $
-    -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
+    -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -ISrc/io/lcd/84x48_mono
 ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -fdiagnostics-color=always $
     -T STM32F411RCTx_FLASH.ld -Wl,-Map=output/midi-grid.map
 
@@ -177,6 +177,7 @@ build output/Src/application/startup/Startup.o: cxx $
     Src/application/startup/Startup.cpp
 build output/Src/hardware/grid/GridDriver.o: cxx $
     Src/hardware/grid/GridDriver.cpp
+build output/Src/hardware/lcd/Driver.o: cxx Src/hardware/lcd/Driver.cpp
 build output/Src/io/additional_buttons/AdditionalButtons.o: cxx $
     Src/io/additional_buttons/AdditionalButtons.cpp
 build output/Src/io/grid/ButtonInput.o: cxx Src/io/grid/ButtonInput.cpp
@@ -186,8 +187,11 @@ build output/Src/io/grid/GridContainer.o: cxx Src/io/grid/GridContainer.cpp
 build output/Src/io/grid/LedOutput.o: cxx Src/io/grid/LedOutput.cpp
 build output/Src/io/grid/PulsingLeds.o: cxx Src/io/grid/PulsingLeds.cpp
 build output/Src/io/lcd/Backlight.o: cxx Src/io/lcd/Backlight.cpp
-build output/Src/io/lcd/Lcd.o: cxx Src/io/lcd/Lcd.cpp
-build output/Src/io/lcd/LcdDriver.o: cxx Src/io/lcd/LcdDriver.cpp
+build output/Src/io/lcd/84x48_mono/Lcd.o: cxx Src/io/lcd/84x48_mono/Lcd.cpp
+build output/Src/io/lcd/84x48_mono/LcdContainer.o: cxx $
+    Src/io/lcd/84x48_mono/LcdContainer.cpp
+build output/Src/io/lcd/84x48_mono/Pcd8544.o: cxx $
+    Src/io/lcd/84x48_mono/Pcd8544.cpp
 build output/Src/io/rotary_controls/RotaryControls.o: cxx $
     Src/io/rotary_controls/RotaryControls.cpp
 build output/Src/io/usb/UsbMidi.o: cxx Src/io/usb/UsbMidi.cpp
@@ -249,13 +253,14 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/Src/application/launchpad/LcdGui.o $
     output/Src/application/snake/Snake.o $
     output/Src/application/startup/Startup.o $
-    output/Src/hardware/grid/GridDriver.o $
+    output/Src/hardware/grid/GridDriver.o output/Src/hardware/lcd/Driver.o $
     output/Src/io/additional_buttons/AdditionalButtons.o $
     output/Src/io/grid/ButtonInput.o output/Src/io/grid/FlashingLeds.o $
     output/Src/io/grid/Grid.o output/Src/io/grid/GridContainer.o $
     output/Src/io/grid/LedOutput.o output/Src/io/grid/PulsingLeds.o $
-    output/Src/io/lcd/Backlight.o output/Src/io/lcd/Lcd.o $
-    output/Src/io/lcd/LcdDriver.o $
+    output/Src/io/lcd/Backlight.o output/Src/io/lcd/84x48_mono/Lcd.o $
+    output/Src/io/lcd/84x48_mono/LcdContainer.o $
+    output/Src/io/lcd/84x48_mono/Pcd8544.o $
     output/Src/io/rotary_controls/RotaryControls.o $
     output/Src/io/usb/UsbMidi.o output/Src/main.o $
     output/Src/system/GlobalInterrupts.o output/Src/system/System.o $

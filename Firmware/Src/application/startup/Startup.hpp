@@ -13,7 +13,7 @@ namespace hardware
 
 namespace lcd
 {
-    class Lcd;
+    class LcdInterface;
 }
 
 namespace mcu
@@ -27,7 +27,7 @@ namespace application
 class Startup : public Application
 {
 public:
-    Startup( ApplicationController& applicationController, hardware::grid::GridDriver& gridDriver, lcd::Lcd& lcd, mcu::System& system );
+    Startup( ApplicationController& applicationController, hardware::grid::GridDriver& gridDriver, lcd::LcdInterface& lcd, mcu::System& system );
 
 private:
     void run( ApplicationThread& thread );
@@ -35,7 +35,7 @@ private:
     void displayUsbConnecting();
 
     hardware::grid::GridDriver& gridDriver_;
-    lcd::Lcd& lcd_;
+    lcd::LcdInterface& lcd_;
     mcu::System& system_;
 };
 

@@ -18,7 +18,7 @@ namespace midi
 
 namespace lcd
 {
-    class Lcd;
+    class LcdInterface;
 }
 
 namespace application
@@ -27,7 +27,7 @@ namespace application
 class GridTest : public Application
 {
 public:
-    GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
+    GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );
@@ -43,7 +43,7 @@ private:
     Color getRandomColor();
 
     grid::GridInterface& grid_;
-    lcd::Lcd& lcd_;
+    lcd::LcdInterface& lcd_;
 };
 
 } // namespace

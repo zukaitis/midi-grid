@@ -5,7 +5,7 @@
 
 namespace lcd
 {
-    class Lcd;
+    class LcdInterface;
 }
 
 namespace application
@@ -24,7 +24,7 @@ class Launchpad;
 class LcdGui
 {
 public:
-    LcdGui( Launchpad& launchpad, lcd::Lcd& lcd );
+    LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd );
 
     void initialize();
     void refresh();
@@ -47,7 +47,7 @@ private:
     void displayTimingStatus();
 
     Launchpad& launchpad_;
-    lcd::Lcd& lcd_;
+    lcd::LcdInterface& lcd_;
 
     TimedDisplay midiInputActivityIcon_;
     TimedDisplay midiOutputActivityIcon_;

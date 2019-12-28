@@ -1,5 +1,4 @@
-#ifndef MAIN_HPP_
-#define MAIN_HPP_
+#pragma once
 
 #include "system/System.hpp"
 #include "hardware/grid/GridDriver.h"
@@ -7,7 +6,9 @@
 #include "io/grid/GridContainer.h"
 #include "io/additional_buttons/AdditionalButtons.h"
 #include "io/rotary_controls/RotaryControls.h"
-#include "io/lcd/Lcd.hpp"
+
+#include "hardware/lcd/Driver.h"
+#include "LcdContainer.h"
 
 #include "application/internal_menu/InternalMenu.hpp"
 #include "application/launchpad/Launchpad.hpp"
@@ -40,7 +41,8 @@ private:
     additional_buttons::AdditionalButtons additionalButtons_;
     rotary_controls::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
-    lcd::Lcd lcd_;
+    hardware::lcd::Driver lcdDriver_;
+    lcd::LcdContainer lcdContainer_;
     application::ApplicationController applicationController_;
     application::Startup startup_;
     application::GridTest gridTest_;
@@ -48,5 +50,3 @@ private:
     application::launchpad::Launchpad launchpad_;
     application::Snake snake_;
 };
-
-#endif // MAIN_HPP_

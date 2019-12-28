@@ -1,8 +1,11 @@
-#include "io/lcd/Lcd.hpp"
+#include "io/lcd/84x48_mono/Lcd.h"
 
 #include "io/lcd/font.h"
 #include "io/lcd/progressArc.h"
 #include "ThreadConfigurations.h"
+
+#include "Pcd8544Interface.h"
+#include "io/lcd/Backlight.hpp"
 
 #include <freertos/ticks.hpp>
 #include <cstring>
@@ -17,34 +20,32 @@ static const Image digitBig[10] = {
         { DIGITS_BIG[8], 12, 16 }, { DIGITS_BIG[9], 12, 16 }
 };
 
-Lcd::Lcd() :
+Lcd::Lcd( Pcd8544Interface& driver, Backlight& backlight ) :
         Thread( "Lcd", kLcd.stackDepth, kLcd.priority ),
-        numberOfProgressArcPositions( NUMBER_OF_ARC_POSITIONS ), // from generated file
-        backlight_( Backlight() ),
-        lcdDriver_( LcdDriver() ),
-        updateRequired_( false )
+        backlight_( backlight ),
+        driver_( driver ),
+        buffer_(),
+        updateRequired_()
 {
-    for (uint8_t line = 0; line < numberOfLines; line++)
-    {
-        for (uint8_t x = 0; x < width; x++)
-        {
-            lcdBuffer_[line][x] = 0x00;
-        }
-    }
+}
+
+Lcd::~Lcd()
+{
 }
 
 void Lcd::Run()
 {
-    static const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
+    const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
+    const uint32_t bufferSize = sizeof( buffer_ ) / sizeof( buffer_[0][0] );
 
     updateRequired_.Take(); // block until LCD update is required
     DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another
-    lcdDriver_.transmit( &lcdBuffer_[0][0] );
+    driver_.transmit( buffer_[0][0], bufferSize );
 }
 
 void Lcd::clear()
 {
-    memset( &lcdBuffer_[0][0], 0x00, lcdDriver_.bufferSize );
+    buffer_ = {};
     updateRequired_.Give();
 }
 
@@ -54,16 +55,16 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
     {
         for (uint8_t i = 0; i < (x2-x1+1); i++)
         {
-            if ((x1+i) >= width)
+            if ((x1+i) >= width_)
             {
                 break;
             }
             else
             {
-                lcdBuffer_[j+y1/8][x1+i] &= ~(0xFF << (y1 % 8));
-                if (((j*8 + y1) < (height - 8)) && (0 != (y1 % 8)))
+                buffer_[j+y1/8][x1+i] &= ~(0xFF << (y1 % 8));
+                if (((j*8 + y1) < (height_ - 8)) && (0 != (y1 % 8)))
                 {
-                    lcdBuffer_[j+y1/8+1][x1+i] &= ~(0xFF >> (8 - y1 % 8));
+                    buffer_[j+y1/8+1][x1+i] &= ~(0xFF >> (8 - y1 % 8));
                 }
             }
         }
@@ -77,19 +78,19 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
     {
         for (uint8_t i = 0; i < image.width; i++)
         {
-            if ((x+i) >= width)
+            if ((x+i) >= width_)
             {
                 break;
             }
             else
             {
-                lcdBuffer_[j+y/8][x+i] &= ~(0xFF << (y % 8));
-                lcdBuffer_[j+y/8][x+i] |= image.data[j*image.width + i] << (y % 8);
+                buffer_[j+y/8][x+i] &= ~(0xFF << (y % 8));
+                buffer_[j+y/8][x+i] |= image.data[j*image.width + i] << (y % 8);
 
-                if (((j*8 + y) < (height - 8)) && (0 != (y % 8)))
+                if (((j*8 + y) < (height_ - 8)) && (0 != (y % 8)))
                 {
-                    lcdBuffer_[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
-                    lcdBuffer_[j+y/8+1][x+i] |= image.data[j*image.width + i] >> (8 - y % 8);
+                    buffer_[j+y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
+                    buffer_[j+y/8+1][x+i] |= image.data[j*image.width + i] >> (8 - y % 8);
                 }
             }
         }
@@ -105,7 +106,7 @@ void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t po
 
 void Lcd::initialize()
 {
-    lcdDriver_.initialize();
+    driver_.initialize();
     backlight_.initialize();
     clear();
     Start();
@@ -113,7 +114,7 @@ void Lcd::initialize()
 
 void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
 {
-    if (y < height) // width is checked in putChar
+    if (y < height_) // width_ is checked in putChar
     {
         while (*string)
         {
@@ -126,26 +127,26 @@ void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
 
 void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification )
 {
-    uint8_t textWidth = strlen( string ) * FONT_WIDTH;
+    uint8_t textwidth_ = strlen( string ) * FONT_WIDTH;
 
     switch (justification)
     {
-        case Justification_RIGHT:
-            if (textWidth < x)
+        case Justification::RIGHT:
+            if (textwidth_ < x)
             {
-                putString( string, (x - textWidth), y );
+                putString( string, (x - textwidth_), y );
             }
             break;
-        case Justification_CENTER:
-            textWidth = textWidth / 2;
-            if ((textWidth <= x) && (textWidth <= (width - x)))
+        case Justification::CENTER:
+            textwidth_ = textwidth_ / 2;
+            if ((textwidth_ <= x) && (textwidth_ <= (width_ - x)))
             {
-                putString( string, (x - textWidth), y );
+                putString( string, (x - textwidth_), y );
             }
             break;
-        case Justification_LEFT:
+        case Justification::LEFT:
         default:
-            if (textWidth < (width - x))
+            if (textwidth_ < (width_ - x))
             {
                 putString( string, x, y );
             }
@@ -179,26 +180,26 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
         divisor /= 10;
     }
 
-    uint8_t textWidth = numberOfDigits * digitBig[0].width;
+    uint8_t textwidth_ = numberOfDigits * digitBig[0].width;
 
     switch (justification)
     {
-        case Justification_RIGHT:
-            if (textWidth < x)
+        case Justification::RIGHT:
+            if (textwidth_ < x)
             {
-                putBigDigits( number, (x - textWidth), y, numberOfDigits );
+                putBigDigits( number, (x - textwidth_), y, numberOfDigits );
             }
             break;
-        case Justification_CENTER:
-            textWidth = textWidth / 2;
-            if ((textWidth <= x) && (textWidth <= (width - x)))
+        case Justification::CENTER:
+            textwidth_ = textwidth_ / 2;
+            if ((textwidth_ <= x) && (textwidth_ <= (width_ - x)))
             {
-                putBigDigits( number, (x - textWidth), y, numberOfDigits );
+                putBigDigits( number, (x - textwidth_), y, numberOfDigits );
             }
             break;
-        case Justification_LEFT:
+        case Justification::LEFT:
         default:
-            if (textWidth < (width - x))
+            if (textwidth_ < (width_ - x))
             {
                 putBigDigits( number, x, y, numberOfDigits );
             }
@@ -215,22 +216,42 @@ void Lcd::putChar( const uint8_t x, const uint8_t y, const char c )
 {
     for (uint8_t i = 0; i < 6; i++)
     {
-        if ((x+i) >= width)
+        if ((x+i) >= width_)
         {
             break;
         }
         else
         {
-            lcdBuffer_[y/8][x+i] &= ~(0xFF << (y % 8));
-            lcdBuffer_[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
+            buffer_[y/8][x+i] &= ~(0xFF << (y % 8));
+            buffer_[y/8][x+i] |= ASCII[c-0x20][i] << (y % 8);
 
-            if ((y < (height - FONT_HEIGHT)) && (0 != (y % 8)))
+            if ((y < (height_ - FONT_HEIGHT)) && (0 != (y % 8)))
             {
-                lcdBuffer_[y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
-                lcdBuffer_[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
+                buffer_[y/8+1][x+i] &= ~(0xFF >> (8 - y % 8));
+                buffer_[y/8+1][x+i] |= ASCII[c-0x20][i] >> (8 - y % 8);
             }
         }
     }
+}
+
+uint16_t Lcd::width() const
+{
+    return width_;
+}
+
+uint16_t Lcd::height() const
+{
+    return height_;
+}
+
+uint16_t Lcd::numberOfTextLines() const
+{
+    return numberOfTextLines_;
+}
+
+uint8_t Lcd::maximumBacklightIntensity() const
+{
+    return 64; // TODO: fix
 }
 
 } // namespace

@@ -20,7 +20,8 @@
         "submodules/etl/include",
         "submodules/FreeRTOS-Kernel/include",
         "submodules/freertos-addons/c++/Source/include",
-        "Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
+        "Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+        "Src/io/lcd/84x48_mono"
     ],
 
     "c_source_files": [
@@ -74,6 +75,7 @@
         "Src/application/snake/Snake.cpp",
         "Src/application/startup/Startup.cpp",
         "Src/hardware/grid/GridDriver.cpp",
+        "Src/hardware/lcd/Driver.cpp",
         "Src/io/additional_buttons/AdditionalButtons.cpp",
         "Src/io/grid/ButtonInput.cpp",
         "Src/io/grid/FlashingLeds.cpp",
@@ -82,8 +84,9 @@
         "Src/io/grid/LedOutput.cpp",
         "Src/io/grid/PulsingLeds.cpp",
         "Src/io/lcd/Backlight.cpp",
-        "Src/io/lcd/Lcd.cpp",
-        "Src/io/lcd/LcdDriver.cpp",
+        "Src/io/lcd/84x48_mono/Lcd.cpp",
+        "Src/io/lcd/84x48_mono/LcdContainer.cpp",
+        "Src/io/lcd/84x48_mono/Pcd8544.cpp",
         "Src/io/rotary_controls/RotaryControls.cpp",
         "Src/io/usb/UsbMidi.cpp",
         "Src/main.cpp",

@@ -13,7 +13,7 @@ namespace grid
 
 namespace lcd
 {
-    class Lcd;
+    class LcdInterface;
 }
 
 namespace application
@@ -62,7 +62,7 @@ static const uint8_t gridSize = gridHeigth * gridWidth;
 class Snake : public Application
 {
 public:
-    Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd );
+    Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd );
 
 private:
     void run( ApplicationThread& thread );
@@ -84,7 +84,7 @@ private:
     uint8_t getScore() const;
 
     grid::GridInterface& grid_;
-    lcd::Lcd& lcd_;
+    lcd::LcdInterface& lcd_;
 
     bool applicationEnded_;
     bool gameInProgress_;

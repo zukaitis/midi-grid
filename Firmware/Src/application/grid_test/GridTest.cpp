@@ -2,7 +2,7 @@
 
 #include "io/grid/GridInterface.h"
 #include "io/usb/UsbMidi.hpp"
-#include "io/lcd/Lcd.hpp"
+#include "io/lcd/LcdInterface.h"
 #include "application/images.h"
 
 #include <freertos/ticks.hpp>
@@ -15,7 +15,7 @@ namespace application
 
 static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
 
-GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd, midi::UsbMidi& usbMidi ):
+GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
     grid_( grid ),
     lcd_( lcd )
@@ -126,7 +126,7 @@ void GridTest::displayWaitingForMidi()
 {
     lcd_.clear();
     lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "Awaiting MIDI", lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
+    lcd_.print( "Awaiting MIDI", lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 } // namespace

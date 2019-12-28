@@ -2,7 +2,7 @@
 
 #include "io/grid/GridInterface.h"
 #include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "io/lcd/Lcd.hpp"
+#include "io/lcd/LcdInterface.h"
 #include "system/System.hpp"
 
 #include "types/Color.h"
@@ -30,7 +30,7 @@ static const Coordinates kGridTestButton = {2,7};
 static const Color kGridTestButtonColor = color::YELLOW;
 
 InternalMenu::InternalMenu( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-    lcd::Lcd& lcd, mcu::System& system ):
+    lcd::LcdInterface& lcd, mcu::System& system ):
         Application( applicationController ),
         grid_( grid ),
         lcd_( lcd ),
@@ -90,8 +90,8 @@ void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent event )
 void InternalMenu::updateLcd() const
 {
     lcd_.clear();
-    lcd_.print( "Internal Menu", lcd_.horizontalCenter, 16, lcd::Justification_CENTER );
-    lcd_.print( "Active", lcd_.horizontalCenter, 24, lcd::Justification_CENTER );
+    lcd_.print( "Internal Menu", lcd_.horizontalCenter(), 16, lcd::Justification::CENTER );
+    lcd_.print( "Active", lcd_.horizontalCenter(), 24, lcd::Justification::CENTER );
 }
 
 }

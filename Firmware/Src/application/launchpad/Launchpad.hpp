@@ -74,7 +74,7 @@ public:
     friend class LcdGui; // allow GUI to read info
 
     Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::Lcd& lcd, midi::UsbMidi& usbMidi );
+        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi );
 
 private:
     void run( ApplicationThread& thread );

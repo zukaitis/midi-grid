@@ -1,6 +1,6 @@
 #include "application/snake/Snake.hpp"
 
-#include "io/lcd/Lcd.hpp"
+#include "io/lcd/LcdInterface.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -22,7 +22,7 @@ static const Color foodColor = color::YELLOW;
 
 static const Coordinates directionVector[numberOfDirections] = { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
 
-Snake::Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::Lcd& lcd ):
+Snake::Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd ):
     Application( applicationController ),
     grid_( grid ),
     lcd_( lcd ),
@@ -176,13 +176,13 @@ void Snake::updateGrid() const
 void Snake::updateLcd() const
 {
     lcd_.clear();
-    lcd_.print( "Snake", lcd_.horizontalCenter, 0, lcd::Justification_CENTER );
+    lcd_.print( "Snake", lcd_.horizontalCenter(), 0, lcd::Justification::CENTER );
     lcd_.print( "Score:", 0, 16 );
-    lcd_.printNumberInBigDigits( getScore(), lcd_.width - 1, 16, lcd::Justification_RIGHT );
+    lcd_.printNumberInBigDigits( getScore(), lcd_.width() - 1, 16, lcd::Justification::RIGHT );
     
-    char bestScoreString[lcd_.numberOfCharactersInLine] = {};
+    char bestScoreString[16] = {};
     std::sprintf( bestScoreString, "Best: %i", bestScore_ );
-    lcd_.print( bestScoreString, lcd_.horizontalCenter, 40, lcd::Justification_CENTER );
+    lcd_.print( bestScoreString, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void Snake::feed( const Coordinates headCoords )

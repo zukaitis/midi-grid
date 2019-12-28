@@ -21,15 +21,17 @@ Main::Main() :
         additionalButtons_( additional_buttons::AdditionalButtons( gridDriver_ ) ),
         rotaryControls_( rotary_controls::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
-        lcd_( lcd::Lcd() ),
+        lcdDriver_( hardware::lcd::Driver() ),
+        lcdContainer_( lcd::LcdContainer( lcdDriver_ ) ),
         applicationController_( application::ApplicationController(
             additionalButtons_, gridContainer_.getGrid(), rotaryControls_, usbMidi_ ) ),
-        startup_( application::Startup( applicationController_, gridDriver_, lcd_, system_ ) ),
-        gridTest_( application::GridTest( applicationController_, gridContainer_.getGrid(), lcd_, usbMidi_ ) ),
-        internalMenu_( application::InternalMenu( applicationController_, gridContainer_.getGrid(), additionalButtons_, lcd_, system_ ) ),
+        startup_( application::Startup( applicationController_, gridDriver_, lcdContainer_.getLcd(), system_ ) ),
+        gridTest_( application::GridTest( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd(), usbMidi_ ) ),
+        internalMenu_( application::InternalMenu( applicationController_, gridContainer_.getGrid(), additionalButtons_,
+            lcdContainer_.getLcd(), system_ ) ),
         launchpad_( application::launchpad::Launchpad(
-            applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcd_, usbMidi_ ) ),
-        snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcd_ ) )
+            applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_ ) ),
+        snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {
         NULL, // ApplicationIndex_PREVIOUS

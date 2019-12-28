@@ -8,3 +8,5 @@ Firmware/unit_tests/coverage_report/
 Firmware/unit_tests/tests/*/*
 !Firmware/unit_tests/tests/*/*.cpp
 !Firmware/unit_tests/tests/*/build_settings.json
+Misc/image_generation/*
+!Misc/image_generation/*.py
