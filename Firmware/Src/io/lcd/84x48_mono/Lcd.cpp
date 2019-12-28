@@ -5,7 +5,7 @@
 #include "ThreadConfigurations.h"
 
 #include "Pcd8544Interface.h"
-#include "io/lcd/Backlight.hpp"
+#include "io/lcd/BacklightInterface.h"
 
 #include <freertos/ticks.hpp>
 #include <cstring>
@@ -20,7 +20,7 @@ static const Image digitBig[10] = {
         { DIGITS_BIG[8], 12, 16 }, { DIGITS_BIG[9], 12, 16 }
 };
 
-Lcd::Lcd( Pcd8544Interface& driver, Backlight& backlight ) :
+Lcd::Lcd( Pcd8544Interface& driver, BacklightInterface& backlight ) :
         Thread( "Lcd", kLcd.stackDepth, kLcd.priority ),
         backlight_( backlight ),
         driver_( driver ),

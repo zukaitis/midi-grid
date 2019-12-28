@@ -3,8 +3,8 @@
 namespace lcd
 {
 
-LcdContainer::LcdContainer( hardware::lcd::DriverInterface& driver ):
-    backlight_( Backlight() ),
+LcdContainer::LcdContainer( hardware::lcd::DriverInterface& driver, hardware::lcd::BacklightDriverInterface& backlightDriver ):
+    backlight_( Backlight( backlightDriver ) ),
     pcd8544_( Pcd8544( driver ) ),
     lcd_( Lcd( pcd8544_, backlight_))
 {

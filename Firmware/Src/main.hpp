@@ -8,6 +8,7 @@
 #include "io/rotary_controls/RotaryControls.h"
 
 #include "hardware/lcd/Driver.h"
+#include "hardware/lcd/BacklightDriver.h"
 #include "LcdContainer.h"
 
 #include "application/internal_menu/InternalMenu.hpp"
@@ -42,6 +43,7 @@ private:
     rotary_controls::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
     hardware::lcd::Driver lcdDriver_;
+    hardware::lcd::BacklightDriver backlightDriver_;
     lcd::LcdContainer lcdContainer_;
     application::ApplicationController applicationController_;
     application::Startup startup_;

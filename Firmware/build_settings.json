@@ -75,6 +75,7 @@
         "Src/application/snake/Snake.cpp",
         "Src/application/startup/Startup.cpp",
         "Src/hardware/grid/GridDriver.cpp",
+        "Src/hardware/lcd/BacklightDriver.cpp",
         "Src/hardware/lcd/Driver.cpp",
         "Src/io/additional_buttons/AdditionalButtons.cpp",
         "Src/io/grid/ButtonInput.cpp",

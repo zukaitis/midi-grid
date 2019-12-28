@@ -10,12 +10,12 @@ namespace lcd
 {
 
 class Pcd8544Interface;
-class Backlight;
+class BacklightInterface;
 
 class Lcd: private freertos::Thread, public LcdInterface
 {
 public:
-    Lcd( Pcd8544Interface& driver, Backlight& backlight );
+    Lcd( Pcd8544Interface& driver, BacklightInterface& backlight );
     virtual ~Lcd();
 
     void clear() override;
@@ -46,7 +46,7 @@ private:
     void putBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits );
 
     Pcd8544Interface& driver_;
-    Backlight& backlight_;
+    BacklightInterface& backlight_;
 
     static constexpr uint16_t width_ = 84;
     static constexpr uint16_t height_ = 48;

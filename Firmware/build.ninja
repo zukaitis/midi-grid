@@ -177,6 +177,8 @@ build output/Src/application/startup/Startup.o: cxx $
     Src/application/startup/Startup.cpp
 build output/Src/hardware/grid/GridDriver.o: cxx $
     Src/hardware/grid/GridDriver.cpp
+build output/Src/hardware/lcd/BacklightDriver.o: cxx $
+    Src/hardware/lcd/BacklightDriver.cpp
 build output/Src/hardware/lcd/Driver.o: cxx Src/hardware/lcd/Driver.cpp
 build output/Src/io/additional_buttons/AdditionalButtons.o: cxx $
     Src/io/additional_buttons/AdditionalButtons.cpp
@@ -253,7 +255,9 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/Src/application/launchpad/LcdGui.o $
     output/Src/application/snake/Snake.o $
     output/Src/application/startup/Startup.o $
-    output/Src/hardware/grid/GridDriver.o output/Src/hardware/lcd/Driver.o $
+    output/Src/hardware/grid/GridDriver.o $
+    output/Src/hardware/lcd/BacklightDriver.o $
+    output/Src/hardware/lcd/Driver.o $
     output/Src/io/additional_buttons/AdditionalButtons.o $
     output/Src/io/grid/ButtonInput.o output/Src/io/grid/FlashingLeds.o $
     output/Src/io/grid/Grid.o output/Src/io/grid/GridContainer.o $

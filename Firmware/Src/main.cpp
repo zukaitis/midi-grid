@@ -22,7 +22,8 @@ Main::Main() :
         rotaryControls_( rotary_controls::RotaryControls( gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcdDriver_( hardware::lcd::Driver() ),
-        lcdContainer_( lcd::LcdContainer( lcdDriver_ ) ),
+        backlightDriver_( hardware::lcd::BacklightDriver() ),
+        lcdContainer_( lcd::LcdContainer( lcdDriver_, backlightDriver_ ) ),
         applicationController_( application::ApplicationController(
             additionalButtons_, gridContainer_.getGrid(), rotaryControls_, usbMidi_ ) ),
         startup_( application::Startup( applicationController_, gridDriver_, lcdContainer_.getLcd(), system_ ) ),

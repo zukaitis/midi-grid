@@ -2,7 +2,7 @@
 
 #include "io/lcd/84x48_mono/Pcd8544.h"
 #include "io/lcd/84x48_mono/Lcd.h"
-#include "io/lcd/Backlight.hpp"
+#include "io/lcd/Backlight.h"
 
 namespace lcd
 {
@@ -10,7 +10,7 @@ namespace lcd
 class LcdContainer
 {
 public:
-    LcdContainer( hardware::lcd::DriverInterface& driver );
+    LcdContainer( hardware::lcd::DriverInterface& driver, hardware::lcd::BacklightDriverInterface& backlightDriver );
     virtual ~LcdContainer();
 
     Lcd& getLcd();
