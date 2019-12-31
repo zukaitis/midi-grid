@@ -9,9 +9,9 @@ public:
     Color() = default;
     Color( const uint8_t r, const uint8_t g, const uint8_t b );
 
-    uint8_t getRed() const;
-    uint8_t getGreen() const;
-    uint8_t getBlue() const;
+    uint8_t red() const;
+    uint8_t green() const;
+    uint8_t blue() const;
 
     bool operator==(const Color& color) const;
     Color operator+(const Color& color) const;

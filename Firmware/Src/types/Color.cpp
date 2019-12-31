@@ -23,17 +23,17 @@ Color::Color( const uint8_t r, const uint8_t g, const uint8_t b ):
     }
 }
 
-uint8_t Color::getRed() const
+uint8_t Color::red() const
 {
     return red_;
 };
 
-uint8_t Color::getGreen() const
+uint8_t Color::green() const
 {
     return green_;
 };
 
-uint8_t Color::getBlue() const
+uint8_t Color::blue() const
 {
     return blue_;
 };

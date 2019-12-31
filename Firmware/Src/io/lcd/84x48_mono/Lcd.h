@@ -5,6 +5,7 @@
 #include <freertos/thread.hpp>
 #include <freertos/semaphore.hpp>
 #include <etl/array.h>
+#include <etl/cstring.h>
 
 namespace lcd
 {
@@ -55,7 +56,6 @@ private:
     etl::array<etl::array<uint8_t, width_>, numberOfTextLines_> buffer_;
 
     freertos::BinarySemaphore updateRequired_;
-
 };
 
 }

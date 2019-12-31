@@ -1,5 +1,6 @@
 #pragma once
 
+#include "types/Coordinates.h"
 #include <cstdint>
 
 namespace lcd

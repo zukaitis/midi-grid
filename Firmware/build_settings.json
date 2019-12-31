@@ -84,7 +84,7 @@
         "Src/io/grid/GridContainer.cpp",
         "Src/io/grid/LedOutput.cpp",
         "Src/io/grid/PulsingLeds.cpp",
-        "Src/io/lcd/Backlight.cpp",
+        "Src/io/lcd/backlight/Backlight.cpp",
         "Src/io/lcd/84x48_mono/Lcd.cpp",
         "Src/io/lcd/84x48_mono/LcdContainer.cpp",
         "Src/io/lcd/84x48_mono/Pcd8544.cpp",

@@ -188,7 +188,8 @@ build output/Src/io/grid/Grid.o: cxx Src/io/grid/Grid.cpp
 build output/Src/io/grid/GridContainer.o: cxx Src/io/grid/GridContainer.cpp
 build output/Src/io/grid/LedOutput.o: cxx Src/io/grid/LedOutput.cpp
 build output/Src/io/grid/PulsingLeds.o: cxx Src/io/grid/PulsingLeds.cpp
-build output/Src/io/lcd/Backlight.o: cxx Src/io/lcd/Backlight.cpp
+build output/Src/io/lcd/backlight/Backlight.o: cxx $
+    Src/io/lcd/backlight/Backlight.cpp
 build output/Src/io/lcd/84x48_mono/Lcd.o: cxx Src/io/lcd/84x48_mono/Lcd.cpp
 build output/Src/io/lcd/84x48_mono/LcdContainer.o: cxx $
     Src/io/lcd/84x48_mono/LcdContainer.cpp
@@ -262,7 +263,8 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/Src/io/grid/ButtonInput.o output/Src/io/grid/FlashingLeds.o $
     output/Src/io/grid/Grid.o output/Src/io/grid/GridContainer.o $
     output/Src/io/grid/LedOutput.o output/Src/io/grid/PulsingLeds.o $
-    output/Src/io/lcd/Backlight.o output/Src/io/lcd/84x48_mono/Lcd.o $
+    output/Src/io/lcd/backlight/Backlight.o $
+    output/Src/io/lcd/84x48_mono/Lcd.o $
     output/Src/io/lcd/84x48_mono/LcdContainer.o $
     output/Src/io/lcd/84x48_mono/Pcd8544.o $
     output/Src/io/rotary_controls/RotaryControls.o $

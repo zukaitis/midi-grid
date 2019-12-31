@@ -4,8 +4,8 @@
 #include "io/lcd/progressArc.h"
 #include "ThreadConfigurations.h"
 
-#include "Pcd8544Interface.h"
-#include "io/lcd/BacklightInterface.h"
+#include "io/lcd/84x48_mono/Pcd8544Interface.h"
+#include "io/lcd/backlight/BacklightInterface.h"
 
 #include <freertos/ticks.hpp>
 #include <cstring>
@@ -121,8 +121,8 @@ void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
             putChar( x, y, *string++ );
             x += 6;
         }
+        updateRequired_.Give();
     }
-    updateRequired_.Give();
 }
 
 void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification )

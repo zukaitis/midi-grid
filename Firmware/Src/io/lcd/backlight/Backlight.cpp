@@ -1,4 +1,4 @@
-#include "io/lcd/Backlight.h"
+#include "io/lcd/backlight/Backlight.h"
 #include "hardware/lcd/BacklightDriverInterface.h"
 
 #include "system/gpio_definitions.h"

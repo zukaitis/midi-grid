@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <etl/exception.h>
 
 struct Coordinates
 {
@@ -18,9 +17,9 @@ struct Coordinates
 
     bool operator<(const Coordinates& coordinates) const
     {
-        bool equal = true;
-        equal &= (this->x < coordinates.x);
-        equal &= (this->y < coordinates.y);
-        return equal;
+        bool lessThan = true;
+        lessThan &= (this->x < coordinates.x);
+        lessThan &= (this->y < coordinates.y);
+        return lessThan;
     };
 };

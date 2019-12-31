@@ -2,7 +2,7 @@
 
 #include "io/lcd/84x48_mono/Pcd8544.h"
 #include "io/lcd/84x48_mono/Lcd.h"
-#include "io/lcd/Backlight.h"
+#include "io/lcd/backlight/Backlight.h"
 
 namespace lcd
 {

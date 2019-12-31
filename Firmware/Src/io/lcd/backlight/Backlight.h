@@ -1,6 +1,6 @@
 #pragma once
 
-#include "io/lcd/BacklightInterface.h"
+#include "io/lcd/backlight/BacklightInterface.h"
 
 #include <freertos/thread.hpp>
 #include <freertos/semaphore.hpp>

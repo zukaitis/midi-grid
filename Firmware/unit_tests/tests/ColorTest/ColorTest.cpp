@@ -26,9 +26,9 @@ TEST( ColorConstructor, TruncateValues )
 {
     const Color color( 0xFF, 0xFF, 0xFF );
     
-    EXPECT_EQ( colorMaxValue, color.getRed() );
-    EXPECT_EQ( colorMaxValue, color.getGreen() );
-    EXPECT_EQ( colorMaxValue, color.getBlue() );
+    EXPECT_EQ( colorMaxValue, color.red() );
+    EXPECT_EQ( colorMaxValue, color.green() );
+    EXPECT_EQ( colorMaxValue, color.blue() );
 }
 
 TEST( EqualityOperator, SameValues )
@@ -54,9 +54,9 @@ TEST( AdditionOperator, Addition )
 
     const Color sum = color1 + color2;
 
-    EXPECT_EQ( sum.getRed(), color1.getRed() + color2.getRed() );
-    EXPECT_EQ( sum.getGreen(), color1.getGreen() + color2.getGreen() );
-    EXPECT_EQ( sum.getBlue(), color1.getBlue() + color2.getBlue() );
+    EXPECT_EQ( sum.red(), color1.red() + color2.red() );
+    EXPECT_EQ( sum.green(), color1.green() + color2.green() );
+    EXPECT_EQ( sum.blue(), color1.blue() + color2.blue() );
 }
 
 TEST( AdditionOperator, AdditionTruncated )
@@ -66,9 +66,9 @@ TEST( AdditionOperator, AdditionTruncated )
 
     const Color sum = color1 + color2;
 
-    EXPECT_EQ( colorMaxValue, sum.getRed() );
-    EXPECT_EQ( colorMaxValue, sum.getGreen() );
-    EXPECT_EQ( colorMaxValue, sum.getBlue() );
+    EXPECT_EQ( colorMaxValue, sum.red() );
+    EXPECT_EQ( colorMaxValue, sum.green() );
+    EXPECT_EQ( colorMaxValue, sum.blue() );
 }
 
 TEST( MultiplicationOperator, Multiplication )
@@ -78,9 +78,9 @@ TEST( MultiplicationOperator, Multiplication )
 
     const Color product = color * multiplier;
 
-    EXPECT_EQ( product.getRed(), color.getRed() * multiplier );
-    EXPECT_EQ( product.getGreen(), color.getGreen() * multiplier );
-    EXPECT_EQ( product.getBlue(), color.getBlue() * multiplier );
+    EXPECT_EQ( product.red(), color.red() * multiplier );
+    EXPECT_EQ( product.green(), color.green() * multiplier );
+    EXPECT_EQ( product.blue(), color.blue() * multiplier );
 }
 
 TEST( MultiplicationOperator, MultiplicationTruncated )
@@ -90,9 +90,9 @@ TEST( MultiplicationOperator, MultiplicationTruncated )
 
     const Color product = color * multiplier;
 
-    EXPECT_EQ( colorMaxValue, product.getRed() );
-    EXPECT_EQ( colorMaxValue, product.getGreen() );
-    EXPECT_EQ( colorMaxValue, product.getBlue() );
+    EXPECT_EQ( colorMaxValue, product.red() );
+    EXPECT_EQ( colorMaxValue, product.green() );
+    EXPECT_EQ( colorMaxValue, product.blue() );
 }
 
 TEST( MultiplicationOperator, MultiplicationWithFloat )
@@ -102,9 +102,9 @@ TEST( MultiplicationOperator, MultiplicationWithFloat )
 
     const Color product = color * multiplier;
 
-    EXPECT_EQ( product.getRed(), color.getRed() / 2 );
-    EXPECT_EQ( product.getGreen(), color.getGreen() / 2 );
-    EXPECT_EQ( product.getBlue(), color.getBlue() / 2 );
+    EXPECT_EQ( product.red(), color.red() / 2 );
+    EXPECT_EQ( product.green(), color.green() / 2 );
+    EXPECT_EQ( product.blue(), color.blue() / 2 );
 }
 
 TEST( DivisionOperator, Division )
@@ -114,7 +114,7 @@ TEST( DivisionOperator, Division )
 
     const Color quotient = color / divisor;
 
-    EXPECT_EQ( quotient.getRed(), color.getRed() / divisor );
-    EXPECT_EQ( quotient.getGreen(), color.getGreen() / divisor );
-    EXPECT_EQ( quotient.getBlue(), color.getBlue() / divisor );
+    EXPECT_EQ( quotient.red(), color.red() / divisor );
+    EXPECT_EQ( quotient.green(), color.green() / divisor );
+    EXPECT_EQ( quotient.blue(), color.blue() / divisor );
 }
