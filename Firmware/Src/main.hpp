@@ -7,7 +7,7 @@
 #include "io/additional_buttons/AdditionalButtons.h"
 #include "io/rotary_controls/RotaryControls.h"
 
-#include "hardware/lcd/Driver.h"
+#include "hardware/lcd/Spi.h"
 #include "hardware/lcd/BacklightDriver.h"
 #include "LcdContainer.h"
 
@@ -42,7 +42,7 @@ private:
     additional_buttons::AdditionalButtons additionalButtons_;
     rotary_controls::RotaryControls rotaryControls_;
     midi::UsbMidi usbMidi_;
-    hardware::lcd::Driver lcdDriver_;
+    hardware::lcd::Spi lcdSpi_;
     hardware::lcd::BacklightDriver backlightDriver_;
     lcd::LcdContainer lcdContainer_;
     application::ApplicationController applicationController_;

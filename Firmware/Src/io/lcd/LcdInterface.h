@@ -49,9 +49,7 @@ public:
     virtual void printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification = Justification::LEFT ) = 0;
     virtual void setBacklightIntensity( const uint8_t intensity ) = 0;
 
-    virtual uint16_t width() const = 0;
-    virtual uint16_t height() const = 0;
-    virtual uint16_t numberOfTextLines() const = 0;
+    virtual uint16_t right() const = 0;
     virtual uint8_t maximumBacklightIntensity() const = 0;
     virtual uint8_t horizontalCenter() const = 0; // TODO: remove
 };

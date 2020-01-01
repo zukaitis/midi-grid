@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hardware/lcd/DriverInterface.h"
+#include "hardware/lcd/SpiInterface.h"
 
 #include <cstdint>
 
@@ -10,11 +10,11 @@ namespace hardware
 namespace lcd
 {
 
-class Driver: public DriverInterface
+class Spi: public SpiInterface
 {
 public:
-    Driver();
-    virtual ~Driver();
+    Spi();
+    virtual ~Spi();
 
     void initialize() const override;
 

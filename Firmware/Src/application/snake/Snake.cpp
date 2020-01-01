@@ -178,7 +178,7 @@ void Snake::updateLcd() const
     lcd_.clear();
     lcd_.print( "Snake", lcd_.horizontalCenter(), 0, lcd::Justification::CENTER );
     lcd_.print( "Score:", 0, 16 );
-    lcd_.printNumberInBigDigits( getScore(), lcd_.width() - 1, 16, lcd::Justification::RIGHT );
+    lcd_.printNumberInBigDigits( getScore(), lcd_.right(), 16, lcd::Justification::RIGHT );
     
     char bestScoreString[16] = {};
     std::sprintf( bestScoreString, "Best: %i", bestScore_ );

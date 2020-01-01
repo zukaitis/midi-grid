@@ -1,4 +1,4 @@
-#include "hardware/lcd/Driver.h"
+#include "hardware/lcd/Spi.h"
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
@@ -17,22 +17,22 @@ extern "C" void DMA1_Stream4_IRQHandler()
     HAL_DMA_IRQHandler( &lcdSpiDma );
 }
 
-Driver::Driver()
+Spi::Spi()
 {
 }
 
-Driver::~Driver()
+Spi::~Spi()
 {
 }
 
-void Driver::initialize() const
+void Spi::initialize() const
 {
     initializeGpio();
     initializeSpi();
     initializeDma();
 }
 
-void Driver::writeData( const uint8_t& data, const uint32_t size ) const
+void Spi::writeData( const uint8_t& data, const uint32_t size ) const
 {
     while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
     {
@@ -43,7 +43,7 @@ void Driver::writeData( const uint8_t& data, const uint32_t size ) const
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>( &data ), size );
 }
 
-void Driver::initializeDma() const
+void Spi::initializeDma() const
 {
     __HAL_RCC_DMA1_CLK_ENABLE();
 
@@ -69,7 +69,7 @@ void Driver::initializeDma() const
     HAL_NVIC_EnableIRQ( DMA1_Stream4_IRQn );
 }
 
-void Driver::initializeGpio() const
+void Spi::initializeGpio() const
 {
     static GPIO_InitTypeDef gpioConfiguration;
 
@@ -87,7 +87,7 @@ void Driver::initializeGpio() const
     HAL_GPIO_Init( mcu::LCD_GPIO_Port, &gpioConfiguration );
 }
 
-void Driver::initializeSpi() const
+void Spi::initializeSpi() const
 {
     __HAL_RCC_SPI2_CLK_ENABLE();
 
@@ -106,13 +106,13 @@ void Driver::initializeSpi() const
     HAL_SPI_Init( &lcdSpi );
 }
 
-void Driver::reset() const
+void Spi::reset() const
 {
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_RESET );
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_SET );
 }
 
-void Driver::writeCommand( const uint8_t& command, const uint32_t size ) const
+void Spi::writeCommand( const uint8_t& command, const uint32_t size ) const
 {
     while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
     {

@@ -8,10 +8,10 @@ namespace hardware
 namespace lcd
 {
 
-class DriverInterface
+class SpiInterface
 {
 public:
-    virtual ~DriverInterface() = default;
+    virtual ~SpiInterface() = default;
 
     virtual void initialize() const = 0;
 
