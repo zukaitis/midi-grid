@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Set up gtest
+
+wget https://github.com/google/googletest/archive/master.zip
+unzip master.zip
+sudo mkdir -p /usr/src/googletest/build
+mv googletest-master googletest
+sudo rsync -a googletest /usr/src
+cd /usr/src/googletest/build
+sudo cmake ..
+sudo make
+sudo make install 

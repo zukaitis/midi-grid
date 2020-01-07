@@ -47,7 +47,7 @@
         {
             "label": "Run ALL UTs",
             "type": "shell",
-            "command": "unit_tests/run -c",
+            "command": "unit_tests/run -co",
             "group": "test",
             "presentation": {
                 "reveal": "always",
