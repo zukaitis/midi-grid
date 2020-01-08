@@ -8,10 +8,13 @@
     },
 
     "ninja_variables": {
+        "coverage_flag": "--coverage",
+        "color_flag": "-fdiagnostics-color=always",
+
         "compiler": "g++",
-        "compiler_flags": "-c -Wall -fprofile-arcs -ftest-coverage -fdiagnostics-color=always",
+        "compiler_flags": "-c -Wall ${color_flag}",
         "linker": "g++",
-        "linker_flags": "-fprofile-arcs -ftest-coverage -fdiagnostics-color=always -L ${lib_dir} -l gtest -l pthread -l gmock"
+        "linker_flags": "${coverage_flag} ${color_flag} -L ${lib_dir} -l gtest -l pthread -l gmock"
     },
 
     "include_directories": [

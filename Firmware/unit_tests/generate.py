@@ -45,7 +45,7 @@ def generate_single_build_file( test_path: str ):
     ninja_writer = ninja_syntax.Writer( open( build_full_filename, 'w' ) )
     n = ninja_writer
 
-    script_full_filename = __file__
+    script_full_filename = os.path.realpath( __file__ )
     script_filename = os.path.basename( script_full_filename )
 
     n.comment( 'This file is generated using ' + script_filename + ' script, do not edit it by hand!' )
@@ -96,6 +96,12 @@ def generate_single_build_file( test_path: str ):
         description='CXX ${out}' )
     n.newline()
 
+    n.rule( 'cxx_coverage',
+        command='${compiler} -MMD -MT ${out} -MF ${out}.d ${compiler_flags} ${coverage_flag} ${inc_flags} -c ${in} -o ${out}',
+        depfile='${out}.d',
+        description='CXX ${out}' )
+    n.newline()
+
     n.rule( 'link',
         command='${linker} -o ${out} ${in} ${linker_flags}',
         description='LINK ${out}' )
@@ -115,11 +121,21 @@ def generate_single_build_file( test_path: str ):
 
     n.comment( 'Build instructions' )
     objs = list()
-    for f in settings['source_files']:
-        o = '${object_dir}' + remove_file_extension( remove_variable_prefix( f ) ) + '.o'
-        n.build( o, 'cxx', f )
-        objs.append( o )
-    n.newline()
+
+    o = '${object_dir}' + remove_file_extension( remove_variable_prefix( settings['test_file'] ) ) + '.o'
+    n.build( o, 'cxx', settings['test_file'] )
+    objs.append( o )
+
+    o = '${object_dir}' + remove_file_extension( remove_variable_prefix( settings['file_under_test'] ) ) + '.o'
+    n.build( o, 'cxx_coverage', settings['file_under_test'] )
+    objs.append( o )
+
+    if 'source_files' in settings:
+        for f in settings['source_files']:
+            o = '${object_dir}' + remove_file_extension( remove_variable_prefix( f ) ) + '.o'
+            n.build( o, 'cxx', f )
+            objs.append( o )
+        n.newline()
 
     n.comment( 'Target linker instruction' )
     n.build( '${target}', 'link', objs )
