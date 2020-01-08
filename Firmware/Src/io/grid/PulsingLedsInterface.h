@@ -1,6 +1,6 @@
 #pragma once
 
-struct Color;
+class Color;
 struct Coordinates;
 
 namespace grid

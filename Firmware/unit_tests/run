@@ -37,6 +37,8 @@ while getopts 'mncog' flag; do
     esac
 done
 
+export CLICOLOR_FORCE="1"
+
 if [[ "${no_color_flag}" = true ]]; then
     readonly RED=''
     readonly GREEN=''

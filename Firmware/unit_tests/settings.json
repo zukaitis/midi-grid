@@ -9,12 +9,12 @@
 
     "ninja_variables": {
         "coverage_flag": "--coverage",
-        "color_flag": "-fdiagnostics-color=always",
+        "color_flag": "-fcolor-diagnostics",
 
-        "compiler": "g++",
-        "compiler_flags": "-c -Wall ${color_flag}",
-        "linker": "g++",
-        "linker_flags": "${coverage_flag} ${color_flag} -L ${lib_dir} -l gtest -l pthread -l gmock"
+        "compiler": "clang++",
+        "compiler_flags": "${color_flag} -c -Wall",
+        "linker": "clang++",
+        "linker_flags": "${coverage_flag} ${color_flag} -L ${lib_dir} -lgtest -lpthread -lgmock"
     },
 
     "include_directories": [

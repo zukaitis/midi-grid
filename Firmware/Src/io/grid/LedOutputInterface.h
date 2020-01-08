@@ -1,7 +1,7 @@
 #pragma once
 
+class Color;
 struct Coordinates;
-struct Color;
 
 namespace grid
 {

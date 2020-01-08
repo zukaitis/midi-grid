@@ -78,6 +78,8 @@ def generate_single_build_file( test_path: str ):
         value = os.path.normpath( value )
         value += os.path.sep
         n.variable( key, value )
+
+    n.variable( 'test_path', test_path )
     n.newline()
 
     n.comment( 'Common variables')
@@ -123,7 +125,7 @@ def generate_single_build_file( test_path: str ):
     objs = list()
 
     o = '${object_dir}' + remove_file_extension( remove_variable_prefix( settings['test_file'] ) ) + '.o'
-    n.build( o, 'cxx', settings['test_file'] )
+    n.build( o, 'cxx', '${test_path}' + settings['test_file'] ) # prepending test path to fix warning links
     objs.append( o )
 
     o = '${object_dir}' + remove_file_extension( remove_variable_prefix( settings['file_under_test'] ) ) + '.o'
