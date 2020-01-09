@@ -3,6 +3,8 @@
 *.ninja_deps
 *.ninja_log
 .directory
+Firmware/midi-grid.code-workspace
+Firmware/output/*
 Firmware/unit_tests/objects/
 Firmware/unit_tests/coverage_report/
 Firmware/unit_tests/tests/*/*

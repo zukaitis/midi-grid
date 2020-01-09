@@ -1,8 +1,0 @@
-{
-    "test_file": "GridFlashingLedsTest.cpp",
-    "file_under_test": "${source_dir}/io/grid/FlashingLeds.cpp",
-    "source_files": [
-        "${source_dir}/types/Color.cpp",
-        "${mock_dir}/freertos/MockThread.cpp"
-    ]
-}

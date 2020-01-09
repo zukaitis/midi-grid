@@ -2,7 +2,7 @@
 
 from ninja import ninja_syntax
 import os
-import json
+import yaml
 import argparse
 
 def remove_file_extension( filename: str ) -> str:
@@ -22,20 +22,20 @@ def generate_single_build_file( test_path: str ):
     if not os.path.isabs( test_path ):
         test_path = os.getcwd() + os.path.sep + test_path
 
-    common_settings_filename = 'settings.json'
+    common_settings_filename = 'settings.yaml'
     common_settings_full_filename = unit_test_root_dir + common_settings_filename
     try:
         with open( common_settings_full_filename, 'r' ) as read_file:
-            common_settings = json.load( read_file )
+            common_settings = yaml.load( read_file )
     except FileNotFoundError:
         print( common_settings_filename + ' file does not exist, generation failed')
         return
 
-    settings_filename = 'build_settings.json'
+    settings_filename = 'build_settings.yaml'
     settings_full_filename = test_path + settings_filename
     try:
         with open( settings_full_filename, 'r' ) as read_file:
-            settings = json.load( read_file )
+            settings = yaml.load( read_file )
     except FileNotFoundError:
         print( settings_full_filename + ' file does not exist, generation failed')
         return

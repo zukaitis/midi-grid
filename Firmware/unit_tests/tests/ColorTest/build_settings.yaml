@@ -1,0 +1,4 @@
+---
+
+test_file: ColorTest.cpp
+file_under_test: ${source_dir}/types/Color.cpp

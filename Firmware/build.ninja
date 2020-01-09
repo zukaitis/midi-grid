@@ -1,6 +1,6 @@
 # This file is generated using generate_build_file.py script, do not edit it
 # by hand!
-# Settings are parsed from build_settings.json file
+# Settings are parsed from build_settings.yaml file
 
 ninja_required_version = 1.8
 
@@ -280,7 +280,7 @@ build $out_dir/size.txt: size $target
 build output/midi-grid.hex: hex $target
 build output/midi-grid.bin: bin $target
 build output/midi-grid.dfu: dfu $target
-build build.ninja: configure | generate_build_file.py build_settings.json
+build build.ninja: configure | generate_build_file.py build_settings.yaml
 build all: phony build.ninja $target $out_dir/size.txt output/midi-grid.hex $
     output/midi-grid.bin output/midi-grid.dfu
 default all

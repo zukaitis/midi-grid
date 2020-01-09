@@ -2,7 +2,7 @@
 
 from ninja import ninja_syntax
 import os
-import json
+import yaml
 
 def remove_file_extension( filename: str ) -> str:
     (root, _extension) = os.path.splitext( filename )
@@ -16,9 +16,9 @@ BUILD_FILENAME = 'build.ninja'
 ninja_writer = ninja_syntax.Writer( open( BUILD_FILENAME, 'w' ) )
 n = ninja_writer
 
-SETTINGS_FILENAME = 'build_settings.json'
+SETTINGS_FILENAME = 'build_settings.yaml'
 with open( SETTINGS_FILENAME, 'r') as read_file:
-    settings = json.load( read_file )
+    settings = yaml.load( read_file )
 
 SCRIPT_NAME = os.path.basename( __file__ )
 

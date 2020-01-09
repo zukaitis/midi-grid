@@ -1,0 +1,8 @@
+---
+
+test_file: GridPulsingLedsTest.cpp
+file_under_test: ${source_dir}/io/grid/PulsingLeds.cpp
+source_files:
+- ${source_dir}/types/Color.cpp
+- ${mock_dir}/freertos/MockThread.cpp
+

@@ -72,15 +72,17 @@ do
         build_output=$(ninja all)
         if [[ $? -ne 0 ]]; then
             echo "${build_output}"
-            echo "${RED}Build of ${test_name} failed${NC}\n"
+            echo "${RED}Build of ${test_name} failed${NC}"
+            echo ""
             continue
         else
-            if [[ "${build_output}" = "ninja: no work to do." ]]; then
+            if [[ "${build_output}" = *"ninja: no work to do."* ]]; then
                 if [[ "${modified_flag}" = true ]]; then
                     continue
                 fi
             else
-                echo "${build_output}\n"
+                echo "${build_output}"
+                echo ""
             fi
         fi
     fi
@@ -118,12 +120,12 @@ echo "${number_of_tests_ran} unit tests were ran, ${passed_str} of them have pas
 
 for test in ${passed_tests[*]}
 do
-    printf "${GREEN}[  PASSED  ]${NC} ${test}\n"
+    echo -e "${GREEN}[  PASSED  ]${NC} ${test}"
 done
 
 for test in ${failed_tests[*]}
 do
-    printf "${RED}[  FAILED  ]${NC} ${test}\n"
+    echo -e "${RED}[  FAILED  ]${NC} ${test}"
 done
 
 if [[ "${coverage_flag}" = true ]]; then
