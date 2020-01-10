@@ -164,13 +164,13 @@ void Snake::blink() const
 void Snake::updateGrid() const
 {
     grid_.turnAllLedsOff();
-    grid_.setLed( {snake_[0].x, snake_[0].y}, headColor );
+    grid_.setLed( {static_cast<uint8_t>(snake_[0].x), static_cast<uint8_t>(snake_[0].y)}, headColor );
     for (uint8_t i = 1; i < length_; i++)
     {
-        grid_.setLed( {snake_[i].x, snake_[i].y}, bodyColor_ );
+        grid_.setLed( {static_cast<uint8_t>(snake_[i].x), static_cast<uint8_t>(snake_[i].y)}, bodyColor_ );
     }
 
-    grid_.setLed( {food_.x, food_.y}, foodColor );
+    grid_.setLed( {static_cast<uint8_t>(food_.x), static_cast<uint8_t>(food_.y)}, foodColor );
 }
 
 void Snake::updateLcd() const

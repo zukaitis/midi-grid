@@ -29,7 +29,7 @@ public:
     void discardPendingInput() override;
 
 private:
-    void Run();
+    void Run() override;
 
     void copyInput();
 

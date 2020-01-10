@@ -27,7 +27,7 @@ public:
     uint8_t getMaximumIntensity() const override;
 
 private:
-    void Run();
+    void Run() override;
 
     hardware::lcd::BacklightDriverInterface& driver_;
 

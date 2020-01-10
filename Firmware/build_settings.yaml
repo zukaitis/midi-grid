@@ -21,6 +21,9 @@ include_directories:
 - submodules/freertos-addons/c++/Source/include
 - Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 - Src/io/lcd/84x48_mono
+  # using c and c++ libraries from arm-none-eabi-gcc atm
+- /usr/lib/arm-none-eabi/include/c++/7.3.1
+- /usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi
 
 c_source_files:
 - Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
@@ -100,13 +103,13 @@ asm_source_files:
 - startup/startup_stm32f411xe.S
 
 linker_script: STM32F411RCTx_FLASH.ld
-c_compiler: arm-none-eabi-gcc
-cxx_compiler: arm-none-eabi-g++
-asm_compiler: arm-none-eabi-gcc
+c_compiler: clang-9
+cxx_compiler: clang++-9
+asm_compiler: clang-9
 linker: arm-none-eabi-g++
-object_copy_utility: arm-none-eabi-objcopy
-object_information_utility: arm-none-eabi-objdump
-output_size_report_utility: arm-none-eabi-size
+object_copy_utility: llvm-objcopy-9
+object_information_utility: llvm-objdump-9
+output_size_report_utility: llvm-size-9
 dfu_conversion_utility: submodules/dfuse-tool/dfu-convert
 
 arch_flags:
@@ -114,12 +117,12 @@ arch_flags:
 - -DUSE_HAL_DRIVER
 - -DSTM32F411xE
 - -mthumb
-- -specs=nano.specs
-- -specs=nosys.specs
 - -mfloat-abi=hard
 - -mfpu=fpv4-sp-d16
+- --sysroot=/usr/lib/arm-none-eabi
 
 c_flags:
+- --target=arm-none-eabi
 - -O0
 - -ggdb3
 - -ffunction-sections
@@ -136,4 +139,7 @@ cxx_flags:
 linker_flags:
 - -Wl,-Map=output.map
 - -Wl,--gc-sections
+- -Wl,--warn-once
 - -fdiagnostics-color=always
+- -specs=nano.specs
+- -specs=nosys.specs

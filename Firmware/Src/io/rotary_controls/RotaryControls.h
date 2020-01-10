@@ -20,7 +20,7 @@ public:
     void discardPendingInput() override;
 
 private:
-    void Run();
+    void Run() override;
 
     int8_t calculateVelocityMultiplier( const uint32_t intervalMs ) const;
 

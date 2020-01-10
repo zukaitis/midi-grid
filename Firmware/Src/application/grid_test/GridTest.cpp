@@ -76,14 +76,16 @@ void GridTest::displayIntroAnimation( ApplicationThread& thread )
         {
             const uint8_t y = currentStepNumber;
             grid_.setLed( {x, y}, getIntroAnimationColor( x, y ) );
-            grid_.setLed( {7U - x, 7U - y}, getIntroAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( {static_cast<uint8_t>(7U - x), static_cast<uint8_t>(7U - y)},
+                getIntroAnimationColor( static_cast<uint8_t>(7U - x), static_cast<uint8_t>(7U - y) ) );
         }
 
         for (uint8_t y = 0; y <= currentStepNumber; y++)
         {
             const uint8_t x = currentStepNumber;
             grid_.setLed( {x, y}, getIntroAnimationColor( x, y ) );
-            grid_.setLed( {7U - x, 7U - y}, getIntroAnimationColor( 7U - x, 7U - y ) );
+            grid_.setLed( {static_cast<uint8_t>(7U - x), static_cast<uint8_t>(7U - y)},
+                getIntroAnimationColor( static_cast<uint8_t>(7U - x), static_cast<uint8_t>(7U - y) ) );
         }
         
         thread.delay( delayPeriod );

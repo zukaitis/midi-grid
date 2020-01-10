@@ -30,6 +30,18 @@
             "problemMatcher": []
         },
         {
+            "label": "Rebuild",
+            "type": "shell",
+            "command": "rm -r output && ninja",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Run UTs",
             "type": "shell",
             "command": "unit_tests/run -m",

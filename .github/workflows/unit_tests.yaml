@@ -1,11 +1,15 @@
 name: Unit Tests
 on: 
   push:
-    paths-ignore:
-      - '**.md'
+    paths:
+      - 'Firmware/**'
+      - '!Firmware/.vscode/**'
+      - '!**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
+    paths:
+      - 'Firmware/**'
+      - '!Firmware/.vscode/**'
+      - '!**.md'
 
 jobs:
   unit_tests:
