@@ -4,6 +4,7 @@ on:
     branches:
       - master
     paths:
+      - '.github/workflows/build.yaml'
       - 'Firmware/**'
       - '!Firmware/unit_tests/**'
       - '!Firmware/.vscode/**'
@@ -45,7 +46,7 @@ jobs:
         run: echo "::set-output name=version::$(git rev-list --count origin/master)"
       - name: Compress output files
         if: success() && github.event_name == 'push'
-        run: cd Firmware/output && 7z a midi-grid_v${{ steps.get_version.outputs.version }}.7z midi-grid.*
+        run: cd Firmware/output && test -f midi-grid.* && 7z a midi-grid_v${{ steps.get_version.outputs.version }}.7z midi-grid.*
       - name: Create Release
         if: success() && github.event_name == 'push'
         id: create_release
