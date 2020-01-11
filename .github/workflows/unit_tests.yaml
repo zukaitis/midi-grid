@@ -2,7 +2,6 @@ name: Unit Tests
 on: 
   push:
     paths:
-      - '.github/workflows/unit-tests.yaml'
       - 'Firmware/**'
       - '!Firmware/.vscode/**'
       - '!**.md'
@@ -18,28 +17,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-      uses: actions/checkout@v1
+        uses: actions/checkout@v1
       - name: Checkout submodules
-      uses: textbook/git-checkout-submodule-action@master
+        uses: textbook/git-checkout-submodule-action@master
       - name: Install Python packages
-      run: pip3 install ninja
+        run: pip3 install ninja
       - name: Setup ninja-build
-      uses: seanmiddleditch/gha-setup-ninja@master
+        uses: seanmiddleditch/gha-setup-ninja@master
       - name: Setup gtest
-      run: .github/workflows/setup_gtest
+        run: .github/workflows/setup_gtest
       - name: Setup lcov
-      run: sudo apt install lcov
+        run: sudo apt install lcov
       - name: Run
-      run: Firmware/unit_tests/run -c
+        run: Firmware/unit_tests/run -c
       - name: Upload coverage report
-      if: success()
-      uses: actions/upload-artifact@v1
-      with:
+        if: success()
+        uses: actions/upload-artifact@v1
+        with:
           name: coverage_report
           path: Firmware/unit_tests/coverage_report
       - name: Upload coverage report to Codecov
-      if: success()
-      uses: codecov/codecov-action@v1
-      with:
+        if: success()
+        uses: codecov/codecov-action@v1
+        with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: Firmware/unit_tests/coverage_report/coverage_filtered.info

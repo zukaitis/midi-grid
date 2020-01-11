@@ -4,7 +4,6 @@ on:
     branches:
       - master
     paths:
-      - '.github/workflows/build.yaml'
       - 'Firmware/**'
       - '!Firmware/unit_tests/**'
       - '!Firmware/.vscode/**'
@@ -33,6 +32,8 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
       - name: Setup ARM GNU tools
         run: sudo apt install gcc-arm-none-eabi
+      - name: Setup llvm
+        run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
       - name: Build
         run: cd Firmware && ninja | tee build_log.txt
       - name: Upload build log
