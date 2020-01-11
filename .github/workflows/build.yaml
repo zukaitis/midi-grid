@@ -35,6 +35,8 @@ jobs:
         run: sudo apt install gcc-arm-none-eabi
       - name: Setup llvm
         run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      - name: check gnu arm tools version
+        run: ls /usr/lib/arm-none-eabi/include/c++/
       - name: Build
         run: cd Firmware && ninja | tee build_log.txt
       - name: Upload build log
@@ -43,14 +45,14 @@ jobs:
           name: build_log
           path: Firmware/build_log.txt
       - name: Get version
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && github.ref == 'master'
         id: get_version
         run: echo "::set-output name=version::$(git rev-list --count origin/master)"
       - name: Compress output files
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && github.ref == 'master'
         run: cd Firmware/output && test -f midi-grid.* && 7z a midi-grid_v${{ steps.get_version.outputs.version }}.7z midi-grid.*
       - name: Create Release
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && github.ref == 'master'
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
@@ -61,7 +63,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && github.ref == 'master'
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1.0.1
         env:
