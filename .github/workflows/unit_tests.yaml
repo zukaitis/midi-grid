@@ -2,6 +2,7 @@ name: Unit Tests
 on: 
   push:
     paths:
+      - '.github/workflows/unit-tests.yaml'
       - 'Firmware/**'
       - '!Firmware/.vscode/**'
       - '!**.md'
