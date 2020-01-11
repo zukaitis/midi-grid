@@ -32,7 +32,7 @@
         {
             "label": "Rebuild",
             "type": "shell",
-            "command": "rm -r output && ninja",
+            "command": "rm -rf output && ninja",
             "group": "build",
             "presentation": {
                 "reveal": "always",
@@ -57,9 +57,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Run ALL UTs",
+            "label": "Rerun UTs",
             "type": "shell",
-            "command": "unit_tests/run -co",
+            "command": "rm -rf unit_tests/objects && unit_tests/run -co",
             "group": "test",
             "presentation": {
                 "reveal": "always",

@@ -17,7 +17,7 @@ include_directories:
 - Src
 - Src/configs
 - submodules/etl/include
-- submodules/FreeRTOS-Kernel/include
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/include
 - submodules/freertos-addons/c++/Source/include
 - Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 - Src/io/lcd/84x48_mono
@@ -58,13 +58,13 @@ c_source_files:
 - Src/io/usb/usb_device.c
 - Src/system/stm32f4xx_it.c
 - Src/system/system_stm32f4xx.c
-- submodules/FreeRTOS-Kernel/croutine.c
-- submodules/FreeRTOS-Kernel/event_groups.c
-- submodules/FreeRTOS-Kernel/list.c
-- submodules/FreeRTOS-Kernel/queue.c
-- submodules/FreeRTOS-Kernel/stream_buffer.c
-- submodules/FreeRTOS-Kernel/tasks.c
-- submodules/FreeRTOS-Kernel/timers.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/list.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/queue.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/stream_buffer.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.c
+- submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.c
 
 cxx_source_files:
 - Src/application/Application.cpp
