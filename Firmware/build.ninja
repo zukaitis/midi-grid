@@ -22,7 +22,8 @@ dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
-    -mfloat-abi=hard -mfpu=fpv4-sp-d16 --sysroot=/usr/lib/arm-none-eabi
+    -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fshort-enums $
+    --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
 c_flags = --target=arm-none-eabi -O0 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
@@ -35,13 +36,11 @@ inc_flags = -IDrivers/CMSIS/Include $
     -Isubmodules/FreeRTOS-Kernel/FreeRTOS/Source/include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -ISrc/io/lcd/84x48_mono $
-    -I/usr/lib/arm-none-eabi/include/c++/7.3.1 $
-    -I/usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi $
-    -I/usr/lib/arm-none-eabi/include/c++/6.3.1 $
-    -I/usr/lib/arm-none-eabi/include/c++/6.3.1/arm-none-eabi
-ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -Wl,--warn-once $
-    -fdiagnostics-color=always -specs=nano.specs -specs=nosys.specs -T $
-    STM32F411RCTx_FLASH.ld -Wl,-Map=output/midi-grid.map
+    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
+    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
+ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
+    -specs=nano.specs -specs=nosys.specs -T STM32F411RCTx_FLASH.ld $
+    -Wl,-Map=output/midi-grid.map
 
 # Rules for different types of inputs and outputs
 rule as

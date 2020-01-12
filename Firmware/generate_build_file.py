@@ -18,7 +18,7 @@ n = ninja_writer
 
 SETTINGS_FILENAME = 'build_settings.yaml'
 with open( SETTINGS_FILENAME, 'r') as read_file:
-    settings = yaml.load( read_file )
+    settings = yaml.load( read_file, Loader=yaml.BaseLoader )
 
 SCRIPT_NAME = os.path.basename( __file__ )
 

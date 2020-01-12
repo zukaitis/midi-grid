@@ -22,11 +22,8 @@ include_directories:
 - Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 - Src/io/lcd/84x48_mono
   # using c and c++ libraries from arm-none-eabi-gcc atm
-- /usr/lib/arm-none-eabi/include/c++/7.3.1
-- /usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi
-  # theses two include dirs are used in CI, because version there is different for some reason
-- /usr/lib/arm-none-eabi/include/c++/6.3.1
-- /usr/lib/arm-none-eabi/include/c++/6.3.1/arm-none-eabi
+- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/
+- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
 
 c_source_files:
 - Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
@@ -122,7 +119,8 @@ arch_flags:
 - -mthumb
 - -mfloat-abi=hard
 - -mfpu=fpv4-sp-d16
-- --sysroot=/usr/lib/arm-none-eabi
+- -fshort-enums
+- --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
 
 c_flags:
 - --target=arm-none-eabi
@@ -140,7 +138,6 @@ cxx_flags:
 - -DCPP_FREERTOS_NO_CPP_STRINGS
 
 linker_flags:
-- -Wl,-Map=output.map
 - -Wl,--gc-sections
 - -Wl,--warn-once
 - -fdiagnostics-color=always
