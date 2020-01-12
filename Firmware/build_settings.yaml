@@ -24,6 +24,9 @@ include_directories:
   # using c and c++ libraries from arm-none-eabi-gcc atm
 - /usr/lib/arm-none-eabi/include/c++/7.3.1
 - /usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi
+  # theses two include dirs are used in CI, because version there is different for some reason
+- /usr/lib/arm-none-eabi/include/c++/6.3.1
+- /usr/lib/arm-none-eabi/include/c++/6.3.1/arm-none-eabi
 
 c_source_files:
 - Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c

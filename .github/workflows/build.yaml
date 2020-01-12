@@ -35,8 +35,8 @@ jobs:
         run: sudo apt install gcc-arm-none-eabi
       - name: Setup llvm
         run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-      - name: check gnu arm tools version
-        run: ls /usr/lib/arm-none-eabi/include/c++/
+      - name: check value of ref
+        run: echo ${{ github.ref }}
       - name: Build
         run: cd Firmware && ninja | tee build_log.txt
       - name: Upload build log

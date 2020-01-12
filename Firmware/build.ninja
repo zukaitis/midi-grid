@@ -36,7 +36,9 @@ inc_flags = -IDrivers/CMSIS/Include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -ISrc/io/lcd/84x48_mono $
     -I/usr/lib/arm-none-eabi/include/c++/7.3.1 $
-    -I/usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi
+    -I/usr/lib/arm-none-eabi/include/c++/7.3.1/arm-none-eabi $
+    -I/usr/lib/arm-none-eabi/include/c++/6.3.1 $
+    -I/usr/lib/arm-none-eabi/include/c++/6.3.1/arm-none-eabi
 ld_flags = -Wl,-Map=output.map -Wl,--gc-sections -Wl,--warn-once $
     -fdiagnostics-color=always -specs=nano.specs -specs=nosys.specs -T $
     STM32F411RCTx_FLASH.ld -Wl,-Map=output/midi-grid.map
