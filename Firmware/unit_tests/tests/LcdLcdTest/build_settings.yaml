@@ -1,0 +1,4 @@
+---
+
+test_file: LcdTest.cpp
+file_under_test: ${source_dir}/io/lcd/Lcd.cpp

@@ -1,0 +1,7 @@
+---
+
+test_file: LcdBacklightTest.cpp
+file_under_test: ${source_dir}/io/lcd/backlight/Backlight.cpp
+source_files:
+  - ${mock_dir}/freertos/MockThread.cpp
+  - ${mock_dir}/freertos/MockBinarySemaphore.cpp
