@@ -20,7 +20,7 @@ namespace lcd
 class Pcd8544: public DriverInterface, private freertos::Thread
 {
 public:
-    Pcd8544( hardware::lcd::SpiInterface& driver );
+    Pcd8544( hardware::lcd::SpiInterface& spi );
     virtual ~Pcd8544();
 
     void initialize() override;

@@ -6,7 +6,7 @@ class Color
 {
 public:
 
-    Color() = default;
+    Color();
     Color( const uint8_t r, const uint8_t g, const uint8_t b );
 
     uint8_t red() const;

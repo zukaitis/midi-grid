@@ -4,6 +4,7 @@ from ninja import ninja_syntax
 import os
 import yaml
 import argparse
+import sys
 
 def remove_file_extension( filename: str ) -> str:
     (root, _extension) = os.path.splitext( filename )
@@ -26,19 +27,19 @@ def generate_single_build_file( test_path: str ):
     common_settings_full_filename = unit_test_root_dir + common_settings_filename
     try:
         with open( common_settings_full_filename, 'r' ) as read_file:
-            common_settings = yaml.load( read_file )
+            common_settings = yaml.load( read_file, Loader=yaml.BaseLoader )
     except FileNotFoundError:
         print( common_settings_filename + ' file does not exist, generation failed')
-        return
+        sys.exit( 1 )
 
     settings_filename = 'build_settings.yaml'
     settings_full_filename = test_path + settings_filename
     try:
         with open( settings_full_filename, 'r' ) as read_file:
-            settings = yaml.load( read_file )
+            settings = yaml.load( read_file, Loader=yaml.BaseLoader )
     except FileNotFoundError:
         print( settings_full_filename + ' file does not exist, generation failed')
-        return
+        sys.exit( 1 )
 
     build_filename = 'build.ninja'
     build_full_filename = test_path + build_filename

@@ -19,7 +19,10 @@ TEST( ColorConstructor, CreateWithParameters )
 TEST( ColorConstructor, CreateWithoutParameters )
 {
     Color color;
-    SUCCEED();
+
+    EXPECT_EQ( 0, color.red() );
+    EXPECT_EQ( 0, color.green() );
+    EXPECT_EQ( 0, color.blue() );
 }
 
 TEST( ColorConstructor, TruncateValues )

@@ -19,8 +19,8 @@ static const Image digitBig[10] = {
 };
 
 Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
-    backlight_( backlight ),
-    driver_( driver )
+    driver_( driver ),
+    backlight_( backlight )
 {
 }
 

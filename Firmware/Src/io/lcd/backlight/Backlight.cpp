@@ -1,9 +1,6 @@
 #include "io/lcd/backlight/Backlight.h"
 #include "hardware/lcd/BacklightDriverInterface.h"
 
-#include "system/gpio_definitions.h"
-#include "stm32f4xx_hal.h"
-
 #include "ThreadConfigurations.h"
 #include <freertos/ticks.hpp>
 
@@ -16,7 +13,8 @@ Backlight::Backlight( hardware::lcd::BacklightDriverInterface& driver ):
     Thread( "Backlight", kBacklight.stackDepth, kBacklight.priority ),
     driver_( driver ),
     appointedIntensity_( 0 ),
-    currentIntensity_( 0 )
+    currentIntensity_( 0 ),
+    appointedIntensityChanged_( false )
 {
 }
 

@@ -10,11 +10,11 @@
 namespace lcd
 {
 
-Pcd8544::Pcd8544( hardware::lcd::SpiInterface& driver ):
+Pcd8544::Pcd8544( hardware::lcd::SpiInterface& spi ):
     Thread( "Lcd", kLcd.stackDepth, kLcd.priority ),
-    spi_( driver ),
+    spi_( spi ),
     buffer_(),
-    updateRequired_()
+    updateRequired_( false )
 {
 }
 
@@ -25,7 +25,6 @@ Pcd8544::~Pcd8544()
 void Pcd8544::Run()
 {
     const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
-    const uint32_t bufferSize = sizeof( buffer_ ) / sizeof( buffer_[0][0] );
 
     updateRequired_.Take(); // block until LCD update is required
     DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another

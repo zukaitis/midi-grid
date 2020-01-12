@@ -59,9 +59,11 @@ do
 
     if ! [[ -f ${test_path}${BUILD_FILENAME} ]]; then
         if [[ "${no_generation_flag}" = false ]]; then
+            echo ""
             ${UNIT_TESTS_DIR}/generate.py ${test_path}
             if [[ $? -ne 0 ]]; then
-                echo "generation of ${BUILD_FILENAME} file for ${test_name} failed, use -n flag to ignore it"
+                echo -e "${RED}Generation of ${BUILD_FILENAME} file for ${test_name} failed.${NC} Use -n flag to ignore it"
+                failed_tests+=("${test_name}")
                 continue
             fi
         fi
@@ -71,9 +73,10 @@ do
         cd ${test_path}
         build_output=$(ninja all)
         if [[ $? -ne 0 ]]; then
-            echo "${build_output}"
-            echo "${RED}Build of ${test_name} failed${NC}"
             echo ""
+            echo "${build_output}"
+            echo -e "${RED}Build of ${test_name} failed${NC}"
+            failed_tests+=("${test_name}")
             continue
         else
             if [[ "${build_output}" = *"ninja: no work to do."* ]]; then
@@ -88,6 +91,7 @@ do
     fi
 
     if [[ -f ${test_path}${test_name} ]]; then
+        echo ""
         echo "${test_name}"
         ${test_path}${test_name}
         if [[ $? -ne 0 ]]; then
@@ -95,7 +99,6 @@ do
         else
             passed_tests+=("${test_name}")
         fi
-        echo ""
     fi
 done
 
@@ -115,7 +118,7 @@ if [[ "${number_of_failed_tests}" != "0" ]]; then
     exit_value=1 # output non-zero value on exit
 fi
 
-
+echo ""
 echo "${number_of_tests_ran} unit tests were ran, ${passed_str} of them have passed."
 
 for test in ${passed_tests[*]}
@@ -142,7 +145,7 @@ if [[ "${coverage_flag}" = true ]]; then
     genhtml coverage_filtered.info --output-directory . >/dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
-        echo "Coverage report generation failed"
+        echo -e "${RED}Coverage report generation failed${NC}"
     else
         echo "Coverage report generated, it can be accessed at:"
         echo "${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html"

@@ -22,7 +22,7 @@
                 "${workspaceFolder}/Src",
                 "${workspaceFolder}/Src/configs",
                 "${workspaceFolder}/submodules/etl/include",
-                "${workspaceFolder}/submodules/FreeRTOS-Kernel/include",
+                "${workspaceFolder}/submodules/FreeRTOS-Kernel/FreeRTOS/Source/include",
                 "${workspaceFolder}/submodules/freertos-addons/c++/Source/include",
                 "${workspaceFolder}/unit_tests/mocks",
                 "${workspaceFolder}/Src/io/lcd/84x48_mono",
