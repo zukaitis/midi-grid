@@ -30,7 +30,10 @@ jobs:
       - name: Setup lcov
         run: sudo apt install lcov
       - name: Setup grcov
-        run: sudo apt install grcov
+        run: |
+          wget https://github.com/mozilla/grcov/releases/download/v0.5.9/grcov-osx-x86_64.tar.bz2 &&
+          tar xjf grcov-osx-x86_64.tar.bz2
+          sudo mv grcov usr/bin/grcov
       - name: Run
         run: Firmware/unit_tests/run -c
       - name: Upload coverage report
