@@ -29,6 +29,8 @@ jobs:
         run: .github/workflows/setup_gtest
       - name: Setup lcov
         run: sudo apt install lcov
+      - name: Setup grcov
+        run: sudo apt install grcov
       - name: Run
         run: Firmware/unit_tests/run -c
       - name: Upload coverage report

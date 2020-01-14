@@ -138,24 +138,31 @@ if [[ "${coverage_flag}" = true ]]; then
     cd ${UNIT_TESTS_DIR}
     mkdir -p ${COVERAGE_DIR_NAME}
 
-    lcov --c --directory ${OBJECT_DIR_NAME} --output-file ${COVERAGE_DIR_NAME}/coverage_unfiltered.info >/dev/null 2>&1
+    grcov --llvm ${OBJECT_DIR_NAME} -t lcov > ${COVERAGE_DIR_NAME}/coverage_unfiltered.info
+
     cd ${COVERAGE_DIR_NAME}
-    lcov --remove coverage_unfiltered.info -o coverage_filtered.info \
-        '/usr/include/*' '/usr/src/*' '*submodules/*' '*unit_tests/*' '*Interface.h' >/dev/null 2>&1
-    genhtml coverage_filtered.info --output-directory . >/dev/null 2>&1
-
+    filtering_output=$(lcov --remove coverage_unfiltered.info -o coverage_filtered.info \
+        '/usr/*' '*submodules/*' '*unit_tests/*' '*Interface.h')
     if [[ $? -ne 0 ]]; then
-        echo -e "${RED}Coverage report generation failed${NC}"
-    else
-        echo "Coverage report generated, it can be accessed at:"
-        echo "${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html"
+        echo "${filtering_output}"
+        echo -e "${RED}Coverage info filtering failed${NC}"
+        exit 1
+    fi
 
-        if [[ "${open_coverage_report_flag}" = true ]]; then
-            ${BROWSER} ${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html
-        fi
+    generation_output=$(genhtml coverage_filtered.info --output-directory .)
+    if [[ $? -ne 0 ]]; then
+        echo "${generation_output}"
+        echo -e "${RED}Coverage report generation failed${NC}"
+        exit 1
+    fi
+
+    echo "Coverage report generated, it can be accessed at:"
+    echo "${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html"
+
+    if [[ "${open_coverage_report_flag}" = true ]]; then
+        echo "Opening coverage report in browser"
+        ${BROWSER} ${UNIT_TESTS_DIR}/${COVERAGE_DIR_NAME}/index.html
     fi
 fi
-
-cd ${WORKING_DIR}
 
 exit ${exit_value}

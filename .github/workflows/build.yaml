@@ -36,7 +36,10 @@ jobs:
       - name: Setup llvm
         run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
       - name: Build
-        run: export PATH=$PATH:/opt/gcc-arm-none-eabi-9-2019-q4-major/bin && cd Firmware && ninja | tee build_log.txt
+        run: |
+          export PATH=$PATH:/opt/gcc-arm-none-eabi-9-2019-q4-major/bin &&
+          cd Firmware &&
+          ninja | tee build_log.txt
       - name: Upload build log
         uses: actions/upload-artifact@v1
         with:
@@ -48,7 +51,10 @@ jobs:
         run: echo "::set-output name=version::$(git rev-list --count origin/master)"
       - name: Compress output files
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: cd Firmware/output && test -f midi-grid.* && 7z a midi-grid_v${{ steps.get_version.outputs.version }}.7z midi-grid.*
+        run: |
+          cd Firmware/output &&
+          test -f midi-grid.* &&
+          7z a midi-grid_v${{ steps.get_version.outputs.version }}.7z midi-grid.*
       - name: Create Release
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: create_release
