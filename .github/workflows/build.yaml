@@ -49,6 +49,10 @@ jobs:
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: get_version
         run: echo "::set-output name=version::$(./Firmware/get_version)"
+      - name: Seeking enlightment
+        run: |
+          git rev-list --tags --max-count=10
+          git tag --list
       - name: Compress output files
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
