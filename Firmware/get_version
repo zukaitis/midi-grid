@@ -8,7 +8,7 @@ readonly prerel_name='pre'
 cd ${1:-.} # go to directory, if it's specified
 cd $(git rev-parse --show-toplevel) # go to the root of repository
 
-git fetch # fetch latest tags
+git fetch --tags # fetch latest tags
 current_tag=$(git describe --tags --exact-match origin/HEAD >> /dev/null 2>&1)
 if [[ $? -ne 0 ]]; then
     latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
