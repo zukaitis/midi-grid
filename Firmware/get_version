@@ -9,10 +9,10 @@ cd ${1:-.} # go to directory, if it's specified
 cd $(git rev-parse --show-toplevel) # go to the root of repository
 
 git fetch # fetch latest tags
-current_tag=$(git describe --tags --contains HEAD >> /dev/null 2>&1)
+current_tag=$(git describe --tags --exact-match HEAD >> /dev/null 2>&1)
 if [[ $? -ne 0 ]]; then
     latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
-    build=$(git rev-list --count master)
+    build=$(git rev-list --count origin/master)
 
     prerel=$(./${semver_tool} get prerel ${latest_tag})
     if [[ "${prerel}" == "" ]]; then
