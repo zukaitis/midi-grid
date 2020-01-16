@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Returns firmware version string, in accordance to Semantic Versioning 2.0.0 rules
+
+readonly semver_tool='Firmware/submodules/semver-tool/src/semver' # tool path, relative to repo root
+readonly prerel_name='pre'
+
+cd ${1:-.} # go to directory, if it's specified
+cd $(git rev-parse --show-toplevel) # go to the root of repository
+
+git fetch # fetch latest tags
+current_tag=$(git describe --tags --contains HEAD >> /dev/null 2>&1)
+if [[ $? -ne 0 ]]; then
+    latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+    build=$(git rev-list --count master)
+
+    prerel=$(./${semver_tool} get prerel ${latest_tag})
+    if [[ "${prerel}" == "" ]]; then
+        current_tag=$(./${semver_tool} bump patch ${latest_tag})
+        current_tag+="-${prerel_name}+${build}"
+    else
+        major=$(./${semver_tool} get major ${latest_tag})
+        minor=$(./${semver_tool} get minor ${latest_tag})
+        patch=$(./${semver_tool} get patch ${latest_tag})
+
+        current_tag+="${major}.${minor}.${patch}-${prerel_name}+${build}"
+    fi
+fi
+
+# TODO: implement logic to check for local modifications here
+
+echo "${current_tag}"
