@@ -55,7 +55,7 @@ jobs:
       - name: looking for answers part 2
         if: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
         run: echo "das true"
-      - name: looking for answers part 2
+      - name: looking for answers part 3
         if: contains( ${{ steps.get_version.outputs.version }}, pre )
         run: echo "dis be da truth"
       - name: Compress output files
