@@ -49,6 +49,15 @@ jobs:
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: get_version
         run: echo "::set-output name=version::$(./Firmware/get_version)"
+      - name: looking for answers
+        if: contains( '${{ steps.get_version.outputs.version }}', 'pre' )
+        run: echo "true dat"
+      - name: looking for answers part 2
+        if: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
+        run: echo "das true"
+      - name: looking for answers part 2
+        if: contains( ${{ steps.get_version.outputs.version }}, pre )
+        run: echo "dis be da truth"
       - name: Compress output files
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
