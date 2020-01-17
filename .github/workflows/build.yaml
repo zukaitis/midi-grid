@@ -50,7 +50,7 @@ jobs:
         id: get_version
         run: echo "::set-output name=version::$(./Firmware/get_version)"
       - name: looking for answers
-        if: contains( '${{ steps.get_version.outputs.version }}', 'pre' )
+        if: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
         run: echo "true dat"
       - name: looking for answers part 2
         if: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
