@@ -49,9 +49,6 @@ jobs:
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: get_version
         run: echo "::set-output name=version::$(./Firmware/get_version)"
-      - name: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
-        run: |
-          git rev-list --count origin/master
       - name: Compress output files
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
@@ -68,7 +65,7 @@ jobs:
           tag_name: ${{ steps.get_version.outputs.version }}
           release_name: ${{ steps.get_version.outputs.version }}
           draft: false
-          prerelease: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
+          prerelease: contains( '${{ steps.get_version.outputs.version }}', 'pre' )
       - name: Upload Release Asset
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: upload-release-asset 
