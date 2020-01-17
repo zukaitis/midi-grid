@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
       - name: Checkout submodules
         uses: textbook/git-checkout-submodule-action@master
       - name: Install Python packages
@@ -49,10 +49,9 @@ jobs:
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: get_version
         run: echo "::set-output name=version::$(./Firmware/get_version)"
-      - name: Seeking enlightment
+      - name: contains( ${{ steps.get_version.outputs.version }}, 'pre' )
         run: |
-          git rev-list --tags --max-count=10
-          git tag --list
+          git rev-list --count origin/master
       - name: Compress output files
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
