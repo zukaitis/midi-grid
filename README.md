@@ -22,6 +22,8 @@ or compatibility with other DAWs may be implemented later.
 
 More thorough information, regarding design and implementation, is available in [wiki of this project](https://github.com/zukaitis/midi-grid/wiki).
 
+**This repository uses submodules -** [here's info how to fully clone it](https://stackoverflow.com/questions/3796927/how-to-git-clone-including-submodules)
+
 ## Thanks to
 - [@mimuz](https://github.com/mimuz) - for sharing [STM32 USB MIDI library](https://github.com/mimuz/mimuz-tuch)
 - [@pidcodes](https://github.com/pidcodes) - for providing USB VID/PID pair for this application
