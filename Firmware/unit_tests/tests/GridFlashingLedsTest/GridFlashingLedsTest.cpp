@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "io/grid/FlashingLeds.h"
+#include "grid/FlashingLeds.h"
 
-#include "io/grid/MockLedOutput.h"
+#include "grid/MockLedOutput.h"
 #include "freertos/MockThread.h"
 
 static const uint32_t delayPeriod = 250; // [ms]

@@ -1,6 +1,6 @@
 #include "application/snake/Snake.hpp"
 
-#include "io/lcd/LcdInterface.h"
+#include "lcd/LcdInterface.h"
 
 #include <cstdlib>
 #include <cstring>

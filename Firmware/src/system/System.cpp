@@ -1,6 +1,6 @@
 #include "system/System.hpp"
 #include "stm32f4xx_hal.h"
-#include "io/usb/usb_device.h"
+#include "usb/usb_device.h"
 
 namespace mcu
 {

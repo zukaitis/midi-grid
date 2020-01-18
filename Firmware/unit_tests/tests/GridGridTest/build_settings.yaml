@@ -1,6 +1,6 @@
 ---
 
 test_file: GridGridTest.cpp
-file_under_test: ${source_dir}/io/grid/Grid.cpp
+file_under_test: ${source_dir}/grid/Grid.cpp
 source_files:
 - ${source_dir}/types/Color.cpp

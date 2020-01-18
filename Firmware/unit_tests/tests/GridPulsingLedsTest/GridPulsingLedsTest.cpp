@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "io/grid/PulsingLeds.h"
+#include "grid/PulsingLeds.h"
 
-#include "io/grid/MockLedOutput.h"
+#include "grid/MockLedOutput.h"
 #include "freertos/MockThread.h"
 
 const uint32_t delayPeriod = 67; // [ms]

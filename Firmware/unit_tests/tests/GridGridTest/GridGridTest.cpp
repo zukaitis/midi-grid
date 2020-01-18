@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "io/grid/Grid.h"
+#include "grid/Grid.h"
 
-#include "io/grid/MockButtonInput.h"
-#include "io/grid/MockLedOutput.h"
-#include "io/grid/MockFlashingLeds.h"
-#include "io/grid/MockPulsingLeds.h"
+#include "grid/MockButtonInput.h"
+#include "grid/MockLedOutput.h"
+#include "grid/MockFlashingLeds.h"
+#include "grid/MockPulsingLeds.h"
 
 #include "types/Color.h"
 

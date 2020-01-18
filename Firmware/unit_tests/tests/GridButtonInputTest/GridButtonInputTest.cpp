@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "io/grid/ButtonInput.h"
+#include "grid/ButtonInput.h"
 #include "hardware/grid/MockGridDriver.h"
 #include "system/MockGlobalInterrupts.h"
 #include "freertos/MockThread.h"

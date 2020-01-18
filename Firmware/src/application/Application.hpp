@@ -4,10 +4,10 @@
 #include <freertos/semaphore.hpp>
 #include <freertos/queue.hpp>
 
-#include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "io/grid/GridInterface.h"
-#include "io/rotary_controls/RotaryControlsInterface.h"
-#include "io/usb/UsbMidi.hpp"
+#include "additional_buttons/AdditionalButtonsInterface.h"
+#include "grid/GridInterface.h"
+#include "rotary_controls/RotaryControlsInterface.h"
+#include "usb/UsbMidi.hpp"
 
 namespace application
 {

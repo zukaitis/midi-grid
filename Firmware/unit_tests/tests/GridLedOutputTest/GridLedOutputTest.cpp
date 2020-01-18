@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "io/grid/LedOutput.h"
+#include "grid/LedOutput.h"
 #include "hardware/grid/MockGridDriver.h"
 #include "types/Color.h"
 

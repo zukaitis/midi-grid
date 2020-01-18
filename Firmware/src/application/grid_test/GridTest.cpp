@@ -1,8 +1,8 @@
 #include "application/grid_test/GridTest.hpp"
 
-#include "io/grid/GridInterface.h"
-#include "io/usb/UsbMidi.hpp"
-#include "io/lcd/LcdInterface.h"
+#include "grid/GridInterface.h"
+#include "usb/UsbMidi.hpp"
+#include "lcd/LcdInterface.h"
 #include "application/images.h"
 
 #include <freertos/ticks.hpp>

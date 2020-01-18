@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "io/lcd/Lcd.h"
-#include "io/lcd/backlight/MockBacklight.h"
-#include "io/lcd/MockDriver.h"
+#include "lcd/Lcd.h"
+#include "lcd/backlight/MockBacklight.h"
+#include "lcd/MockDriver.h"
 
 int main( int argc, char **argv)
 {

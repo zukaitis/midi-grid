@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "io/lcd/backlight/Backlight.h"
+#include "lcd/backlight/Backlight.h"
 #include "hardware/lcd/MockBacklightDriver.h"
 #include "freertos/MockThread.h"
 

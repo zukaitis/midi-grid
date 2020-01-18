@@ -1,6 +1,6 @@
 ---
 
 test_file: GridLedOutputTest.cpp
-file_under_test: ${source_dir}/io/grid/LedOutput.cpp
+file_under_test: ${source_dir}/grid/LedOutput.cpp
 source_files:
 - ${source_dir}/types/Color.cpp

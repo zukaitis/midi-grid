@@ -1,8 +1,8 @@
 #include "application/internal_menu/InternalMenu.hpp"
 
-#include "io/grid/GridInterface.h"
-#include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "io/lcd/LcdInterface.h"
+#include "grid/GridInterface.h"
+#include "additional_buttons/AdditionalButtonsInterface.h"
+#include "lcd/LcdInterface.h"
 #include "system/System.hpp"
 
 #include "types/Color.h"

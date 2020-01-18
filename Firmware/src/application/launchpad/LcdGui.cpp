@@ -3,7 +3,7 @@
 #include "application/launchpad/Launchpad.hpp"
 #include "application/launchpad/Images.hpp"
 
-#include "io/lcd/LcdInterface.h"
+#include "lcd/LcdInterface.h"
 #include <freertos/ticks.hpp>
 
 #include <cstdio>

@@ -35,7 +35,7 @@ inc_flags = -Idrivers/CMSIS/Include $
     -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isubmodules/etl/include $
     -Isubmodules/FreeRTOS-Kernel/FreeRTOS/Source/include $
     -Isubmodules/freertos-addons/c++/Source/include $
-    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy -Isrc/io/lcd/84x48_mono $
+    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy -Isrc/lcd/84x48_mono $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
@@ -145,9 +145,9 @@ build output/middlewares/USBMIDI/Src/usbd_midi.o: cc $
     middlewares/USBMIDI/Src/usbd_midi.c
 build output/src/configs/heap_2.o: cc src/configs/heap_2.c
 build output/src/configs/port.o: cc src/configs/port.c
-build output/src/io/usb/usbd_conf.o: cc src/io/usb/usbd_conf.c
-build output/src/io/usb/usbd_desc.o: cc src/io/usb/usbd_desc.c
-build output/src/io/usb/usb_device.o: cc src/io/usb/usb_device.c
+build output/src/usb/usbd_conf.o: cc src/usb/usbd_conf.c
+build output/src/usb/usbd_desc.o: cc src/usb/usbd_desc.c
+build output/src/usb/usb_device.o: cc src/usb/usb_device.c
 build output/src/system/stm32f4xx_it.o: cc src/system/stm32f4xx_it.c
 build output/src/system/system_stm32f4xx.o: cc src/system/system_stm32f4xx.c
 build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o: cc $
@@ -184,24 +184,23 @@ build output/src/hardware/grid/GridDriver.o: cxx $
 build output/src/hardware/lcd/BacklightDriver.o: cxx $
     src/hardware/lcd/BacklightDriver.cpp
 build output/src/hardware/lcd/Spi.o: cxx src/hardware/lcd/Spi.cpp
-build output/src/io/additional_buttons/AdditionalButtons.o: cxx $
-    src/io/additional_buttons/AdditionalButtons.cpp
-build output/src/io/grid/ButtonInput.o: cxx src/io/grid/ButtonInput.cpp
-build output/src/io/grid/FlashingLeds.o: cxx src/io/grid/FlashingLeds.cpp
-build output/src/io/grid/Grid.o: cxx src/io/grid/Grid.cpp
-build output/src/io/grid/GridContainer.o: cxx src/io/grid/GridContainer.cpp
-build output/src/io/grid/LedOutput.o: cxx src/io/grid/LedOutput.cpp
-build output/src/io/grid/PulsingLeds.o: cxx src/io/grid/PulsingLeds.cpp
-build output/src/io/lcd/backlight/Backlight.o: cxx $
-    src/io/lcd/backlight/Backlight.cpp
-build output/src/io/lcd/Lcd.o: cxx src/io/lcd/Lcd.cpp
-build output/src/io/lcd/84x48_mono/LcdContainer.o: cxx $
-    src/io/lcd/84x48_mono/LcdContainer.cpp
-build output/src/io/lcd/84x48_mono/Pcd8544.o: cxx $
-    src/io/lcd/84x48_mono/Pcd8544.cpp
-build output/src/io/rotary_controls/RotaryControls.o: cxx $
-    src/io/rotary_controls/RotaryControls.cpp
-build output/src/io/usb/UsbMidi.o: cxx src/io/usb/UsbMidi.cpp
+build output/src/additional_buttons/AdditionalButtons.o: cxx $
+    src/additional_buttons/AdditionalButtons.cpp
+build output/src/grid/ButtonInput.o: cxx src/grid/ButtonInput.cpp
+build output/src/grid/FlashingLeds.o: cxx src/grid/FlashingLeds.cpp
+build output/src/grid/Grid.o: cxx src/grid/Grid.cpp
+build output/src/grid/GridContainer.o: cxx src/grid/GridContainer.cpp
+build output/src/grid/LedOutput.o: cxx src/grid/LedOutput.cpp
+build output/src/grid/PulsingLeds.o: cxx src/grid/PulsingLeds.cpp
+build output/src/lcd/backlight/Backlight.o: cxx $
+    src/lcd/backlight/Backlight.cpp
+build output/src/lcd/Lcd.o: cxx src/lcd/Lcd.cpp
+build output/src/lcd/84x48_mono/LcdContainer.o: cxx $
+    src/lcd/84x48_mono/LcdContainer.cpp
+build output/src/lcd/84x48_mono/Pcd8544.o: cxx src/lcd/84x48_mono/Pcd8544.cpp
+build output/src/rotary_controls/RotaryControls.o: cxx $
+    src/rotary_controls/RotaryControls.cpp
+build output/src/usb/UsbMidi.o: cxx src/usb/UsbMidi.cpp
 build output/src/main.o: cxx src/main.cpp
 build output/src/system/GlobalInterrupts.o: cxx $
     src/system/GlobalInterrupts.cpp
@@ -243,8 +242,8 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
     output/middlewares/USBMIDI/Src/usbd_midi.o output/src/configs/heap_2.o $
-    output/src/configs/port.o output/src/io/usb/usbd_conf.o $
-    output/src/io/usb/usbd_desc.o output/src/io/usb/usb_device.o $
+    output/src/configs/port.o output/src/usb/usbd_conf.o $
+    output/src/usb/usbd_desc.o output/src/usb/usb_device.o $
     output/src/system/stm32f4xx_it.o output/src/system/system_stm32f4xx.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.o $
@@ -262,17 +261,16 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/src/application/startup/Startup.o $
     output/src/hardware/grid/GridDriver.o $
     output/src/hardware/lcd/BacklightDriver.o output/src/hardware/lcd/Spi.o $
-    output/src/io/additional_buttons/AdditionalButtons.o $
-    output/src/io/grid/ButtonInput.o output/src/io/grid/FlashingLeds.o $
-    output/src/io/grid/Grid.o output/src/io/grid/GridContainer.o $
-    output/src/io/grid/LedOutput.o output/src/io/grid/PulsingLeds.o $
-    output/src/io/lcd/backlight/Backlight.o output/src/io/lcd/Lcd.o $
-    output/src/io/lcd/84x48_mono/LcdContainer.o $
-    output/src/io/lcd/84x48_mono/Pcd8544.o $
-    output/src/io/rotary_controls/RotaryControls.o $
-    output/src/io/usb/UsbMidi.o output/src/main.o $
-    output/src/system/GlobalInterrupts.o output/src/system/System.o $
-    output/src/types/Color.o $
+    output/src/additional_buttons/AdditionalButtons.o $
+    output/src/grid/ButtonInput.o output/src/grid/FlashingLeds.o $
+    output/src/grid/Grid.o output/src/grid/GridContainer.o $
+    output/src/grid/LedOutput.o output/src/grid/PulsingLeds.o $
+    output/src/lcd/backlight/Backlight.o output/src/lcd/Lcd.o $
+    output/src/lcd/84x48_mono/LcdContainer.o $
+    output/src/lcd/84x48_mono/Pcd8544.o $
+    output/src/rotary_controls/RotaryControls.o output/src/usb/UsbMidi.o $
+    output/src/main.o output/src/system/GlobalInterrupts.o $
+    output/src/system/System.o output/src/types/Color.o $
     output/submodules/freertos-addons/c++/Source/cqueue.o $
     output/submodules/freertos-addons/c++/Source/csemaphore.o $
     output/submodules/freertos-addons/c++/Source/cthread.o $

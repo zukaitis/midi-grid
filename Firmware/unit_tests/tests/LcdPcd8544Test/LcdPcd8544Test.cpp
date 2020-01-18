@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "io/lcd/84x48_mono/Pcd8544.h"
+#include "lcd/84x48_mono/Pcd8544.h"
 #include "hardware/lcd/MockSpi.h"
 
 int main( int argc, char **argv)

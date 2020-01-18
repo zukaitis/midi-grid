@@ -1,7 +1,7 @@
 ---
 
 test_file: GridButtonInputTest.cpp
-file_under_test: ${source_dir}/io/grid/ButtonInput.cpp
+file_under_test: ${source_dir}/grid/ButtonInput.cpp
 source_files:
 - ${source_dir}/types/Color.cpp
 - ${mock_dir}/freertos/MockThread.cpp

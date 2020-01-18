@@ -1,7 +1,7 @@
 #include "application/startup/Startup.hpp"
 
 #include "hardware/grid/GridDriver.h"
-#include "io/lcd/LcdInterface.h"
+#include "lcd/LcdInterface.h"
 #include "application/images.h"
 #include "system/System.hpp"
 

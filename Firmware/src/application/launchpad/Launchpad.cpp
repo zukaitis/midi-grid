@@ -1,9 +1,9 @@
 #include "application/launchpad/Launchpad.hpp"
 
-#include "io/grid/GridInterface.h"
-#include "io/additional_buttons/AdditionalButtonsInterface.h"
-#include "io/rotary_controls/RotaryControlsInterface.h"
-#include "io/lcd/LcdInterface.h"
+#include "grid/GridInterface.h"
+#include "additional_buttons/AdditionalButtonsInterface.h"
+#include "rotary_controls/RotaryControlsInterface.h"
+#include "lcd/LcdInterface.h"
 
 #include <cstring>
 #include <etl/array.h>

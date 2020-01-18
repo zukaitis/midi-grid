@@ -3,9 +3,9 @@
 #include "system/System.hpp"
 #include "hardware/grid/GridDriver.h"
 
-#include "io/grid/GridContainer.h"
-#include "io/additional_buttons/AdditionalButtons.h"
-#include "io/rotary_controls/RotaryControls.h"
+#include "grid/GridContainer.h"
+#include "additional_buttons/AdditionalButtons.h"
+#include "rotary_controls/RotaryControls.h"
 
 #include "hardware/lcd/Spi.h"
 #include "hardware/lcd/BacklightDriver.h"
@@ -18,7 +18,7 @@
 #include "application/snake/Snake.hpp"
 
 #include "system/GlobalInterrupts.hpp"
-#include "io/usb/UsbMidi.hpp"
+#include "usb/UsbMidi.hpp"
 
 #include <freertos/thread.hpp>
 
