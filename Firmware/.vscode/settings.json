@@ -3,13 +3,13 @@
         "**/.git": true,
         "**/.gitignore": true,
         "**/.xml": true,
-        "**/.cproject": true,
-        "**/.project": true,
-        "**/.mxproject": true,
-        "**/.ninja_deps": true,
-        "**/.ninja_log": true,
+        "**.cproject": true,
+        "**.project": true,
+        "**.mxproject": true,
+        "**.ninja_deps": true,
+        "**.ninja_log": true,
         "**.html": true,
-        "**/.gcov": true,
+        "**.gcov": true,
         ".settings": true,
         "output/" : true,
         "unit_tests/objects/" : true,
@@ -26,7 +26,9 @@
     },
     "search.exclude": {
         "submodules/": true,
-        "Drivers/": true,
-        "Middlewares/": true,
+        "drivers/": true,
+        "middlewares/": true,
+        "**.info": true,
+        "**.ninja": true
     }
 }

@@ -3,7 +3,7 @@
 directories:
   ut_dir: .
   object_dir: objects
-  source_dir: ../Src
+  source_dir: ../src
   mock_dir: mocks
   lib_dir: /usr/lib
 

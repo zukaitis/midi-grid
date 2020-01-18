@@ -28,14 +28,14 @@ c_flags = --target=arm-none-eabi -O0 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
     -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS
-inc_flags = -IDrivers/CMSIS/Include $
-    -IDrivers/CMSIS/Device/ST/STM32F4xx/Include $
-    -IDrivers/STM32F4xx_HAL_Driver/Inc $
-    -IMiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
-    -IMiddlewares/USBMIDI/Inc -ISrc -ISrc/configs -Isubmodules/etl/include $
+inc_flags = -Idrivers/CMSIS/Include $
+    -Idrivers/CMSIS/Device/ST/STM32F4xx/Include $
+    -Idrivers/STM32F4xx_HAL_Driver/Inc $
+    -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
+    -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isubmodules/etl/include $
     -Isubmodules/FreeRTOS-Kernel/FreeRTOS/Source/include $
     -Isubmodules/freertos-addons/c++/Source/include $
-    -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -ISrc/io/lcd/84x48_mono $
+    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy -Isrc/io/lcd/84x48_mono $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
@@ -91,65 +91,65 @@ rule configure
 # Instructions to build each file
 build output/startup/startup_stm32f411xe.o: as startup/startup_stm32f411xe.S
 
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
 build $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o: $
-    cc Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
-build output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o: cc $
-    Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c
-build output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o: $
-    cc Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o: $
+    cc drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
+build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o: cc $
+    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c
+build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c
 build $
-    output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o: $
-    cc Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
-build output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o: $
-    cc Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
-build output/Middlewares/USBMIDI/Src/usbd_midi.o: cc $
-    Middlewares/USBMIDI/Src/usbd_midi.c
-build output/Src/configs/heap_2.o: cc Src/configs/heap_2.c
-build output/Src/configs/port.o: cc Src/configs/port.c
-build output/Src/io/usb/usbd_conf.o: cc Src/io/usb/usbd_conf.c
-build output/Src/io/usb/usbd_desc.o: cc Src/io/usb/usbd_desc.c
-build output/Src/io/usb/usb_device.o: cc Src/io/usb/usb_device.c
-build output/Src/system/stm32f4xx_it.o: cc Src/system/stm32f4xx_it.c
-build output/Src/system/system_stm32f4xx.o: cc Src/system/system_stm32f4xx.c
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
+build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
+build output/middlewares/USBMIDI/Src/usbd_midi.o: cc $
+    middlewares/USBMIDI/Src/usbd_midi.c
+build output/src/configs/heap_2.o: cc src/configs/heap_2.c
+build output/src/configs/port.o: cc src/configs/port.c
+build output/src/io/usb/usbd_conf.o: cc src/io/usb/usbd_conf.c
+build output/src/io/usb/usbd_desc.o: cc src/io/usb/usbd_desc.c
+build output/src/io/usb/usb_device.o: cc src/io/usb/usb_device.c
+build output/src/system/stm32f4xx_it.o: cc src/system/stm32f4xx_it.c
+build output/src/system/system_stm32f4xx.o: cc src/system/system_stm32f4xx.c
 build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o: cc $
     submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.c
 build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.o: cc $
@@ -165,48 +165,48 @@ build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.o: cc $
 build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.o: cc $
     submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.c
 
-build output/Src/application/Application.o: cxx $
-    Src/application/Application.cpp
-build output/Src/application/grid_test/GridTest.o: cxx $
-    Src/application/grid_test/GridTest.cpp
-build output/Src/application/internal_menu/InternalMenu.o: cxx $
-    Src/application/internal_menu/InternalMenu.cpp
-build output/Src/application/launchpad/Launchpad.o: cxx $
-    Src/application/launchpad/Launchpad.cpp
-build output/Src/application/launchpad/LcdGui.o: cxx $
-    Src/application/launchpad/LcdGui.cpp
-build output/Src/application/snake/Snake.o: cxx $
-    Src/application/snake/Snake.cpp
-build output/Src/application/startup/Startup.o: cxx $
-    Src/application/startup/Startup.cpp
-build output/Src/hardware/grid/GridDriver.o: cxx $
-    Src/hardware/grid/GridDriver.cpp
-build output/Src/hardware/lcd/BacklightDriver.o: cxx $
-    Src/hardware/lcd/BacklightDriver.cpp
-build output/Src/hardware/lcd/Spi.o: cxx Src/hardware/lcd/Spi.cpp
-build output/Src/io/additional_buttons/AdditionalButtons.o: cxx $
-    Src/io/additional_buttons/AdditionalButtons.cpp
-build output/Src/io/grid/ButtonInput.o: cxx Src/io/grid/ButtonInput.cpp
-build output/Src/io/grid/FlashingLeds.o: cxx Src/io/grid/FlashingLeds.cpp
-build output/Src/io/grid/Grid.o: cxx Src/io/grid/Grid.cpp
-build output/Src/io/grid/GridContainer.o: cxx Src/io/grid/GridContainer.cpp
-build output/Src/io/grid/LedOutput.o: cxx Src/io/grid/LedOutput.cpp
-build output/Src/io/grid/PulsingLeds.o: cxx Src/io/grid/PulsingLeds.cpp
-build output/Src/io/lcd/backlight/Backlight.o: cxx $
-    Src/io/lcd/backlight/Backlight.cpp
-build output/Src/io/lcd/Lcd.o: cxx Src/io/lcd/Lcd.cpp
-build output/Src/io/lcd/84x48_mono/LcdContainer.o: cxx $
-    Src/io/lcd/84x48_mono/LcdContainer.cpp
-build output/Src/io/lcd/84x48_mono/Pcd8544.o: cxx $
-    Src/io/lcd/84x48_mono/Pcd8544.cpp
-build output/Src/io/rotary_controls/RotaryControls.o: cxx $
-    Src/io/rotary_controls/RotaryControls.cpp
-build output/Src/io/usb/UsbMidi.o: cxx Src/io/usb/UsbMidi.cpp
-build output/Src/main.o: cxx Src/main.cpp
-build output/Src/system/GlobalInterrupts.o: cxx $
-    Src/system/GlobalInterrupts.cpp
-build output/Src/system/System.o: cxx Src/system/System.cpp
-build output/Src/types/Color.o: cxx Src/types/Color.cpp
+build output/src/application/Application.o: cxx $
+    src/application/Application.cpp
+build output/src/application/grid_test/GridTest.o: cxx $
+    src/application/grid_test/GridTest.cpp
+build output/src/application/internal_menu/InternalMenu.o: cxx $
+    src/application/internal_menu/InternalMenu.cpp
+build output/src/application/launchpad/Launchpad.o: cxx $
+    src/application/launchpad/Launchpad.cpp
+build output/src/application/launchpad/LcdGui.o: cxx $
+    src/application/launchpad/LcdGui.cpp
+build output/src/application/snake/Snake.o: cxx $
+    src/application/snake/Snake.cpp
+build output/src/application/startup/Startup.o: cxx $
+    src/application/startup/Startup.cpp
+build output/src/hardware/grid/GridDriver.o: cxx $
+    src/hardware/grid/GridDriver.cpp
+build output/src/hardware/lcd/BacklightDriver.o: cxx $
+    src/hardware/lcd/BacklightDriver.cpp
+build output/src/hardware/lcd/Spi.o: cxx src/hardware/lcd/Spi.cpp
+build output/src/io/additional_buttons/AdditionalButtons.o: cxx $
+    src/io/additional_buttons/AdditionalButtons.cpp
+build output/src/io/grid/ButtonInput.o: cxx src/io/grid/ButtonInput.cpp
+build output/src/io/grid/FlashingLeds.o: cxx src/io/grid/FlashingLeds.cpp
+build output/src/io/grid/Grid.o: cxx src/io/grid/Grid.cpp
+build output/src/io/grid/GridContainer.o: cxx src/io/grid/GridContainer.cpp
+build output/src/io/grid/LedOutput.o: cxx src/io/grid/LedOutput.cpp
+build output/src/io/grid/PulsingLeds.o: cxx src/io/grid/PulsingLeds.cpp
+build output/src/io/lcd/backlight/Backlight.o: cxx $
+    src/io/lcd/backlight/Backlight.cpp
+build output/src/io/lcd/Lcd.o: cxx src/io/lcd/Lcd.cpp
+build output/src/io/lcd/84x48_mono/LcdContainer.o: cxx $
+    src/io/lcd/84x48_mono/LcdContainer.cpp
+build output/src/io/lcd/84x48_mono/Pcd8544.o: cxx $
+    src/io/lcd/84x48_mono/Pcd8544.cpp
+build output/src/io/rotary_controls/RotaryControls.o: cxx $
+    src/io/rotary_controls/RotaryControls.cpp
+build output/src/io/usb/UsbMidi.o: cxx src/io/usb/UsbMidi.cpp
+build output/src/main.o: cxx src/main.cpp
+build output/src/system/GlobalInterrupts.o: cxx $
+    src/system/GlobalInterrupts.cpp
+build output/src/system/System.o: cxx src/system/System.cpp
+build output/src/types/Color.o: cxx src/types/Color.cpp
 build output/submodules/freertos-addons/c++/Source/cqueue.o: cxx $
     submodules/freertos-addons/c++/Source/cqueue.cpp
 build output/submodules/freertos-addons/c++/Source/csemaphore.o: cxx $
@@ -218,34 +218,34 @@ build output/submodules/freertos-addons/c++/Source/cmutex.o: cxx $
 
 # Target linker instruction
 build $target: link output/startup/startup_stm32f411xe.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o $
-    output/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o $
-    output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o $
-    output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
-    output/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
-    output/Middlewares/USBMIDI/Src/usbd_midi.o output/Src/configs/heap_2.o $
-    output/Src/configs/port.o output/Src/io/usb/usbd_conf.o $
-    output/Src/io/usb/usbd_desc.o output/Src/io/usb/usb_device.o $
-    output/Src/system/stm32f4xx_it.o output/Src/system/system_stm32f4xx.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o $
+    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
+    output/middlewares/USBMIDI/Src/usbd_midi.o output/src/configs/heap_2.o $
+    output/src/configs/port.o output/src/io/usb/usbd_conf.o $
+    output/src/io/usb/usbd_desc.o output/src/io/usb/usb_device.o $
+    output/src/system/stm32f4xx_it.o output/src/system/system_stm32f4xx.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/list.o $
@@ -253,26 +253,26 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/stream_buffer.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.o $
     output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.o $
-    output/Src/application/Application.o $
-    output/Src/application/grid_test/GridTest.o $
-    output/Src/application/internal_menu/InternalMenu.o $
-    output/Src/application/launchpad/Launchpad.o $
-    output/Src/application/launchpad/LcdGui.o $
-    output/Src/application/snake/Snake.o $
-    output/Src/application/startup/Startup.o $
-    output/Src/hardware/grid/GridDriver.o $
-    output/Src/hardware/lcd/BacklightDriver.o output/Src/hardware/lcd/Spi.o $
-    output/Src/io/additional_buttons/AdditionalButtons.o $
-    output/Src/io/grid/ButtonInput.o output/Src/io/grid/FlashingLeds.o $
-    output/Src/io/grid/Grid.o output/Src/io/grid/GridContainer.o $
-    output/Src/io/grid/LedOutput.o output/Src/io/grid/PulsingLeds.o $
-    output/Src/io/lcd/backlight/Backlight.o output/Src/io/lcd/Lcd.o $
-    output/Src/io/lcd/84x48_mono/LcdContainer.o $
-    output/Src/io/lcd/84x48_mono/Pcd8544.o $
-    output/Src/io/rotary_controls/RotaryControls.o $
-    output/Src/io/usb/UsbMidi.o output/Src/main.o $
-    output/Src/system/GlobalInterrupts.o output/Src/system/System.o $
-    output/Src/types/Color.o $
+    output/src/application/Application.o $
+    output/src/application/grid_test/GridTest.o $
+    output/src/application/internal_menu/InternalMenu.o $
+    output/src/application/launchpad/Launchpad.o $
+    output/src/application/launchpad/LcdGui.o $
+    output/src/application/snake/Snake.o $
+    output/src/application/startup/Startup.o $
+    output/src/hardware/grid/GridDriver.o $
+    output/src/hardware/lcd/BacklightDriver.o output/src/hardware/lcd/Spi.o $
+    output/src/io/additional_buttons/AdditionalButtons.o $
+    output/src/io/grid/ButtonInput.o output/src/io/grid/FlashingLeds.o $
+    output/src/io/grid/Grid.o output/src/io/grid/GridContainer.o $
+    output/src/io/grid/LedOutput.o output/src/io/grid/PulsingLeds.o $
+    output/src/io/lcd/backlight/Backlight.o output/src/io/lcd/Lcd.o $
+    output/src/io/lcd/84x48_mono/LcdContainer.o $
+    output/src/io/lcd/84x48_mono/Pcd8544.o $
+    output/src/io/rotary_controls/RotaryControls.o $
+    output/src/io/usb/UsbMidi.o output/src/main.o $
+    output/src/system/GlobalInterrupts.o output/src/system/System.o $
+    output/src/types/Color.o $
     output/submodules/freertos-addons/c++/Source/cqueue.o $
     output/submodules/freertos-addons/c++/Source/csemaphore.o $
     output/submodules/freertos-addons/c++/Source/cthread.o $
