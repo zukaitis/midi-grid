@@ -33,7 +33,7 @@ inc_flags = -Idrivers/CMSIS/Include $
     -Idrivers/STM32F4xx_HAL_Driver/Inc $
     -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
     -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isubmodules/etl/include $
-    -Isubmodules/FreeRTOS-Kernel/FreeRTOS/Source/include $
+    -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy -Isrc/lcd/84x48_mono $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
@@ -150,20 +150,20 @@ build output/src/usb/usbd_desc.o: cc src/usb/usbd_desc.c
 build output/src/usb/usb_device.o: cc src/usb/usb_device.c
 build output/src/system/stm32f4xx_it.o: cc src/system/stm32f4xx_it.c
 build output/src/system/system_stm32f4xx.o: cc src/system/system_stm32f4xx.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/list.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/list.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/queue.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/queue.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/stream_buffer.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/stream_buffer.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.c
-build output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.o: cc $
-    submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.c
+build output/submodules/FreeRTOS-Kernel/croutine.o: cc $
+    submodules/FreeRTOS-Kernel/croutine.c
+build output/submodules/FreeRTOS-Kernel/event_groups.o: cc $
+    submodules/FreeRTOS-Kernel/event_groups.c
+build output/submodules/FreeRTOS-Kernel/list.o: cc $
+    submodules/FreeRTOS-Kernel/list.c
+build output/submodules/FreeRTOS-Kernel/queue.o: cc $
+    submodules/FreeRTOS-Kernel/queue.c
+build output/submodules/FreeRTOS-Kernel/stream_buffer.o: cc $
+    submodules/FreeRTOS-Kernel/stream_buffer.c
+build output/submodules/FreeRTOS-Kernel/tasks.o: cc $
+    submodules/FreeRTOS-Kernel/tasks.c
+build output/submodules/FreeRTOS-Kernel/timers.o: cc $
+    submodules/FreeRTOS-Kernel/timers.c
 
 build output/src/application/Application.o: cxx $
     src/application/Application.cpp
@@ -245,13 +245,13 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/src/configs/port.o output/src/usb/usbd_conf.o $
     output/src/usb/usbd_desc.o output/src/usb/usb_device.o $
     output/src/system/stm32f4xx_it.o output/src/system/system_stm32f4xx.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/croutine.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/event_groups.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/list.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/queue.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/stream_buffer.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/tasks.o $
-    output/submodules/FreeRTOS-Kernel/FreeRTOS/Source/timers.o $
+    output/submodules/FreeRTOS-Kernel/croutine.o $
+    output/submodules/FreeRTOS-Kernel/event_groups.o $
+    output/submodules/FreeRTOS-Kernel/list.o $
+    output/submodules/FreeRTOS-Kernel/queue.o $
+    output/submodules/FreeRTOS-Kernel/stream_buffer.o $
+    output/submodules/FreeRTOS-Kernel/tasks.o $
+    output/submodules/FreeRTOS-Kernel/timers.o $
     output/src/application/Application.o $
     output/src/application/grid_test/GridTest.o $
     output/src/application/internal_menu/InternalMenu.o $

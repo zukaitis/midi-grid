@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HardwareInputInterface.h"
+#include "io/HardwareInputInterface.h" // TODO: replace this nonsense name
 #include "types/ButtonAction.h"
 
 namespace additional_buttons

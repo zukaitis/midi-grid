@@ -1,3 +1,4 @@
-Firmware/Drivers/* linguist-vendored
+Firmware/drivers/* linguist-vendored
+Firmware/middlewares/* linguist-vendored
 Firmware/startup/* linguist-vendored
-Firmware/Middlewares/* linguist-vendored
+Firmware/submodules/* linguist-vendored

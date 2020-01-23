@@ -25,6 +25,7 @@ Pcd8544::~Pcd8544()
 void Pcd8544::Run()
 {
     const TickType_t delayPeriod = freertos::Ticks::MsToTicks( 10 );
+    const uint32_t bufferSize = sizeof( buffer_ ) / sizeof( buffer_[0][0] ); // TODO: remove
 
     updateRequired_.Take(); // block until LCD update is required
     DelayUntil( delayPeriod ); // delay, in case multiple things are to be updated one after another
