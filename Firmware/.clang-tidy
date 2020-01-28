@@ -1,0 +1,8 @@
+---
+Checks: '-*,bugprone-*, cert-*, cppcoreguidelines-*, clang-analyzer-*, google-*, hicpp-*, llvm-*, misc-*, modernize-*,-modernize-use-trailing-return-type, performance-*,portability-*, readability-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+CheckOptions:    
+  - key: llvm-namespace-comment.ShortNamespaceLines
+    value: 16

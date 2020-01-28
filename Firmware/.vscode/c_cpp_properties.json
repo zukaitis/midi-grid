@@ -28,7 +28,8 @@
                 "${workspaceFolder}/src/lcd/84x48_mono",
                 "/usr/src/googletest/googletest/include",
                 "/usr/src/googletest/googlemock/include"
-            ]
+            ],
+            "compileCommands": "${workspaceFolder}/compile_commands.json"
         }
     ],
     "version": 4

@@ -2,7 +2,8 @@
 *.o
 *.ninja_deps
 *.ninja_log
-.directory
+*.directory
+*.clangd
 Firmware/midi-grid.code-workspace
 Firmware/output/*
 Firmware/unit_tests/objects/
