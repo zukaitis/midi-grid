@@ -1,6 +1,8 @@
 #ifndef LCD_PROGRESS_ARC_H_
 #define LCD_PROGRESS_ARC_H_
 
+#include <cstdint>
+
 namespace lcd
 {
 
