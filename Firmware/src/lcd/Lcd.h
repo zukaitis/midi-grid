@@ -26,7 +26,7 @@ public:
 
     uint16_t right() const override;
     uint8_t maximumBacklightIntensity() const override;
-    uint8_t horizontalCenter() const override // TODO: remove
+    uint8_t horizontalCenter() const override // TODO(unknown): remove
     {
         return 84 / 2;
     };
