@@ -7,17 +7,17 @@ class Color
 public:
 
     Color() = default;
-    Color( const uint8_t r, const uint8_t g, const uint8_t b );
+    Color( uint8_t r, uint8_t g, uint8_t b );
 
     uint8_t red() const;
     uint8_t green() const;
     uint8_t blue() const;
 
-    bool operator==(const Color& color) const;
-    Color operator+(const Color& color) const;
-    Color operator*(const uint8_t multiplier) const;
-    Color operator*(const float multiplier) const;
-    Color operator/(const uint8_t divisor) const;
+    bool operator==( const Color& color ) const;
+    Color operator+( const Color& color ) const;
+    Color operator*( uint8_t multiplier ) const;
+    Color operator*( float multiplier ) const;
+    Color operator/( uint8_t divisor ) const;
 
 private:
     static const uint8_t maxValue;

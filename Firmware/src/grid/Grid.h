@@ -24,7 +24,7 @@ public:
 
     Color getLedColor( const Coordinates& coordinates ) const override;
 
-    void setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType = LedLightingType::LIGHT ) override;
+    void setLed( const Coordinates& coordinates, const Color& color, LedLightingType lightingType = LedLightingType::LIGHT ) override;
 
     void turnAllLedsOff() override;
 

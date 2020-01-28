@@ -60,13 +60,13 @@ public:
     bool isPacketAvailable();
     void discardAllPendingPackets();
 
-    void sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value );
-    void sendNoteOn( const uint8_t channel, const uint8_t note, const uint8_t velocity );
-    void sendNoteOff( const uint8_t channel, const uint8_t note );
-    void sendSystemExclussive( const uint8_t* const data, const uint8_t length );
+    void sendControlChange( uint8_t channel, uint8_t control, uint8_t value );
+    void sendNoteOn( uint8_t channel, uint8_t note, uint8_t velocity );
+    void sendNoteOff( uint8_t channel, uint8_t note );
+    void sendSystemExclussive( const uint8_t* data, uint8_t length );
 
-    static uint16_t receiveData( uint8_t* const message, const uint16_t length );
-    static uint16_t transmitData( uint8_t* const message, const uint16_t length );
+    static uint16_t receiveData( uint8_t* message, uint16_t length );
+    static uint16_t transmitData( uint8_t* message, uint16_t length );
 
     inline bool waitForInput( bool& dummy )
     {

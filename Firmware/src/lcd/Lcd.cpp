@@ -38,7 +38,7 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
     driver_.clearArea( x1, y1, x1, x2 );
 }
 
-void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
+void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image& image )
 {
     driver_.displayImage( x, y, image );
 }

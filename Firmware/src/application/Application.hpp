@@ -51,7 +51,7 @@ public:
     void disable();
     void run();
 
-    void delay( const uint32_t periodMs );
+    void delay( uint32_t periodMs );
 
 private:
     void Run();
@@ -67,14 +67,14 @@ public:
     virtual ~Application() = default;
 
     virtual void run( ApplicationThread& thread );
-    virtual void handleAdditionalButtonEvent( const additional_buttons::Event event );
-    virtual void handleGridButtonEvent( const grid::ButtonEvent event );
-    virtual void handleRotaryControlEvent( const rotary_controls::Event event );
-    virtual void handleMidiPacket( const midi::MidiPacket packet );
+    virtual void handleAdditionalButtonEvent( additional_buttons::Event event );
+    virtual void handleGridButtonEvent( grid::ButtonEvent event );
+    virtual void handleRotaryControlEvent( rotary_controls::Event event );
+    virtual void handleMidiPacket( midi::MidiPacket packet );
     virtual void handleMidiPacketAvailable();
 
 protected:
-    void switchApplication( const ApplicationIndex application );
+    void switchApplication( ApplicationIndex application );
 
     void enableAdditionalButtonInputHandler();
     void enableGridInputHandler();
@@ -92,9 +92,9 @@ public:
     ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid, rotary_controls::RotaryControlsInterface& rotaryControls,
         midi::UsbMidi& usbMidi );
 
-    void initialize( Application** const applicationList );
+    void initialize( Application** applicationList );
 
-    void selectApplication( const ApplicationIndex applicationIndex );
+    void selectApplication( ApplicationIndex applicationIndex );
 
     void enableAdditionalButtonInputHandler();
     void enableGridInputHandler();
@@ -103,11 +103,11 @@ public:
     void enableMidiInputHandler();
     void disableAllHandlers();
 
-    void handleInput( const bool dummy );
-    void handleInput( const additional_buttons::Event event );
-    void handleInput( const grid::ButtonEvent event );
-    void handleInput( const rotary_controls::Event event );
-    void handleInput( const midi::MidiPacket packet );
+    void handleInput( bool dummy );
+    void handleInput( additional_buttons::Event event );
+    void handleInput( grid::ButtonEvent event );
+    void handleInput( rotary_controls::Event event );
+    void handleInput( midi::MidiPacket packet );
     void runApplicationThread( ApplicationThread& thread );
 
 private:

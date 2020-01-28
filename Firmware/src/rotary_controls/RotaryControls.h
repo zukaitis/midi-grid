@@ -22,10 +22,10 @@ public:
 private:
     void Run() override;
 
-    int8_t calculateVelocityMultiplier( const uint32_t intervalMs ) const;
+    int8_t calculateVelocityMultiplier( uint32_t intervalMs ) const;
 
     void copyInput();
-    int8_t getRecentMicrosteps( const uint8_t controlIndex ) const;
+    int8_t getRecentMicrosteps( uint8_t controlIndex ) const;
 
     hardware::grid::InputInterface& gridDriver_;
     freertos::Queue events_;
