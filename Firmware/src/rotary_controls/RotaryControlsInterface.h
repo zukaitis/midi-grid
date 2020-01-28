@@ -17,8 +17,8 @@ struct Event
 class RotaryControlsInterface : public HardwareInputInterface<Event>
 {
 public:
-    virtual bool waitForInput( Event& event ) override = 0;
-    virtual void discardPendingInput() override = 0;
+    bool waitForInput( Event& event ) override = 0;
+    void discardPendingInput() override = 0;
 };
 
 }  // namespace rotary_controls

@@ -35,7 +35,7 @@ public:
     void enable();
     void disable();
 
-    void Run();
+    void Run() override;
 
 private:
     ApplicationController& applicationController_;
@@ -54,7 +54,7 @@ public:
     void delay( uint32_t periodMs );
 
 private:
-    void Run();
+    void Run() override;
 
     ApplicationController& applicationController_;
     freertos::BinarySemaphore continueApplication_;
@@ -111,7 +111,7 @@ public:
     void runApplicationThread( ApplicationThread& thread );
 
 private:
-    void Run();
+    void Run() override;
 
     Application* application_[kNumberOfApplications];
     Application* currentlyOpenApplication_;
