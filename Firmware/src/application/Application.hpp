@@ -45,7 +45,7 @@ private:
 class ApplicationThread : public freertos::Thread
 {
 public:
-    ApplicationThread( ApplicationController& applicationController );
+    explicit ApplicationThread( ApplicationController& applicationController );
 
     void enable();
     void disable();
@@ -63,7 +63,7 @@ private:
 class Application
 {
 public:
-    Application( ApplicationController& applicationController );
+    explicit Application( ApplicationController& applicationController );
     virtual ~Application() = default;
 
     virtual void run( ApplicationThread& thread );

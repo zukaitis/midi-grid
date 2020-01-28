@@ -23,7 +23,7 @@ typedef etl::array<bool, NUMBER_OF_BUTTONS> InputArray;
 class AdditionalButtons : private freertos::Thread, public AdditionalButtonsInterface
 {
 public:
-    AdditionalButtons( hardware::grid::InputInterface& gridDriver );
+    explicit AdditionalButtons( hardware::grid::InputInterface& gridDriver );
 
     bool waitForInput( Event& event ) override;
     void discardPendingInput() override;
