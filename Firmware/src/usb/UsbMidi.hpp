@@ -1,7 +1,6 @@
-#ifndef USB_USBMIDI_HPP_
-#define USB_USBMIDI_HPP_
+#pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace freertos
 {
@@ -88,5 +87,3 @@ private:
 };
 
 }  // namespace midi
-
-#endif // USB_USBMIDI_HPP_
