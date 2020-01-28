@@ -12,7 +12,7 @@ class Lcd: public LcdInterface
 {
 public:
     Lcd( DriverInterface& driver, BacklightInterface& backlight );
-    virtual ~Lcd();
+    ~Lcd() override;
 
     void clear() override;
     void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) override;
@@ -41,4 +41,4 @@ private:
 
 };
 
-}
+}  // namespace lcd

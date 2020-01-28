@@ -42,4 +42,4 @@ namespace color
     const Color OCEAN( 0, 32, 64 );
     const Color VIOLET( 32, 0, 64 );
     const Color RASPBERRY( 64, 0, 32 );
-}
+}  // namespace color

@@ -24,4 +24,4 @@ public:
     virtual uint16_t numberOfTextLines() const = 0;
 };
 
-}
+}  // namespace lcd

@@ -54,4 +54,4 @@ public:
     virtual uint8_t horizontalCenter() const = 0; // TODO: remove
 };
 
-}
+}  // namespace lcd

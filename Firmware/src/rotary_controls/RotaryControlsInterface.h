@@ -21,5 +21,4 @@ public:
     virtual void discardPendingInput() override = 0;
 };
 
-
-}
+}  // namespace rotary_controls

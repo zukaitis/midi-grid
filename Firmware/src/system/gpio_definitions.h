@@ -1,12 +1,4 @@
-/*
- * gpioDefinitions.h
- *
- *  Created on: Oct 7, 2018
- *      Author: gedas
- */
-
-#ifndef SYSTEM_GPIO_DEFINITIONS_H_
-#define SYSTEM_GPIO_DEFINITIONS_H_
+#pragma once
 
 #include "stm32f4xx_hal.h"
 
@@ -59,6 +51,4 @@ static const uint16_t SCK_Pin = GPIO_PIN_13;
 static const uint16_t MOSI_Pin = GPIO_PIN_15;
 static const uint16_t LIGHT_Pin = GPIO_PIN_5;
 
-} // namespace system
-
-#endif /* SYSTEM_GPIO_DEFINITIONS_H_ */
+}  // namespace mcu

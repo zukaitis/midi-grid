@@ -11,4 +11,4 @@ public:
     virtual void disable() = 0;
 };
 
-} // namespace
+}  // namespace mcu

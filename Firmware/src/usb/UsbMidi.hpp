@@ -87,6 +87,6 @@ private:
     static freertos::Queue receivedMessages;
 };
 
-} // namespace
+}  // namespace midi
 
 #endif // USB_USBMIDI_HPP_
