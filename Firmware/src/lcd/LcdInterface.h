@@ -51,7 +51,7 @@ public:
 
     virtual uint16_t right() const = 0;
     virtual uint8_t maximumBacklightIntensity() const = 0;
-    virtual uint8_t horizontalCenter() const = 0; // TODO: remove
+    virtual uint8_t horizontalCenter() const = 0; // TODO(unknown): remove
 };
 
 }  // namespace lcd
