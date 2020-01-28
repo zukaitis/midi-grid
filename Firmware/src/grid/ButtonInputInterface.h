@@ -14,4 +14,4 @@ public:
     virtual void discardPendingEvents() = 0;
 };
 
-}
+}  // namespace grid

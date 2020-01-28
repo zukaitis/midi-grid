@@ -40,4 +40,4 @@ private:
     InputArray registeredInput_;
 };
 
-}
+}  // namespace additional_buttons

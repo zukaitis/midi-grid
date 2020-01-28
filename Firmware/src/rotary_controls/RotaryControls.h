@@ -32,4 +32,4 @@ private:
     etl::array<etl::array<uint8_t, hardware::grid::numberOfColumns>, NUMBER_OF_CONTROLS> input_;
 };
 
-}
+}  // namespace rotary_controls

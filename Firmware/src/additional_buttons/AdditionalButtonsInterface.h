@@ -27,4 +27,4 @@ public:
     void discardPendingInput() override = 0;
 };
 
-}
+}  // namespace additional_buttons

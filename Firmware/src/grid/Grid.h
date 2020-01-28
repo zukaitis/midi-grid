@@ -43,4 +43,4 @@ private:
     etl::array<etl::array<Led, numberOfRows>, numberOfColumns> led_;
 };
 
-}
+}  // namespace grid

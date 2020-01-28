@@ -35,4 +35,4 @@ private:
     etl::vector<FlashingLed, grid::NUMBER_OF_LEDS> led_;
 };
 
-}
+}  // namespace grid

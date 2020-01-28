@@ -26,4 +26,4 @@ private:
     Grid grid_;
 };
 
-}
+}  // namespace grid

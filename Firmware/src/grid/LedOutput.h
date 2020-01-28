@@ -27,4 +27,4 @@ private:
     hardware::grid::OutputInterface& gridDriver_;
 };
 
-}
+}  // namespace grid

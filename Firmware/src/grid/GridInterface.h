@@ -48,4 +48,4 @@ public:
     virtual void turnAllLedsOff() = 0;
 };
 
-}
+}  // namespace grid

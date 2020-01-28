@@ -126,4 +126,4 @@ private:
     ApplicationThread applicationThread_;
 };
 
-} // namespace
+}  // namespace application

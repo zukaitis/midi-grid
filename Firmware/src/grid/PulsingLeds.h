@@ -37,4 +37,4 @@ private:
     etl::vector<PulsingLed, grid::NUMBER_OF_LEDS> led_;
 };
 
-}
+}  // namespace grid

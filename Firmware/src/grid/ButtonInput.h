@@ -45,4 +45,4 @@ private:
     freertos::Queue events_;
 };
 
-}
+}  // namespace grid
