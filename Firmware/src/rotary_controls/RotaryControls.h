@@ -14,7 +14,7 @@ namespace rotary_controls
 class RotaryControls : private freertos::Thread, public RotaryControlsInterface
 {
 public:
-    explicit RotaryControls( hardware::grid::InputInterface& gridDriver );
+    explicit RotaryControls( hardware::grid::InputInterface* gridDriver );
 
     bool waitForInput( Event& event ) override;
     void discardPendingInput() override;

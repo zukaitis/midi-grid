@@ -22,7 +22,7 @@ typedef hardware::grid::InputBuffer InputBuffer;
 class ButtonInput : public ButtonInputInterface, private freertos::Thread
 {
 public:
-    ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterruptsInterface& globalInterrupts );
+    ButtonInput( hardware::grid::InputInterface* gridDriver, mcu::GlobalInterruptsInterface* globalInterrupts );
 
     bool waitForEvent( ButtonEvent& event ) override;
     void discardPendingEvents() override;

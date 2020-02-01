@@ -12,9 +12,9 @@ static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1,
 static const etl::array<uint32_t, NUMBER_OF_CONTROLS> kEncoderBitShift = {14, 11};
 static const uint32_t kEncoderMask = 0x03; // two LSBs
 
-RotaryControls::RotaryControls( hardware::grid::InputInterface& gridDriver ) :
+RotaryControls::RotaryControls( hardware::grid::InputInterface* gridDriver ) :
         Thread( "RotaryControls", kRotaryControls.stackDepth, kRotaryControls.priority ),
-        gridDriver_( gridDriver ),
+        gridDriver_( *gridDriver ),
         events_( freertos::Queue( 8, sizeof( Event ) ) )
 {
     gridDriver_.addThreadToNotify( this );
@@ -56,7 +56,10 @@ void RotaryControls::Run()
                 .control = controlIndex };
             microsteps[controlIndex] %= kNumberOfMicrostepsInStep;
 
-            events_.Enqueue( &event );
+            if (false == events_.IsFull())
+            {
+                events_.Enqueue( &event );
+            }
         }
     }
 }

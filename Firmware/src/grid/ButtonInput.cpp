@@ -14,10 +14,10 @@ namespace grid
 
 static const uint16_t INPUT_MASK = 0x000F;
 
-ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterruptsInterface& globalInterrupts ):
+ButtonInput::ButtonInput( hardware::grid::InputInterface* gridDriver, mcu::GlobalInterruptsInterface* globalInterrupts ):
     Thread( "grid::ButtonInput", kGrid.stackDepth, kGrid.priority ),
-    globalInterrupts_( globalInterrupts ),
-    gridDriver_( gridDriver ),
+    globalInterrupts_( *globalInterrupts ),
+    gridDriver_( *gridDriver ),
     events_( freertos::Queue( 16, sizeof( ButtonEvent )))
 {
     gridDriver_.addThreadToNotify( this );
@@ -62,8 +62,12 @@ void ButtonInput::Run()
                         .action = static_cast<ButtonAction>((inputBuffer[x] >> y) & 0x01),
                         .coordinates = calculatePhysicalCoordinates({ x, y }) };
 
-                    events_.Enqueue( &event );
                     registeredInputBuffer_[x] ^= (1 << y); // toggle bit that was registered
+
+                    if (false == events_.IsFull())
+                    {
+                        events_.Enqueue( &event );
+                    }
                 }
             }
         }

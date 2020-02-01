@@ -139,16 +139,16 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
 
 
 
-ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface& additionalButtons, grid::GridInterface& grid,
-        rotary_controls::RotaryControlsInterface& rotaryControls, midi::UsbMidi& usbMidi ):
+ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface* additionalButtons, grid::GridInterface* grid,
+    rotary_controls::RotaryControlsInterface* rotaryControls, midi::UsbMidi* usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
         currentlyOpenApplication_( NULL ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
-        additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, additionalButtons ) ),
-        gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, grid ) ),
-        rotaryControlInputHandler_( InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event>( *this, rotaryControls ) ),
-        midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, usbMidi ) ),
-        midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, usbMidi ) ),
+        additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, *additionalButtons ) ),
+        gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, *grid ) ),
+        rotaryControlInputHandler_( InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event>( *this, *rotaryControls ) ),
+        midiInputAvailableHandler_( InputHandler<midi::UsbMidi&, bool>( *this, *usbMidi ) ),
+        midiInputHandler_( InputHandler<midi::UsbMidi&, midi::MidiPacket>( *this, *usbMidi ) ),
         applicationThread_( ApplicationThread( *this ) )
 {
 }

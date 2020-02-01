@@ -16,7 +16,7 @@ namespace grid
 class LedOutput : public LedOutputInterface
 {
 public:
-    explicit LedOutput( hardware::grid::OutputInterface& gridDriver );
+    explicit LedOutput( hardware::grid::OutputInterface* gridDriver );
 
     void set( const Coordinates& coordinates, const Color& color ) override;
     void setAllOff() override;

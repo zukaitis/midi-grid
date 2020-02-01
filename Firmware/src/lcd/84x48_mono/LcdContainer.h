@@ -10,7 +10,7 @@ namespace lcd
 class LcdContainer
 {
 public:
-    LcdContainer( hardware::lcd::SpiInterface& spi, hardware::lcd::BacklightDriverInterface& backlightDriver );
+    LcdContainer( hardware::lcd::SpiInterface* spi, hardware::lcd::BacklightDriverInterface* backlightDriver );
     virtual ~LcdContainer();
 
     Lcd& getLcd();

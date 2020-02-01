@@ -14,10 +14,10 @@ class PulsingLedsInterface;
 class Grid : public GridInterface
 {
 public:
-    Grid( ButtonInputInterface& buttonInput,
-        LedOutputInterface& ledOutput,
-        FlashingLedsInterface& flashingLeds,
-        PulsingLedsInterface& pulsingLeds );
+    Grid( ButtonInputInterface* buttonInput,
+        LedOutputInterface* ledOutput,
+        FlashingLedsInterface* flashingLeds,
+        PulsingLedsInterface* pulsingLeds );
 
     bool waitForInput( ButtonEvent& event ) override;
     void discardPendingInput() override;

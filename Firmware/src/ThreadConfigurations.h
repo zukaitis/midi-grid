@@ -12,7 +12,7 @@ struct ThreadConfiguration
 static const ThreadConfiguration kAdditionalButtons = { .stackDepth = 256, .priority = 5 };
 static const ThreadConfiguration kGrid = { .stackDepth = 256, .priority = 5 };
 static const ThreadConfiguration kRotaryControls = { .stackDepth = 128, .priority = 5 };
-static const ThreadConfiguration kApplicationController = { .stackDepth = 2048, .priority = 4 };
+static const ThreadConfiguration kApplicationController = { .stackDepth = 1024, .priority = 4 };
 static const ThreadConfiguration kApplicationThread = { .stackDepth = 512, .priority = 3 };
 static const ThreadConfiguration kInputSource = { .stackDepth = 512, .priority = 3 };
 static const ThreadConfiguration kFlashingLeds = { .stackDepth = 256, .priority = 2 };
