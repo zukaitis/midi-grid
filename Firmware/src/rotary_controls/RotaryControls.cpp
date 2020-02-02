@@ -8,7 +8,7 @@ namespace rotary_controls
 {
 
 static const int8_t kNumberOfMicrostepsInStep = 4;
-static const int8_t kEncoderState[16] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
+static const etl::array<int8_t, 16> kEncoderState = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0,-1, 1, 0 };
 static const etl::array<uint32_t, NUMBER_OF_CONTROLS> kEncoderBitShift = {14, 11};
 static const uint32_t kEncoderMask = 0x03; // two LSBs
 

@@ -6,7 +6,8 @@
 #include "lcd/LcdInterface.h"
 #include <freertos/ticks.hpp>
 
-#include <cstdio>
+#include <etl/cstring.h>
+#include <etl/to_string.h>
 
 namespace application
 {
@@ -228,30 +229,32 @@ void LcdGui::displayTimingStatus()
         lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification::RIGHT );
         lcd_.print( "bpm", 66, 32 );
 
-        char signatureString[6];
-        std::sprintf( signatureString, "%d/%d", launchpad_.signatureNumerator_, launchpad_.signatureDenominator_ );
-        lcd_.print( signatureString, 0, 32 );
+        etl::string<6> signatureString;
+        etl::to_string( launchpad_.signatureNumerator_, signatureString );
+        signatureString += "/";
+        etl::to_string( launchpad_.signatureDenominator_, signatureString, true );
+        lcd_.print( &signatureString[0], 0, 32 );
     }
 }
 
 void LcdGui::displayRotaryControlValues()
 {
     const uint8_t numberOfProgressArcPositions = 51;
-    char str[4];
+    etl::string<4> str;
     lcd_.clearArea( 0, 16, 83, 47 );
 
-    lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_[0] * (numberOfProgressArcPositions - 1)) / 127 );
-    sprintf( str, "%d", launchpad_.rotaryControlValue_[0] );
-    lcd_.print( str, 18, 32, lcd::Justification::CENTER );
+    lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_.at( 0 ) * (numberOfProgressArcPositions - 1)) / 127 );
+    etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), str );
+    lcd_.print( &str[0], 18, 32, lcd::Justification::CENTER );
 
-    lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_[1] * (numberOfProgressArcPositions - 1)) / 127 );
-    sprintf( str, "%d", launchpad_.rotaryControlValue_[1] );
-    lcd_.print( str, 63, 32, lcd::Justification::CENTER );
+    lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_.at( 1 ) * (numberOfProgressArcPositions - 1)) / 127 );
+    etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), str );
+    lcd_.print( &str[0], 63, 32, lcd::Justification::CENTER );
 
     rotaryControlValues_.isOn = true;
     rotaryControlValues_.timeToDisable = freertos::Ticks::GetTicks() + kRotaryControlTimeoutMs;
 }
 
-} // namespace
-}
+}  // namespace launchpad
+}  // namespace application
 

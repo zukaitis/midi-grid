@@ -2,9 +2,9 @@
 
 #include "lcd/LcdInterface.h"
 
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
+#include <etl/array.h>
+#include <etl/cstring.h>
+#include <etl/to_string.h>
 
 namespace application
 {
@@ -13,14 +13,14 @@ static const uint16_t offGameBlinkPeriodMs = 300;
 static const uint16_t initialStepPeriodMs = 1000;
 static const uint16_t stepPeriodDecreaseMs = 16;
 
-static const Coordinates initialSnake[2] = { {7, 1}, {7, 0} };
+static const etl::array<Coordinates, 2> initialSnake = {{ {7, 1}, {7, 0} }};
 static const uint8_t initialSnakeLength = 2;
 
 static const Color headColor = color::RED;
 static const Color initialBodyColor = color::GREEN; 
 static const Color foodColor = color::YELLOW;
 
-static const Coordinates directionVector[numberOfDirections] = { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
+static const etl::array<Coordinates, 4> directionVector = {{ {0, 1}, {0, -1}, {-1, 0}, {1, 0} }};
 
 Snake::Snake( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd ):
     Application( applicationController ),
@@ -180,9 +180,9 @@ void Snake::updateLcd() const
     lcd_.print( "Score:", 0, 16 );
     lcd_.printNumberInBigDigits( getScore(), lcd_.right(), 16, lcd::Justification::RIGHT );
     
-    char bestScoreString[16] = {};
-    std::sprintf( bestScoreString, "Best: %i", bestScore_ );
-    lcd_.print( bestScoreString, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    etl::string<16> bestScoreString = "Best: ";
+    etl::to_string( bestScore_, bestScoreString, true );
+    lcd_.print( &bestScoreString[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void Snake::feed( const Coordinates headCoords )
@@ -213,7 +213,11 @@ void Snake::move( const Coordinates headCoords )
 
 void Snake::startNewGame()
 {
-    std::memcpy( snake_, initialSnake, sizeof( Coordinates ) * initialSnakeLength );
+    for (uint32_t i = 0; i < initialSnake.size(); i++)
+    {
+        snake_.at( i ) = initialSnake.at( i );
+    }
+
     length_ = initialSnakeLength;
     bodyColor_ = initialBodyColor;
     direction_ = Direction_UP;

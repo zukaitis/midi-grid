@@ -1,13 +1,14 @@
 #pragma once
 
-#include <freertos/thread.hpp>
-#include <freertos/semaphore.hpp>
-#include <freertos/queue.hpp>
-
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "grid/GridInterface.h"
 #include "rotary_controls/RotaryControlsInterface.h"
 #include "usb/UsbMidi.hpp"
+
+#include <freertos/thread.hpp>
+#include <freertos/semaphore.hpp>
+#include <freertos/queue.hpp>
+#include <etl/array.h>
 
 namespace application
 {
@@ -113,7 +114,7 @@ public:
 private:
     void Run() override;
 
-    Application* application_[kNumberOfApplications];
+    etl::array<Application*, kNumberOfApplications> application_;
     Application* currentlyOpenApplication_;
     freertos::Queue nextApplication_;
     static bool applicationFinished_;

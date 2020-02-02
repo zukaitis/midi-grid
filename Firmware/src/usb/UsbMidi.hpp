@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <etl/array.h>
 
 namespace freertos
 {
@@ -13,7 +14,7 @@ namespace midi
 struct MidiPacket
 {
     uint8_t header;
-    uint8_t data[3];
+    etl::array<uint8_t, 3> data;
 };
 
 union MidiInput
@@ -22,7 +23,7 @@ union MidiInput
     MidiPacket packet;
 };
 
-enum CodeIndexNumber
+enum CodeIndexNumber : uint8_t
 {
     kMiscellaneousFunctionCodes = 0x00,
     kCableEvents = 0x01,

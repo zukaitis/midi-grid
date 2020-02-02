@@ -34,7 +34,7 @@ Main::Main() :
             applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_ ) ),
         snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() ) )
 {
-    application::Application* applicationList[application::kNumberOfApplications] = {
+    etl::array<application::Application*, application::kNumberOfApplications> applicationList = {
         nullptr, // ApplicationIndex_PREVIOUS
         &startup_, // ApplicationIndex_STARTUP
         &gridTest_, // ApplicationIndex_GRID_TEST
@@ -43,7 +43,7 @@ Main::Main() :
         &snake_ // ApplicationIndex_SNAKE
     };
 
-    applicationController_.initialize( applicationList );
+    applicationController_.initialize( &applicationList[0] );
 }
 
 void Main::run()
