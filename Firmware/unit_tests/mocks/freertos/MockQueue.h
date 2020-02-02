@@ -16,6 +16,7 @@ public:
     MOCK_METHOD( bool, Enqueue, ( void* item ) );
     MOCK_METHOD( bool, Dequeue, ( void* item ) );
     MOCK_METHOD( void, Flush, () );
+    MOCK_METHOD( bool, IsFull, () );
 
 private:
     MockQueue() = default;

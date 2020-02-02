@@ -14,14 +14,14 @@ int main( int argc, char **argv)
 TEST( LedOutputConstructor, Create )
 {
     hardware::grid::MockGridDriver mockGridDriver;
-    const grid::LedOutput ledOutput( mockGridDriver );
+    const grid::LedOutput ledOutput( &mockGridDriver );
     SUCCEED();
 }
 
 TEST( set, CallGridDriverSet )
 {
     hardware::grid::MockGridDriver mockGridDriver;
-    grid::LedOutput ledOutput( mockGridDriver );
+    grid::LedOutput ledOutput( &mockGridDriver );
 
     EXPECT_CALL( mockGridDriver, setRedOutput( testing::_, testing::_ ) ).Times( 1 );
     EXPECT_CALL( mockGridDriver, setGreenOutput( testing::_, testing::_ ) ).Times( 1 );
@@ -36,7 +36,7 @@ TEST( set, CheckOutputValues )
     const uint8_t numberOfDiffusedColumns = 8;
 
     hardware::grid::MockGridDriver mockGridDriver;
-    grid::LedOutput ledOutput( mockGridDriver );
+    grid::LedOutput ledOutput( &mockGridDriver );
 
     for (uint8_t x = 0; x < 10; x++)
     {
@@ -55,7 +55,7 @@ TEST( set, CheckOutputValues )
 TEST( set, CheckOutputCoordinates )
 {
     hardware::grid::MockGridDriver mockGridDriver;
-    grid::LedOutput ledOutput( mockGridDriver );
+    grid::LedOutput ledOutput( &mockGridDriver );
 
     for (uint8_t x = 0; x < 10; x++)
     {
@@ -77,7 +77,7 @@ TEST( set, CheckOutputCoordinates )
 TEST( setAllOff, CallGridDriverSetAllOff )
 {
     hardware::grid::MockGridDriver mockGridDriver;
-    grid::LedOutput ledOutput( mockGridDriver );
+    grid::LedOutput ledOutput( &mockGridDriver );
 
     EXPECT_CALL( mockGridDriver, setAllOff() ).Times( 1 );
     ledOutput.setAllOff();

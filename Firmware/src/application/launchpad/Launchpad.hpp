@@ -1,9 +1,11 @@
-#ifndef APPLICATION_LAUNCHPAD_HPP_
-#define APPLICATION_LAUNCHPAD_HPP_
+#pragma once
 
 #include "application/Application.hpp"
 #include "application/launchpad/LcdGui.hpp"
 #include "types/Color.h"
+
+#include <etl/array.h>
+#include <etl/cstring.h>
 
 namespace grid
 {
@@ -103,14 +105,14 @@ private:
     Launchpad95Mode mode_;
     Launchpad95Submode submode_;
     Layout layout_;
-    int16_t rotaryControlValue_[2];
+    etl::array<int16_t, 2> rotaryControlValue_;
     bool isPlaying_;
     bool isRecording_;
     bool isSessionRecording_;
     static const uint8_t kMaximumDawInfoStringLength = 15;
-    char clipName_[kMaximumDawInfoStringLength];
-    char deviceName_[kMaximumDawInfoStringLength];
-    char trackName_[kMaximumDawInfoStringLength];
+    etl::string<15> clipName_;
+    etl::string<15> deviceName_;
+    etl::string<15> trackName_;
     bool nudgeDownActive_;
     bool nudgeUpActive_;
     uint16_t tempo_;
@@ -119,11 +121,9 @@ private:
 
 
     static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
-    uint8_t systemExclusiveInputMessage_[kSystemExclussiveMessageMaximumLength_];
+    etl::array<uint8_t, 64> systemExclusiveInputMessage_;
     uint8_t incomingSystemExclusiveMessageLength_;
 };
 
-}
-} // namespace
-
-#endif // APPLICATION_LAUNCHPAD_HPP_
+}  // namespace launchpad
+}  // namespace application

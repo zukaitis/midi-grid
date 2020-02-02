@@ -35,7 +35,7 @@ Main::Main() :
         snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() ) )
 {
     application::Application* applicationList[application::kNumberOfApplications] = {
-        NULL, // ApplicationIndex_PREVIOUS
+        nullptr, // ApplicationIndex_PREVIOUS
         &startup_, // ApplicationIndex_STARTUP
         &gridTest_, // ApplicationIndex_GRID_TEST
         &internalMenu_, // ApplicationIndex_INTERNAL_MENU

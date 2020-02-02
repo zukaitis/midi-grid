@@ -13,7 +13,7 @@
 namespace application
 {
 
-static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
+static const lcd::Image usbLogo = { &usbLogoArray[0], 60, 24 };
 
 GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),

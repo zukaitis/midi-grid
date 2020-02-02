@@ -13,39 +13,39 @@ namespace application
 namespace launchpad
 {
 
-static const lcd::Image usbSymbolSmall = { usbSymbolSmallArray, 9, 8 };
-static const lcd::Image midiSymbolSmall = { midiSymbolSmallArray, 8, 8 };
-static const lcd::Image arrowSmallUp = { arrowSmallUpArray, 5, 8 };
-static const lcd::Image arrowSmallDown = { arrowSmallDownArray, 5, 8 };
-static const lcd::Image play = { playArray, 16, 16 };
-static const lcd::Image recordingOn = { recordingOnArray, 16, 16 };
-static const lcd::Image sessionRecordingOn = { sessionRecordingOnArray, 16, 16 };
-static const lcd::Image nudgeDownInactive = { nudgeDownInactiveArray, 10, 8};
-static const lcd::Image nudgeDownActive = { nudgeDownActiveArray, 10, 8};
-static const lcd::Image nudgeUpInactive = { nudgeUpInactiveArray, 10, 8};
-static const lcd::Image nudgeUpActive = { nudgeUpActiveArray, 10, 8};
+static const lcd::Image usbSymbolSmall = { &usbSymbolSmallArray[0], 9, 8 };
+static const lcd::Image midiSymbolSmall = { &midiSymbolSmallArray[0], 8, 8 };
+static const lcd::Image arrowSmallUp = { &arrowSmallUpArray[0], 5, 8 };
+static const lcd::Image arrowSmallDown = { &arrowSmallDownArray[0], 5, 8 };
+static const lcd::Image play = { &playArray[0], 16, 16 };
+static const lcd::Image recordingOn = { &recordingOnArray[0], 16, 16 };
+static const lcd::Image sessionRecordingOn = { &sessionRecordingOnArray[0], 16, 16 };
+static const lcd::Image nudgeDownInactive = { &nudgeDownInactiveArray[0], 10, 8};
+static const lcd::Image nudgeDownActive = { &nudgeDownActiveArray[0], 10, 8};
+static const lcd::Image nudgeUpInactive = { &nudgeUpInactiveArray[0], 10, 8};
+static const lcd::Image nudgeUpActive = { &nudgeUpActiveArray[0], 10, 8};
 
-static const char launchpad95ModeString[8][16] = {
-        "Session",
-        "Instrument",
-        "Device control",
-        "User 1",
-        "Drum step seq.",
-        "Melodic seq.",
-        "User 2",
-        "Mixer"
+static const etl::array<etl::string<16>, 8> launchpad95ModeString = {
+    "Session",
+    "Instrument",
+    "Device control",
+    "User 1",
+    "Drum step seq.",
+    "Melodic seq.",
+    "User 2",
+    "Mixer"
 };
 
-static const char launchpad95SubmodeString[9][15] = {
-        " ",
-        "Scale",
-        "Volume",
-        "Pan",
-        "Send A",
-        "Send B",
-        "MSS: Length",
-        "MSS: Octave",
-        "MSS: Velocity"
+static const etl::array<etl::string<16>, 9> launchpad95SubmodeString = {
+    " ",
+    "Scale",
+    "Volume",
+    "Pan",
+    "Send A",
+    "Send B",
+    "MSS: Length",
+    "MSS: Octave",
+    "MSS: Velocity"
 };
 
 static const uint32_t kMidiActivityTimeoutMs = 1000;
@@ -165,17 +165,17 @@ void LcdGui::displayLaunchpad95Info()
 
 void LcdGui::displayClipName()
 {
-    lcd_.print( launchpad_.clipName_, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.clipName_[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayDeviceName()
 {
-    lcd_.print( launchpad_.deviceName_, lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.deviceName_[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayTrackName()
 {
-    lcd_.print( launchpad_.trackName_, lcd_.horizontalCenter(), 32, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.trackName_[0], lcd_.horizontalCenter(), 32, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayMode()
@@ -183,14 +183,14 @@ void LcdGui::displayMode()
     lcd_.clearArea( 0, 8, 83, 15 );
     if (Launchpad95Mode_UNKNOWN != launchpad_.mode_)
     {
-        lcd_.print( launchpad95ModeString[launchpad_.mode_], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
+        lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
     }
 }
 
 void LcdGui::displaySubmode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    lcd_.print( launchpad95SubmodeString[launchpad_.submode_], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
+    lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
 }
 
 void LcdGui::displayStatus()

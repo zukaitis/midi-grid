@@ -17,12 +17,9 @@ namespace launchpad
 static const uint8_t kControlValueLow = 0;
 static const uint8_t kControlValueHigh = 127;
 
-static const uint8_t kChallengeResponseLength = 10;
-static const uint8_t kChallengeResponse[kChallengeResponseLength] = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
+static const etl::array<uint8_t, 10> kChallengeResponse = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
 
-static const uint8_t kStandardSystemExclussiveMessageHeaderLength = 6;
-static const uint8_t kStandardSystemExclussiveMessageHeader[kStandardSystemExclussiveMessageHeaderLength] =
-        { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
+static const etl::array<uint8_t, 6> kStandardSystemExclussiveMessageHeader = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18 };
 static const uint8_t kStandardSystemExclussiveMessageMinimumLength = 8;
 
 enum StandardSystemExclussiveMessageType
@@ -70,23 +67,23 @@ static const uint8_t kMinimumDeviceControlValue = kUp.controlValue;
 static const uint8_t kMaximumDeviceControlValue = kMixer.controlValue;
 
 // buttons are numerated bottom to top, same as in grid
-static const uint8_t kDeviceControlColumnValue[kNumberOfRows] = {
+static const etl::array<uint8_t, kNumberOfRows> kDeviceControlColumnValue = {
         kUser2.controlValue, kMixer.controlValue, kUser1.controlValue, kSession.controlValue,
         kUp.controlValue, kLeft.controlValue, kRight.controlValue, kDown.controlValue };
 
-static const uint8_t kSessionLayout[kNumberOfColumns][kNumberOfRows] = {
+static const etl::array<etl::array<uint8_t, kNumberOfRows>, kNumberOfColumns> kSessionLayout = {{
         {11, 21, 31, 41, 51, 61, 71, 81}, {12, 22, 32, 42, 52, 62, 72, 82},
         {13, 23, 33, 43, 53, 63, 73, 83}, {14, 24, 34, 44, 54, 64, 74, 84},
         {15, 25, 35, 45, 55, 65, 75, 85}, {16, 26, 36, 46, 56, 66, 76, 86},
         {17, 27, 37, 47, 57, 67, 77, 87}, {18, 28, 38, 48, 58, 68, 78, 88},
-        {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} };
+        {19, 29, 39, 49, 59, 69, 79, 89}, {110, 111, 109, 108, 104, 106, 107, 105} }};
 
-static const uint8_t kDrumLayout[kNumberOfColumns][kNumberOfRows] = {
+static const etl::array<etl::array<uint8_t, kNumberOfRows>, kNumberOfColumns> kDrumLayout = {{
         {36, 40, 44, 48, 52, 56, 60, 64}, {37, 41, 45, 49, 53, 57, 61, 65},
         {38, 42, 46, 50, 54, 58, 62, 66}, {39, 43, 47, 51, 55, 59, 63, 67},
         {68, 72, 76, 80, 84, 88, 92, 96}, {69, 73, 77, 81, 85, 89, 93, 97},
         {70, 74, 78, 82, 86, 90, 94, 98}, {71, 75, 79, 83, 87, 91, 95, 99},
-        {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} };
+        {107, 106, 105, 104, 103, 102, 101, 100}, {110, 111, 109, 108, 104, 106, 107, 105} }};
 
 static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(0, 0, 0), Color(8, 8, 8), Color(32, 32, 32), Color(64, 64, 64), Color(64, 20, 18), Color(64, 3, 0), Color(23, 1, 0), Color(7, 0, 0),
@@ -380,13 +377,13 @@ void Launchpad::processDawInfoMessage( const char* const message )
     switch (message[0])
     {
         case 't':
-            strncpy( trackName_, &message[1], kMaximumDawInfoStringLength );
+            trackName_ = &message[1];
             break;
         case 'c':
-            strncpy( clipName_, &message[1], kMaximumDawInfoStringLength );
+            clipName_ = &message[1];
             break;
         case 'd':
-            strncpy( deviceName_, &message[1], kMaximumDawInfoStringLength );
+            deviceName_ = &message[1];
             break;
         case 's':
             {
@@ -508,7 +505,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
 {
     if (length >= kStandardSystemExclussiveMessageMinimumLength)
     {
-        if (0 == memcmp( message, kStandardSystemExclussiveMessageHeader, kStandardSystemExclussiveMessageHeaderLength ))
+        if (0 == memcmp( message, &kStandardSystemExclussiveMessageHeader[0], kStandardSystemExclussiveMessageHeader.size() ))
         {
             const uint8_t standardMessageType = message[6];
             switch(standardMessageType)
@@ -523,7 +520,7 @@ void Launchpad::processSystemExclusiveMessage( uint8_t* const message, uint8_t l
                     }
                     break;
                 case kChallenge:
-                    usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponseLength );
+                    usbMidi_.sendSystemExclussive( &kChallengeResponse[0], kChallengeResponse.size() );
                     gui_.registerMidiOutputActivity();
                     break;
                 case kTextScroll:

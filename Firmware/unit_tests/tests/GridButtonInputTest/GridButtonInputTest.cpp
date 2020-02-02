@@ -19,5 +19,5 @@ TEST( LedOutputConstructor, Create )
 
     EXPECT_CALL( mockGridDriver, addThreadToNotify( testing::_ ) );
     EXPECT_CALL( freertos::MockThread::getInstance(), Start );
-    const grid::ButtonInput buttonInput( mockGridDriver, mockGlobalInterrupts);
+    const grid::ButtonInput buttonInput( &mockGridDriver, &mockGlobalInterrupts );
 }
