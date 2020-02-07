@@ -142,7 +142,7 @@ void Application::handleMidiPacket( const midi::MidiPacket packet )
 ApplicationController::ApplicationController( additional_buttons::AdditionalButtonsInterface* additionalButtons, grid::GridInterface* grid,
     rotary_controls::RotaryControlsInterface* rotaryControls, midi::UsbMidi* usbMidi ):
         Thread( "ApplicationController", kApplicationController.stackDepth, kApplicationController.priority ),
-        currentlyOpenApplication_( NULL ),
+        currentlyOpenApplication_( nullptr ),
         nextApplication_( freertos::Queue( 2, sizeof( ApplicationIndex ) ) ),
         additionalButtonInputHandler_( InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event>( *this, *additionalButtons ) ),
         gridInputHandler_( InputHandler<grid::GridInterface&, grid::ButtonEvent>( *this, *grid ) ),
@@ -153,14 +153,11 @@ ApplicationController::ApplicationController( additional_buttons::AdditionalButt
 {
 }
 
-void ApplicationController::initialize( Application** const applicationList )
+void ApplicationController::initialize( const etl::array<Application*, kNumberOfApplications>& applicationList )
 {
-    for (uint8_t index = 0; index < kNumberOfApplications; index++)
-    {
-        application_[index] = applicationList[index];
-    }
+    application_ = applicationList;
 
-    currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
+    currentlyOpenApplication_ = application_.at( ApplicationIndex_STARTUP );
     Start();
 }
 

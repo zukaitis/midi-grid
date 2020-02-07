@@ -70,6 +70,8 @@ enum Launchpad95Submode : uint8_t
     Launchpad95Submode_VELOCITY // Melodic step sequencer
 };
 
+using SystemExclussiveMessage = etl::string<64>;
+
 class Launchpad : public Application
 {
 public:
@@ -89,10 +91,10 @@ private:
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
 
-    void processDawInfoMessage( const char* const message );
+    void processDawInfoMessage( const etl::string_view& message );
     void processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
-    void processSystemExclusiveMessage( uint8_t* const message, uint8_t length );
+    void processSystemExclusiveMessage( const SystemExclussiveMessage& message );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
     void sendMixerModeControlMessage();
@@ -119,10 +121,7 @@ private:
     uint8_t signatureNumerator_;
     uint8_t signatureDenominator_;
 
-
-    static const uint8_t kSystemExclussiveMessageMaximumLength_ = 64;
-    etl::array<uint8_t, 64> systemExclusiveInputMessage_;
-    uint8_t incomingSystemExclusiveMessageLength_;
+    SystemExclussiveMessage systemExclusiveInputMessage_;
 };
 
 }  // namespace launchpad

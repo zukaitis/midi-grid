@@ -43,7 +43,7 @@ Main::Main() :
         &snake_ // ApplicationIndex_SNAKE
     };
 
-    applicationController_.initialize( &applicationList[0] );
+    applicationController_.initialize( applicationList );
 }
 
 void Main::run()

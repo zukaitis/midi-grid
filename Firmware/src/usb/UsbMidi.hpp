@@ -14,7 +14,7 @@ namespace midi
 struct MidiPacket
 {
     uint8_t header;
-    etl::array<uint8_t, 3> data;
+    etl::array<char, 3> data;
 };
 
 union MidiInput

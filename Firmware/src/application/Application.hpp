@@ -93,7 +93,7 @@ public:
     ApplicationController( additional_buttons::AdditionalButtonsInterface* additionalButtons, grid::GridInterface* grid,
         rotary_controls::RotaryControlsInterface* rotaryControls, midi::UsbMidi* usbMidi );
 
-    void initialize( Application** applicationList );
+    void initialize( const etl::array<Application*, kNumberOfApplications>& applicationList );
 
     void selectApplication( ApplicationIndex applicationIndex );
 
