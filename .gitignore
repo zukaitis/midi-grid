@@ -2,6 +2,7 @@
 *.o
 *.ninja_deps
 *.ninja_log
+*.kicad_pcb-bak
 .directory
 Firmware/midi-grid.code-workspace
 Firmware/output/*
@@ -10,5 +11,6 @@ Firmware/unit_tests/coverage_report/
 Firmware/unit_tests/tests/*/*
 !Firmware/unit_tests/tests/*/*.cpp
 !Firmware/unit_tests/tests/*/build_settings.yaml
+Hardware/fp-info-cache
 Misc/image_generation/*
 !Misc/image_generation/*.py
