@@ -55,7 +55,7 @@ void InternalMenu::run( ApplicationThread& thread )
     enableAdditionalButtonInputHandler();
 }
 
-void InternalMenu::handleAdditionalButtonEvent( const additional_buttons::Event event )
+void InternalMenu::handleAdditionalButtonEvent( const additional_buttons::Event& event )
 {
     if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction::RELEASED == event.action))
     {
@@ -63,10 +63,11 @@ void InternalMenu::handleAdditionalButtonEvent( const additional_buttons::Event 
     }
 }
 
-void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent event )
+void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent& event )
 {
     if (ButtonAction::PRESSED == event.action)
     {
+        // TODO(unknown): replace this with switch case
         if ((kBootloaderButton == event.coordinates))
         {
             // reset into DFU bootloader

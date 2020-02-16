@@ -25,7 +25,7 @@ class AdditionalButtons : private freertos::Thread, public AdditionalButtonsInte
 public:
     explicit AdditionalButtons( hardware::grid::InputInterface* gridDriver );
 
-    bool waitForInput( Event& event ) override;
+    bool waitForInput( Event* event ) override;
     void discardPendingInput() override;
 
 private:
@@ -35,6 +35,7 @@ private:
 
     hardware::grid::InputInterface& gridDriver_;
     freertos::Queue events_;
+    freertos::BinarySemaphore changesAvailable_;
 
     etl::array<InputArray, 2> input_;
     InputArray registeredInput_;

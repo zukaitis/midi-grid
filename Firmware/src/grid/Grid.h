@@ -19,7 +19,7 @@ public:
         FlashingLedsInterface* flashingLeds,
         PulsingLedsInterface* pulsingLeds );
 
-    bool waitForInput( ButtonEvent& event ) override;
+    bool waitForInput( ButtonEvent* event ) override;
     void discardPendingInput() override;
 
     Color getLedColor( const Coordinates& coordinates ) const override;

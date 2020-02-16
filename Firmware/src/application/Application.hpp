@@ -31,7 +31,7 @@ template <class InputSource, class InputType>
 class InputHandler : private freertos::Thread
 {
 public:
-    InputHandler( ApplicationController& applicationController, InputSource inputSource );
+    InputHandler( ApplicationController* applicationController, InputSource* inputSource );
 
     void enable();
     void disable();
@@ -40,7 +40,7 @@ public:
 
 private:
     ApplicationController& applicationController_;
-    InputSource inputSource_;
+    InputSource& inputSource_;
 };
 
 class ApplicationThread : public freertos::Thread
@@ -68,10 +68,10 @@ public:
     virtual ~Application() = default;
 
     virtual void run( ApplicationThread& thread );
-    virtual void handleAdditionalButtonEvent( additional_buttons::Event event );
-    virtual void handleGridButtonEvent( grid::ButtonEvent event );
-    virtual void handleRotaryControlEvent( rotary_controls::Event event );
-    virtual void handleMidiPacket( midi::MidiPacket packet );
+    virtual void handleAdditionalButtonEvent( const additional_buttons::Event& event );
+    virtual void handleGridButtonEvent( const grid::ButtonEvent& event );
+    virtual void handleRotaryControlEvent( const rotary_controls::Event& event );
+    virtual void handleMidiPacket( const midi::MidiPacket& packet );
     virtual void handleMidiPacketAvailable();
 
 protected:
@@ -104,11 +104,11 @@ public:
     void enableMidiInputHandler();
     void disableAllHandlers();
 
-    void handleInput( bool dummy );
-    void handleInput( additional_buttons::Event event );
-    void handleInput( grid::ButtonEvent event );
-    void handleInput( rotary_controls::Event event );
-    void handleInput( midi::MidiPacket packet );
+    void handleInput( const bool& dummy );
+    void handleInput( const additional_buttons::Event& event );
+    void handleInput( const grid::ButtonEvent& event );
+    void handleInput( const rotary_controls::Event& event );
+    void handleInput( const midi::MidiPacket& packet );
     void runApplicationThread( ApplicationThread& thread );
 
 private:
@@ -116,14 +116,14 @@ private:
 
     etl::array<Application*, kNumberOfApplications> application_;
     Application* currentlyOpenApplication_;
-    freertos::Queue nextApplication_;
     static bool applicationFinished_;
+    freertos::BinarySemaphore notificationReplacement_;
 
-    InputHandler<additional_buttons::AdditionalButtonsInterface&, additional_buttons::Event> additionalButtonInputHandler_;
-    InputHandler<grid::GridInterface&, grid::ButtonEvent> gridInputHandler_;
-    InputHandler<rotary_controls::RotaryControlsInterface&, rotary_controls::Event> rotaryControlInputHandler_;
-    InputHandler<midi::UsbMidi&, bool> midiInputAvailableHandler_;
-    InputHandler<midi::UsbMidi&, midi::MidiPacket> midiInputHandler_;
+    InputHandler<additional_buttons::AdditionalButtonsInterface, additional_buttons::Event> additionalButtonInputHandler_;
+    InputHandler<grid::GridInterface, grid::ButtonEvent> gridInputHandler_;
+    InputHandler<rotary_controls::RotaryControlsInterface, rotary_controls::Event> rotaryControlInputHandler_;
+    InputHandler<midi::UsbMidi, bool> midiInputAvailableHandler_;
+    InputHandler<midi::UsbMidi, midi::MidiPacket> midiInputHandler_;
     ApplicationThread applicationThread_;
 };
 

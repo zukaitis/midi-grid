@@ -24,7 +24,7 @@ class ButtonInput : public ButtonInputInterface, private freertos::Thread
 public:
     ButtonInput( hardware::grid::InputInterface* gridDriver, mcu::GlobalInterruptsInterface* globalInterrupts );
 
-    bool waitForEvent( ButtonEvent& event ) override;
+    bool waitForEvent( ButtonEvent* event ) override;
     void discardPendingEvents() override;
 
 private:
@@ -43,6 +43,7 @@ private:
     hardware::grid::InputInterface& gridDriver_;
 
     freertos::Queue events_;
+    freertos::BinarySemaphore changesAvailable_;
 };
 
 }  // namespace grid

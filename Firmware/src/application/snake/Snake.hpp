@@ -68,8 +68,8 @@ public:
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const additional_buttons::Event event );
-    void handleGridButtonEvent( const grid::ButtonEvent event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event& event );
+    void handleGridButtonEvent( const grid::ButtonEvent& event );
 
     void advance();
     void blink() const;

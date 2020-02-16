@@ -30,11 +30,11 @@ public:
     GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi );
 
 private:
-    void run( ApplicationThread& thread );
+    void run( ApplicationThread& thread ) override;
 
-    void handleAdditionalButtonEvent( const additional_buttons::Event event );
-    void handleGridButtonEvent( const grid::ButtonEvent event );
-    void handleMidiPacketAvailable();
+    void handleAdditionalButtonEvent( const additional_buttons::Event& event ) override;
+    void handleGridButtonEvent( const grid::ButtonEvent& event ) override;
+    void handleMidiPacketAvailable() override;
 
     void displayIntroAnimation( ApplicationThread& thread );
     void displayWaitingForMidi();

@@ -22,7 +22,7 @@ Grid::Grid( ButtonInputInterface* buttonInput,
 {
 }
 
-bool Grid::waitForInput( ButtonEvent& event )
+bool Grid::waitForInput( ButtonEvent* event )
 {
     return buttonInput_.waitForEvent( event );
 }

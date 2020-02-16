@@ -38,9 +38,9 @@ UsbMidi::~UsbMidi()
 {
 }
 
-bool UsbMidi::waitForPacket( MidiPacket& packet )
+bool UsbMidi::waitForPacket( MidiPacket* packet )
 {
-    const bool packetAvailable = receivedMessages.Dequeue( &packet ); // block until event
+    const bool packetAvailable = receivedMessages.Dequeue( packet ); // block until event
     return packetAvailable;
 }
 

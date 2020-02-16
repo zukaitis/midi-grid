@@ -20,13 +20,14 @@ ButtonInput::ButtonInput( hardware::grid::InputInterface* gridDriver, mcu::Globa
     gridDriver_( *gridDriver ),
     events_( freertos::Queue( 16, sizeof( ButtonEvent )))
 {
-    gridDriver_.addThreadToNotify( this );
+    // gridDriver_.addThreadToNotify( this );
+    gridDriver_.addSemaphoreToGive( &changesAvailable_ );
     Thread::Start();
 }
 
-bool ButtonInput::waitForEvent( ButtonEvent& event )
+bool ButtonInput::waitForEvent( ButtonEvent* event )
 {
-    const bool eventAvailable = events_.Dequeue( &event ); // block until event
+    const bool eventAvailable = events_.Dequeue( event ); // block until event
     return eventAvailable;
 }
 
@@ -39,7 +40,8 @@ void ButtonInput::Run()
 {
     static const InputBuffer& inputBuffer = inputBuffers_[0];
 
-    Thread::WaitForNotification(); // blocking until grid driver gives notification
+    // Thread::WaitForNotification(); // blocking until grid driver gives notification
+    changesAvailable_.Take();
 
     globalInterrupts_.disable();
     copyInputBuffers();

@@ -62,7 +62,7 @@ void Snake::run( ApplicationThread& thread )
     }
 }
 
-void Snake::handleGridButtonEvent( const grid::ButtonEvent event )
+void Snake::handleGridButtonEvent( const grid::ButtonEvent& event )
 {
     if (gameInProgress_)
     {
@@ -96,7 +96,7 @@ void Snake::handleGridButtonEvent( const grid::ButtonEvent event )
     }
 }
 
-void Snake::handleAdditionalButtonEvent( const additional_buttons::Event event )
+void Snake::handleAdditionalButtonEvent( const additional_buttons::Event& event )
 {
     if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction::PRESSED == event.action))
     {

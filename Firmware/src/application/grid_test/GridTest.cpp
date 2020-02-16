@@ -40,7 +40,7 @@ void GridTest::run( ApplicationThread& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event event )
+void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event& event )
 {
     if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction::PRESSED == event.action))
     {
@@ -48,7 +48,7 @@ void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event even
     }
 }
 
-void GridTest::handleGridButtonEvent( const grid::ButtonEvent event )
+void GridTest::handleGridButtonEvent( const grid::ButtonEvent& event )
 {
     Color color( 0, 0, 0 );
     if (ButtonAction::PRESSED == event.action)

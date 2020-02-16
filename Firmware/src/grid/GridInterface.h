@@ -38,7 +38,7 @@ class GridInterface : public HardwareInputInterface<ButtonEvent>
 public:
     virtual ~GridInterface() = default;
 
-    bool waitForInput( ButtonEvent& event ) override = 0;
+    bool waitForInput( ButtonEvent* event ) override = 0;
     void discardPendingInput() override = 0;
 
     virtual Color getLedColor( const Coordinates& coordinates ) const = 0;

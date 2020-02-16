@@ -5,6 +5,7 @@
 
 #include <etl/array.h>
 #include <etl/vector.h>
+#include <freertos/semaphore.hpp>
 
 namespace hardware
 {
@@ -17,7 +18,8 @@ public:
     GridDriver();
     virtual ~GridDriver() = default;
 
-    void addThreadToNotify( freertos::Thread* const thread ) override;
+    void addThreadToNotify( freertos::Thread* thread ) override;
+    void addSemaphoreToGive( freertos::BinarySemaphore* semaphore ) override;
     const InputDebouncingBuffers& getInputDebouncingBuffers() const override;
     const InputBuffer& getStableInputBuffer() const override;
 
@@ -49,6 +51,7 @@ private:
     static etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> blueOutput_;
 
     static etl::vector<freertos::Thread*, 7> threadToNotify_;
+    static etl::vector<freertos::BinarySemaphore*, 4> notificationReplacement_;
 };
 
 }

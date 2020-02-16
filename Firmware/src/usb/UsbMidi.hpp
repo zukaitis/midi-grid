@@ -55,7 +55,7 @@ public:
     UsbMidi();
     ~UsbMidi();
 
-    bool waitForPacket( MidiPacket& packet );
+    bool waitForPacket( MidiPacket* packet );
     bool waitUntilPacketIsAvailable();
     bool isPacketAvailable();
     void discardAllPendingPackets();
@@ -68,12 +68,12 @@ public:
     static uint16_t receiveData( uint8_t* message, uint16_t length );
     static uint16_t transmitData( uint8_t* message, uint16_t length );
 
-    inline bool waitForInput( bool& dummy )
+    inline bool waitForInput( bool* dummy )
     {
         return waitUntilPacketIsAvailable();
     };
 
-    inline bool waitForInput( MidiPacket& packet )
+    inline bool waitForInput( MidiPacket* packet )
     {
         return waitForPacket( packet );
     };

@@ -15,7 +15,8 @@ AdditionalButtons::AdditionalButtons( hardware::grid::InputInterface* gridDriver
 {
     registeredInput_.fill( false );
 
-    gridDriver_.addThreadToNotify( this );
+    // gridDriver_.addThreadToNotify( this );
+    gridDriver_.addSemaphoreToGive( &changesAvailable_ );
     Thread::Start();
 }
 
@@ -24,9 +25,9 @@ void AdditionalButtons::discardPendingInput()
     events_.Flush();
 }
 
-bool AdditionalButtons::waitForInput( Event& event )
+bool AdditionalButtons::waitForInput( Event* event )
 {
-    const bool eventAvailable = events_.Dequeue( &event );
+    const bool eventAvailable = events_.Dequeue( event );
     return eventAvailable;
 }
 
@@ -44,7 +45,8 @@ void AdditionalButtons::copyInput()
 
 void AdditionalButtons::Run()
 {
-    Thread::WaitForNotification(); // blocking until grid driver gives notification
+    // Thread::WaitForNotification(); // blocking until grid driver gives notification
+    changesAvailable_.Take();
 
     copyInput();
 

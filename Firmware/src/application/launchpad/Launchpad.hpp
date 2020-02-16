@@ -83,10 +83,10 @@ public:
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const additional_buttons::Event event );
-    void handleGridButtonEvent( const grid::ButtonEvent event );
-    void handleMidiPacket( const midi::MidiPacket packet );
-    void handleRotaryControlEvent( const rotary_controls::Event event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event& event );
+    void handleGridButtonEvent( const grid::ButtonEvent& event );
+    void handleMidiPacket( const midi::MidiPacket& packet );
+    void handleRotaryControlEvent( const rotary_controls::Event& event );
 
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();

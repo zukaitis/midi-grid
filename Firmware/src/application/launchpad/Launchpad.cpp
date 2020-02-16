@@ -137,7 +137,7 @@ void Launchpad::run( ApplicationThread& thread )
     grid_.turnAllLedsOff();
     gui_.initialize();
 
-    enableRotaryControlInputHandler();
+    // enableRotaryControlInputHandler();
     enableAdditionalButtonInputHandler();
     enableGridInputHandler();
     enableMidiInputHandler();
@@ -288,7 +288,7 @@ Launchpad95Submode Launchpad::determineLaunchpad95Submode()
     return submode;
 }
 
-void Launchpad::handleRotaryControlEvent( const rotary_controls::Event event )
+void Launchpad::handleRotaryControlEvent( const rotary_controls::Event& event )
 {
     rotaryControlValue_.at( event.control ) += event.steps;
 
@@ -305,7 +305,7 @@ void Launchpad::handleRotaryControlEvent( const rotary_controls::Event event )
     gui_.displayRotaryControlValues();
 }
 
-void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event event )
+void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event& event )
 {
     if (additional_buttons::Button::extraNote == event.button) // only send note on the event of black button
     {
@@ -323,7 +323,7 @@ void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event eve
     }
 }
 
-void Launchpad::handleMidiPacket( const midi::MidiPacket packet )
+void Launchpad::handleMidiPacket( const midi::MidiPacket& packet )
 {
     const uint8_t codeIndexNumber = packet.header & midi::kCodeIndexNumberMask;
     switch (codeIndexNumber)
@@ -349,7 +349,7 @@ void Launchpad::handleMidiPacket( const midi::MidiPacket packet )
     gui_.registerMidiInputActivity();
 }
 
-void Launchpad::handleGridButtonEvent( const grid::ButtonEvent event )
+void Launchpad::handleGridButtonEvent( const grid::ButtonEvent& event )
 {
     const uint8_t controlValue = (ButtonAction::PRESSED == event.action) ? kControlValueHigh : kControlValueLow;
     if (kDeviceControlColumn == event.coordinates.x)
