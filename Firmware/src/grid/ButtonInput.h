@@ -6,6 +6,7 @@
 
 #include <freertos/thread.hpp>
 #include <freertos/queue.hpp>
+#include <freertos/semaphore.hpp>
 
 #include "types/Coordinates.h"
 

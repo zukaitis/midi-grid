@@ -37,7 +37,7 @@ TEST( waitForInput, Call )
 
     grid::ButtonEvent event;
     EXPECT_CALL( mockButtonInput, waitForEvent( testing::_ ) ).Times( 1 );
-    grid.waitForInput( event );
+    grid.waitForInput( &event );
 }
 
 TEST( discardPendingInput, Call )

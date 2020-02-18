@@ -19,6 +19,7 @@ public:
     virtual ~MockGridDriver() = default;
 
     MOCK_METHOD( void, addThreadToNotify, (freertos::Thread* const thread), (override) );
+    MOCK_METHOD( void, addSemaphoreToGive, (freertos::BinarySemaphore* semaphore), (override) );
     MOCK_METHOD( const InputDebouncingBuffers&, getInputDebouncingBuffers, (), (const, override) );
     MOCK_METHOD( const InputBuffer&, getStableInputBuffer, (), (const, override) );
 
