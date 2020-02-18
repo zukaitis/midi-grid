@@ -32,8 +32,8 @@ static const etl::array<uint16_t, 65> kBrightnessDirect = {
     8783, 9021, 9265, 9500, 9753, 9995, 10233, 10489,
     10737, 10989, 11213, 11489, 11729, 11987, 12203, 12480, 12741 };
 
-LedOutput::LedOutput( hardware::grid::OutputInterface& gridDriver ):
-    gridDriver_( gridDriver )
+LedOutput::LedOutput( hardware::grid::OutputInterface* gridDriver ):
+    gridDriver_( *gridDriver )
 {
 }
 

@@ -14,19 +14,20 @@ namespace grid
 
 static const uint16_t INPUT_MASK = 0x000F;
 
-ButtonInput::ButtonInput( hardware::grid::InputInterface& gridDriver, mcu::GlobalInterruptsInterface& globalInterrupts ):
+ButtonInput::ButtonInput( hardware::grid::InputInterface* gridDriver, mcu::GlobalInterruptsInterface* globalInterrupts ):
     Thread( "grid::ButtonInput", kGrid.stackDepth, kGrid.priority ),
-    globalInterrupts_( globalInterrupts ),
-    gridDriver_( gridDriver ),
+    globalInterrupts_( *globalInterrupts ),
+    gridDriver_( *gridDriver ),
     events_( freertos::Queue( 16, sizeof( ButtonEvent )))
 {
-    gridDriver_.addThreadToNotify( this );
+    // gridDriver_.addThreadToNotify( this );
+    gridDriver_.addSemaphoreToGive( &changesAvailable_ );
     Thread::Start();
 }
 
-bool ButtonInput::waitForEvent( ButtonEvent& event )
+bool ButtonInput::waitForEvent( ButtonEvent* event )
 {
-    const bool eventAvailable = events_.Dequeue( &event ); // block until event
+    const bool eventAvailable = events_.Dequeue( event ); // block until event
     return eventAvailable;
 }
 
@@ -39,7 +40,8 @@ void ButtonInput::Run()
 {
     static const InputBuffer& inputBuffer = inputBuffers_[0];
 
-    Thread::WaitForNotification(); // blocking until grid driver gives notification
+    // Thread::WaitForNotification(); // blocking until grid driver gives notification
+    changesAvailable_.Take();
 
     globalInterrupts_.disable();
     copyInputBuffers();
@@ -62,8 +64,12 @@ void ButtonInput::Run()
                         .action = static_cast<ButtonAction>((inputBuffer[x] >> y) & 0x01),
                         .coordinates = calculatePhysicalCoordinates({ x, y }) };
 
-                    events_.Enqueue( &event );
                     registeredInputBuffer_[x] ^= (1 << y); // toggle bit that was registered
+
+                    if (false == events_.IsFull())
+                    {
+                        events_.Enqueue( &event );
+                    }
                 }
             }
         }

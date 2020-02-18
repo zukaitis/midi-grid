@@ -15,6 +15,7 @@ public:
     bool Enqueue( void* item );
     bool Dequeue( void* item, TickType_t Timeout = 0xFFFFFFFF );
     void Flush();
+    bool IsFull();
 };
 
 }

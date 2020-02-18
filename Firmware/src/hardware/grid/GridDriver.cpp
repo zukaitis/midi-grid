@@ -2,6 +2,7 @@
 #include "system/gpio_definitions.h"
 #include "types/Coordinates.h"
 #include <freertos/thread.hpp>
+#include <freertos/semaphore.hpp>
 
 #include "stm32f4xx_hal.h"
 
@@ -66,6 +67,7 @@ etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::gree
 etl::array<etl::array<uint32_t, numberOfRows>, numberOfColumns> GridDriver::blueOutput_ = {};
 
 etl::vector<freertos::Thread*, 7> GridDriver::threadToNotify_;
+etl::vector<freertos::BinarySemaphore*, 4> GridDriver::notificationReplacement_;
 
 GridDriver::GridDriver()
 {
@@ -74,6 +76,11 @@ GridDriver::GridDriver()
 void GridDriver::addThreadToNotify( freertos::Thread* const thread )
 {
     threadToNotify_.push_back( thread );
+}
+
+void GridDriver::addSemaphoreToGive( freertos::BinarySemaphore* const semaphore )
+{
+    notificationReplacement_.push_back( semaphore );
 }
 
 const InputDebouncingBuffers& GridDriver::getInputDebouncingBuffers() const
@@ -158,9 +165,15 @@ void GridDriver::notifyInputReadoutToBuffer1Complete()
 
 void GridDriver::notifyThreads()
 {
-    for (freertos::Thread* thread : threadToNotify_)
+    // for (freertos::Thread* thread : threadToNotify_)
+    // {
+    //     thread->NotifyFromISR();
+    // }
+
+    BaseType_t unused = 0;
+    for (freertos::BinarySemaphore* semaphore : notificationReplacement_)
     {
-        thread->NotifyFromISR();
+        semaphore->GiveFromISR( &unused );
     }
 }
 

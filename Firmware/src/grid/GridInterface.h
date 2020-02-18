@@ -38,14 +38,14 @@ class GridInterface : public HardwareInputInterface<ButtonEvent>
 public:
     virtual ~GridInterface() = default;
 
-    virtual bool waitForInput( ButtonEvent& event ) override = 0;
-    virtual void discardPendingInput() override = 0;
+    bool waitForInput( ButtonEvent* event ) override = 0;
+    void discardPendingInput() override = 0;
 
     virtual Color getLedColor( const Coordinates& coordinates ) const = 0;
 
-    virtual void setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType = LedLightingType::LIGHT ) = 0;
+    virtual void setLed( const Coordinates& coordinates, const Color& color, LedLightingType lightingType = LedLightingType::LIGHT ) = 0;
 
     virtual void turnAllLedsOff() = 0;
 };
 
-}
+}  // namespace grid

@@ -4,14 +4,14 @@ namespace grid
 {
 
 GridContainer::GridContainer( 
-    hardware::grid::InputInterface& gridDriverInput,
-    hardware::grid::OutputInterface& gridDriverOutput,
-    mcu::GlobalInterruptsInterface& globalInterrupts ):
+    hardware::grid::InputInterface* gridDriverInput,
+    hardware::grid::OutputInterface* gridDriverOutput,
+    mcu::GlobalInterruptsInterface* globalInterrupts ):
         buttonInput_( ButtonInput( gridDriverInput, globalInterrupts ) ),
         ledOutput_( LedOutput( gridDriverOutput ) ),
-        flashingLeds_( FlashingLeds( ledOutput_ ) ),
-        pulsingLeds_( PulsingLeds( ledOutput_ ) ),
-        grid_( Grid( buttonInput_, ledOutput_, flashingLeds_, pulsingLeds_ ) )
+        flashingLeds_( FlashingLeds( &ledOutput_ ) ),
+        pulsingLeds_( PulsingLeds( &ledOutput_ ) ),
+        grid_( Grid( &buttonInput_, &ledOutput_, &flashingLeds_, &pulsingLeds_ ) )
 {
 }
 

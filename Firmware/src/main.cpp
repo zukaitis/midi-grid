@@ -17,15 +17,15 @@ Main::Main() :
         system_( mcu::System() ),
         globalInterrupts_( mcu::GlobalInterrupts() ),
         gridDriver_( hardware::grid::GridDriver() ),
-        gridContainer_( grid::GridContainer( gridDriver_, gridDriver_, globalInterrupts_ ) ),
-        additionalButtons_( additional_buttons::AdditionalButtons( gridDriver_ ) ),
-        rotaryControls_( rotary_controls::RotaryControls( gridDriver_ ) ),
+        gridContainer_( grid::GridContainer( &gridDriver_, &gridDriver_, &globalInterrupts_ ) ),
+        additionalButtons_( additional_buttons::AdditionalButtons( &gridDriver_ ) ),
+        rotaryControls_( rotary_controls::RotaryControls( &gridDriver_ ) ),
         usbMidi_( midi::UsbMidi() ),
         lcdSpi_( hardware::lcd::Spi() ),
         backlightDriver_( hardware::lcd::BacklightDriver() ),
-        lcdContainer_( lcd::LcdContainer( lcdSpi_, backlightDriver_ ) ),
+        lcdContainer_( lcd::LcdContainer( &lcdSpi_, &backlightDriver_ ) ),
         applicationController_( application::ApplicationController(
-            additionalButtons_, gridContainer_.getGrid(), rotaryControls_, usbMidi_ ) ),
+            &additionalButtons_, &gridContainer_.getGrid(), &rotaryControls_, &usbMidi_ ) ),
         startup_( application::Startup( applicationController_, gridDriver_, lcdContainer_.getLcd(), system_ ) ),
         gridTest_( application::GridTest( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd(), usbMidi_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, gridContainer_.getGrid(), additionalButtons_,
@@ -34,8 +34,8 @@ Main::Main() :
             applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_ ) ),
         snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() ) )
 {
-    application::Application* applicationList[application::kNumberOfApplications] = {
-        NULL, // ApplicationIndex_PREVIOUS
+    etl::array<application::Application*, application::kNumberOfApplications> applicationList = {
+        nullptr, // ApplicationIndex_PREVIOUS
         &startup_, // ApplicationIndex_STARTUP
         &gridTest_, // ApplicationIndex_GRID_TEST
         &internalMenu_, // ApplicationIndex_INTERNAL_MENU

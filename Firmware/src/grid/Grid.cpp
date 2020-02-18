@@ -10,19 +10,19 @@ namespace grid
 
 Coordinates GRID_LIMITS = { numberOfColumns, numberOfRows };
 
-Grid::Grid( ButtonInputInterface& buttonInput,
-    LedOutputInterface& ledOutput,
-    FlashingLedsInterface& flashingLeds,
-    PulsingLedsInterface& pulsingLeds ) :
-        buttonInput_( buttonInput ),
-        ledOutput_( ledOutput ),
-        flashingLeds_( flashingLeds ),
-        pulsingLeds_( pulsingLeds ),
+Grid::Grid( ButtonInputInterface* buttonInput,
+    LedOutputInterface* ledOutput,
+    FlashingLedsInterface* flashingLeds,
+    PulsingLedsInterface* pulsingLeds ) :
+        buttonInput_( *buttonInput ),
+        ledOutput_( *ledOutput ),
+        flashingLeds_( *flashingLeds ),
+        pulsingLeds_( *pulsingLeds ),
         led_()
 {
 }
 
-bool Grid::waitForInput( ButtonEvent& event )
+bool Grid::waitForInput( ButtonEvent* event )
 {
     return buttonInput_.waitForEvent( event );
 }

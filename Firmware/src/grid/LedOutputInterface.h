@@ -14,4 +14,4 @@ public:
     virtual void setAllOff() = 0;
 };
 
-}
+}  // namespace grid

@@ -4,6 +4,7 @@
 #include "application/Application.hpp"
 #include "types/Color.h"
 #include <freertos/thread.hpp>
+#include <etl/array.h>
 
 namespace grid
 {
@@ -67,8 +68,8 @@ public:
 private:
     void run( ApplicationThread& thread );
 
-    void handleAdditionalButtonEvent( const additional_buttons::Event event );
-    void handleGridButtonEvent( const grid::ButtonEvent event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event& event );
+    void handleGridButtonEvent( const grid::ButtonEvent& event );
 
     void advance();
     void blink() const;
@@ -91,7 +92,7 @@ private:
 
     Direction direction_;
     Direction directionCandidate_;
-    Coordinates snake_[gridSize];
+    etl::array<Coordinates, gridSize> snake_;
     uint8_t length_;
     uint8_t bestScore_;
     uint16_t stepPeriodMs_;

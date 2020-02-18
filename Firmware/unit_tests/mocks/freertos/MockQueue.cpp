@@ -33,4 +33,9 @@ void Queue::Flush()
     MockQueue::getInstance().Flush();
 }
 
+bool Queue::IsFull()
+{
+    return MockQueue::getInstance().IsFull();
+}
+
 }

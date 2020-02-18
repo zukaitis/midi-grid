@@ -11,9 +11,9 @@ namespace grid
 
 static const uint32_t FLASHING_PERIOD = 250; // 120bpm - default flashing rate
 
-FlashingLeds::FlashingLeds( LedOutputInterface& ledOutput ):
+FlashingLeds::FlashingLeds( LedOutputInterface* ledOutput ):
         Thread( "FlashingLeds", kFlashingLeds.stackDepth, kFlashingLeds.priority ),
-        ledOutput_( ledOutput ),
+        ledOutput_( *ledOutput ),
         led_( 0 )
 {
     Thread::Start();

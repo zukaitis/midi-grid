@@ -22,7 +22,7 @@ TEST( GridConstructor, Create )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     SUCCEED();
 }
@@ -33,11 +33,11 @@ TEST( waitForInput, Call )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     grid::ButtonEvent event;
     EXPECT_CALL( mockButtonInput, waitForEvent( testing::_ ) ).Times( 1 );
-    grid.waitForInput( event );
+    grid.waitForInput( &event );
 }
 
 TEST( discardPendingInput, Call )
@@ -46,7 +46,7 @@ TEST( discardPendingInput, Call )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     EXPECT_CALL( mockButtonInput, discardPendingEvents ).Times( 1 );
     grid.discardPendingInput();
@@ -58,7 +58,7 @@ TEST( getLedColor, CheckDefaultValues )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     for (uint8_t x = 0; x < 10; x++)
     {
@@ -75,7 +75,7 @@ TEST( setLed, DefaultLightingType )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     Coordinates coords = { 2, 2 };
     Color color = { 9, 9, 9 };
@@ -92,7 +92,7 @@ TEST( setLed, OutOfBounds )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     Coordinates coords = { 11, 11 };
     Color color = { 8, 8, 8 };
@@ -109,7 +109,7 @@ TEST( setLed, Flashing )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     Coordinates coords = { 3, 3 };
     Color color = { 9, 02, 10 };
@@ -134,7 +134,7 @@ TEST( setLed, Pulsing )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     Coordinates coords = { 7, 7 };
     Color color = { 7, 7, 7 };
@@ -157,7 +157,7 @@ TEST( turnAllLedsOff, Call )
     grid::MockLedOutput mockLedOutput;
     grid::MockFlashingLeds mockFlashingLeds;
     grid::MockPulsingLeds mockPulsingLeds;
-    grid::Grid grid( mockButtonInput, mockLedOutput, mockFlashingLeds, mockPulsingLeds );
+    grid::Grid grid( &mockButtonInput, &mockLedOutput, &mockFlashingLeds, &mockPulsingLeds );
 
     Color color = { 19, 20, 21 };
 

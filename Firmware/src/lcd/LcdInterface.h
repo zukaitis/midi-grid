@@ -40,18 +40,18 @@ public:
     virtual ~LcdInterface() = default;
 
     virtual void clear() = 0;
-    virtual void clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2 ) = 0;
-    virtual void displayImage( const uint8_t x, const uint8_t y, const Image image) = 0;
-    virtual void displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position ) = 0;
+    virtual void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) = 0;
+    virtual void displayImage( uint8_t x, uint8_t y, const Image& image) = 0;
+    virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
-    virtual void print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification = Justification::LEFT ) = 0;
+    virtual void print( const char* string, uint8_t x, uint8_t y, Justification justification = Justification::LEFT ) = 0;
     //virtual void print( const char* const string, const uint8_t y, const Justification justification ) = 0;
-    virtual void printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification = Justification::LEFT ) = 0;
-    virtual void setBacklightIntensity( const uint8_t intensity ) = 0;
+    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification = Justification::LEFT ) = 0;
+    virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 
     virtual uint16_t right() const = 0;
     virtual uint8_t maximumBacklightIntensity() const = 0;
-    virtual uint8_t horizontalCenter() const = 0; // TODO: remove
+    virtual uint8_t horizontalCenter() const = 0; // TODO(unknown): remove
 };
 
-}
+}  // namespace lcd

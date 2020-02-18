@@ -23,9 +23,9 @@ typedef etl::array<bool, NUMBER_OF_BUTTONS> InputArray;
 class AdditionalButtons : private freertos::Thread, public AdditionalButtonsInterface
 {
 public:
-    AdditionalButtons( hardware::grid::InputInterface& gridDriver );
+    explicit AdditionalButtons( hardware::grid::InputInterface* gridDriver );
 
-    bool waitForInput( Event& event ) override;
+    bool waitForInput( Event* event ) override;
     void discardPendingInput() override;
 
 private:
@@ -35,9 +35,10 @@ private:
 
     hardware::grid::InputInterface& gridDriver_;
     freertos::Queue events_;
+    freertos::BinarySemaphore changesAvailable_;
 
     etl::array<InputArray, 2> input_;
     InputArray registeredInput_;
 };
 
-}
+}  // namespace additional_buttons

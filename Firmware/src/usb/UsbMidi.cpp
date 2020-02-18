@@ -6,6 +6,8 @@
 #include "usbd_midi.h"
 #include "usb/usbd_desc.h"
 
+#include <etl/array.h>
+
 extern "C" {
 extern uint8_t USBD_MIDI_SendData (USBD_HandleTypeDef *pdev, uint8_t *pBuf, uint16_t length);
 extern void USBD_MIDI_SendPacket(void);
@@ -36,9 +38,9 @@ UsbMidi::~UsbMidi()
 {
 }
 
-bool UsbMidi::waitForPacket( MidiPacket& packet )
+bool UsbMidi::waitForPacket( MidiPacket* packet )
 {
-    const bool packetAvailable = receivedMessages.Dequeue( &packet ); // block until event
+    const bool packetAvailable = receivedMessages.Dequeue( packet ); // block until event
     return packetAvailable;
 }
 
@@ -60,43 +62,43 @@ void UsbMidi::discardAllPendingPackets()
 
 void UsbMidi::sendControlChange( const uint8_t channel, const uint8_t control, const uint8_t value )
 {
-    static uint8_t buffer[kMidiPacketSize];
+    static etl::array<uint8_t, 4> buffer;
     buffer[0] = kControlChange;
-    buffer[1] = (kControlChange << 4) | channel;
+    buffer[1] = (kControlChange << 4U) | channel;
     buffer[2] = kControlMask & control;
     buffer[3] = kControlValueMask & value;
 
-    transmitData( buffer, kMidiPacketSize );
+    transmitData( &buffer[0], kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
 void UsbMidi::sendNoteOn( const uint8_t channel, const uint8_t note, const uint8_t velocity )
 {
-    static uint8_t buffer[kMidiPacketSize];
+    static etl::array<uint8_t, 4> buffer;
     buffer[0] = kNoteOn;
-    buffer[1] = (kNoteOn << 4) | channel;
+    buffer[1] = (kNoteOn << 4U) | channel;
     buffer[2] = kNoteMask & note;
     buffer[3] = kVelocityMask & velocity;
 
-    transmitData( buffer, kMidiPacketSize );
+    transmitData( &buffer[0], kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
 void UsbMidi::sendNoteOff( const uint8_t channel, const uint8_t note )
 {
-    static uint8_t buffer[kMidiPacketSize];
+    static etl::array<uint8_t, 4> buffer;
     buffer[0] = kNoteOff;
     buffer[1] = (kNoteOff << 4) | channel;
     buffer[2] = kNoteMask & note;
     buffer[3] = 0;
 
-    transmitData( buffer, kMidiPacketSize );
+    transmitData( &buffer[0], kMidiPacketSize );
     USBD_MIDI_SendPacket();
 }
 
 void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t length )
 {
-    static uint8_t buffer[kMidiPacketSize];
+    static etl::array<uint8_t, 4> buffer;
     uint8_t dataIndex = 0;
     while (dataIndex < length)
     {
@@ -128,7 +130,7 @@ void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t len
                 buffer[3] = data[dataIndex++];
                 break;
         }
-        transmitData( buffer, kMidiPacketSize );
+        transmitData( &buffer[0], kMidiPacketSize );
         USBD_MIDI_SendPacket();
     }
 }

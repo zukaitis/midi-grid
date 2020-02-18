@@ -12,9 +12,9 @@ namespace grid
 static const uint32_t PULSE_STEP_INTERVAL = 67; // 1000ms / 15 = 66.6... ms
 static const uint8_t PULSE_STEP_COUNT = 15;
 
-PulsingLeds::PulsingLeds( LedOutputInterface& ledOutput ):
+PulsingLeds::PulsingLeds( LedOutputInterface* ledOutput ):
         Thread( "PulsingLeds", kPulsingLeds.stackDepth, kPulsingLeds.priority ),
-        ledOutput_( ledOutput ),
+        ledOutput_( *ledOutput ),
         led_( 0 )
 {
     Thread::Start();

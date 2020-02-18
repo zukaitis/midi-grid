@@ -1,5 +1,4 @@
-#ifndef SYSTEM_HPP_
-#define SYSTEM_HPP_
+#pragma once
 
 namespace mcu
 {
@@ -19,6 +18,4 @@ private:
     void configureSystemClock();
 };
 
-} // namespace hal
-
-#endif // SYSTEM_HPP_
+}  // namespace mcu

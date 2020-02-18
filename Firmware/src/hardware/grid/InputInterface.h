@@ -6,6 +6,7 @@
 namespace freertos
 {
     class Thread;
+    class BinarySemaphore;
 }
 
 namespace hardware
@@ -24,6 +25,7 @@ public:
     virtual ~InputInterface() = default;
 
     virtual void addThreadToNotify( freertos::Thread* const thread ) = 0;
+    virtual void addSemaphoreToGive( freertos::BinarySemaphore* semaphore ) = 0;
     virtual const InputDebouncingBuffers& getInputDebouncingBuffers() const = 0;
     virtual const InputBuffer& getStableInputBuffer() const = 0;
 };

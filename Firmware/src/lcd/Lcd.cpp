@@ -12,11 +12,11 @@
 namespace lcd
 {
 
-static const Image digitBig[10] = {
-        { DIGITS_BIG[0], 12, 16 }, { DIGITS_BIG[1], 12, 16 }, { DIGITS_BIG[2], 12, 16 }, { DIGITS_BIG[3], 12, 16 },
-        { DIGITS_BIG[4], 12, 16 }, { DIGITS_BIG[5], 12, 16 }, { DIGITS_BIG[6], 12, 16 }, { DIGITS_BIG[7], 12, 16 },
-        { DIGITS_BIG[8], 12, 16 }, { DIGITS_BIG[9], 12, 16 }
-};
+static const etl::array<Image, 10> digitBig = {{
+        { &DIGITS_BIG[0][0], 12, 16 }, { &DIGITS_BIG[1][0], 12, 16 }, { &DIGITS_BIG[2][0], 12, 16 }, { &DIGITS_BIG[3][0], 12, 16 },
+        { &DIGITS_BIG[4][0], 12, 16 }, { &DIGITS_BIG[5][0], 12, 16 }, { &DIGITS_BIG[6][0], 12, 16 }, { &DIGITS_BIG[7][0], 12, 16 },
+        { &DIGITS_BIG[8][0], 12, 16 }, { &DIGITS_BIG[9][0], 12, 16 }
+}};
 
 Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
     driver_( driver ),
@@ -38,14 +38,14 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
     driver_.clearArea( x1, y1, x1, x2 );
 }
 
-void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image image )
+void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image& image )
 {
     driver_.displayImage( x, y, image );
 }
 
 void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
 {
-    const Image arc = { progressArcArray[position], 38, 32 };
+    const Image arc = { &progressArcArray.at(position)[0], 38, 32 };
     displayImage( x, y, arc );
 }
 

@@ -8,14 +8,15 @@ namespace additional_buttons
 
 static const etl::array<uint32_t, 2> BUTTON_MASK = {0x2000, 0x0400};
 
-AdditionalButtons::AdditionalButtons( hardware::grid::InputInterface& gridDriver ) :
+AdditionalButtons::AdditionalButtons( hardware::grid::InputInterface* gridDriver ) :
         Thread( "AdditionalButtons", kAdditionalButtons.stackDepth, kAdditionalButtons.priority ),
-        gridDriver_( gridDriver ),
+        gridDriver_( *gridDriver ),
         events_( freertos::Queue( 3, sizeof( Event ) ) )
 {
     registeredInput_.fill( false );
 
-    gridDriver_.addThreadToNotify( this );
+    // gridDriver_.addThreadToNotify( this );
+    gridDriver_.addSemaphoreToGive( &changesAvailable_ );
     Thread::Start();
 }
 
@@ -24,9 +25,9 @@ void AdditionalButtons::discardPendingInput()
     events_.Flush();
 }
 
-bool AdditionalButtons::waitForInput( Event& event )
+bool AdditionalButtons::waitForInput( Event* event )
 {
-    const bool eventAvailable = events_.Dequeue( &event );
+    const bool eventAvailable = events_.Dequeue( event );
     return eventAvailable;
 }
 
@@ -44,7 +45,8 @@ void AdditionalButtons::copyInput()
 
 void AdditionalButtons::Run()
 {
-    Thread::WaitForNotification(); // blocking until grid driver gives notification
+    // Thread::WaitForNotification(); // blocking until grid driver gives notification
+    changesAvailable_.Take();
 
     copyInput();
 
@@ -59,7 +61,11 @@ void AdditionalButtons::Run()
                     .action = input ? ButtonAction::PRESSED : ButtonAction::RELEASED,
                     .button = static_cast<Button>(buttonIndex) };
                 registeredInput_[buttonIndex] = input;
-                events_.Enqueue( &event );
+
+                if (false == events_.IsFull())
+                {
+                    events_.Enqueue( &event );
+                }
             }
         }
     }

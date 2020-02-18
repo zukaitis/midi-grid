@@ -13,7 +13,7 @@
 namespace application
 {
 
-static const lcd::Image usbLogo = { usbLogoArray, 60, 24 };
+static const lcd::Image usbLogo = { &usbLogoArray[0], 60, 24 };
 
 GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
@@ -40,7 +40,7 @@ void GridTest::run( ApplicationThread& thread )
     enableMidiInputAvailableHandler();
 }
 
-void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event event )
+void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event& event )
 {
     if ((additional_buttons::Button::internalMenu == event.button) && (ButtonAction::PRESSED == event.action))
     {
@@ -48,7 +48,7 @@ void GridTest::handleAdditionalButtonEvent( const additional_buttons::Event even
     }
 }
 
-void GridTest::handleGridButtonEvent( const grid::ButtonEvent event )
+void GridTest::handleGridButtonEvent( const grid::ButtonEvent& event )
 {
     Color color( 0, 0, 0 );
     if (ButtonAction::PRESSED == event.action)

@@ -16,7 +16,7 @@ class LedOutputInterface;
 class FlashingLeds: public FlashingLedsInterface, private freertos::Thread
 {
 public:
-    FlashingLeds( LedOutputInterface& ledOutput );
+    explicit FlashingLeds( LedOutputInterface* ledOutput );
 
     void add( const Coordinates& coordinates, const FlashingColors& colors ) override;
     void remove( const Coordinates& coordinates ) override;
@@ -35,4 +35,4 @@ private:
     etl::vector<FlashingLed, grid::NUMBER_OF_LEDS> led_;
 };
 
-}
+}  // namespace grid

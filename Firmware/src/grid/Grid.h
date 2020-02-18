@@ -14,17 +14,17 @@ class PulsingLedsInterface;
 class Grid : public GridInterface
 {
 public:
-    Grid( ButtonInputInterface& buttonInput,
-        LedOutputInterface& ledOutput,
-        FlashingLedsInterface& flashingLeds,
-        PulsingLedsInterface& pulsingLeds );
+    Grid( ButtonInputInterface* buttonInput,
+        LedOutputInterface* ledOutput,
+        FlashingLedsInterface* flashingLeds,
+        PulsingLedsInterface* pulsingLeds );
 
-    bool waitForInput( ButtonEvent& event ) override;
+    bool waitForInput( ButtonEvent* event ) override;
     void discardPendingInput() override;
 
     Color getLedColor( const Coordinates& coordinates ) const override;
 
-    void setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType = LedLightingType::LIGHT ) override;
+    void setLed( const Coordinates& coordinates, const Color& color, LedLightingType lightingType = LedLightingType::LIGHT ) override;
 
     void turnAllLedsOff() override;
 
@@ -43,4 +43,4 @@ private:
     etl::array<etl::array<Led, numberOfRows>, numberOfColumns> led_;
 };
 
-}
+}  // namespace grid

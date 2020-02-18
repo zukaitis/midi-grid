@@ -21,4 +21,4 @@ public:
     virtual void removeAll() = 0;
 };
 
-}
+}  // namespace grid

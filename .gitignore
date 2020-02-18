@@ -2,8 +2,9 @@
 *.o
 *.ninja_deps
 *.ninja_log
+*.directory
+*.clangd
 *.kicad_pcb-bak
-.directory
 Firmware/midi-grid.code-workspace
 Firmware/output/*
 Firmware/unit_tests/objects/
