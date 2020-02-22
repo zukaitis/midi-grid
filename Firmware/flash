@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Flashes selected firmware file to the device
+
+readonly device_name='midi-grid'
+readonly script_dir=$(dirname $(readlink -f $0))
+readonly dfuse_tool=${script_dir}/submodules/dfuse-tool/dfuse-tool.py
+
+file="${1}"
+
+if [[ "${file}" == '' ]]; then
+    echo "File not specified"
+    exit 1
+fi
+
+if [[ ! -f "${file}" ]]; then
+    echo "${file}: no such file"
+    exit 1
+fi
+
+if [[ ! "${file}" == *".dfu" ]]; then
+    echo "Only .dfu files are supported"
+    exit 1
+fi
+
+sendmidi dev ${device_name} on 88 101 # first midi message might be ignored
+sendmidi dev ${device_name} syx 00h 20h 29h 00h 71h 00h 69h # reset to bootloader SysEx message
+
+sleep 1 # wait for the device to restart
+
+dfu-util --alt 0 --download ${file} # flash firmware file
+python2 ${dfuse_tool} --leave # leave DFU mode and jump to main aplication

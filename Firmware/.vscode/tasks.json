@@ -6,7 +6,7 @@
         {
             "label": "Flash using DFU",
             "type": "shell",
-            "command": "dfu-util --alt 0 --download output/midi-grid.dfu",
+            "command": "./flash output/midi-grid.dfu",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared",

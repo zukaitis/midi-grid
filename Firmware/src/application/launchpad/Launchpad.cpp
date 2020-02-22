@@ -4,6 +4,7 @@
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "rotary_controls/RotaryControlsInterface.h"
 #include "lcd/LcdInterface.h"
+#include "system/System.hpp"
 
 #include <cstring>
 #include <etl/array.h>
@@ -25,6 +26,9 @@ static const SystemExclussiveMessageHeader kStandardSystemExclussiveMessageHeade
 static const etl::string_view standardSystemExclussiveMessageHeaderView(
     kStandardSystemExclussiveMessageHeader );
 static const uint8_t kStandardSystemExclussiveMessageMinimumLength = 8;
+
+static const etl::string<9> systemExclussiveBootloaderMessage = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x00, 0x71, 0x00, 0x69, static_cast<char>(0xF7)};
+static const etl::string_view systemExclussiveBootloaderMessageView( systemExclussiveBootloaderMessage );
 
 enum StandardSystemExclussiveMessageType
 {
@@ -108,11 +112,12 @@ static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
 Launchpad::Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi ) :
+        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi, mcu::System* system ) :
         Application( applicationController ),
-        gui_( LcdGui( *this, lcd ) ),
+        gui_( *this, lcd ),
         grid_( grid ),
         usbMidi_( usbMidi ),
+        system_( *system ),
         applicationEnded_( true ),
         mode_( Launchpad95Mode_UNKNOWN ),
         submode_( Launchpad95Submode_DEFAULT ),
@@ -536,6 +541,16 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
                     break;
                 default:
                     break;
+            }
+        }
+        else
+        {
+            const etl::string_view messageView( message.begin(), systemExclussiveBootloaderMessage.size() );
+
+            if (messageView == systemExclussiveBootloaderMessageView)
+            {
+                // reset into DFU bootloader
+                system_.resetIntoBootloader();
             }
         }
     }

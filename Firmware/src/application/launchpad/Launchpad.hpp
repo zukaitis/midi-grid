@@ -27,6 +27,11 @@ namespace midi
     class UsbMidi;
 }
 
+namespace mcu
+{
+    class System;
+}
+
 namespace application
 {
 
@@ -78,7 +83,7 @@ public:
     friend class LcdGui; // allow GUI to read info
 
     Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi );
+        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi, mcu::System* system );
 
 private:
     void run( ApplicationThread& thread );
@@ -102,6 +107,7 @@ private:
     LcdGui gui_;
     grid::GridInterface& grid_;
     midi::UsbMidi& usbMidi_;
+    mcu::System& system_;
 
     bool applicationEnded_;
     Launchpad95Mode mode_;

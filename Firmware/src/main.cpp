@@ -30,8 +30,7 @@ Main::Main() :
         gridTest_( application::GridTest( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd(), usbMidi_ ) ),
         internalMenu_( application::InternalMenu( applicationController_, gridContainer_.getGrid(), additionalButtons_,
             lcdContainer_.getLcd(), system_ ) ),
-        launchpad_( application::launchpad::Launchpad(
-            applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_ ) ),
+        launchpad_( applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_, &system_ ),
         snake_( application::Snake( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() ) )
 {
     etl::array<application::Application*, application::kNumberOfApplications> applicationList = {
