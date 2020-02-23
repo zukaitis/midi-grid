@@ -90,7 +90,7 @@ const InputDebouncingBuffers& GridDriver::getInputDebouncingBuffers() const
 
 const InputBuffer& GridDriver::getStableInputBuffer() const
 {
-    return input_[stableBufferIndex_];
+    return input_.at( stableBufferIndex_ );
 }
 
 void GridDriver::setRedOutput( const Coordinates& coords, const std::uint32_t value )
@@ -113,6 +113,14 @@ void GridDriver::setAllOff()
     redOutput_ = {};
     greenOutput_ = {};
     blueOutput_ = {};
+}
+
+void GridDriver::injectButtonPress( const Coordinates& coords )
+{
+    input_.at( 0 ).at( coords.x ) |= (1U << coords.y);
+    input_.at( 1 ).at( coords.x ) |= (1U << coords.y);
+
+    notifyThreads();
 }
 
 void GridDriver::initialize() const

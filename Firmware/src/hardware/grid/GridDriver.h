@@ -2,6 +2,7 @@
 
 #include "hardware/grid/InputInterface.h"
 #include "hardware/grid/OutputInterface.h"
+#include "hardware/grid/TestingInterface.h"
 
 #include <etl/array.h>
 #include <etl/vector.h>
@@ -12,7 +13,7 @@ namespace hardware
 namespace grid
 {
 
-class GridDriver : public InputInterface, public OutputInterface
+class GridDriver : public InputInterface, public OutputInterface, public TestingInterface
 {
 public:
     GridDriver();
@@ -23,11 +24,13 @@ public:
     const InputDebouncingBuffers& getInputDebouncingBuffers() const override;
     const InputBuffer& getStableInputBuffer() const override;
 
-    void setRedOutput( const Coordinates& coords, const std::uint32_t value ) override;
-    void setGreenOutput( const Coordinates& coords, const std::uint32_t value ) override;
-    void setBlueOutput( const Coordinates& coords, const std::uint32_t value ) override;
+    void setRedOutput( const Coordinates& coords, uint32_t value ) override;
+    void setGreenOutput( const Coordinates& coords, uint32_t value ) override;
+    void setBlueOutput( const Coordinates& coords, uint32_t value ) override;
 
     void setAllOff() override;
+
+    void injectButtonPress( const Coordinates& coords ) override;
 
     void initialize() const;
     void start() const;

@@ -8,8 +8,6 @@
 namespace grid
 {
 
-Coordinates GRID_LIMITS = { numberOfColumns, numberOfRows };
-
 Grid::Grid( ButtonInputInterface* buttonInput,
     LedOutputInterface* ledOutput,
     FlashingLedsInterface* flashingLeds,
@@ -39,7 +37,7 @@ Color Grid::getLedColor( const Coordinates& coordinates ) const
 
 void Grid::setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType )
 {
-    if (coordinates < GRID_LIMITS)
+    if (coordinates < gridLimits)
     {
         // remove led from flashing or pulsing list if it's in that list and proceed with setting the led
         if (LedLightingType::FLASH == led_[coordinates.x][coordinates.y].lightingType)

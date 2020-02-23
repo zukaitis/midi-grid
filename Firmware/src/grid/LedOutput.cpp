@@ -74,4 +74,4 @@ Coordinates LedOutput::calculateHardwareCoordinates( const Coordinates& coordina
     return hardwareCoordinates;
 }
 
-}
+}  // namespace grid

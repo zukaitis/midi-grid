@@ -18,6 +18,7 @@
 #include "application/snake/Snake.hpp"
 
 #include "system/GlobalInterrupts.hpp"
+#include "testing/Testing.h"
 #include "usb/UsbMidi.hpp"
 
 #include <freertos/thread.hpp>
@@ -45,6 +46,7 @@ private:
     hardware::lcd::Spi lcdSpi_;
     hardware::lcd::BacklightDriver backlightDriver_;
     lcd::LcdContainer lcdContainer_;
+    testing::Testing testing_;
     application::ApplicationController applicationController_;
     application::Startup startup_;
     application::GridTest gridTest_;

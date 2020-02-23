@@ -24,11 +24,11 @@ class InputInterface
 public:
     virtual ~InputInterface() = default;
 
-    virtual void addThreadToNotify( freertos::Thread* const thread ) = 0;
+    virtual void addThreadToNotify( freertos::Thread* thread ) = 0;
     virtual void addSemaphoreToGive( freertos::BinarySemaphore* semaphore ) = 0;
     virtual const InputDebouncingBuffers& getInputDebouncingBuffers() const = 0;
     virtual const InputBuffer& getStableInputBuffer() const = 0;
 };
 
-}
-}
+}  // namespace grid
+}  // namespace hardware

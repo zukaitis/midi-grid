@@ -10,6 +10,7 @@ namespace grid
 
 static const uint8_t numberOfColumns = 10;
 static const uint8_t numberOfRows = 8;
+static const Coordinates gridLimits = { numberOfColumns, numberOfRows };
 static const uint8_t NUMBER_OF_LEDS = numberOfColumns * numberOfRows;
 
 namespace button

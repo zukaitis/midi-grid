@@ -89,6 +89,7 @@ cxx_source_files:
 - src/lcd/84x48_mono/LcdContainer.cpp
 - src/lcd/84x48_mono/Pcd8544.cpp
 - src/rotary_controls/RotaryControls.cpp
+- src/testing/Testing.cpp
 - src/usb/UsbMidi.cpp
 - src/main.cpp
 - src/system/GlobalInterrupts.cpp

@@ -64,7 +64,7 @@ void ButtonInput::Run()
                         .action = static_cast<ButtonAction>((inputBuffer[x] >> y) & 0x01),
                         .coordinates = calculatePhysicalCoordinates({ x, y }) };
 
-                    registeredInputBuffer_[x] ^= (1 << y); // toggle bit that was registered
+                    registeredInputBuffer_[x] ^= (1U << y); // toggle bit that was registered
 
                     if (false == events_.IsFull())
                     {
