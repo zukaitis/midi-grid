@@ -68,6 +68,11 @@ void Grid::setLed( const Coordinates& coordinates, const Color& color, const Led
     }
 }
 
+void Grid::setLed( const Coordinates& coordinates, const Color& color )
+{
+    setLed( coordinates, color, LedLightingType::LIGHT );
+}
+
 void Grid::turnAllLedsOff()
 {
     ledOutput_.setAllOff();
