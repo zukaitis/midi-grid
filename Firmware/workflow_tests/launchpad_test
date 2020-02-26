@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# Tests functionality of Launchpad mode
+
+# test sequence:
+
+# 1. send flash and pulse led commands to all side buttons
+# 2. send whole palette of colors to grid buttons
+# 3. send "clear all buttons" SysEx
+# 4. send few "simulate button press" SysEx messages
+# 5. receive and check notes for every press
+# 5. send some message, which would trigger SysEx transmission from the device
+
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[0;33m'
+readonly NC='\033[0m' # No Color
+
+init ()
+{
+    echo "Setting the device to Launchpad mode"
+
+    sendmidi dev ${device_name} on 88 101 # first midi message might be ignored
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+}
+
+pulse_leds ()
+{
+    echo "Setting LEDs to pulse"
+    for note in {19..89..10}
+    do
+        sendmidi dev ${device_name} ch 3 on ${note} 53
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+    done
+}
+
+flash_leds ()
+{
+    echo "Setting LEDs to flash"
+    for control in {104..111}
+    do
+        sendmidi dev ${device_name} ch 2 cc ${control} 9
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+    done
+}
+
+light_palette ()
+{
+    echo "Testing color palette"
+    color=0
+    for i in {1..2}
+    do
+        note=11
+        while [[ ${note} -lt 89 ]]
+        do
+            sendmidi dev ${device_name} on ${note} ${color}
+            ((color++))
+            ((note++))
+            if [[ $((note % 10)) -eq 9 ]]
+            then
+                ((note+=2))
+            fi
+        done
+    done
+}
+
+readonly device_name='midi-grid'
+
+step=(
+    "init"
+    "pulse_leds"
+    "flash_leds"
+    "light_palette"
+)
+
+step_index=0
+for current_step in "${step[@]}"
+do
+    ((step_index++))
+    printf "${YELLOW}[${step_index}/${#step[@]}]${NC} "
+    $current_step
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}Test failed on step ${step_index}${NC}"
+        exit 1
+    fi
+done
+
+echo -e "${GREEN}Test completed successfully${NC}"

@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Flash using DFU",
+            "label": "Flash",
             "type": "shell",
             "command": "./flash output/midi-grid.dfu",
             "presentation": {
@@ -60,6 +60,18 @@
             "label": "Rerun UTs",
             "type": "shell",
             "command": "rm -rf unit_tests/objects && unit_tests/run -co",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "./workflow_tests/launchpad_test",
             "group": "test",
             "presentation": {
                 "reveal": "always",
