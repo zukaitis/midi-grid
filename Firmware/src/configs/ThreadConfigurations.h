@@ -1,7 +1,6 @@
-#ifndef THREAD_CONFIGURATIONS_H_
-#define THREAD_CONFIGURATIONS_H_
+#pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 struct ThreadConfiguration
 {
@@ -19,5 +18,3 @@ static const ThreadConfiguration kFlashingLeds = { .stackDepth = 256, .priority 
 static const ThreadConfiguration kPulsingLeds = { .stackDepth = 256, .priority = 2 };
 static const ThreadConfiguration kLcd = { .stackDepth = 256, .priority = 2 };
 static const ThreadConfiguration kBacklight = { .stackDepth = 256, .priority = 2 };
-
-#endif // THREAD_CONFIGURATIONS_H_

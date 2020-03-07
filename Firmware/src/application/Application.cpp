@@ -158,14 +158,14 @@ void ApplicationController::initialize( const etl::array<Application*, kNumberOf
     application_ = applicationList;
 
     currentlyOpenApplication_ = application_.at( ApplicationIndex_STARTUP );
-    Start();
+    Thread::Start();
 }
 
 void ApplicationController::selectApplication( const ApplicationIndex applicationIndex )
 {
     Application* applicationBeingClosed = currentlyOpenApplication_;
-    currentlyOpenApplication_ = application_[applicationIndex];
-    application_[ApplicationIndex_PREVIOUS] = applicationBeingClosed;
+    currentlyOpenApplication_ = application_.at( applicationIndex );
+    application_.at( ApplicationIndex_PREVIOUS ) = applicationBeingClosed;
     // Notify();
     notificationReplacement_.Give();
 }
@@ -176,7 +176,7 @@ void ApplicationController::Run()
     static bool firstCall = true;
     if (firstCall)
     {
-        currentlyOpenApplication_ = application_[ApplicationIndex_STARTUP];
+        currentlyOpenApplication_ = application_.at( ApplicationIndex_STARTUP );
         applicationThread_.enable();
         firstCall = false;
     }

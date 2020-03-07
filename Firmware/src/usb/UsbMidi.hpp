@@ -17,12 +17,6 @@ struct MidiPacket
     etl::array<char, 3> data;
 };
 
-union MidiInput
-{
-    uint32_t input;
-    MidiPacket packet;
-};
-
 enum CodeIndexNumber : uint8_t
 {
     kMiscellaneousFunctionCodes = 0x00,
@@ -55,30 +49,30 @@ public:
     UsbMidi();
     ~UsbMidi();
 
-    bool waitForPacket( MidiPacket* packet );
-    bool waitUntilPacketIsAvailable();
-    bool isPacketAvailable();
-    void discardAllPendingPackets();
+    static bool waitForPacket( MidiPacket* packet );
+    static bool waitUntilPacketIsAvailable();
+    static bool isPacketAvailable();
+    static void discardAllPendingPackets();
 
-    void sendControlChange( uint8_t channel, uint8_t control, uint8_t value );
-    void sendNoteOn( uint8_t channel, uint8_t note, uint8_t velocity );
-    void sendNoteOff( uint8_t channel, uint8_t note );
-    void sendSystemExclussive( const uint8_t* data, uint8_t length );
+    static void sendControlChange( uint8_t channel, uint8_t control, uint8_t value );
+    static void sendNoteOn( uint8_t channel, uint8_t note, uint8_t velocity );
+    static void sendNoteOff( uint8_t channel, uint8_t note );
+    static void sendSystemExclussive( const uint8_t* data, uint8_t length );
 
     static uint16_t receiveData( uint8_t* message, uint16_t length );
     static uint16_t transmitData( uint8_t* message, uint16_t length );
 
-    inline bool waitForInput( bool* dummy )
+    static inline bool waitForInput( bool* /*dummy*/ )
     {
         return waitUntilPacketIsAvailable();
     };
 
-    inline bool waitForInput( MidiPacket* packet )
+    static inline bool waitForInput( MidiPacket* packet )
     {
         return waitForPacket( packet );
     };
 
-    inline void discardPendingInput()
+    static inline void discardPendingInput()
     {
         discardAllPendingPackets();
     };

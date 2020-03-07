@@ -22,13 +22,9 @@ etl::array<uint32_t, 32> BacklightDriver::outputBuffer_ = {};
 static DMA_HandleTypeDef dmaConfiguration;
 static SPI_HandleTypeDef spiConfiguration;
 
-BacklightDriver::BacklightDriver()
-{
-}
+BacklightDriver::BacklightDriver() = default;
 
-BacklightDriver::~BacklightDriver()
-{
-}
+BacklightDriver::~BacklightDriver() = default;
 
 void BacklightDriver::initialize()
 {

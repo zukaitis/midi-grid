@@ -43,9 +43,9 @@ void ButtonInput::Run()
     // Thread::WaitForNotification(); // blocking until grid driver gives notification
     changesAvailable_.Take();
 
-    globalInterrupts_.disable();
+    // globalInterrupts_.disable();
     copyInputBuffers();
-    globalInterrupts_.enable();
+    // globalInterrupts_.enable();
 
     InputBuffer debouncingBuffer;
     fillDebouncingBuffer( debouncingBuffer );

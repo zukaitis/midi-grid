@@ -1,18 +1,19 @@
 #include "system/GlobalInterrupts.hpp"
 
-#include "stm32f4xx_hal.h"
+#include "freertos/critical.hpp"
 
 namespace mcu
 {
 
 void GlobalInterrupts::enable()
 {
-    __enable_irq();
+    freertos::CriticalSection::EnterFromISR();
 }
 
 void GlobalInterrupts::disable()
 {
-    __disable_irq();
+    BaseType_t unused;
+    freertos::CriticalSection::ExitFromISR( unused );
 }
 
-} // namespace hal
+}  // namespace mcu

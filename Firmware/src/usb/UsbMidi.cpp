@@ -28,15 +28,11 @@ static const uint8_t kVelocityMask = 0x7F;
 static const uint8_t kControlMask = 0x7F;
 static const uint8_t kControlValueMask = 0x7F;
 
-freertos::Queue UsbMidi::receivedMessages = freertos::Queue( 256, sizeof(uint32_t) );
+freertos::Queue UsbMidi::receivedMessages = freertos::Queue( 256, sizeof( MidiPacket ) );
 
-UsbMidi::UsbMidi()
-{
-}
+UsbMidi::UsbMidi() = default;
 
-UsbMidi::~UsbMidi()
-{
-}
+UsbMidi::~UsbMidi() = default;
 
 bool UsbMidi::waitForPacket( MidiPacket* packet )
 {
@@ -46,8 +42,8 @@ bool UsbMidi::waitForPacket( MidiPacket* packet )
 
 bool UsbMidi::waitUntilPacketIsAvailable()
 {
-    MidiInput unused;
-    return receivedMessages.Peek( &unused.input );
+    MidiPacket unused = {};
+    return receivedMessages.Peek( &unused );
 }
 
 bool UsbMidi::isPacketAvailable()
@@ -137,15 +133,19 @@ void UsbMidi::sendSystemExclussive( const uint8_t* const data, const uint8_t len
 
 uint16_t UsbMidi::receiveData( uint8_t* const message, const uint16_t length )
 {
-    const uint16_t numberOfMessages = length / kMidiPacketSize;
+    const uint16_t numberOfPackets = length / kMidiPacketSize;
     const uint16_t lostBytes = length % kMidiPacketSize;
     if (0 == lostBytes)
     {
-        for(uint16_t count = 0; count < numberOfMessages; count++)
+        for (uint16_t packetIndex = 0; packetIndex < numberOfPackets; packetIndex++)
         {
-            //b4arrq_push(&rxq,((uint32_t *)message)+count);
+            //b4arrq_push(&rxq,((uint32_t *)message)+packetIndex);
             BaseType_t unused;
-            receivedMessages.EnqueueFromISR( reinterpret_cast<uint32_t*>(message + count*kMidiPacketSize), &unused );
+            MidiPacket packet = { message[4*packetIndex], {
+                message[4*packetIndex+1],
+                message[4*packetIndex+2],
+                message[4*packetIndex+3] } };
+            receivedMessages.EnqueueFromISR( &packet, &unused );
         }
     }
     return 0;

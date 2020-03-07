@@ -31,8 +31,8 @@ Main::Main() :
         gridTest_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd(), usbMidi_ ),
         internalMenu_( applicationController_, gridContainer_.getGrid(), additionalButtons_,
             lcdContainer_.getLcd(), system_ ),
-        launchpad_( applicationController_, gridContainer_.getGrid(), additionalButtons_, rotaryControls_, lcdContainer_.getLcd(), usbMidi_,
-            &system_ ),
+        launchpad_( &applicationController_, &gridContainer_.getGrid(), &additionalButtons_, &rotaryControls_, &lcdContainer_.getLcd(),
+            &usbMidi_, &system_ ),
         snake_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() )
 {
     etl::array<application::Application*, application::kNumberOfApplications> applicationList = {
@@ -49,7 +49,7 @@ Main::Main() :
 
 void Main::run()
 {
-    globalInterrupts_.disable();
+    // globalInterrupts_.disable();
     system_.initialize();
 
     //applicationController_.selectApplication( application::ApplicationIndex_STARTUP );
@@ -58,7 +58,16 @@ void Main::run()
 
 extern "C" void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
 {
-    volatile uint32_t i;
+    volatile uint32_t i = 0;
+    while (true)
+    {
+        i++;
+    }
+}
+
+extern "C" void vApplicationMallocFailedHook()
+{
+    volatile uint32_t i = 0;
     while (true)
     {
         i++;

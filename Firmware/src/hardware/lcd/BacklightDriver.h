@@ -21,9 +21,9 @@ public:
     uint8_t getMaximumIntensity() const override;
 
 private:
-    void initializeDma();
-    void initializeGpio();
-    void initializeSpi();
+    static void initializeDma();
+    static void initializeGpio();
+    static void initializeSpi();
 
     static etl::array<uint32_t, 32> outputBuffer_;
 

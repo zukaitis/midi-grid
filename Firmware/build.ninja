@@ -28,14 +28,15 @@ c_flags = --target=arm-none-eabi -O0 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
     -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS
-inc_flags = -Idrivers/CMSIS/Include $
-    -Idrivers/CMSIS/Device/ST/STM32F4xx/Include $
-    -Idrivers/STM32F4xx_HAL_Driver/Inc $
+inc_flags = -Idrivers/CMSIS/Device/ST/STM32F4xx/Include $
+    -Idrivers/CMSIS/Include -Idrivers/STM32F4xx_HAL_Driver/Inc $
+    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy $
     -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
-    -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isubmodules/etl/include $
-    -Isubmodules/FreeRTOS-Kernel/include $
+    -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/84x48_mono $
+    -Isubmodules/etl/include $
     -Isubmodules/freertos-addons/c++/Source/include $
-    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy -Isrc/lcd/84x48_mono $
+    -Isubmodules/FreeRTOS-Kernel/include $
+    -Isubmodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/ $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
@@ -143,8 +144,6 @@ build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o: $
     cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
 build output/middlewares/USBMIDI/Src/usbd_midi.o: cc $
     middlewares/USBMIDI/Src/usbd_midi.c
-build output/src/configs/heap_2.o: cc src/configs/heap_2.c
-build output/src/configs/port.o: cc src/configs/port.c
 build output/src/usb/usbd_conf.o: cc src/usb/usbd_conf.c
 build output/src/usb/usbd_desc.o: cc src/usb/usbd_desc.c
 build output/src/usb/usb_device.o: cc src/usb/usb_device.c
@@ -164,6 +163,10 @@ build output/submodules/FreeRTOS-Kernel/tasks.o: cc $
     submodules/FreeRTOS-Kernel/tasks.c
 build output/submodules/FreeRTOS-Kernel/timers.o: cc $
     submodules/FreeRTOS-Kernel/timers.c
+build output/submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/port.o: cc $
+    submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/port.c
+build output/submodules/FreeRTOS-Kernel/portable/MemMang/heap_1.o: cc $
+    submodules/FreeRTOS-Kernel/portable/MemMang/heap_1.c
 
 build output/src/application/Application.o: cxx $
     src/application/Application.cpp
@@ -242,8 +245,7 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
-    output/middlewares/USBMIDI/Src/usbd_midi.o output/src/configs/heap_2.o $
-    output/src/configs/port.o output/src/usb/usbd_conf.o $
+    output/middlewares/USBMIDI/Src/usbd_midi.o output/src/usb/usbd_conf.o $
     output/src/usb/usbd_desc.o output/src/usb/usb_device.o $
     output/src/system/stm32f4xx_it.o output/src/system/system_stm32f4xx.o $
     output/submodules/FreeRTOS-Kernel/croutine.o $
@@ -253,6 +255,8 @@ build $target: link output/startup/startup_stm32f411xe.o $
     output/submodules/FreeRTOS-Kernel/stream_buffer.o $
     output/submodules/FreeRTOS-Kernel/tasks.o $
     output/submodules/FreeRTOS-Kernel/timers.o $
+    output/submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/port.o $
+    output/submodules/FreeRTOS-Kernel/portable/MemMang/heap_1.o $
     output/src/application/Application.o $
     output/src/application/grid_test/GridTest.o $
     output/src/application/internal_menu/InternalMenu.o $

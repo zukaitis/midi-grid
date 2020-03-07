@@ -111,12 +111,12 @@ static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(7, 7, 13), Color(56, 64, 21), Color(30, 64, 47), Color(38, 38, 64), Color(35, 25, 64), Color(17, 17, 17), Color(30, 30, 30), Color(56, 64, 64),
     Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
-Launchpad::Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi, mcu::System* system ) :
-        Application( applicationController ),
-        gui_( *this, lcd ),
-        grid_( grid ),
-        usbMidi_( usbMidi ),
+Launchpad::Launchpad( ApplicationController* applicationController, grid::GridInterface* grid, additional_buttons::AdditionalButtonsInterface* additionalButtons,
+        rotary_controls::RotaryControlsInterface* rotaryControls, lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system ) :
+        Application( *applicationController ),
+        gui_( *this, *lcd ),
+        grid_( *grid ),
+        usbMidi_( *usbMidi ),
         system_( *system ),
         applicationEnded_( true ),
         mode_( Launchpad95Mode_UNKNOWN ),
@@ -142,7 +142,7 @@ void Launchpad::run( ApplicationThread& thread )
     grid_.turnAllLedsOff();
     gui_.initialize();
 
-    // enableRotaryControlInputHandler();
+    enableRotaryControlInputHandler();
     enableAdditionalButtonInputHandler();
     enableGridInputHandler();
     enableMidiInputHandler();

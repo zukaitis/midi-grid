@@ -82,22 +82,22 @@ class Launchpad : public Application
 public:
     friend class LcdGui; // allow GUI to read info
 
-    Launchpad( ApplicationController& applicationController, grid::GridInterface& grid, additional_buttons::AdditionalButtonsInterface& additionalButtons,
-        rotary_controls::RotaryControlsInterface& rotaryControls, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi, mcu::System* system );
+    Launchpad( ApplicationController* applicationController, grid::GridInterface* grid, additional_buttons::AdditionalButtonsInterface* additionalButtons,
+        rotary_controls::RotaryControlsInterface* rotaryControls, lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system );
 
 private:
-    void run( ApplicationThread& thread );
+    void run( ApplicationThread& thread ) override;
 
-    void handleAdditionalButtonEvent( const additional_buttons::Event& event );
-    void handleGridButtonEvent( const grid::ButtonEvent& event );
-    void handleMidiPacket( const midi::MidiPacket& packet );
-    void handleRotaryControlEvent( const rotary_controls::Event& event );
+    void handleAdditionalButtonEvent( const additional_buttons::Event& event ) override;
+    void handleGridButtonEvent( const grid::ButtonEvent& event ) override;
+    void handleMidiPacket( const midi::MidiPacket& packet ) override;
+    void handleRotaryControlEvent( const rotary_controls::Event& event ) override;
 
     Launchpad95Mode determineLaunchpad95Mode();
     Launchpad95Submode determineLaunchpad95Submode();
 
     void processDawInfoMessage( const etl::string_view& message );
-    void processChangeControlMidiMessage( const uint8_t channel, const uint8_t control, const uint8_t value );
+    void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
     void processSystemExclusiveMessage( const SystemExclussiveMessage& message );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
