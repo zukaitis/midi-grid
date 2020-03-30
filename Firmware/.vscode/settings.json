@@ -11,6 +11,7 @@
         "**.html": true,
         "**.gcov": true,
         ".settings": true,
+        "Debug/": true,
         "output/" : true,
         "unit_tests/objects/" : true,
         "submodules/etl/*.*": true,

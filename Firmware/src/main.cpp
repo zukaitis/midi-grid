@@ -25,6 +25,7 @@ Main::Main() :
         backlightDriver_( hardware::lcd::BacklightDriver() ),
         lcdContainer_( &lcdSpi_, &backlightDriver_ ),
         testing_( &gridDriver_ ),
+        logContainer_( &lcdContainer_.getLcd() ),
         applicationController_( application::ApplicationController(
             &additionalButtons_, &gridContainer_.getGrid(), &rotaryControls_, &usbMidi_ ) ),
         startup_( applicationController_, gridDriver_, lcdContainer_.getLcd(), system_ ),
@@ -45,6 +46,11 @@ Main::Main() :
     };
 
     applicationController_.initialize( applicationList );
+}
+
+log::LogContainer& Main::getLogContainer()
+{
+    return logContainer_;
 }
 
 void Main::run()

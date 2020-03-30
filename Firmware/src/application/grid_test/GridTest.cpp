@@ -4,6 +4,7 @@
 #include "usb/UsbMidi.hpp"
 #include "lcd/LcdInterface.h"
 #include "application/images.h"
+#include "log/info.h"
 
 #include <freertos/ticks.hpp>
 
@@ -54,6 +55,8 @@ void GridTest::handleGridButtonEvent( const grid::ButtonEvent& event )
     if (ButtonAction::PRESSED == event.action)
     {
         color = getRandomColor();
+        log::info << "yo dis is log";
+        log::info << "respect it";
     }
     grid_.setLed( event.coordinates, color );
 }

@@ -32,7 +32,7 @@ void Startup::run( ApplicationThread& thread )
     {
     }
 
-    switchApplication( ApplicationIndex_LAUNCHPAD );
+    switchApplication( ApplicationIndex_GRID_TEST );
 }
 
 void Startup::displayUsbConnecting()

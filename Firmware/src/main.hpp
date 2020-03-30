@@ -10,6 +10,7 @@
 #include "hardware/lcd/Spi.h"
 #include "hardware/lcd/BacklightDriver.h"
 #include "LcdContainer.h"
+#include "log/LogContainer.h"
 
 #include "application/internal_menu/InternalMenu.hpp"
 #include "application/launchpad/Launchpad.hpp"
@@ -32,6 +33,8 @@ public:
         return instance;
     }
 
+    log::LogContainer& getLogContainer();
+
     void run();
 private:
     Main();
@@ -47,6 +50,7 @@ private:
     hardware::lcd::BacklightDriver backlightDriver_;
     lcd::LcdContainer lcdContainer_;
     testing::Testing testing_;
+    log::LogContainer logContainer_;
     application::ApplicationController applicationController_;
     application::Startup startup_;
     application::GridTest gridTest_;
