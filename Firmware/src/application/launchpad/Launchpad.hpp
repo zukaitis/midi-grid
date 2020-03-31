@@ -2,6 +2,7 @@
 
 #include "application/Application.hpp"
 #include "application/launchpad/LcdGui.hpp"
+#include "testing/TestingInterface.h"
 #include "types/Color.h"
 
 #include <etl/array.h>
@@ -30,6 +31,11 @@ namespace midi
 namespace mcu
 {
     class System;
+}
+
+namespace testing
+{
+    class TestingInterface;
 }
 
 namespace application
@@ -82,8 +88,9 @@ class Launchpad : public Application
 public:
     friend class LcdGui; // allow GUI to read info
 
-    Launchpad( ApplicationController* applicationController, grid::GridInterface* grid, additional_buttons::AdditionalButtonsInterface* additionalButtons,
-        rotary_controls::RotaryControlsInterface* rotaryControls, lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system );
+    Launchpad( ApplicationController* applicationController, grid::GridInterface* grid,
+        additional_buttons::AdditionalButtonsInterface* additionalButtons, rotary_controls::RotaryControlsInterface* rotaryControls,
+        lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system, testing::TestingInterface* testing );
 
 private:
     void run( ApplicationThread& thread ) override;
@@ -108,6 +115,7 @@ private:
     grid::GridInterface& grid_;
     midi::UsbMidi& usbMidi_;
     mcu::System& system_;
+    testing::TestingInterface& testing_;
 
     bool applicationEnded_;
     Launchpad95Mode mode_;

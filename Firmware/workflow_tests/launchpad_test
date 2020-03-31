@@ -11,6 +11,8 @@
 # 5. receive and check notes for every press
 # 5. send some message, which would trigger SysEx transmission from the device
 
+readonly device_name='midi-grid'
+
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[0;33m'
@@ -68,15 +70,35 @@ light_palette ()
             fi
         done
     done
+
+    sleep 1 # wait to see if LEDs are pulsing
 }
 
-readonly device_name='midi-grid'
+sysex_leds_off ()
+{
+    echo "Turning LEDs off through SysEx command"
+
+    sendmidi dev ${device_name} syx 00h 20h 29h 02h 18h 0Eh 00h
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
+}
+
+receive_notes ()
+{
+    echo "Requesting device to send notes"
+}
+
+# receivemidi dev midi-grid ch 1 nn on 88
+
 
 step=(
     "init"
     "pulse_leds"
     "flash_leds"
     "light_palette"
+    "sysex_leds_off"
+    "receive_notes"
 )
 
 step_index=0

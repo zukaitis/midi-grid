@@ -33,7 +33,7 @@ Main::Main() :
         internalMenu_( applicationController_, gridContainer_.getGrid(), additionalButtons_,
             lcdContainer_.getLcd(), system_ ),
         launchpad_( &applicationController_, &gridContainer_.getGrid(), &additionalButtons_, &rotaryControls_, &lcdContainer_.getLcd(),
-            &usbMidi_, &system_ ),
+            &usbMidi_, &system_, &testing_ ),
         snake_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() )
 {
     etl::array<application::Application*, application::kNumberOfApplications> applicationList = {

@@ -1,10 +1,12 @@
 #include "application/launchpad/Launchpad.hpp"
 
+#include "application/snake/Snake.hpp"
 #include "grid/GridInterface.h"
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "rotary_controls/RotaryControlsInterface.h"
 #include "lcd/LcdInterface.h"
 #include "system/System.hpp"
+#include "testing/TestingInterface.h"
 
 #include <cstring>
 #include <etl/array.h>
@@ -21,20 +23,35 @@ static const uint8_t kControlValueHigh = 127;
 
 static const etl::array<uint8_t, 10> kChallengeResponse = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
 
-using SystemExclussiveMessageHeader = etl::string<6>;
-static const SystemExclussiveMessageHeader kStandardSystemExclussiveMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x18 };
-static const etl::string_view standardSystemExclussiveMessageHeaderView(
-    kStandardSystemExclussiveMessageHeader );
+static const etl::string<6> kStandardSystemExclussiveMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x18 };
+static const etl::string_view standardSystemExclussiveMessageHeaderView( kStandardSystemExclussiveMessageHeader );
 static const uint8_t kStandardSystemExclussiveMessageMinimumLength = 8;
 
-static const etl::string<9> systemExclussiveBootloaderMessage = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x00, 0x71, 0x00, 0x69, static_cast<char>(0xF7)};
+static const etl::string<9> systemExclussiveBootloaderMessage = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x00, 0x71, 0x00, 0x69,
+    static_cast<char>(0xF7) };
 static const etl::string_view systemExclussiveBootloaderMessageView( systemExclussiveBootloaderMessage );
 
-enum StandardSystemExclussiveMessageType
+enum class LaunchpadSysExCommand
 {
-    kTextScroll = 0x14,
-    kSetLayout = 0x22,
-    kChallenge = 0x40
+    SET_LED = 0x0A,
+    SET_LED_RGB = 0x0B,
+    SET_LEDS_BY_COLUMN = 0x0C,
+    SET_LEDS_BY_ROW = 0x0D,
+    SET_ALL_LEDS = 0x0E,
+    TEXT_SCROLL = 0x14,
+    SET_LAYOUT = 0x22,
+    FLASH_LED = 0x23,
+    PULSE_LED = 0x28,
+    FADER_SETUP = 0x2B,
+    CHALLENGE = 0x40
+};
+
+static const etl::string<6> customSysExMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x07 };
+static const etl::string_view customSysExMessageHeaderView( customSysExMessageHeader );
+
+enum class CustomSysExCommand
+{
+    INJECT_BUTTON_PRESS = 0
 };
 
 enum MidiChannel
@@ -111,13 +128,15 @@ static const etl::array<Color, 128> kLaunchpadColorPalette = {
     Color(7, 7, 13), Color(56, 64, 21), Color(30, 64, 47), Color(38, 38, 64), Color(35, 25, 64), Color(17, 17, 17), Color(30, 30, 30), Color(56, 64, 64),
     Color(42, 2, 0), Color(14, 0, 0), Color(0, 53, 0), Color(0, 17, 0), Color(47, 45, 0), Color(16, 13, 0), Color(46, 24, 0), Color(19, 6, 0) };
 
-Launchpad::Launchpad( ApplicationController* applicationController, grid::GridInterface* grid, additional_buttons::AdditionalButtonsInterface* additionalButtons,
-        rotary_controls::RotaryControlsInterface* rotaryControls, lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system ) :
+Launchpad::Launchpad( ApplicationController* applicationController, grid::GridInterface* grid,
+    additional_buttons::AdditionalButtonsInterface* additionalButtons, rotary_controls::RotaryControlsInterface* rotaryControls,
+    lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system, testing::TestingInterface* testing ) :
         Application( *applicationController ),
         gui_( *this, *lcd ),
         grid_( *grid ),
         usbMidi_( *usbMidi ),
         system_( *system ),
+        testing_( *testing ),
         applicationEnded_( true ),
         mode_( Launchpad95Mode_UNKNOWN ),
         submode_( Launchpad95Submode_DEFAULT ),
@@ -517,10 +536,16 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
         const etl::string_view header( message.begin(), kStandardSystemExclussiveMessageHeader.size() );
         if (header == standardSystemExclussiveMessageHeaderView)
         {
-            const uint8_t messageType = message.at( 6 );
-            switch (messageType)
+            const LaunchpadSysExCommand command = static_cast<LaunchpadSysExCommand>(message.at( 6 ));
+            switch (command)
             {
-                case kSetLayout:
+                case LaunchpadSysExCommand::SET_ALL_LEDS:
+                    if (0 == message.at( 7 ))
+                    {
+                        grid_.turnAllLedsOff();
+                    }
+                    break;
+                case LaunchpadSysExCommand::SET_LAYOUT:
                     {
                         const uint8_t layoutIndex = message.at( 7 );
                         if (layoutIndex <= kMaximumLayoutIndex)
@@ -529,11 +554,11 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
                         }
                     }
                     break;
-                case kChallenge:
+                case LaunchpadSysExCommand::CHALLENGE:
                     usbMidi_.sendSystemExclussive( &kChallengeResponse.at( 0 ), kChallengeResponse.size() );
                     gui_.registerMidiOutputActivity();
                     break;
-                case kTextScroll:
+                case LaunchpadSysExCommand::TEXT_SCROLL:
                     {
                         const etl::string_view dawInfo( &message.at( 7 ), message.end() );
                         processDawInfoMessage( dawInfo );
@@ -541,6 +566,16 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
                     break;
                 default:
                     break;
+            }
+        }
+        else if (header == customSysExMessageHeaderView)
+        {
+            const CustomSysExCommand command = static_cast<CustomSysExCommand>(message.at( 6 ));
+            if (CustomSysExCommand::INJECT_BUTTON_PRESS == command)
+            {
+                const ::Coordinates button = { static_cast<uint8_t>((message.at( 6 ) >> 4U) & 0x0FU),
+                    static_cast<uint8_t>(message.at( 6 ) & 0x0FU) };
+                testing_.injectButtonPress( button );
             }
         }
         else
