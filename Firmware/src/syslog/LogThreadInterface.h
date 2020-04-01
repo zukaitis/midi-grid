@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <etl/string_view.h>
 
-namespace log
+namespace syslog
 {
 
 class LogThreadInterface
@@ -17,4 +17,4 @@ public:
 
 };
 
-}  // namespace log
+}  // namespace syslog

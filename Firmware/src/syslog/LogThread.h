@@ -1,12 +1,12 @@
 #pragma once
 
-#include "log/LogThreadInterface.h"
+#include "syslog/LogThreadInterface.h"
 
 #include "lcd/LcdInterface.h"
 #include <freertos/thread.hpp>
 #include <freertos/semaphore.hpp>
 
-namespace log
+namespace syslog
 {
 
 class LogThread : public LogThreadInterface, private freertos::Thread
@@ -27,4 +27,4 @@ private:
     uint8_t lineNumber_;
 };
 
-}  // namespace log
+}  // namespace syslog

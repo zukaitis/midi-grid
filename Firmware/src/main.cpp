@@ -48,7 +48,7 @@ Main::Main() :
     applicationController_.initialize( applicationList );
 }
 
-log::LogContainer& Main::getLogContainer()
+syslog::LogContainer& Main::getLogContainer()
 {
     return logContainer_;
 }

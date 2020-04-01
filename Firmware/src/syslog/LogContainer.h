@@ -1,10 +1,10 @@
 #pragma once
 
 #include "lcd/LcdInterface.h"
-#include "log/Log.h"
-#include "log/LogThread.h"
+#include "syslog/Log.h"
+#include "syslog/LogThread.h"
 
-namespace log
+namespace syslog
 {
 
 class LogContainer
@@ -22,4 +22,4 @@ private:
     Log error_;
 };
 
-}  // namespace log
+}  // namespace syslog

@@ -1,9 +1,9 @@
-#include "log/LogThread.h"
-#include "log/info.h"
+#include "syslog/LogThread.h"
+#include "syslog/info.h"
 
 #include "main.hpp"
 
-namespace log
+namespace syslog
 {
 
 LogInterface& info = Main::getInstance().getLogContainer().getInfo();
@@ -25,4 +25,4 @@ LogInterface& LogContainer::getError()
     return error_;
 }
 
-}  // namespace log
+}  // namespace syslog

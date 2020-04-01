@@ -1,6 +1,6 @@
-#include "log/LogThread.h"
+#include "syslog/LogThread.h"
 
-namespace log
+namespace syslog
 {
 
 LogThread::LogThread( lcd::LcdInterface* lcd ):
@@ -33,4 +33,4 @@ void LogThread::Run()
 }
 
 
-}  // namespace log
+}  // namespace syslog

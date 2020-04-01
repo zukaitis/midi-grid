@@ -12,6 +12,7 @@
 # 5. send some message, which would trigger SysEx transmission from the device
 
 readonly device_name='midi-grid'
+readonly tempfile='/tmp/launchpad_test.txt'
 
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
@@ -62,6 +63,9 @@ light_palette ()
         while [[ ${note} -lt 89 ]]
         do
             sendmidi dev ${device_name} on ${note} ${color}
+            if [[ $? -ne 0 ]]; then
+                return 1
+            fi
             ((color++))
             ((note++))
             if [[ $((note % 10)) -eq 9 ]]
@@ -87,10 +91,36 @@ sysex_leds_off ()
 receive_notes ()
 {
     echo "Requesting device to send notes"
+
+    for x in {0..7}
+    do
+        y=3
+        sendmidi dev ${device_name} syx 00h 20h 29h 02h 07h 00h ${x} ${y}
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+
+        receivemidi dev ${device_name} ch 1 nn on > ${tempfile} &
+        pid=$!
+        sleep 0.1
+        kill ${pid}
+
+        ((note=10*y+x+11))
+        if [[ "$(<${tempfile})" != *"${note} 127"* ]]; then
+            return 1
+        fi
+        
+        sendmidi dev ${device_name} on ${note} 5
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+        ((note+=10))
+        sendmidi dev ${device_name} on ${note} 5
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+    done
 }
-
-# receivemidi dev midi-grid ch 1 nn on 88
-
 
 step=(
     "init"

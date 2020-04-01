@@ -1,6 +1,9 @@
-#include "log/Log.h"
+#include "syslog/Log.h"
 
-namespace log
+#include <etl/cstring.h>
+#include <etl/to_string.h>
+
+namespace syslog
 {
 
 Log::Log( LogThreadInterface* logThread ):
@@ -21,6 +24,14 @@ void Log::operator<<( const etl::string_view& message ) const
 void Log::operator<<( const char* message ) const
 {
     logThread_.append( message );
+    display();
+}
+
+void Log::operator<<( const uint32_t value ) const
+{
+    etl::string<16> valueString = "0x";
+    etl::to_string( value, valueString, etl::format_spec().hex(), true );
+    logThread_.append( valueString );
     display();
 }
 
@@ -55,4 +66,4 @@ void Log::display() const
     }
 }
 
-}  // namespace log
+}  // namespace syslog

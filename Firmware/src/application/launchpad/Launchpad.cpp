@@ -1,6 +1,7 @@
 #include "application/launchpad/Launchpad.hpp"
 
 #include "application/snake/Snake.hpp"
+#include "etl/to_string.h"
 #include "grid/GridInterface.h"
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "rotary_controls/RotaryControlsInterface.h"
@@ -11,6 +12,8 @@
 #include <cstring>
 #include <etl/array.h>
 #include <etl/string_view.h>
+
+#include "syslog/info.h"
 
 namespace application
 {
@@ -573,9 +576,12 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
             const CustomSysExCommand command = static_cast<CustomSysExCommand>(message.at( 6 ));
             if (CustomSysExCommand::INJECT_BUTTON_PRESS == command)
             {
-                const ::Coordinates button = { static_cast<uint8_t>((message.at( 6 ) >> 4U) & 0x0FU),
-                    static_cast<uint8_t>(message.at( 6 ) & 0x0FU) };
-                testing_.injectButtonPress( button );
+                if (10 == message.size())
+                {
+                    const ::Coordinates button = { static_cast<uint8_t>(message.at( 7 )),
+                        static_cast<uint8_t>(message.at( 8 )) };
+                    testing_.injectButtonPress( button );
+                }
             }
         }
         else

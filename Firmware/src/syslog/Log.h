@@ -1,21 +1,22 @@
 #pragma once
 
-#include "log/LogInterface.h"
-#include "log/LogThreadInterface.h"
+#include "syslog/LogInterface.h"
+#include "syslog/LogThreadInterface.h"
 
 #include <etl/string_view.h>
 
-namespace log
+namespace syslog
 {
 
 class Log : public LogInterface
 {
 public:
-    explicit Log( LogThreadInterface* log );
+    explicit Log( LogThreadInterface* syslog );
     ~Log() override;
 
     void operator<<( const etl::string_view& message ) const override;
     void operator<<( const char* message ) const override;
+    void operator<<( uint32_t value ) const override;
 
     void setDisplayTimeout( uint32_t timeoutMs ) override;
     void disableDisplayTimeout() override;
@@ -37,4 +38,4 @@ private:
     uint32_t timeout_;
 };
 
-}  // namespace log
+}  // namespace syslog
