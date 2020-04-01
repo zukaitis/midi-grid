@@ -122,6 +122,27 @@ receive_notes ()
     done
 }
 
+receive_sysex ()
+{
+    echo "Requesting a SysEx challenge message from the device"
+
+    receivemidi dev midi-grid syx > ${tempfile} &
+    pid=$!
+
+    sendmidi dev ${device_name} syx 00h 20h 29h 02h 18h 40h
+    if [[ $? -ne 0 ]]; then
+        kill ${pid}
+        return 1
+    fi
+
+    sleep 0.5
+    kill ${pid}
+
+    if [[ "$(<${tempfile})" != *"00 20 29 02 18 40 00 00"* ]]; then
+        return 1
+    fi
+}
+
 step=(
     "init"
     "pulse_leds"
@@ -129,6 +150,7 @@ step=(
     "light_palette"
     "sysex_leds_off"
     "receive_notes"
+    "receive_sysex"
 )
 
 step_index=0
