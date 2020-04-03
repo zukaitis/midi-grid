@@ -124,6 +124,11 @@ n.rule( 'configure',
     description='Generating $out file' )
 n.newline()
 
+n.rule( 'compdb',
+    command='ninja -t compdb cxx > $out',
+    description='Generating $out file' )
+n.newline()
+
 objs = list()
 
 n.comment( 'Instructions to build each file' )
@@ -153,6 +158,10 @@ n.comment( 'Size report instruction' )
 n.build( '$out_dir/size.txt', 'size', '$target' )
 n.newline()
 
+n.comment( 'Generate compilation database' )
+n.build( 'compile_commands.json', 'compdb' )
+n.newline()
+
 additional_output_instructions = ''
 for ao in settings['additional_outputs']:
     extension = extract_extension( ao )
@@ -168,5 +177,5 @@ for ao in settings['additional_outputs']:
 
 n.build( BUILD_FILENAME, 'configure', implicit=[SCRIPT_NAME, SETTINGS_FILENAME] )
 
-n.build( 'all', 'phony ' + BUILD_FILENAME + ' $target $out_dir/size.txt' + additional_output_instructions )
+n.build( 'all', 'phony ' + BUILD_FILENAME + ' $target $out_dir/size.txt compile_commands.json' + additional_output_instructions )
 n.default( 'all' )

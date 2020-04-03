@@ -1,7 +1,5 @@
 #include "application/launchpad/Launchpad.hpp"
 
-#include "application/snake/Snake.hpp"
-#include "etl/to_string.h"
 #include "grid/GridInterface.h"
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "rotary_controls/RotaryControlsInterface.h"
@@ -46,7 +44,7 @@ enum class LaunchpadSysExCommand
     FLASH_LED = 0x23,
     PULSE_LED = 0x28,
     FADER_SETUP = 0x2B,
-    CHALLENGE = 0x40
+    DISCONNECT_OR_CHALLENGE = 0x40
 };
 
 static const etl::string<6> customSysExMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x07 };
@@ -539,7 +537,7 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
         const etl::string_view header( message.begin(), kStandardSystemExclussiveMessageHeader.size() );
         if (header == standardSystemExclussiveMessageHeaderView)
         {
-            const LaunchpadSysExCommand command = static_cast<LaunchpadSysExCommand>(message.at( 6 ));
+            const auto command = static_cast<LaunchpadSysExCommand>(message.at( 6 ));
             switch (command)
             {
                 case LaunchpadSysExCommand::SET_ALL_LEDS:
@@ -557,9 +555,17 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
                         }
                     }
                     break;
-                case LaunchpadSysExCommand::CHALLENGE:
-                    usbMidi_.sendSystemExclussive( &kChallengeResponse.at( 0 ), kChallengeResponse.size() );
-                    gui_.registerMidiOutputActivity();
+                case LaunchpadSysExCommand::DISCONNECT_OR_CHALLENGE:
+                    if (12 == message.size()) // challenge
+                    {
+                        usbMidi_.sendSystemExclussive( &kChallengeResponse.at( 0 ), kChallengeResponse.size() );
+                        gui_.registerMidiOutputActivity();
+                    }
+                    else if (8 == message.size()) // disconnect
+                    {
+                        applicationEnded_ = true;
+                        Application::switchApplication( ApplicationIndex_GRID_TEST );
+                    }
                     break;
                 case LaunchpadSysExCommand::TEXT_SCROLL:
                     {
@@ -573,7 +579,7 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
         }
         else if (header == customSysExMessageHeaderView)
         {
-            const CustomSysExCommand command = static_cast<CustomSysExCommand>(message.at( 6 ));
+            const auto command = static_cast<CustomSysExCommand>(message.at( 6 ));
             if (CustomSysExCommand::INJECT_BUTTON_PRESS == command)
             {
                 if (10 == message.size())

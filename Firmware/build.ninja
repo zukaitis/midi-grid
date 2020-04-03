@@ -89,6 +89,10 @@ rule configure
   description = Generating $out file
   generator = 1
 
+rule compdb
+  command = ninja -t compdb cxx > $out
+  description = Generating $out file
+
 # Instructions to build each file
 build output/startup/startup_stm32f411xe.o: as startup/startup_stm32f411xe.S
 
@@ -289,10 +293,14 @@ build $target: link output/startup/startup_stm32f411xe.o $
 # Size report instruction
 build $out_dir/size.txt: size $target
 
+# Generate compilation database
+build compile_commands.json: compdb
+
 build output/midi-grid.hex: hex $target
 build output/midi-grid.bin: bin $target
 build output/midi-grid.dfu: dfu $target
 build build.ninja: configure | generate_build_file.py build_settings.yaml
-build all: phony build.ninja $target $out_dir/size.txt output/midi-grid.hex $
-    output/midi-grid.bin output/midi-grid.dfu
+build all: phony build.ninja $target $out_dir/size.txt $
+    compile_commands.json output/midi-grid.hex output/midi-grid.bin $
+    output/midi-grid.dfu
 default all

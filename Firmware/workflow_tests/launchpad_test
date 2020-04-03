@@ -9,7 +9,8 @@
 # 3. send "clear all buttons" SysEx
 # 4. send few "simulate button press" SysEx messages
 # 5. receive and check notes for every press
-# 5. send some message, which would trigger SysEx transmission from the device
+# 6. send some message, which would trigger SysEx transmission from the device
+# 7. switch applications, when it becomes possible
 
 readonly device_name='midi-grid'
 readonly tempfile='/tmp/launchpad_test.txt'
@@ -129,7 +130,7 @@ receive_sysex ()
     receivemidi dev midi-grid syx > ${tempfile} &
     pid=$!
 
-    sendmidi dev ${device_name} syx 00h 20h 29h 02h 18h 40h
+    sendmidi dev ${device_name} syx 00h 20h 29h 02h 18h 40h 00h 00h 00h 00h
     if [[ $? -ne 0 ]]; then
         kill ${pid}
         return 1
