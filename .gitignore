@@ -5,6 +5,7 @@
 *.directory
 *.clangd
 *.kicad_pcb-bak
+Firmware/.vscode/launch.json
 Firmware/midi-grid.code-workspace
 Firmware/output/*
 Firmware/unit_tests/objects/
