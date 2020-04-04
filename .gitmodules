@@ -13,3 +13,12 @@
 [submodule "Firmware/submodules/semver-tool"]
 	path = Firmware/submodules/semver-tool
 	url = https://github.com/fsaintjacques/semver-tool.git
+[submodule "Firmware/submodules/cmsis_core"]
+	path = Firmware/submodules/cmsis_core
+	url = https://github.com/STMicroelectronics/cmsis_core.git
+[submodule "Firmware/submodules/cmsis_device_f4"]
+	path = Firmware/submodules/cmsis_device_f4
+	url = https://github.com/STMicroelectronics/cmsis_device_f4.git
+[submodule "Firmware/submodules/stm32f4xx_hal_driver"]
+	path = Firmware/submodules/stm32f4xx_hal_driver
+	url = https://github.com/STMicroelectronics/stm32f4xx_hal_driver.git

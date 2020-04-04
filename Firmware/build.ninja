@@ -28,9 +28,9 @@ c_flags = --target=arm-none-eabi -O0 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
     -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS
-inc_flags = -Idrivers/CMSIS/Device/ST/STM32F4xx/Include $
-    -Idrivers/CMSIS/Include -Idrivers/STM32F4xx_HAL_Driver/Inc $
-    -Idrivers/STM32F4xx_HAL_Driver/Inc/Legacy $
+inc_flags = -Isubmodules/cmsis_device_f4/Include $
+    -Isubmodules/cmsis_core/Include -Isubmodules/stm32f4xx_hal_driver/Inc $
+    -Isubmodules/stm32f4xx_hal_driver/Inc/Legacy $
     -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
     -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/84x48_mono $
     -Isubmodules/etl/include $
@@ -94,51 +94,53 @@ rule compdb
   description = Generating $out file
 
 # Instructions to build each file
-build output/startup/startup_stm32f411xe.o: as startup/startup_stm32f411xe.S
-
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
 build $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o: $
-    cc drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
-build output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o: cc $
-    drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c
+    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.o: $
+    as submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.s
+
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_cortex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_cortex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ex.o: $
+    cc submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ex.c
+build $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ramfunc.o: $
+    cc submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ramfunc.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_gpio.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_gpio.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_spi.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_spi.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim_ex.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim_ex.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_uart.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_uart.c
+build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_ll_usb.o: cc $
+    submodules/stm32f4xx_hal_driver/Src/stm32f4xx_ll_usb.c
 build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o: $
     cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c
 build $
@@ -227,28 +229,29 @@ build output/submodules/freertos-addons/c++/Source/cmutex.o: cxx $
     submodules/freertos-addons/c++/Source/cmutex.cpp
 
 # Target linker instruction
-build $target: link output/startup/startup_stm32f411xe.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o $
-    output/drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o $
+build $target: link $
+    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_cortex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_dma_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_flash_ramfunc.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_gpio.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pcd_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_pwr_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_rcc_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_spi.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_tim_ex.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_uart.o $
+    output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_ll_usb.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
