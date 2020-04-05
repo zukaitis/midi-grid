@@ -44,14 +44,17 @@ public:
     virtual void displayImage( uint8_t x, uint8_t y, const Image& image) = 0;
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
-    virtual void print( const char* string, uint8_t x, uint8_t y, Justification justification = Justification::LEFT ) = 0;
-    //virtual void print( const char* const string, const uint8_t y, const Justification justification ) = 0;
-    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification = Justification::LEFT ) = 0;
+    virtual void print( const char* string, uint8_t x, uint8_t y, Justification justification ) = 0;
+    virtual void print( const char* string, uint8_t x, uint8_t y ) = 0;
+    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) = 0;
+    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) = 0;
     virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 
     virtual uint16_t right() const = 0;
     virtual uint8_t maximumBacklightIntensity() const = 0;
     virtual uint8_t horizontalCenter() const = 0; // TODO(unknown): remove
+
+    virtual void release() = 0;
 };
 
 }  // namespace lcd

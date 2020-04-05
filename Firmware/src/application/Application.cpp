@@ -4,7 +4,7 @@
 namespace application
 {
 
-template <class InputSource, class InputType>
+template <typename InputSource, typename InputType>
 InputHandler<InputSource, InputType>::InputHandler( ApplicationController* applicationController, InputSource* inputSource ):
     Thread( "InputHandler", kInputSource.stackDepth, kInputSource.priority ),
     applicationController_( *applicationController ),
@@ -14,20 +14,20 @@ InputHandler<InputSource, InputType>::InputHandler( ApplicationController* appli
     Suspend();
 }
 
-template <class InputSource, class InputType>
+template <typename InputSource, typename InputType>
 void InputHandler<InputSource, InputType>::enable()
 {
     inputSource_.discardPendingInput();
     Resume();
 }
 
-template <class InputSource, class InputType>
+template <typename InputSource, typename InputType>
 void InputHandler<InputSource, InputType>::disable()
 {
     Suspend();
 }
 
-template <class InputSource, class InputType>
+template <typename InputSource, typename InputType>
 void InputHandler<InputSource, InputType>::Run()
 {
     InputType input = {};

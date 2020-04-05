@@ -96,6 +96,11 @@ void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, con
     }
 }
 
+void Lcd::print( const char* const string, const uint8_t x, const uint8_t y )
+{
+    print( string, x, y, Justification::LEFT );
+}
+
 void Lcd::putBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
 {
     uint16_t divisor = pow( 10, numberOfDigits );
@@ -149,6 +154,11 @@ void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const 
     }
 }
 
+void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y )
+{
+    printNumberInBigDigits( number, x, y, Justification::LEFT );
+}
+
 void Lcd::setBacklightIntensity( const uint8_t intensity )
 {
     backlight_.setIntensity( intensity );
@@ -164,4 +174,8 @@ uint8_t Lcd::maximumBacklightIntensity() const
     return 64; // TODO: fix
 }
 
-} // namespace
+void Lcd::release()
+{
+}
+
+}  // namespace lcd

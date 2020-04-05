@@ -1,6 +1,6 @@
 #pragma once
 
-template<class EventType>
+template<typename EventType>
 class HardwareInputInterface
 {
     virtual bool waitForInput( EventType* event ) = 0;

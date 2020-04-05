@@ -25,16 +25,16 @@ Main::Main() :
         backlightDriver_( hardware::lcd::BacklightDriver() ),
         lcdContainer_( &lcdSpi_, &backlightDriver_ ),
         testing_( &gridDriver_ ),
-        logContainer_( &lcdContainer_.getLcd() ),
+        logContainer_( &lcdContainer_.getLcdLowPriority() ),
         applicationController_( application::ApplicationController(
             &additionalButtons_, &gridContainer_.getGrid(), &rotaryControls_, &usbMidi_ ) ),
-        startup_( applicationController_, gridDriver_, lcdContainer_.getLcd(), system_ ),
-        gridTest_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd(), usbMidi_ ),
+        startup_( applicationController_, gridDriver_, lcdContainer_.getLcdLowPriority(), system_ ),
+        gridTest_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcdLowPriority(), usbMidi_ ),
         internalMenu_( applicationController_, gridContainer_.getGrid(), additionalButtons_,
-            lcdContainer_.getLcd(), system_ ),
-        launchpad_( &applicationController_, &gridContainer_.getGrid(), &additionalButtons_, &rotaryControls_, &lcdContainer_.getLcd(),
+            lcdContainer_.getLcdLowPriority(), system_ ),
+        launchpad_( &applicationController_, &gridContainer_.getGrid(), &additionalButtons_, &rotaryControls_, &lcdContainer_.getLcdLowPriority(),
             &usbMidi_, &system_, &testing_ ),
-        snake_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcd() )
+        snake_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcdLowPriority() )
 {
     etl::array<application::Application*, application::kNumberOfApplications> applicationList = {
         nullptr, // ApplicationIndex_PREVIOUS

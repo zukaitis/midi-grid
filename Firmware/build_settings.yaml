@@ -85,10 +85,11 @@ cxx_source_files:
 - src/grid/GridContainer.cpp
 - src/grid/LedOutput.cpp
 - src/grid/PulsingLeds.cpp
-- src/lcd/backlight/Backlight.cpp
 - src/lcd/Lcd.cpp
+- src/lcd/PriorityManager.cpp
 - src/lcd/84x48_mono/LcdContainer.cpp
 - src/lcd/84x48_mono/Pcd8544.cpp
+- src/lcd/backlight/Backlight.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp
 - src/syslog/LogThread.cpp

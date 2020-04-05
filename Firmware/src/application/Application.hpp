@@ -27,7 +27,7 @@ enum ApplicationIndex : uint8_t
 class Application;
 class ApplicationController;
 
-template <class InputSource, class InputType>
+template <typename InputSource, typename InputType>
 class InputHandler : private freertos::Thread
 {
 public:

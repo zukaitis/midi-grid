@@ -125,7 +125,7 @@ n.rule( 'configure',
 n.newline()
 
 n.rule( 'compdb',
-    command='ninja -t compdb cxx > $out',
+    command='ninja -t compdb cxx cc > $out',
     description='Generating $out file' )
 n.newline()
 

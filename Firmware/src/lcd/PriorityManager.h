@@ -5,14 +5,17 @@
 namespace lcd
 {
 
-class DriverInterface;
-class BacklightInterface;
+enum class Priority : uint8_t
+{
+    LOW = 0,
+    HIGH
+};
 
-class Lcd: public LcdInterface
+class PriorityManager : public LcdInterface
 {
 public:
-    Lcd( DriverInterface& driver, BacklightInterface& backlight );
-    ~Lcd() override;
+    PriorityManager( LcdInterface* lcd, Priority priority );
+    ~PriorityManager() override;
 
     void clear() override;
     void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) override;
@@ -27,21 +30,17 @@ public:
 
     uint16_t right() const override;
     uint8_t maximumBacklightIntensity() const override;
-    uint8_t horizontalCenter() const override // TODO(unknown): remove
-    {
-        return 84 / 2;
-    };
+    uint8_t horizontalCenter() const override; // TODO(unknown): remove
 
     void release() override;
 
 private:
+    bool checkPriority();
 
-    void putString( const char* string, uint8_t x, uint8_t y );
-    void putBigDigits( uint16_t number, uint8_t x, uint8_t y, uint8_t numberOfDigits );
+    LcdInterface& lcd_;
 
-    DriverInterface& driver_;
-    BacklightInterface& backlight_;
-
+    const Priority priority_;
+    static Priority currentPriorityFilter_;
 };
 
-}  // namespace lcd
+}
