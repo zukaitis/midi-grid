@@ -25,4 +25,4 @@ private:
     PriorityManager managerPriorityHigh_;
 };
 
-}
+}  // namespace lcd
