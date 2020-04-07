@@ -3,6 +3,7 @@
 #include "lcd/LcdInterface.h"
 #include "syslog/Log.h"
 #include "syslog/LogThread.h"
+#include "syslog/Storage.h"
 
 namespace syslog
 {
@@ -16,8 +17,8 @@ public:
     LogInterface& getError();
 
 private:
+    Storage storage_;
     LogThread logThread_;
-
     Log info_;
     Log error_;
 };

@@ -63,6 +63,14 @@ void PriorityManager::print( const char* string, uint8_t x, uint8_t y, Justifica
     }
 }
 
+void PriorityManager::print( const char* string, uint8_t y, Justification justification )
+{
+    if (checkPriority())
+    {
+        lcd_.print( string, y, justification );
+    }
+}
+
 void PriorityManager::print( const char* string, uint8_t x, uint8_t y )
 {
     if (checkPriority())
@@ -76,6 +84,14 @@ void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t x, uint8_
     if (checkPriority())
     {
         lcd_.printNumberInBigDigits( number, x, y, justification );
+    }
+}
+
+void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification )
+{
+    if (checkPriority())
+    {
+        lcd_.printNumberInBigDigits( number, y, justification );
     }
 }
 
@@ -95,19 +111,14 @@ void PriorityManager::setBacklightIntensity( uint8_t intensity )
     }
 }
 
-uint16_t PriorityManager::right() const
-{
-    return lcd_.right();
-}
-
 uint8_t PriorityManager::maximumBacklightIntensity() const
 {
     return lcd_.maximumBacklightIntensity();
 }
 
-uint8_t PriorityManager::horizontalCenter() const
+uint16_t PriorityManager::line( uint8_t lineNumber ) const
 {
-    return lcd_.horizontalCenter();
+    return lcd_.line( lineNumber );
 }
 
 void PriorityManager::release()

@@ -45,14 +45,15 @@ public:
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
     virtual void print( const char* string, uint8_t x, uint8_t y, Justification justification ) = 0;
+    virtual void print( const char* string, uint8_t y, Justification justification ) = 0;
     virtual void print( const char* string, uint8_t x, uint8_t y ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) = 0;
+    virtual void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) = 0;
     virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 
-    virtual uint16_t right() const = 0;
     virtual uint8_t maximumBacklightIntensity() const = 0;
-    virtual uint8_t horizontalCenter() const = 0; // TODO(unknown): remove
+    virtual uint16_t line( uint8_t lineNumber ) const = 0;
 
     virtual void release() = 0;
 };

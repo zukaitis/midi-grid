@@ -176,13 +176,13 @@ void Snake::updateGrid() const
 void Snake::updateLcd() const
 {
     lcd_.clear();
-    lcd_.print( "Snake", lcd_.horizontalCenter(), 0, lcd::Justification::CENTER );
+    lcd_.print( "Snake", lcd_.line( 0 ), lcd::Justification::CENTER );
     lcd_.print( "Score:", 0, 16 );
-    lcd_.printNumberInBigDigits( getScore(), lcd_.right(), 16, lcd::Justification::RIGHT );
+    lcd_.printNumberInBigDigits( getScore(), 16, lcd::Justification::RIGHT );
     
     etl::string<16> bestScoreString = "Best: ";
     etl::to_string( bestScore_, bestScoreString, true );
-    lcd_.print( &bestScoreString[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( &bestScoreString[0], lcd_.line( 5 ), lcd::Justification::CENTER );
 }
 
 void Snake::feed( const Coordinates headCoords )

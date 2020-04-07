@@ -9,7 +9,8 @@ namespace syslog
 LogInterface& info = Main::getInstance().getLogContainer().getInfo();
 
 LogContainer::LogContainer( lcd::LcdInterface* lcdInterface ):
-    logThread_( lcdInterface ),
+    storage_(),
+    logThread_( lcdInterface, &storage_ ),
     info_( &logThread_ ),
     error_( &logThread_ )
 {

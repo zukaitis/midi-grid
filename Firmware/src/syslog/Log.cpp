@@ -8,8 +8,8 @@ namespace syslog
 
 Log::Log( LogThreadInterface* logThread ):
     logThread_( *logThread ),
-    mode_( DisplayMode::UNTIMED ),
-    timeout_( 0 )
+    mode_( DisplayMode::TIMED ),
+    timeout_( 2000U )
 {
 }
 
@@ -37,17 +37,18 @@ void Log::operator<<( const uint32_t value ) const
 
 void Log::setDisplayTimeout( uint32_t timeoutMs )
 {
-
+    mode_ = DisplayMode::TIMED;
+    timeout_ = timeoutMs;
 }
 
 void Log::disableDisplayTimeout()
 {
-
+    mode_ = DisplayMode::UNTIMED;
 }
 
 void Log::disableDisplay()
 {
-
+    mode_ = DisplayMode::OFF;
 }
 
 void Log::display() const

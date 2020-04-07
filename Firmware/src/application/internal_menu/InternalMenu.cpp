@@ -91,8 +91,8 @@ void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent& event )
 void InternalMenu::updateLcd() const
 {
     lcd_.clear();
-    lcd_.print( "Internal Menu", lcd_.horizontalCenter(), 16, lcd::Justification::CENTER );
-    lcd_.print( "Active", lcd_.horizontalCenter(), 24, lcd::Justification::CENTER );
+    lcd_.print( "Internal Menu", 16, lcd::Justification::CENTER );
+    lcd_.print( "Active", 24, lcd::Justification::CENTER );
 }
 
 }

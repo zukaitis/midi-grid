@@ -3,6 +3,7 @@
 #include "syslog/LogThreadInterface.h"
 
 #include "lcd/LcdInterface.h"
+#include "syslog/StorageInterface.h"
 #include <freertos/thread.hpp>
 #include <freertos/semaphore.hpp>
 
@@ -12,7 +13,7 @@ namespace syslog
 class LogThread : public LogThreadInterface, private freertos::Thread
 {
 public:
-    explicit LogThread( lcd::LcdInterface* lcd );
+    LogThread( lcd::LcdInterface* lcd, StorageInterface* storage );
     ~LogThread() override;
 
     void append( const etl::string_view& message ) override;
@@ -23,8 +24,10 @@ public:
 
 private:
     lcd::LcdInterface& lcd_;
+    StorageInterface& storage_;
 
-    uint8_t lineNumber_;
+    freertos::BinarySemaphore timeout_;
+    uint32_t displayTimeMs_;
 };
 
 }  // namespace syslog

@@ -61,7 +61,7 @@ LcdGui::LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd ):
 void LcdGui::initialize()
 {
     lcd_.clear();
-    lcd_.print( "L95", lcd_.horizontalCenter(), 0, lcd::Justification::CENTER );
+    lcd_.print( "L95", 0, lcd::Justification::CENTER );
     lcd_.displayImage( 63, 0, usbSymbolSmall );
     lcd_.displayImage( 0, 0, midiSymbolSmall );
 
@@ -166,17 +166,17 @@ void LcdGui::displayLaunchpad95Info()
 
 void LcdGui::displayClipName()
 {
-    lcd_.print( &launchpad_.clipName_[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.clipName_[0], lcd_.line( 5 ), lcd::Justification::CENTER );
 }
 
 void LcdGui::displayDeviceName()
 {
-    lcd_.print( &launchpad_.deviceName_[0], lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.deviceName_[0], lcd_.line( 5 ), lcd::Justification::CENTER );
 }
 
 void LcdGui::displayTrackName()
 {
-    lcd_.print( &launchpad_.trackName_[0], lcd_.horizontalCenter(), 32, lcd::Justification::CENTER );
+    lcd_.print( &launchpad_.trackName_[0], lcd_.line( 4 ), lcd::Justification::CENTER );
 }
 
 void LcdGui::displayMode()
@@ -184,14 +184,14 @@ void LcdGui::displayMode()
     lcd_.clearArea( 0, 8, 83, 15 );
     if (Launchpad95Mode_UNKNOWN != launchpad_.mode_)
     {
-        lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
+        lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
     }
 }
 
 void LcdGui::displaySubmode()
 {
     lcd_.clearArea( 0, 8, 83, 15 );
-    lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.horizontalCenter(), 8, lcd::Justification::CENTER );
+    lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
 }
 
 void LcdGui::displayStatus()

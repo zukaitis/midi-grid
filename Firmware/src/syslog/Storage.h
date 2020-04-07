@@ -16,6 +16,7 @@ public:
 
     void addEntry( const etl::string_view& entry ) override;
     bool getEntry( etl::string_view* entry, uint16_t index ) override;
+    uint16_t getEntryCount() override;
 
 private:
 

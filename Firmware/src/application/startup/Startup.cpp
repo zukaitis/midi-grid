@@ -39,7 +39,7 @@ void Startup::displayUsbConnecting()
 {
     lcd_.clear();
     lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "USB Connecting", lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( "USB Connecting", lcd_.line( 5 ), lcd::Justification::CENTER );
 }
 
-} // namespace
+}  // namespace application

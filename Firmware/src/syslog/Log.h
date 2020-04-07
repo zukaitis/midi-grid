@@ -11,7 +11,7 @@ namespace syslog
 class Log : public LogInterface
 {
 public:
-    explicit Log( LogThreadInterface* syslog );
+    explicit Log( LogThreadInterface* logThread );
     ~Log() override;
 
     void operator<<( const etl::string_view& message ) const override;

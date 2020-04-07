@@ -93,6 +93,7 @@ cxx_source_files:
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp
 - src/syslog/LogThread.cpp
+- src/syslog/Storage.cpp
 - src/rotary_controls/RotaryControls.cpp
 - src/testing/Testing.cpp
 - src/usb/UsbMidi.cpp

@@ -131,7 +131,7 @@ void GridTest::displayWaitingForMidi()
 {
     lcd_.clear();
     lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "Awaiting MIDI", lcd_.horizontalCenter(), 40, lcd::Justification::CENTER );
+    lcd_.print( "Awaiting MIDI", 40, lcd::Justification::CENTER );
 }
 
-} // namespace
+}  // namespace application

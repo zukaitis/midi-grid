@@ -12,6 +12,8 @@ Storage::Storage():
 {
 }
 
+Storage::~Storage() = default;
+
 void Storage::addEntry( const etl::string_view& entry )
 {
     makeSpace( entry );
@@ -32,6 +34,11 @@ bool Storage::getEntry( etl::string_view* const entry, const uint16_t index )
     }
 
     return entryAvailable;
+}
+
+uint16_t Storage::getEntryCount()
+{
+    return record_.size();
 }
 
 void Storage::copyData( const Record& record, const etl::string_view& entry )

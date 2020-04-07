@@ -14,6 +14,7 @@ public:
 
     virtual void addEntry( const etl::string_view& entry ) = 0;
     virtual bool getEntry( etl::string_view* entry, uint16_t index ) = 0;
+    virtual uint16_t getEntryCount() = 0;
 
 };
 
