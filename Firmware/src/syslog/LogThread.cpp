@@ -54,7 +54,7 @@ void LogThread::display()
         etl::string_view entry;
         if (storage_.getEntry( &entry, index ))
         {
-            // lcd_.print( entry, lcd_.line( line ), lcd::Justification::LEFT );
+            lcd_.print( entry, lcd_.line( line ), lcd::Justification::LEFT );
         }
         index++;
         line--;

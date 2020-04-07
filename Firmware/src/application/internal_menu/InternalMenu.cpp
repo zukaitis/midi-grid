@@ -42,6 +42,7 @@ InternalMenu::InternalMenu( ApplicationController& applicationController, grid::
 void InternalMenu::run( ApplicationThread& thread )
 {
     updateLcd();
+    lcd_.release(); // internal menu turns syslog view off
 
     grid_.turnAllLedsOff();
     grid_.setLed( {kBootloaderButtonX, kBootloaderButtonY}, kBootloaderButtonColor );

@@ -55,7 +55,7 @@ void PriorityManager::initialize()
     }
 }
 
-void PriorityManager::print( const char* string, uint8_t x, uint8_t y, Justification justification )
+void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification )
 {
     if (checkPriority())
     {
@@ -63,7 +63,7 @@ void PriorityManager::print( const char* string, uint8_t x, uint8_t y, Justifica
     }
 }
 
-void PriorityManager::print( const char* string, uint8_t y, Justification justification )
+void PriorityManager::print( const etl::string_view& string, uint8_t y, Justification justification )
 {
     if (checkPriority())
     {
@@ -71,7 +71,7 @@ void PriorityManager::print( const char* string, uint8_t y, Justification justif
     }
 }
 
-void PriorityManager::print( const char* string, uint8_t x, uint8_t y )
+void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t y )
 {
     if (checkPriority())
     {

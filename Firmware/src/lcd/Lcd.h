@@ -19,9 +19,9 @@ public:
     void displayImage( uint8_t x, uint8_t y, const Image& image) override;
     void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) override;
     void initialize() override;
-    void print( const char* string, uint8_t x, uint8_t y, Justification justification ) override;
-    void print( const char* string, uint8_t y, Justification justification ) override;
-    void print( const char* string, uint8_t x, uint8_t y) override;
+    void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) override;
+    void print( const etl::string_view& string, uint8_t y, Justification justification ) override;
+    void print( const etl::string_view& string, uint8_t x, uint8_t y) override;
     void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) override;
     void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) override;
     void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) override;
@@ -34,7 +34,7 @@ public:
 
 private:
 
-    void putString( const char* string, uint8_t x, uint8_t y );
+    void putString( const etl::string_view& string, uint8_t x, uint8_t y );
     void putBigDigits( uint16_t number, uint8_t x, uint8_t y, uint8_t numberOfDigits );
 
     uint16_t calculateX( Justification justification );

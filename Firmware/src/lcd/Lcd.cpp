@@ -6,7 +6,6 @@
 #include "lcd/DriverInterface.h"
 #include "lcd/backlight/BacklightInterface.h"
 
-#include <cstring>
 #include <cmath>
 
 namespace lcd
@@ -55,21 +54,21 @@ void Lcd::initialize()
     backlight_.initialize();
 }
 
-void Lcd::putString( const char* string, uint8_t x, const uint8_t y )
+void Lcd::putString( const etl::string_view& string, uint8_t x, const uint8_t y )
 {
     if (y < driver_.height()) // width_ is checked in putChar
     {
-        while (*string)
+        for (char c : string)
         {
-            driver_.putChar( x, y, *string++ );
+            driver_.putChar( x, y, c );
             x += 6;
         }
     }
 }
 
-void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, const Justification justification )
+void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y, const Justification justification )
 {
-    uint8_t textwidth = strlen( string ) * FONT_WIDTH;
+    uint8_t textwidth = string.length() * FONT_WIDTH;
 
     switch (justification)
     {
@@ -96,12 +95,12 @@ void Lcd::print( const char* const string, const uint8_t x, const uint8_t y, con
     }
 }
 
-void Lcd::print( const char* const string, uint8_t y, const Justification justification )
+void Lcd::print( const etl::string_view& string, uint8_t y, const Justification justification )
 {
     print( string, calculateX( justification ), y, justification );
 }
 
-void Lcd::print( const char* const string, const uint8_t x, const uint8_t y )
+void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y )
 {
     print( string, x, y, Justification::LEFT );
 }

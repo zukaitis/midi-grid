@@ -2,6 +2,7 @@
 
 #include "types/Coordinates.h"
 #include <cstdint>
+#include <etl/string_view.h>
 
 namespace lcd
 {
@@ -44,9 +45,9 @@ public:
     virtual void displayImage( uint8_t x, uint8_t y, const Image& image) = 0;
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
-    virtual void print( const char* string, uint8_t x, uint8_t y, Justification justification ) = 0;
-    virtual void print( const char* string, uint8_t y, Justification justification ) = 0;
-    virtual void print( const char* string, uint8_t x, uint8_t y ) = 0;
+    virtual void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) = 0;
+    virtual void print( const etl::string_view& string, uint8_t y, Justification justification ) = 0;
+    virtual void print( const etl::string_view& string, uint8_t x, uint8_t y ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) = 0;

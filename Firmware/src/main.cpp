@@ -25,13 +25,13 @@ Main::Main() :
         backlightDriver_( hardware::lcd::BacklightDriver() ),
         lcdContainer_( &lcdSpi_, &backlightDriver_ ),
         testing_( &gridDriver_ ),
-        logContainer_( &lcdContainer_.getLcdLowPriority() ),
+        logContainer_( &lcdContainer_.getLcdHighPriority() ),
         applicationController_( application::ApplicationController(
             &additionalButtons_, &gridContainer_.getGrid(), &rotaryControls_, &usbMidi_ ) ),
         startup_( applicationController_, gridDriver_, lcdContainer_.getLcdLowPriority(), system_ ),
         gridTest_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcdLowPriority(), usbMidi_ ),
         internalMenu_( applicationController_, gridContainer_.getGrid(), additionalButtons_,
-            lcdContainer_.getLcdLowPriority(), system_ ),
+            lcdContainer_.getLcdHighPriority(), system_ ),
         launchpad_( &applicationController_, &gridContainer_.getGrid(), &additionalButtons_, &rotaryControls_, &lcdContainer_.getLcdLowPriority(),
             &usbMidi_, &system_, &testing_ ),
         snake_( applicationController_, gridContainer_.getGrid(), lcdContainer_.getLcdLowPriority() )
