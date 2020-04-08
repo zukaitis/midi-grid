@@ -1,7 +1,6 @@
 #include "syslog/Storage.h"
 
 #include <etl/cstring.h>
-#include <sys/_stdint.h>
 
 namespace syslog
 {
@@ -67,16 +66,32 @@ const Storage::Record& Storage::createRecord( const etl::string_view& entry )
 
 void Storage::makeSpace( const etl::string_view& entry )
 {
-    uint16_t newStartIndex = record_.front().startIndex + record_.front().length;
-    if ((newStartIndex + entry.length()) > buffer_.size())
+    if (false == record_.empty())
     {
-        newStartIndex = 0;
-    }
+        if (record_.full())
+        {
+            record_.pop_back(); // if entry limit is reached, free one up
+        }
 
-    while ((newStartIndex + entry.length()) > record_.back().startIndex)
-    {
-        // keep removing oldest records, until there is enough space for a new one
-        record_.pop_back();
+        uint16_t newStartIndex = record_.front().startIndex + record_.front().length;
+        if ((newStartIndex + entry.length()) > buffer_.size())
+        {
+            while (newStartIndex <= record_.back().startIndex)
+            {
+                // remove all records from the end of the buffer
+                record_.pop_back();
+            }
+            newStartIndex = 0;
+        }
+
+        if (newStartIndex <= record_.back().startIndex)
+        {
+            while ((newStartIndex + entry.length()) > record_.back().startIndex)
+            {
+                // keep removing oldest records, until there is enough space for a new one
+                record_.pop_back();
+            }
+        }
     }
 }
 

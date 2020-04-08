@@ -196,12 +196,12 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
             mode = Launchpad95Mode_INSTRUMENT;
             break;
         }
-        else if (kLaunchpadColorPalette.at( 48 ) == color)
+        if (kLaunchpadColorPalette.at( 48 ) == color)
         {
             mode = Launchpad95Mode_DEVICE_CONTROLLER;
             break;
         }
-        else if (kLaunchpadColorPalette.at( 45 ) == color)
+        if (kLaunchpadColorPalette.at( 45 ) == color)
         {
             mode = Launchpad95Mode_USER1;
             break;
@@ -213,12 +213,12 @@ Launchpad95Mode Launchpad::determineLaunchpad95Mode()
             mode = Launchpad95Mode_DRUM_STEP_SEQUENCER;
             break;
         }
-        else if (kLaunchpadColorPalette.at( 9 ) == color)
+        if (kLaunchpadColorPalette.at( 9 ) == color)
         {
             mode = Launchpad95Mode_MELODIC_SEQUENCER;
             break;
         }
-        else if (kLaunchpadColorPalette.at( 45 ) == color)
+        if (kLaunchpadColorPalette.at( 45 ) == color)
         {
             mode = Launchpad95Mode_USER2;
             break;

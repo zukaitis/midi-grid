@@ -1,8 +1,6 @@
 #include "syslog/LogThread.h"
 #include "lcd/LcdInterface.h"
-#include "portmacro.h"
 #include "syslog/StorageInterface.h"
-#include <sys/_stdint.h>
 
 namespace syslog
 {

@@ -1,0 +1,4 @@
+---
+
+test_file: SyslogStorageTest.cpp
+file_under_test: ${source_dir}/syslog/Storage.cpp
