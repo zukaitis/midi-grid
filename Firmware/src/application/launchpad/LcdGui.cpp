@@ -61,10 +61,6 @@ LcdGui::LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd ):
 void LcdGui::initialize()
 {
     lcd_.clear();
-    lcd_.print( "L95", 0, lcd::Justification::CENTER );
-    lcd_.displayImage( 63, 0, usbSymbolSmall );
-    lcd_.displayImage( 0, 0, midiSymbolSmall );
-
     displayLaunchpad95Info();
 }
 
@@ -76,6 +72,10 @@ void LcdGui::refresh()
 
 void LcdGui::refreshStatusBar()
 {
+    lcd_.print( "L95", 0, lcd::Justification::CENTER );
+    lcd_.displayImage( 63, 0, usbSymbolSmall );
+    lcd_.displayImage( 0, 0, midiSymbolSmall );
+
     if (midiInputActivityIcon_.isOn)
     {
         if (freertos::Ticks::GetTicks() >= midiInputActivityIcon_.timeToDisable)
