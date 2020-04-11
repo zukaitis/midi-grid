@@ -17,7 +17,7 @@ include_directories:
 - middlewares/USBMIDI/Inc
 - src
 - src/configs
-- src/lcd/84x48_mono
+- src/lcd/240x320
 - submodules/etl/include
 - submodules/freertos-addons/c++/Source/include
 - submodules/FreeRTOS-Kernel/include
@@ -87,8 +87,8 @@ cxx_source_files:
 - src/grid/PulsingLeds.cpp
 - src/lcd/Lcd.cpp
 - src/lcd/PriorityManager.cpp
-- src/lcd/84x48_mono/LcdContainer.cpp
-- src/lcd/84x48_mono/Pcd8544.cpp
+- src/lcd/240x320/LcdContainer.cpp
+- src/lcd/240x320/Ili9341.cpp
 - src/lcd/backlight/Backlight.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp

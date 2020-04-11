@@ -1,6 +1,7 @@
 #include "system/System.hpp"
 #include "stm32f4xx_hal.h"
 #include "usb/usb_device.h"
+#include <freertos/ticks.hpp>
 
 namespace mcu
 {
@@ -87,6 +88,14 @@ void System::configureSystemClock()
 
     // Configure the Systick
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+}
+
+void System::delayDirty( uint32_t timeMs )
+{
+    const uint32_t releaseTime = freertos::Ticks::GetTicks() + timeMs;
+    while (freertos::Ticks::GetTicks() < releaseTime)
+    {
+    }
 }
 
 } // namespace mcu

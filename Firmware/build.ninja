@@ -32,7 +32,7 @@ inc_flags = -Isubmodules/cmsis_device_f4/Include $
     -Isubmodules/cmsis_core/Include -Isubmodules/stm32f4xx_hal_driver/Inc $
     -Isubmodules/stm32f4xx_hal_driver/Inc/Legacy $
     -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc $
-    -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/84x48_mono $
+    -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/240x320 $
     -Isubmodules/etl/include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -Isubmodules/FreeRTOS-Kernel/include $
@@ -203,9 +203,9 @@ build output/src/grid/LedOutput.o: cxx src/grid/LedOutput.cpp
 build output/src/grid/PulsingLeds.o: cxx src/grid/PulsingLeds.cpp
 build output/src/lcd/Lcd.o: cxx src/lcd/Lcd.cpp
 build output/src/lcd/PriorityManager.o: cxx src/lcd/PriorityManager.cpp
-build output/src/lcd/84x48_mono/LcdContainer.o: cxx $
-    src/lcd/84x48_mono/LcdContainer.cpp
-build output/src/lcd/84x48_mono/Pcd8544.o: cxx src/lcd/84x48_mono/Pcd8544.cpp
+build output/src/lcd/240x320/LcdContainer.o: cxx $
+    src/lcd/240x320/LcdContainer.cpp
+build output/src/lcd/240x320/Ili9341.o: cxx src/lcd/240x320/Ili9341.cpp
 build output/src/lcd/backlight/Backlight.o: cxx $
     src/lcd/backlight/Backlight.cpp
 build output/src/syslog/Log.o: cxx src/syslog/Log.cpp
@@ -283,8 +283,7 @@ build $target: link $
     output/src/grid/Grid.o output/src/grid/GridContainer.o $
     output/src/grid/LedOutput.o output/src/grid/PulsingLeds.o $
     output/src/lcd/Lcd.o output/src/lcd/PriorityManager.o $
-    output/src/lcd/84x48_mono/LcdContainer.o $
-    output/src/lcd/84x48_mono/Pcd8544.o $
+    output/src/lcd/240x320/LcdContainer.o output/src/lcd/240x320/Ili9341.o $
     output/src/lcd/backlight/Backlight.o output/src/syslog/Log.o $
     output/src/syslog/LogContainer.o output/src/syslog/LogThread.o $
     output/src/syslog/Storage.o output/src/rotary_controls/RotaryControls.o $

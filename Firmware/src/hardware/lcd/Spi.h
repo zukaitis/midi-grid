@@ -14,13 +14,14 @@ class Spi: public SpiInterface
 {
 public:
     Spi();
-    virtual ~Spi();
+    ~Spi() override;
 
     void initialize() const override;
 
     void reset() const override;
-    void writeCommand( const uint8_t& command, const uint32_t size = 1 ) const override;
+    void writeCommand( uint8_t command ) const override;
     void writeData( const uint8_t& data, const uint32_t size ) const override;
+    void writeData( const etl::array_view<uint8_t>& data ) const override;
 
 private:
     void initializeDma() const;
@@ -28,6 +29,6 @@ private:
     void initializeSpi() const;
 };
 
-}
+}  // namespace lcd
 
-}
+}  // namespace hardware
