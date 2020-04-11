@@ -144,7 +144,7 @@ void Ili9341::initialize()
 
     spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
     {
-        etl::array<uint8_t, 1> data = {0x48}; // ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR
+        etl::array<uint8_t, 1> data = {0x08}; // ILI9341_MADCTL_BGR
         spi_.writeData( etl::array_view<uint8_t>(data) );
     }
 
@@ -192,10 +192,40 @@ void Ili9341::initialize()
 
     spi_.writeCommand( static_cast<uint8_t>(Command::SLPOUT) );
     
-    mcu::System::delayDirty( 10 ); // TODO(unknown): remove
+    mcu::System::delayDirty( 150 ); // TODO(unknown): remove
 
     spi_.writeCommand( static_cast<uint8_t>(Command::DISPON) );
 
+    mcu::System::delayDirty( 500 ); // TODO(unknown): remove
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
+    {
+        etl::array<uint8_t, 1> data = {0x88}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
+        spi_.writeData( etl::array_view<uint8_t>(data) );
+    }
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
+    {
+        etl::array<uint8_t, 4> data = {0x00, 0x08, 0x00, 0x80};
+        spi_.writeData( etl::array_view<uint8_t>(data) );
+    }
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::PASET) );
+    {
+        etl::array<uint8_t, 4> data = {0x00, 0x08, 0x00, 0x80};
+        spi_.writeData( etl::array_view<uint8_t>(data) );
+    }
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+
+    for (uint16_t varpoksnis = 0; varpoksnis < 6050; varpoksnis++)
+    {
+        
+        {
+            etl::array<uint8_t, 2> data = {0x00, 0x00};
+            spi_.writeData( etl::array_view<uint8_t>(data) );
+        }
+    }
     // clear();
 }
 
@@ -226,23 +256,7 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image
 
 void Ili9341::putChar( const uint8_t x, const uint8_t y, const char c )
 {
-    spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
-    {
-        etl::array<uint8_t, 4> data = {0x08, 0x80, 0x08, 0x80};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::PASET) );
-    {
-        etl::array<uint8_t, 4> data = {0x08, 0x80, 0x08, 0x80};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
-    {
-        etl::array<uint8_t, 2> data = {0xFF, 0xFF};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    
 }
 
 uint16_t Ili9341::width() const
