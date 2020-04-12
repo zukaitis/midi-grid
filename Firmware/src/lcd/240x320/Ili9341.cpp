@@ -6,12 +6,15 @@
 #include "lcd/font.h"
 
 #include <freertos/ticks.hpp>
-#include <sys/_stdint.h>
+#include <etl/algorithm.h>
+#include <etl/absolute.h>
 
 #include "system/System.hpp" // TODO(unknown): remove
 
 namespace lcd
 {
+
+static const uint8_t asciiOffset = 0x20; // TODO(unknown): delet
 
 enum class Command : uint8_t
 {
@@ -77,118 +80,99 @@ void Ili9341::initialize()
     spi_.reset();
 
     spi_.writeCommand( 0xEF );
-    {
-        etl::array<uint8_t, 3> data = {0x03, 0x80, 0x02};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    DataBuffer& buffer = assignDataBuffer();
+    buffer = {0x03, 0x80, 0x02};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xCF );
-    {
-        etl::array<uint8_t, 3> data = {0x00, 0xC1, 0x30};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x00, 0xC1, 0x30};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xED );
-    {
-        etl::array<uint8_t, 4> data = {0x64, 0x03, 0x12, 0x81};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x64, 0x03, 0x12, 0x81};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xE8 );
-    {
-        etl::array<uint8_t, 3> data = {0x85, 0x00, 0x78};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x85, 0x00, 0x78};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xCB );
-    {
-        etl::array<uint8_t, 5> data = {0x39, 0x2C, 0x00, 0x34, 0x02};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x39, 0x2C, 0x00, 0x34, 0x02};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xF7 );
-    {
-        etl::array<uint8_t, 1> data = {0x20};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x20};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xEA );
-    {
-        etl::array<uint8_t, 2> data = {0x00, 0x00};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x00, 0x00};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PWCTR1) );
-    {
-        etl::array<uint8_t, 1> data = {0x23};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x23};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PWCTR2) );
-    {
-        etl::array<uint8_t, 1> data = {0x10};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x10};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::VMCTR1) );
-    {
-        etl::array<uint8_t, 2> data = {0x3e, 0x28};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x3e, 0x28};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::VMCTR2) );
-    {
-        etl::array<uint8_t, 1> data = {0x86};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x86};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
-    {
-        etl::array<uint8_t, 1> data = {0x08}; // ILI9341_MADCTL_BGR
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x08}; // ILI9341_MADCTL_BGR
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PIXFMT) );
-    {
-        etl::array<uint8_t, 1> data = {0x55};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x66};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::FRMCTR1) );
-    {
-        etl::array<uint8_t, 2> data = {0x00, 0x18};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x00, 0x18};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::DFUNCTR) );
-    {
-        etl::array<uint8_t, 3> data = {0x08, 0x82, 0x27};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x08, 0x82, 0x27};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( 0xF2 );
-    {
-        etl::array<uint8_t, 1> data = {0x00};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x00};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GAMMASET) );
-    {
-        etl::array<uint8_t, 1> data = {0x01};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x01};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GMCTRP1) );
-    {
-        etl::array<uint8_t, 15> data = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GMCTRN1) );
-    {
-        etl::array<uint8_t, 15> data = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
+    spi_.writeData( RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::SLPOUT) );
     
@@ -199,54 +183,39 @@ void Ili9341::initialize()
     mcu::System::delayDirty( 500 ); // TODO(unknown): remove
 
     spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
-    {
-        etl::array<uint8_t, 1> data = {0x88}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
+    buffer = assignDataBuffer();
+    buffer = {0xA8}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
+    spi_.writeData( RawDataView(buffer) );
 
-    spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
-    {
-        etl::array<uint8_t, 4> data = {0x00, 0x08, 0x00, 0x80};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::PASET) );
-    {
-        etl::array<uint8_t, 4> data = {0x00, 0x08, 0x00, 0x80};
-        spi_.writeData( etl::array_view<uint8_t>(data) );
-    }
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
-
-    for (uint16_t varpoksnis = 0; varpoksnis < 6050; varpoksnis++)
-    {
-        
-        {
-            etl::array<uint8_t, 2> data = {0x00, 0x00};
-            spi_.writeData( etl::array_view<uint8_t>(data) );
-        }
-    }
-    // clear();
-}
-
-void Ili9341::transmit()
-{
-    
-}
-
-void Ili9341::setCursor( const uint8_t column, const uint8_t row8Bit )
-{
-
+    clear();
 }
 
 void Ili9341::clear()
 {
-
+    clearArea( {0, 0}, {width_, height_} );
 }
 
 void Ili9341::clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2 )
 {
+    // deprecated
+    clearArea( {x1, y1}, {x2, y2} );
+}
 
+void Ili9341::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
+{
+    setWorkingArea(
+        {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)},
+        {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)} );
+
+    const uint32_t areaSize = etl::absolute(corner1.x - corner2.x) * etl::absolute(corner1.y - corner2.y);
+
+    PixelBuffer& buffer = assignPixelBuffer();
+    buffer.assign( buffer.capacity(), {0x80, 0x80, 0x00} );
+    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+    for (uint32_t i = 0; i < ((areaSize / buffer.size()) + 1); i++)
+    {
+        spi_.writeData( PixelView(buffer) );
+    }
 }
 
 void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image )
@@ -257,6 +226,46 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image
 void Ili9341::putChar( const uint8_t x, const uint8_t y, const char c )
 {
     
+}
+
+void Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
+{
+    auto limitX = static_cast<uint16_t>(coords.x + string.length()*FONT_WIDTH);
+    if (limitX > width_)
+    {
+        limitX = width_;
+    }
+
+    setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + FONT_HEIGHT - 1) });
+
+    const Pixel textColor = {0x00, 0xFF, 0xFF};
+    const Pixel backgroundColor = {0xFF, 0x00, 0x00};
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+
+    uint16_t x = coords.x;
+    uint16_t y = 0;
+    PixelBuffer& buffer = assignPixelBuffer();
+    while (x < limitX)
+    {
+        const char c = string.at( (x - coords.x) / FONT_WIDTH );
+        const uint8_t column = ASCII.at( c - asciiOffset ).at( (x - coords.x) % FONT_WIDTH );
+        const bool textPixel = (((column >> y) & 0x01U) != 0U);
+        buffer.emplace_back( (textPixel) ? textColor : backgroundColor );
+
+        y++;
+        if (y == FONT_HEIGHT)
+        {
+            y = 0;
+            x++;
+        }
+
+        if ((buffer.full()) || (x == limitX))
+        {
+            spi_.writeData( PixelView( buffer ) );
+            buffer = assignPixelBuffer();
+        }
+    }
 }
 
 uint16_t Ili9341::width() const
@@ -273,5 +282,42 @@ uint16_t Ili9341::numberOfTextLines() const
 {
     return numberOfTextLines_;
 }
+
+void Ili9341::setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight )
+{
+    if (topLeft < bottomRight)
+    {
+        spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
+        const etl::array<uint8_t, 4> limitsY = {
+            static_cast<uint8_t>(topLeft.y / 0x100U),
+            static_cast<uint8_t>(topLeft.y % 0x100U),
+            static_cast<uint8_t>(bottomRight.y / 0x100U),
+            static_cast<uint8_t>(bottomRight.y % 0x100U) };
+        spi_.writeData( etl::array_view<const uint8_t>(limitsY) );
+
+        spi_.writeCommand( static_cast<uint8_t>(Command::PASET) );
+        const etl::array<uint8_t, 4> limitsX = {
+            static_cast<uint8_t>(topLeft.x / 0x100U),
+            static_cast<uint8_t>(topLeft.x % 0x100U),
+            static_cast<uint8_t>(bottomRight.x / 0x100U),
+            static_cast<uint8_t>(bottomRight.x % 0x100U) };
+        spi_.writeData( etl::array_view<const uint8_t>(limitsX) );
+    }
+}
+
+Ili9341::PixelBuffer& Ili9341::assignPixelBuffer()
+{
+    pixelBufferIndex_ = (pixelBufferIndex_ + 1) / pixelBuffer_.size();
+    pixelBuffer_.at( pixelBufferIndex_ ).clear();
+    return pixelBuffer_.at( pixelBufferIndex_ );
+}
+
+Ili9341::DataBuffer& Ili9341::assignDataBuffer()
+{
+    dataBufferIndex_ = (dataBufferIndex_ + 1) / dataBuffer_.size();
+    dataBuffer_.at( dataBufferIndex_ ).clear();
+    return dataBuffer_.at( dataBufferIndex_ );
+}
+
 
 } // namespace lcd

@@ -1,4 +1,5 @@
 #include "hardware/lcd/Spi.h"
+#include "hardware/lcd/SpiInterface.h"
 #include "system/gpio_definitions.h"
 
 #include "stm32f4xx_hal.h"
@@ -53,7 +54,7 @@ void Spi::writeData( const uint8_t& data, const uint32_t size ) const
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>( &data ), size );
 }
 
-void Spi::writeData( const etl::array_view<uint8_t>& data ) const
+void Spi::writeData( const ::lcd::RawDataView& data ) const
 {
     while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
     {
@@ -62,6 +63,17 @@ void Spi::writeData( const etl::array_view<uint8_t>& data ) const
 
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>(&data.front()), data.size() );
+}
+
+void Spi::writeData( const ::lcd::PixelView& data) const
+{
+    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
+    {
+        // wait until previous transfer is done
+    }
+
+    HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
+    HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>(&data.front().front()), data.size() * data.at(0).size() );
 }
 
 void Spi::initializeDma() const
@@ -120,7 +132,7 @@ void Spi::initializeSpi() const
     lcdSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
     lcdSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
     lcdSpi.Init.NSS = SPI_NSS_HARD_OUTPUT;
-    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32; // 3MBbit?
+    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4; // 24MBbit
     lcdSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
     lcdSpi.Init.TIMode = SPI_TIMODE_DISABLE;
     lcdSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

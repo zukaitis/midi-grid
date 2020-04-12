@@ -75,21 +75,21 @@ void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t 
         case Justification::RIGHT:
             if (textwidth < x)
             {
-                putString( string, (x - textwidth), y );
+                driver_.putString( string, {static_cast<uint16_t>(x - textwidth), y} );
             }
             break;
         case Justification::CENTER:
             textwidth = textwidth / 2;
             if ((textwidth <= x) && (textwidth <= (driver_.width() - x)))
             {
-                putString( string, (x - textwidth), y );
+                driver_.putString( string, {static_cast<uint16_t>(x - textwidth), y} );
             }
             break;
         case Justification::LEFT:
         default:
             if (textwidth < (driver_.width() - x))
             {
-                putString( string, x, y );
+                driver_.putString( string, {x, y} );
             }
             break;
     }

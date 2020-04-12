@@ -4,8 +4,8 @@
 
 struct Coordinates
 {
-    uint8_t x;
-    uint8_t y;
+    uint16_t x;
+    uint16_t y;
 
     bool operator==(const Coordinates& coordinates) const
     {

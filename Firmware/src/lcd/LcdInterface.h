@@ -21,13 +21,6 @@ enum class Justification
     CENTER
 };
 
-struct Color
-{
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-};
-
 enum class FontSize
 {
     PT1,
