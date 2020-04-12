@@ -223,11 +223,6 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image
     
 }
 
-void Ili9341::putChar( const uint8_t x, const uint8_t y, const char c )
-{
-    
-}
-
 void Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
 {
     auto limitX = static_cast<uint16_t>(coords.x + string.length()*FONT_WIDTH);

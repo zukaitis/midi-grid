@@ -26,9 +26,9 @@ public:
 
     virtual void reset() const = 0;
     virtual void writeCommand( uint8_t command ) const = 0;
-    virtual void writeData( const uint8_t& data, const uint32_t size ) const = 0;
-    virtual void writeData( const etl::array_view<const uint8_t>& data ) const = 0;
-    virtual void writeData( const ::lcd::PixelView& data) const = 0;
+    virtual void writeData( const uint8_t& data, uint32_t size ) const = 0;
+    virtual void writeData( const ::lcd::RawDataView& data ) const = 0;
+    virtual void writeData( const ::lcd::PixelView& data ) const = 0;
 };
 
 }

@@ -17,8 +17,9 @@ public:
 
     MOCK_METHOD( void, reset, (), (const, override) );
     MOCK_METHOD( void, writeCommand, (const uint8_t command), (const, override) );
-    MOCK_METHOD( void, writeData, (const uint8_t& data, const uint32_t size), (const, override) );
-    MOCK_METHOD( void, writeData, (const etl::array_view<uint8_t>& data), (const, override) );
+    MOCK_METHOD( void, writeData, (const uint8_t& data, uint32_t size), (const, override) );
+    MOCK_METHOD( void, writeData, (const ::lcd::RawDataView& data), (const, override) );
+    MOCK_METHOD( void, writeData, (const ::lcd::PixelView& data), (const, override) );
 };
 
 }

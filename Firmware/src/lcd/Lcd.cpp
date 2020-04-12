@@ -54,18 +54,6 @@ void Lcd::initialize()
     backlight_.initialize();
 }
 
-void Lcd::putString( const etl::string_view& string, uint8_t x, const uint8_t y )
-{
-    if (y < driver_.height()) // width_ is checked in putChar
-    {
-        for (char c : string)
-        {
-            driver_.putChar( x, y, c );
-            x += 6;
-        }
-    }
-}
-
 void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y, const Justification justification )
 {
     uint8_t textwidth = string.length() * FONT_WIDTH;

@@ -34,7 +34,6 @@ public:
 
 private:
 
-    void putString( const etl::string_view& string, uint8_t x, uint8_t y );
     void putBigDigits( uint16_t number, uint8_t x, uint8_t y, uint8_t numberOfDigits );
 
     uint16_t calculateX( Justification justification );
