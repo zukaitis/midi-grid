@@ -65,8 +65,30 @@ enum class Command : uint8_t
     GMCTRN1 = 0xE1
 };
 
+namespace color
+{
+    static const Pixel BLACK = {0, 0, 0};
+    static const Pixel RED = {255, 0, 0};
+    static const Pixel GREEN = {0, 255, 0};
+    static const Pixel BLUE = {0, 0, 255};
+    static const Pixel YELLOW = {255, 255, 0};
+    static const Pixel MAGENTA = {255, 0, 255};
+    static const Pixel CYAN = {0, 255, 255};
+    static const Pixel WHITE = {255, 255, 255};
+    static const Pixel ORANGE = {255, 125, 0};
+    static const Pixel SPRING_GREEN = {125, 255, 0};
+    static const Pixel TURQUOISE = {0, 255, 125};
+    static const Pixel OCEAN = {0, 125, 255};
+    static const Pixel VIOLET = {125, 0, 255};
+    static const Pixel RASPBERRY = {255, 0, 125};
+}
+
 Ili9341::Ili9341( hardware::lcd::SpiInterface* spi ):
-    spi_( *spi )
+    spi_( *spi ),
+    pixelBuffer_(),
+    pixelBufferIndex_( 0 ),
+    dataBuffer_(),
+    dataBufferIndex_( 0 )
 {
 }
 
@@ -203,6 +225,11 @@ void Ili9341::clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2
 
 void Ili9341::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
 {
+    fillArea( corner1, corner2, color::BLACK );
+}
+
+void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+{
     setWorkingArea(
         {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)},
         {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)} );
@@ -210,7 +237,7 @@ void Ili9341::clearArea( const Coordinates& corner1, const Coordinates& corner2 
     const uint32_t areaSize = etl::absolute(corner1.x - corner2.x) * etl::absolute(corner1.y - corner2.y);
 
     PixelBuffer& buffer = assignPixelBuffer();
-    buffer.assign( buffer.capacity(), {0x80, 0x80, 0x00} );
+    buffer.assign( buffer.capacity(), color );
     spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
     for (uint32_t i = 0; i < ((areaSize / buffer.size()) + 1); i++)
     {
@@ -233,8 +260,8 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
 
     setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + FONT_HEIGHT - 1) });
 
-    const Pixel textColor = {0x00, 0xFF, 0xFF};
-    const Pixel backgroundColor = {0xFF, 0x00, 0x00};
+    const Pixel textColor = color::WHITE;
+    const Pixel backgroundColor = color::BLACK;
 
     spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
 
