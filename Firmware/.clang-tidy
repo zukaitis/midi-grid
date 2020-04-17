@@ -1,5 +1,17 @@
 ---
-Checks: '-*,bugprone-*, cert-*, cppcoreguidelines-*, clang-analyzer-*, google-*, hicpp-*, llvm-*, misc-*, modernize-*,-modernize-use-trailing-return-type, performance-*,portability-*, readability-*'
+Checks: '-*,
+    bugprone-*,
+    cert-*, -cert-err58-cpp,
+    cppcoreguidelines-*,
+    clang-analyzer-*,
+    google-*,
+    hicpp-*,
+    llvm-*,
+    misc-*,
+    modernize-*, -modernize-use-trailing-return-type,
+    performance-*,
+    portability-*,
+    readability-*'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
