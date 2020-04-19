@@ -47,7 +47,7 @@
   (pad 6 thru_hole oval (at 3.5 0.35) (size 2 1.9) (drill 1.2) (layers *.Cu *.Mask))
   (pad 6 smd rect (at 2.9 0.35) (size 1.2 1.9) (layers F.Cu F.Mask))
   (pad 6 smd rect (at -2.9 0.35) (size 1.2 1.9) (layers F.Cu F.Mask))
-  (model ${KIPRJMOD}/project_library/project_library.3dshapes/User Library-MicroUSB-B_Molex_105017-0001.wrl
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/UserLibrary-MicroUSB-B_Molex_105017-0001.wrl
     (at (xyz 0 -0.006 0.045))
     (scale (xyz 394 394 394))
     (rotate (xyz -90 0 0))
