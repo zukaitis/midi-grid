@@ -1,9 +1,10 @@
 #include "lcd/240x320/Ili9341.h"
 #include "hardware/lcd/SpiInterface.h"
+#include "lcd/Format.h"
 #include "lcd/LcdInterface.h"
 #include "ThreadConfigurations.h"
 
-#include "lcd/font.h"
+#include "lcd/Font.h"
 
 #include <freertos/ticks.hpp>
 #include <etl/algorithm.h>
@@ -65,24 +66,6 @@ enum class Command : uint8_t
     GMCTRN1 = 0xE1
 };
 
-namespace color
-{
-    static const Pixel BLACK = {0, 0, 0};
-    static const Pixel RED = {255, 0, 0};
-    static const Pixel GREEN = {0, 255, 0};
-    static const Pixel BLUE = {0, 0, 255};
-    static const Pixel YELLOW = {255, 255, 0};
-    static const Pixel MAGENTA = {255, 0, 255};
-    static const Pixel CYAN = {0, 255, 255};
-    static const Pixel WHITE = {255, 255, 255};
-    static const Pixel ORANGE = {255, 125, 0};
-    static const Pixel SPRING_GREEN = {125, 255, 0};
-    static const Pixel TURQUOISE = {0, 255, 125};
-    static const Pixel OCEAN = {0, 125, 255};
-    static const Pixel VIOLET = {125, 0, 255};
-    static const Pixel RASPBERRY = {255, 0, 125};
-}
-
 Ili9341::Ili9341( hardware::lcd::SpiInterface* spi ):
     spi_( *spi ),
     pixelBuffer_(),
@@ -92,9 +75,7 @@ Ili9341::Ili9341( hardware::lcd::SpiInterface* spi ):
 {
 }
 
-Ili9341::~Ili9341()
-{
-}
+Ili9341::~Ili9341() = default;
 
 void Ili9341::initialize()
 {
@@ -104,97 +85,97 @@ void Ili9341::initialize()
     spi_.writeCommand( 0xEF );
     DataBuffer& buffer = assignDataBuffer();
     buffer = {0x03, 0x80, 0x02};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xCF );
     buffer = assignDataBuffer();
     buffer = {0x00, 0xC1, 0x30};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xED );
     buffer = assignDataBuffer();
     buffer = {0x64, 0x03, 0x12, 0x81};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xE8 );
     buffer = assignDataBuffer();
     buffer = {0x85, 0x00, 0x78};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xCB );
     buffer = assignDataBuffer();
     buffer = {0x39, 0x2C, 0x00, 0x34, 0x02};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xF7 );
     buffer = assignDataBuffer();
     buffer = {0x20};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xEA );
     buffer = assignDataBuffer();
     buffer = {0x00, 0x00};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PWCTR1) );
     buffer = assignDataBuffer();
     buffer = {0x23};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PWCTR2) );
     buffer = assignDataBuffer();
     buffer = {0x10};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::VMCTR1) );
     buffer = assignDataBuffer();
     buffer = {0x3e, 0x28};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::VMCTR2) );
     buffer = assignDataBuffer();
     buffer = {0x86};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
     buffer = assignDataBuffer();
     buffer = {0x08}; // ILI9341_MADCTL_BGR
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::PIXFMT) );
     buffer = assignDataBuffer();
     buffer = {0x66};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::FRMCTR1) );
     buffer = assignDataBuffer();
     buffer = {0x00, 0x18};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::DFUNCTR) );
     buffer = assignDataBuffer();
     buffer = {0x08, 0x82, 0x27};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( 0xF2 );
     buffer = assignDataBuffer();
     buffer = {0x00};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GAMMASET) );
     buffer = assignDataBuffer();
     buffer = {0x01};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GMCTRP1) );
     buffer = assignDataBuffer();
     buffer = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::GMCTRN1) );
     buffer = assignDataBuffer();
     buffer = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     spi_.writeCommand( static_cast<uint8_t>(Command::SLPOUT) );
     
@@ -207,7 +188,7 @@ void Ili9341::initialize()
     spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
     buffer = assignDataBuffer();
     buffer = {0xA8}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
-    spi_.writeData( RawDataView(buffer) );
+    spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
     clear();
 }
@@ -252,37 +233,72 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image
 
 void Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
 {
-    auto limitX = static_cast<uint16_t>(coords.x + string.length()*FONT_WIDTH);
+    putString( string, coords, Format() );
+}
+
+// @Robert C. Martin - forgive me for this method pls
+void Ili9341::putString( const etl::string_view& string, const Coordinates& coords, const Format& format )
+{
+    auto limitX = static_cast<uint16_t>(coords.x + format.font().getStringWidth( string ) );
     if (limitX > width_)
     {
         limitX = width_;
     }
 
-    setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + FONT_HEIGHT - 1) });
+    const Pixel textColor = format.textColor();
+    const Pixel backgroundColor = format.backgroundColor();
+    const uint16_t height = format.font().getHeight();
 
-    const Pixel textColor = color::WHITE;
-    const Pixel backgroundColor = color::BLACK;
+    setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + height - 1) });
+
+    uint16_t charIndex = 0;
+    uint16_t x = 0;
+    uint16_t y = 0;
+    const char c = string.at( charIndex );
+    Font::GlyphView glyph = format.font().getGlyph( c );
+    uint16_t width = format.font().getCharWidth( c );
+    bool drawGlyph = true;
 
     spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
 
-    uint16_t x = coords.x;
-    uint16_t y = 0;
     PixelBuffer& buffer = assignPixelBuffer();
-    while (x < limitX)
+    while (charIndex < string.length())
     {
-        const char c = string.at( (x - coords.x) / FONT_WIDTH );
-        const uint8_t column = ASCII.at( c - asciiOffset ).at( (x - coords.x) % FONT_WIDTH );
-        const bool textPixel = (((column >> y) & 0x01U) != 0U);
-        buffer.emplace_back( (textPixel) ? textColor : backgroundColor );
+        if (drawGlyph)
+        {
+            const uint8_t column = glyph.at( x + y / 8U );
+            const bool pixelActive = ((static_cast<uint8_t>(column >> (y % 8U)) & 0x01U) != 0U);
+            buffer.emplace_back( (pixelActive) ? textColor : backgroundColor );
+        }
+        else  // draw space between glyphs
+        {
+            buffer.emplace_back( backgroundColor );
+        }
 
         y++;
-        if (y == FONT_HEIGHT)
+        if (y == height)
         {
             y = 0;
             x++;
+            if (x == width)
+            {
+                x = 0;
+                drawGlyph = !drawGlyph;
+                if (drawGlyph)
+                {
+                    const char c = string.at( charIndex );
+                    glyph = format.font().getGlyph( c );
+                    width = format.font().getCharWidth( c );
+                }
+                else
+                {
+                    width = format.font().getLetterSpacingWidth();
+                    charIndex++;
+                }
+            }
         }
 
-        if ((buffer.full()) || (x == limitX))
+        if ((buffer.full()) || charIndex == string.length())
         {
             spi_.writeData( PixelView( buffer ) );
             buffer = assignPixelBuffer();

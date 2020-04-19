@@ -1,9 +1,11 @@
 // This file is generated using convert.py script
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/font/Font.h"
+#include "lcd/Font.h"
 
 namespace lcd
+{
+namespace font
 {
 
 static const etl::array<uint8_t, 422> data = {
@@ -39,6 +41,7 @@ static const etl::array<uint16_t, 96> map = {
     331, 336, 338, 346, 351, 356, 361, 366, 370, 374, 377, 382, 387, 394, 399, 404, 409, 412, 414, 417, 422
 };
 
-static const Font nokiafc22( 95, 32, DataView( data ), MapView( map ), 1, 1 );
+Font nokia_8p( 95, 32, Font::GlyphView( data ), Font::MapView( map ), 8, 1 );
 
+}  // namespace font
 }  // namespace lcd

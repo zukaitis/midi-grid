@@ -9,15 +9,18 @@ import textwrap
 output_file_header = '// This file is generated using ' + os.path.basename( __file__ ) + ' script' + '''
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/font/Font.h"
+#include "lcd/Font.h"
 
 namespace lcd
+{
+namespace font
 {
 
 '''
 
 output_file_footer = '''
 
+}  // namespace font
 }  // namespace lcd
 '''
 
@@ -45,7 +48,8 @@ def convert( input_file : str, output_file : str ):
 
     height = get_max_height( font )
     negative_offset = get_negative_offset( font )
-    bytes_per_column = math.ceil((height - negative_offset) / 8)
+    total_height = height - negative_offset
+    bytes_per_column = math.ceil(total_height / 8)
 
     data_array = []
     font_map = [0]
@@ -84,10 +88,10 @@ def convert( input_file : str, output_file : str ):
     output.write( '};\n\n' )
     
     font_name = os.path.splitext( os.path.basename( output_file ) )[0]
-    output.write( 'static const Font ' + str(font_name) + '( ' + \
+    output.write( 'Font ' + str(font_name) + '( ' + \
         str(number_of_characters) + ', ' + str(first_symbol) + \
-        ', DataView( data ), MapView( map ), ' + \
-        str(bytes_per_column) + ', ' + str(gap_width) + ' );' )
+        ', Font::GlyphView( data ), Font::MapView( map ), ' + \
+        str(total_height) + ', ' + str(gap_width) + ' );' )
 
     output.write( output_file_footer )
     output.close() 

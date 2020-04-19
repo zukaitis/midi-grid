@@ -25,6 +25,7 @@ public:
     void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color );
     void displayImage( uint8_t x, uint8_t y, const Image& image ) override;
     void putString( const etl::string_view& string, const Coordinates& coords ) override;
+    void putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) override;
 
     uint16_t width() const override;
     uint16_t height() const override;

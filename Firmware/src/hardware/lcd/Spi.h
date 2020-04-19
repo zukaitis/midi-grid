@@ -21,7 +21,7 @@ public:
     void reset() const override;
     void writeCommand( uint8_t command ) const override;
     void writeData( const uint8_t& data, uint32_t size ) const override;
-    void writeData( const ::lcd::RawDataView& data ) const override;
+    void writeData( const RawDataView& data ) const override;
     void writeData( const ::lcd::PixelView& data) const override;
 
 private:

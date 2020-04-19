@@ -54,7 +54,7 @@ void Spi::writeData( const uint8_t& data, const uint32_t size ) const
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>( &data ), size );
 }
 
-void Spi::writeData( const ::lcd::RawDataView& data ) const
+void Spi::writeData( const RawDataView& data ) const
 {
     while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
     {

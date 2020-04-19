@@ -85,11 +85,14 @@ cxx_source_files:
 - src/grid/GridContainer.cpp
 - src/grid/LedOutput.cpp
 - src/grid/PulsingLeds.cpp
+- src/lcd/Font.cpp
+- src/lcd/Format.cpp
 - src/lcd/Lcd.cpp
 - src/lcd/PriorityManager.cpp
 - src/lcd/240x320/LcdContainer.cpp
 - src/lcd/240x320/Ili9341.cpp
 - src/lcd/backlight/Backlight.cpp
+- src/lcd/font/nokia_8p.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp
 - src/syslog/LogThread.cpp
