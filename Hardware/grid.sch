@@ -1,42 +1,6 @@
-EESchema Schematic File Version 2
-LIBS:project_library
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:diode
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:stm32
-LIBS:ESD_Protection
+EESchema Schematic File Version 4
 LIBS:midi_grid-cache
-EELAYER 25 0
+EELAYER 30 0
 EELAYER END
 $Descr A2 23386 16535
 encoding utf-8
@@ -51,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 1 1 5A11EA22
 P 8550 3250
 F 0 "SW1" H 8600 3350 50  0000 L CNN
@@ -62,7 +26,7 @@ F 3 "" H 8550 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D1
+L project_library:LED_RAGB D1
 U 1 1 5A13025C
 P 8300 3500
 F 0 "D1" H 8300 3870 50  0000 C CNN
@@ -73,7 +37,7 @@ F 3 "" H 8300 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D2
+L project_library:LL4148 D2
 U 1 1 5A130887
 P 8800 3500
 F 0 "D2" H 8800 3600 50  0000 C CNN
@@ -84,7 +48,7 @@ F 3 "" H 8800 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 2 1 5A132302
 P 9800 3250
 F 0 "SW1" H 9850 3350 50  0000 L CNN
@@ -95,7 +59,7 @@ F 3 "" H 9800 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D3
+L project_library:LED_RAGB D3
 U 1 1 5A132308
 P 9550 3500
 F 0 "D3" H 9550 3870 50  0000 C CNN
@@ -106,7 +70,7 @@ F 3 "" H 9550 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D4
+L project_library:LL4148 D4
 U 1 1 5A13230E
 P 10050 3500
 F 0 "D4" H 10050 3600 50  0000 C CNN
@@ -117,7 +81,7 @@ F 3 "" H 10050 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 3 1 5A132C7E
 P 11050 3250
 F 0 "SW1" H 11100 3350 50  0000 L CNN
@@ -128,7 +92,7 @@ F 3 "" H 11050 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D5
+L project_library:LED_RAGB D5
 U 1 1 5A132C84
 P 10800 3500
 F 0 "D5" H 10800 3870 50  0000 C CNN
@@ -139,7 +103,7 @@ F 3 "" H 10800 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D6
+L project_library:LL4148 D6
 U 1 1 5A132C8A
 P 11300 3500
 F 0 "D6" H 11300 3600 50  0000 C CNN
@@ -150,7 +114,7 @@ F 3 "" H 11300 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 4 1 5A132C9B
 P 12300 3250
 F 0 "SW1" H 12350 3350 50  0000 L CNN
@@ -161,7 +125,7 @@ F 3 "" H 12300 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D7
+L project_library:LED_RAGB D7
 U 1 1 5A132CA1
 P 12050 3500
 F 0 "D7" H 12050 3870 50  0000 C CNN
@@ -172,7 +136,7 @@ F 3 "" H 12050 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D8
+L project_library:LL4148 D8
 U 1 1 5A132CA7
 P 12550 3500
 F 0 "D8" H 12550 3600 50  0000 C CNN
@@ -183,7 +147,7 @@ F 3 "" H 12550 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 5 1 5A1356C7
 P 8550 4300
 F 0 "SW1" H 8600 4400 50  0000 L CNN
@@ -194,7 +158,7 @@ F 3 "" H 8550 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D9
+L project_library:LED_RAGB D9
 U 1 1 5A1356CD
 P 8300 4550
 F 0 "D9" H 8300 4920 50  0000 C CNN
@@ -205,7 +169,7 @@ F 3 "" H 8300 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D10
+L project_library:LL4148 D10
 U 1 1 5A1356D3
 P 8800 4550
 F 0 "D10" H 8800 4650 50  0000 C CNN
@@ -216,7 +180,7 @@ F 3 "" H 8800 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 6 1 5A1356E2
 P 9800 4300
 F 0 "SW1" H 9850 4400 50  0000 L CNN
@@ -227,7 +191,7 @@ F 3 "" H 9800 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D11
+L project_library:LED_RAGB D11
 U 1 1 5A1356E8
 P 9550 4550
 F 0 "D11" H 9550 4920 50  0000 C CNN
@@ -238,7 +202,7 @@ F 3 "" H 9550 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D12
+L project_library:LL4148 D12
 U 1 1 5A1356EE
 P 10050 4550
 F 0 "D12" H 10050 4650 50  0000 C CNN
@@ -249,7 +213,7 @@ F 3 "" H 10050 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 7 1 5A1356FF
 P 11050 4300
 F 0 "SW1" H 11100 4400 50  0000 L CNN
@@ -260,7 +224,7 @@ F 3 "" H 11050 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D13
+L project_library:LED_RAGB D13
 U 1 1 5A135705
 P 10800 4550
 F 0 "D13" H 10800 4920 50  0000 C CNN
@@ -271,7 +235,7 @@ F 3 "" H 10800 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D14
+L project_library:LL4148 D14
 U 1 1 5A13570B
 P 11300 4550
 F 0 "D14" H 11300 4650 50  0000 C CNN
@@ -282,7 +246,7 @@ F 3 "" H 11300 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 8 1 5A13571A
 P 12300 4300
 F 0 "SW1" H 12350 4400 50  0000 L CNN
@@ -293,7 +257,7 @@ F 3 "" H 12300 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D15
+L project_library:LED_RAGB D15
 U 1 1 5A135720
 P 12050 4550
 F 0 "D15" H 12050 4920 50  0000 C CNN
@@ -304,7 +268,7 @@ F 3 "" H 12050 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D16
+L project_library:LL4148 D16
 U 1 1 5A135726
 P 12550 4550
 F 0 "D16" H 12550 4650 50  0000 C CNN
@@ -315,7 +279,7 @@ F 3 "" H 12550 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 9 1 5A136333
 P 8550 5350
 F 0 "SW1" H 8600 5450 50  0000 L CNN
@@ -326,7 +290,7 @@ F 3 "" H 8550 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D17
+L project_library:LED_RAGB D17
 U 1 1 5A136339
 P 8300 5600
 F 0 "D17" H 8300 5970 50  0000 C CNN
@@ -337,7 +301,7 @@ F 3 "" H 8300 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D18
+L project_library:LL4148 D18
 U 1 1 5A13633F
 P 8800 5600
 F 0 "D18" H 8800 5700 50  0000 C CNN
@@ -348,7 +312,7 @@ F 3 "" H 8800 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 10 1 5A13634E
 P 9800 5350
 F 0 "SW1" H 9850 5450 50  0000 L CNN
@@ -359,7 +323,7 @@ F 3 "" H 9800 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D19
+L project_library:LED_RAGB D19
 U 1 1 5A136354
 P 9550 5600
 F 0 "D19" H 9550 5970 50  0000 C CNN
@@ -370,7 +334,7 @@ F 3 "" H 9550 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D20
+L project_library:LL4148 D20
 U 1 1 5A13635A
 P 10050 5600
 F 0 "D20" H 10050 5700 50  0000 C CNN
@@ -381,7 +345,7 @@ F 3 "" H 10050 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 11 1 5A13636B
 P 11050 5350
 F 0 "SW1" H 11100 5450 50  0000 L CNN
@@ -392,7 +356,7 @@ F 3 "" H 11050 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D21
+L project_library:LED_RAGB D21
 U 1 1 5A136371
 P 10800 5600
 F 0 "D21" H 10800 5970 50  0000 C CNN
@@ -403,7 +367,7 @@ F 3 "" H 10800 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D22
+L project_library:LL4148 D22
 U 1 1 5A136377
 P 11300 5600
 F 0 "D22" H 11300 5700 50  0000 C CNN
@@ -414,7 +378,7 @@ F 3 "" H 11300 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 12 1 5A136386
 P 12300 5350
 F 0 "SW1" H 12350 5450 50  0000 L CNN
@@ -425,7 +389,7 @@ F 3 "" H 12300 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D23
+L project_library:LED_RAGB D23
 U 1 1 5A13638C
 P 12050 5600
 F 0 "D23" H 12050 5970 50  0000 C CNN
@@ -436,7 +400,7 @@ F 3 "" H 12050 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D24
+L project_library:LL4148 D24
 U 1 1 5A136392
 P 12550 5600
 F 0 "D24" H 12550 5700 50  0000 C CNN
@@ -447,7 +411,7 @@ F 3 "" H 12550 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 13 1 5A1363B7
 P 8550 6400
 F 0 "SW1" H 8600 6500 50  0000 L CNN
@@ -458,7 +422,7 @@ F 3 "" H 8550 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D25
+L project_library:LED_RAGB D25
 U 1 1 5A1363BD
 P 8300 6650
 F 0 "D25" H 8300 7020 50  0000 C CNN
@@ -469,7 +433,7 @@ F 3 "" H 8300 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D26
+L project_library:LL4148 D26
 U 1 1 5A1363C3
 P 8800 6650
 F 0 "D26" H 8800 6750 50  0000 C CNN
@@ -480,7 +444,7 @@ F 3 "" H 8800 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 14 1 5A1363D2
 P 9800 6400
 F 0 "SW1" H 9850 6500 50  0000 L CNN
@@ -491,7 +455,7 @@ F 3 "" H 9800 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D27
+L project_library:LED_RAGB D27
 U 1 1 5A1363D8
 P 9550 6650
 F 0 "D27" H 9550 7020 50  0000 C CNN
@@ -502,7 +466,7 @@ F 3 "" H 9550 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D28
+L project_library:LL4148 D28
 U 1 1 5A1363DE
 P 10050 6650
 F 0 "D28" H 10050 6750 50  0000 C CNN
@@ -513,7 +477,7 @@ F 3 "" H 10050 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 15 1 5A1363EF
 P 11050 6400
 F 0 "SW1" H 11100 6500 50  0000 L CNN
@@ -524,7 +488,7 @@ F 3 "" H 11050 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D29
+L project_library:LED_RAGB D29
 U 1 1 5A1363F5
 P 10800 6650
 F 0 "D29" H 10800 7020 50  0000 C CNN
@@ -535,7 +499,7 @@ F 3 "" H 10800 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D30
+L project_library:LL4148 D30
 U 1 1 5A1363FB
 P 11300 6650
 F 0 "D30" H 11300 6750 50  0000 C CNN
@@ -546,7 +510,7 @@ F 3 "" H 11300 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW1
+L project_library:Button_matrix_4x4 SW1
 U 16 1 5A13640A
 P 12300 6400
 F 0 "SW1" H 12350 6500 50  0000 L CNN
@@ -557,7 +521,7 @@ F 3 "" H 12300 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D31
+L project_library:LED_RAGB D31
 U 1 1 5A136410
 P 12050 6650
 F 0 "D31" H 12050 7020 50  0000 C CNN
@@ -568,7 +532,7 @@ F 3 "" H 12050 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D32
+L project_library:LL4148 D32
 U 1 1 5A136416
 P 12550 6650
 F 0 "D32" H 12550 6750 50  0000 C CNN
@@ -579,7 +543,7 @@ F 3 "" H 12550 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 1 1 5A13DCCC
 P 13550 3250
 F 0 "SW2" H 13600 3350 50  0000 L CNN
@@ -590,7 +554,7 @@ F 3 "" H 13550 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D33
+L project_library:LED_RAGB D33
 U 1 1 5A13DCD2
 P 13300 3500
 F 0 "D33" H 13300 3870 50  0000 C CNN
@@ -601,7 +565,7 @@ F 3 "" H 13300 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D34
+L project_library:LL4148 D34
 U 1 1 5A13DCD8
 P 13800 3500
 F 0 "D34" H 13800 3600 50  0000 C CNN
@@ -612,7 +576,7 @@ F 3 "" H 13800 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 2 1 5A13DCE7
 P 14800 3250
 F 0 "SW2" H 14850 3350 50  0000 L CNN
@@ -623,7 +587,7 @@ F 3 "" H 14800 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D35
+L project_library:LED_RAGB D35
 U 1 1 5A13DCED
 P 14550 3500
 F 0 "D35" H 14550 3870 50  0000 C CNN
@@ -634,7 +598,7 @@ F 3 "" H 14550 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D36
+L project_library:LL4148 D36
 U 1 1 5A13DCF3
 P 15050 3500
 F 0 "D36" H 15050 3600 50  0000 C CNN
@@ -645,7 +609,7 @@ F 3 "" H 15050 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 3 1 5A13DD04
 P 16050 3250
 F 0 "SW2" H 16100 3350 50  0000 L CNN
@@ -656,7 +620,7 @@ F 3 "" H 16050 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D37
+L project_library:LED_RAGB D37
 U 1 1 5A13DD0A
 P 15800 3500
 F 0 "D37" H 15800 3870 50  0000 C CNN
@@ -667,7 +631,7 @@ F 3 "" H 15800 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D38
+L project_library:LL4148 D38
 U 1 1 5A13DD10
 P 16300 3500
 F 0 "D38" H 16300 3600 50  0000 C CNN
@@ -678,7 +642,7 @@ F 3 "" H 16300 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 4 1 5A13DD1F
 P 17300 3250
 F 0 "SW2" H 17350 3350 50  0000 L CNN
@@ -689,7 +653,7 @@ F 3 "" H 17300 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D39
+L project_library:LED_RAGB D39
 U 1 1 5A13DD25
 P 17050 3500
 F 0 "D39" H 17050 3870 50  0000 C CNN
@@ -700,7 +664,7 @@ F 3 "" H 17050 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D40
+L project_library:LL4148 D40
 U 1 1 5A13DD2B
 P 17550 3500
 F 0 "D40" H 17550 3600 50  0000 C CNN
@@ -711,7 +675,7 @@ F 3 "" H 17550 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 5 1 5A13DD50
 P 13550 4300
 F 0 "SW2" H 13600 4400 50  0000 L CNN
@@ -722,7 +686,7 @@ F 3 "" H 13550 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D41
+L project_library:LED_RAGB D41
 U 1 1 5A13DD56
 P 13300 4550
 F 0 "D41" H 13300 4920 50  0000 C CNN
@@ -733,7 +697,7 @@ F 3 "" H 13300 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D42
+L project_library:LL4148 D42
 U 1 1 5A13DD5C
 P 13800 4550
 F 0 "D42" H 13800 4650 50  0000 C CNN
@@ -744,7 +708,7 @@ F 3 "" H 13800 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 6 1 5A13DD6B
 P 14800 4300
 F 0 "SW2" H 14850 4400 50  0000 L CNN
@@ -755,7 +719,7 @@ F 3 "" H 14800 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D43
+L project_library:LED_RAGB D43
 U 1 1 5A13DD71
 P 14550 4550
 F 0 "D43" H 14550 4920 50  0000 C CNN
@@ -766,7 +730,7 @@ F 3 "" H 14550 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D44
+L project_library:LL4148 D44
 U 1 1 5A13DD77
 P 15050 4550
 F 0 "D44" H 15050 4650 50  0000 C CNN
@@ -777,7 +741,7 @@ F 3 "" H 15050 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 7 1 5A13DD88
 P 16050 4300
 F 0 "SW2" H 16100 4400 50  0000 L CNN
@@ -788,7 +752,7 @@ F 3 "" H 16050 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D45
+L project_library:LED_RAGB D45
 U 1 1 5A13DD8E
 P 15800 4550
 F 0 "D45" H 15800 4920 50  0000 C CNN
@@ -799,7 +763,7 @@ F 3 "" H 15800 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D46
+L project_library:LL4148 D46
 U 1 1 5A13DD94
 P 16300 4550
 F 0 "D46" H 16300 4650 50  0000 C CNN
@@ -810,7 +774,7 @@ F 3 "" H 16300 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 8 1 5A13DDA3
 P 17300 4300
 F 0 "SW2" H 17350 4400 50  0000 L CNN
@@ -821,7 +785,7 @@ F 3 "" H 17300 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D47
+L project_library:LED_RAGB D47
 U 1 1 5A13DDA9
 P 17050 4550
 F 0 "D47" H 17050 4920 50  0000 C CNN
@@ -832,7 +796,7 @@ F 3 "" H 17050 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D48
+L project_library:LL4148 D48
 U 1 1 5A13DDAF
 P 17550 4550
 F 0 "D48" H 17550 4650 50  0000 C CNN
@@ -843,7 +807,7 @@ F 3 "" H 17550 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 9 1 5A13DDD4
 P 13550 5350
 F 0 "SW2" H 13600 5450 50  0000 L CNN
@@ -854,7 +818,7 @@ F 3 "" H 13550 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D49
+L project_library:LED_RAGB D49
 U 1 1 5A13DDDA
 P 13300 5600
 F 0 "D49" H 13300 5970 50  0000 C CNN
@@ -865,7 +829,7 @@ F 3 "" H 13300 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D50
+L project_library:LL4148 D50
 U 1 1 5A13DDE0
 P 13800 5600
 F 0 "D50" H 13800 5700 50  0000 C CNN
@@ -876,7 +840,7 @@ F 3 "" H 13800 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 10 1 5A13DDEF
 P 14800 5350
 F 0 "SW2" H 14850 5450 50  0000 L CNN
@@ -887,7 +851,7 @@ F 3 "" H 14800 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D51
+L project_library:LED_RAGB D51
 U 1 1 5A13DDF5
 P 14550 5600
 F 0 "D51" H 14550 5970 50  0000 C CNN
@@ -898,7 +862,7 @@ F 3 "" H 14550 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D52
+L project_library:LL4148 D52
 U 1 1 5A13DDFB
 P 15050 5600
 F 0 "D52" H 15050 5700 50  0000 C CNN
@@ -909,7 +873,7 @@ F 3 "" H 15050 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 11 1 5A13DE0C
 P 16050 5350
 F 0 "SW2" H 16100 5450 50  0000 L CNN
@@ -920,7 +884,7 @@ F 3 "" H 16050 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D53
+L project_library:LED_RAGB D53
 U 1 1 5A13DE12
 P 15800 5600
 F 0 "D53" H 15800 5970 50  0000 C CNN
@@ -931,7 +895,7 @@ F 3 "" H 15800 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D54
+L project_library:LL4148 D54
 U 1 1 5A13DE18
 P 16300 5600
 F 0 "D54" H 16300 5700 50  0000 C CNN
@@ -942,7 +906,7 @@ F 3 "" H 16300 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 12 1 5A13DE27
 P 17300 5350
 F 0 "SW2" H 17350 5450 50  0000 L CNN
@@ -953,7 +917,7 @@ F 3 "" H 17300 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D55
+L project_library:LED_RAGB D55
 U 1 1 5A13DE2D
 P 17050 5600
 F 0 "D55" H 17050 5970 50  0000 C CNN
@@ -964,7 +928,7 @@ F 3 "" H 17050 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D56
+L project_library:LL4148 D56
 U 1 1 5A13DE33
 P 17550 5600
 F 0 "D56" H 17550 5700 50  0000 C CNN
@@ -975,7 +939,7 @@ F 3 "" H 17550 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 13 1 5A13DE58
 P 13550 6400
 F 0 "SW2" H 13600 6500 50  0000 L CNN
@@ -986,7 +950,7 @@ F 3 "" H 13550 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D57
+L project_library:LED_RAGB D57
 U 1 1 5A13DE5E
 P 13300 6650
 F 0 "D57" H 13300 7020 50  0000 C CNN
@@ -997,7 +961,7 @@ F 3 "" H 13300 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D58
+L project_library:LL4148 D58
 U 1 1 5A13DE64
 P 13800 6650
 F 0 "D58" H 13800 6750 50  0000 C CNN
@@ -1008,7 +972,7 @@ F 3 "" H 13800 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 14 1 5A13DE73
 P 14800 6400
 F 0 "SW2" H 14850 6500 50  0000 L CNN
@@ -1019,7 +983,7 @@ F 3 "" H 14800 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D59
+L project_library:LED_RAGB D59
 U 1 1 5A13DE79
 P 14550 6650
 F 0 "D59" H 14550 7020 50  0000 C CNN
@@ -1030,7 +994,7 @@ F 3 "" H 14550 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D60
+L project_library:LL4148 D60
 U 1 1 5A13DE7F
 P 15050 6650
 F 0 "D60" H 15050 6750 50  0000 C CNN
@@ -1041,7 +1005,7 @@ F 3 "" H 15050 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 15 1 5A13DE90
 P 16050 6400
 F 0 "SW2" H 16100 6500 50  0000 L CNN
@@ -1052,7 +1016,7 @@ F 3 "" H 16050 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D61
+L project_library:LED_RAGB D61
 U 1 1 5A13DE96
 P 15800 6650
 F 0 "D61" H 15800 7020 50  0000 C CNN
@@ -1063,7 +1027,7 @@ F 3 "" H 15800 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D62
+L project_library:LL4148 D62
 U 1 1 5A13DE9C
 P 16300 6650
 F 0 "D62" H 16300 6750 50  0000 C CNN
@@ -1074,7 +1038,7 @@ F 3 "" H 16300 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW2
+L project_library:Button_matrix_4x4 SW2
 U 16 1 5A13DEAB
 P 17300 6400
 F 0 "SW2" H 17350 6500 50  0000 L CNN
@@ -1085,7 +1049,7 @@ F 3 "" H 17300 6600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D63
+L project_library:LED_RAGB D63
 U 1 1 5A13DEB1
 P 17050 6650
 F 0 "D63" H 17050 7020 50  0000 C CNN
@@ -1096,7 +1060,7 @@ F 3 "" H 17050 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D64
+L project_library:LL4148 D64
 U 1 1 5A13DEB7
 P 17550 6650
 F 0 "D64" H 17550 6750 50  0000 C CNN
@@ -1107,7 +1071,7 @@ F 3 "" H 17550 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 1 1 5A13E53C
 P 8550 7450
 F 0 "SW3" H 8600 7550 50  0000 L CNN
@@ -1118,7 +1082,7 @@ F 3 "" H 8550 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D65
+L project_library:LED_RAGB D65
 U 1 1 5A13E542
 P 8300 7700
 F 0 "D65" H 8300 8070 50  0000 C CNN
@@ -1129,7 +1093,7 @@ F 3 "" H 8300 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D66
+L project_library:LL4148 D66
 U 1 1 5A13E548
 P 8800 7700
 F 0 "D66" H 8800 7800 50  0000 C CNN
@@ -1140,7 +1104,7 @@ F 3 "" H 8800 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 2 1 5A13E557
 P 9800 7450
 F 0 "SW3" H 9850 7550 50  0000 L CNN
@@ -1151,7 +1115,7 @@ F 3 "" H 9800 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D67
+L project_library:LED_RAGB D67
 U 1 1 5A13E55D
 P 9550 7700
 F 0 "D67" H 9550 8070 50  0000 C CNN
@@ -1162,7 +1126,7 @@ F 3 "" H 9550 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D68
+L project_library:LL4148 D68
 U 1 1 5A13E563
 P 10050 7700
 F 0 "D68" H 10050 7800 50  0000 C CNN
@@ -1173,7 +1137,7 @@ F 3 "" H 10050 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 3 1 5A13E574
 P 11050 7450
 F 0 "SW3" H 11100 7550 50  0000 L CNN
@@ -1184,7 +1148,7 @@ F 3 "" H 11050 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D69
+L project_library:LED_RAGB D69
 U 1 1 5A13E57A
 P 10800 7700
 F 0 "D69" H 10800 8070 50  0000 C CNN
@@ -1195,7 +1159,7 @@ F 3 "" H 10800 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D70
+L project_library:LL4148 D70
 U 1 1 5A13E580
 P 11300 7700
 F 0 "D70" H 11300 7800 50  0000 C CNN
@@ -1206,7 +1170,7 @@ F 3 "" H 11300 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 4 1 5A13E58F
 P 12300 7450
 F 0 "SW3" H 12350 7550 50  0000 L CNN
@@ -1217,7 +1181,7 @@ F 3 "" H 12300 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D71
+L project_library:LED_RAGB D71
 U 1 1 5A13E595
 P 12050 7700
 F 0 "D71" H 12050 8070 50  0000 C CNN
@@ -1228,7 +1192,7 @@ F 3 "" H 12050 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D72
+L project_library:LL4148 D72
 U 1 1 5A13E59B
 P 12550 7700
 F 0 "D72" H 12550 7800 50  0000 C CNN
@@ -1239,7 +1203,7 @@ F 3 "" H 12550 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 5 1 5A13E5C0
 P 8550 8500
 F 0 "SW3" H 8600 8600 50  0000 L CNN
@@ -1250,7 +1214,7 @@ F 3 "" H 8550 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D73
+L project_library:LED_RAGB D73
 U 1 1 5A13E5C6
 P 8300 8750
 F 0 "D73" H 8300 9120 50  0000 C CNN
@@ -1261,7 +1225,7 @@ F 3 "" H 8300 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D74
+L project_library:LL4148 D74
 U 1 1 5A13E5CC
 P 8800 8750
 F 0 "D74" H 8800 8850 50  0000 C CNN
@@ -1272,7 +1236,7 @@ F 3 "" H 8800 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 6 1 5A13E5DB
 P 9800 8500
 F 0 "SW3" H 9850 8600 50  0000 L CNN
@@ -1283,7 +1247,7 @@ F 3 "" H 9800 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D75
+L project_library:LED_RAGB D75
 U 1 1 5A13E5E1
 P 9550 8750
 F 0 "D75" H 9550 9120 50  0000 C CNN
@@ -1294,7 +1258,7 @@ F 3 "" H 9550 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D76
+L project_library:LL4148 D76
 U 1 1 5A13E5E7
 P 10050 8750
 F 0 "D76" H 10050 8850 50  0000 C CNN
@@ -1305,7 +1269,7 @@ F 3 "" H 10050 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 7 1 5A13E5F8
 P 11050 8500
 F 0 "SW3" H 11100 8600 50  0000 L CNN
@@ -1316,7 +1280,7 @@ F 3 "" H 11050 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D77
+L project_library:LED_RAGB D77
 U 1 1 5A13E5FE
 P 10800 8750
 F 0 "D77" H 10800 9120 50  0000 C CNN
@@ -1327,7 +1291,7 @@ F 3 "" H 10800 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D78
+L project_library:LL4148 D78
 U 1 1 5A13E604
 P 11300 8750
 F 0 "D78" H 11300 8850 50  0000 C CNN
@@ -1338,7 +1302,7 @@ F 3 "" H 11300 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 8 1 5A13E613
 P 12300 8500
 F 0 "SW3" H 12350 8600 50  0000 L CNN
@@ -1349,7 +1313,7 @@ F 3 "" H 12300 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D79
+L project_library:LED_RAGB D79
 U 1 1 5A13E619
 P 12050 8750
 F 0 "D79" H 12050 9120 50  0000 C CNN
@@ -1360,7 +1324,7 @@ F 3 "" H 12050 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D80
+L project_library:LL4148 D80
 U 1 1 5A13E61F
 P 12550 8750
 F 0 "D80" H 12550 8850 50  0000 C CNN
@@ -1371,7 +1335,7 @@ F 3 "" H 12550 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 9 1 5A13E644
 P 8550 9550
 F 0 "SW3" H 8600 9650 50  0000 L CNN
@@ -1382,7 +1346,7 @@ F 3 "" H 8550 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D81
+L project_library:LED_RAGB D81
 U 1 1 5A13E64A
 P 8300 9800
 F 0 "D81" H 8300 10170 50  0000 C CNN
@@ -1393,7 +1357,7 @@ F 3 "" H 8300 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D82
+L project_library:LL4148 D82
 U 1 1 5A13E650
 P 8800 9800
 F 0 "D82" H 8800 9900 50  0000 C CNN
@@ -1404,7 +1368,7 @@ F 3 "" H 8800 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 10 1 5A13E65F
 P 9800 9550
 F 0 "SW3" H 9850 9650 50  0000 L CNN
@@ -1415,7 +1379,7 @@ F 3 "" H 9800 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D83
+L project_library:LED_RAGB D83
 U 1 1 5A13E665
 P 9550 9800
 F 0 "D83" H 9550 10170 50  0000 C CNN
@@ -1426,7 +1390,7 @@ F 3 "" H 9550 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D84
+L project_library:LL4148 D84
 U 1 1 5A13E66B
 P 10050 9800
 F 0 "D84" H 10050 9900 50  0000 C CNN
@@ -1437,7 +1401,7 @@ F 3 "" H 10050 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 11 1 5A13E67C
 P 11050 9550
 F 0 "SW3" H 11100 9650 50  0000 L CNN
@@ -1448,7 +1412,7 @@ F 3 "" H 11050 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D85
+L project_library:LED_RAGB D85
 U 1 1 5A13E682
 P 10800 9800
 F 0 "D85" H 10800 10170 50  0000 C CNN
@@ -1459,7 +1423,7 @@ F 3 "" H 10800 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D86
+L project_library:LL4148 D86
 U 1 1 5A13E688
 P 11300 9800
 F 0 "D86" H 11300 9900 50  0000 C CNN
@@ -1470,7 +1434,7 @@ F 3 "" H 11300 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 12 1 5A13E697
 P 12300 9550
 F 0 "SW3" H 12350 9650 50  0000 L CNN
@@ -1481,7 +1445,7 @@ F 3 "" H 12300 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D87
+L project_library:LED_RAGB D87
 U 1 1 5A13E69D
 P 12050 9800
 F 0 "D87" H 12050 10170 50  0000 C CNN
@@ -1492,7 +1456,7 @@ F 3 "" H 12050 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D88
+L project_library:LL4148 D88
 U 1 1 5A13E6A3
 P 12550 9800
 F 0 "D88" H 12550 9900 50  0000 C CNN
@@ -1503,7 +1467,7 @@ F 3 "" H 12550 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 13 1 5A13E6C8
 P 8550 10600
 F 0 "SW3" H 8600 10700 50  0000 L CNN
@@ -1514,7 +1478,7 @@ F 3 "" H 8550 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D89
+L project_library:LED_RAGB D89
 U 1 1 5A13E6CE
 P 8300 10850
 F 0 "D89" H 8300 11220 50  0000 C CNN
@@ -1525,7 +1489,7 @@ F 3 "" H 8300 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D90
+L project_library:LL4148 D90
 U 1 1 5A13E6D4
 P 8800 10850
 F 0 "D90" H 8800 10950 50  0000 C CNN
@@ -1536,7 +1500,7 @@ F 3 "" H 8800 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 14 1 5A13E6E3
 P 9800 10600
 F 0 "SW3" H 9850 10700 50  0000 L CNN
@@ -1547,7 +1511,7 @@ F 3 "" H 9800 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D91
+L project_library:LED_RAGB D91
 U 1 1 5A13E6E9
 P 9550 10850
 F 0 "D91" H 9550 11220 50  0000 C CNN
@@ -1558,7 +1522,7 @@ F 3 "" H 9550 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D92
+L project_library:LL4148 D92
 U 1 1 5A13E6EF
 P 10050 10850
 F 0 "D92" H 10050 10950 50  0000 C CNN
@@ -1569,7 +1533,7 @@ F 3 "" H 10050 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 15 1 5A13E700
 P 11050 10600
 F 0 "SW3" H 11100 10700 50  0000 L CNN
@@ -1580,7 +1544,7 @@ F 3 "" H 11050 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D93
+L project_library:LED_RAGB D93
 U 1 1 5A13E706
 P 10800 10850
 F 0 "D93" H 10800 11220 50  0000 C CNN
@@ -1591,7 +1555,7 @@ F 3 "" H 10800 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D94
+L project_library:LL4148 D94
 U 1 1 5A13E70C
 P 11300 10850
 F 0 "D94" H 11300 10950 50  0000 C CNN
@@ -1602,7 +1566,7 @@ F 3 "" H 11300 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW3
+L project_library:Button_matrix_4x4 SW3
 U 16 1 5A13E71B
 P 12300 10600
 F 0 "SW3" H 12350 10700 50  0000 L CNN
@@ -1613,7 +1577,7 @@ F 3 "" H 12300 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D95
+L project_library:LED_RAGB D95
 U 1 1 5A13E721
 P 12050 10850
 F 0 "D95" H 12050 11220 50  0000 C CNN
@@ -1624,7 +1588,7 @@ F 3 "" H 12050 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D96
+L project_library:LL4148 D96
 U 1 1 5A13E727
 P 12550 10850
 F 0 "D96" H 12550 10950 50  0000 C CNN
@@ -1635,7 +1599,7 @@ F 3 "" H 12550 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 1 1 5A13F37C
 P 13550 7450
 F 0 "SW4" H 13600 7550 50  0000 L CNN
@@ -1646,7 +1610,7 @@ F 3 "" H 13550 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D97
+L project_library:LED_RAGB D97
 U 1 1 5A13F382
 P 13300 7700
 F 0 "D97" H 13300 8070 50  0000 C CNN
@@ -1657,7 +1621,7 @@ F 3 "" H 13300 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D98
+L project_library:LL4148 D98
 U 1 1 5A13F388
 P 13800 7700
 F 0 "D98" H 13800 7800 50  0000 C CNN
@@ -1668,7 +1632,7 @@ F 3 "" H 13800 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 2 1 5A13F397
 P 14800 7450
 F 0 "SW4" H 14850 7550 50  0000 L CNN
@@ -1679,7 +1643,7 @@ F 3 "" H 14800 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D99
+L project_library:LED_RAGB D99
 U 1 1 5A13F39D
 P 14550 7700
 F 0 "D99" H 14550 8070 50  0000 C CNN
@@ -1690,7 +1654,7 @@ F 3 "" H 14550 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D100
+L project_library:LL4148 D100
 U 1 1 5A13F3A3
 P 15050 7700
 F 0 "D100" H 15050 7800 50  0000 C CNN
@@ -1701,7 +1665,7 @@ F 3 "" H 15050 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 3 1 5A13F3B4
 P 16050 7450
 F 0 "SW4" H 16100 7550 50  0000 L CNN
@@ -1712,7 +1676,7 @@ F 3 "" H 16050 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D101
+L project_library:LED_RAGB D101
 U 1 1 5A13F3BA
 P 15800 7700
 F 0 "D101" H 15800 8070 50  0000 C CNN
@@ -1723,7 +1687,7 @@ F 3 "" H 15800 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D102
+L project_library:LL4148 D102
 U 1 1 5A13F3C0
 P 16300 7700
 F 0 "D102" H 16300 7800 50  0000 C CNN
@@ -1734,7 +1698,7 @@ F 3 "" H 16300 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 4 1 5A13F3CF
 P 17300 7450
 F 0 "SW4" H 17350 7550 50  0000 L CNN
@@ -1745,7 +1709,7 @@ F 3 "" H 17300 7650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D103
+L project_library:LED_RAGB D103
 U 1 1 5A13F3D5
 P 17050 7700
 F 0 "D103" H 17050 8070 50  0000 C CNN
@@ -1756,7 +1720,7 @@ F 3 "" H 17050 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D104
+L project_library:LL4148 D104
 U 1 1 5A13F3DB
 P 17550 7700
 F 0 "D104" H 17550 7800 50  0000 C CNN
@@ -1767,7 +1731,7 @@ F 3 "" H 17550 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 5 1 5A13F400
 P 13550 8500
 F 0 "SW4" H 13600 8600 50  0000 L CNN
@@ -1778,7 +1742,7 @@ F 3 "" H 13550 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D105
+L project_library:LED_RAGB D105
 U 1 1 5A13F406
 P 13300 8750
 F 0 "D105" H 13300 9120 50  0000 C CNN
@@ -1789,7 +1753,7 @@ F 3 "" H 13300 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D106
+L project_library:LL4148 D106
 U 1 1 5A13F40C
 P 13800 8750
 F 0 "D106" H 13800 8850 50  0000 C CNN
@@ -1800,7 +1764,7 @@ F 3 "" H 13800 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 6 1 5A13F41B
 P 14800 8500
 F 0 "SW4" H 14850 8600 50  0000 L CNN
@@ -1811,7 +1775,7 @@ F 3 "" H 14800 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D107
+L project_library:LED_RAGB D107
 U 1 1 5A13F421
 P 14550 8750
 F 0 "D107" H 14550 9120 50  0000 C CNN
@@ -1822,7 +1786,7 @@ F 3 "" H 14550 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D108
+L project_library:LL4148 D108
 U 1 1 5A13F427
 P 15050 8750
 F 0 "D108" H 15050 8850 50  0000 C CNN
@@ -1833,7 +1797,7 @@ F 3 "" H 15050 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 7 1 5A13F438
 P 16050 8500
 F 0 "SW4" H 16100 8600 50  0000 L CNN
@@ -1844,7 +1808,7 @@ F 3 "" H 16050 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D109
+L project_library:LED_RAGB D109
 U 1 1 5A13F43E
 P 15800 8750
 F 0 "D109" H 15800 9120 50  0000 C CNN
@@ -1855,7 +1819,7 @@ F 3 "" H 15800 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D110
+L project_library:LL4148 D110
 U 1 1 5A13F444
 P 16300 8750
 F 0 "D110" H 16300 8850 50  0000 C CNN
@@ -1866,7 +1830,7 @@ F 3 "" H 16300 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 8 1 5A13F453
 P 17300 8500
 F 0 "SW4" H 17350 8600 50  0000 L CNN
@@ -1877,7 +1841,7 @@ F 3 "" H 17300 8700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D111
+L project_library:LED_RAGB D111
 U 1 1 5A13F459
 P 17050 8750
 F 0 "D111" H 17050 9120 50  0000 C CNN
@@ -1888,7 +1852,7 @@ F 3 "" H 17050 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D112
+L project_library:LL4148 D112
 U 1 1 5A13F45F
 P 17550 8750
 F 0 "D112" H 17550 8850 50  0000 C CNN
@@ -1899,7 +1863,7 @@ F 3 "" H 17550 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 9 1 5A13F484
 P 13550 9550
 F 0 "SW4" H 13600 9650 50  0000 L CNN
@@ -1910,7 +1874,7 @@ F 3 "" H 13550 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D113
+L project_library:LED_RAGB D113
 U 1 1 5A13F48A
 P 13300 9800
 F 0 "D113" H 13300 10170 50  0000 C CNN
@@ -1921,7 +1885,7 @@ F 3 "" H 13300 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D114
+L project_library:LL4148 D114
 U 1 1 5A13F490
 P 13800 9800
 F 0 "D114" H 13800 9900 50  0000 C CNN
@@ -1932,7 +1896,7 @@ F 3 "" H 13800 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 10 1 5A13F49F
 P 14800 9550
 F 0 "SW4" H 14850 9650 50  0000 L CNN
@@ -1943,7 +1907,7 @@ F 3 "" H 14800 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D115
+L project_library:LED_RAGB D115
 U 1 1 5A13F4A5
 P 14550 9800
 F 0 "D115" H 14550 10170 50  0000 C CNN
@@ -1954,7 +1918,7 @@ F 3 "" H 14550 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D116
+L project_library:LL4148 D116
 U 1 1 5A13F4AB
 P 15050 9800
 F 0 "D116" H 15050 9900 50  0000 C CNN
@@ -1965,7 +1929,7 @@ F 3 "" H 15050 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 11 1 5A13F4BC
 P 16050 9550
 F 0 "SW4" H 16100 9650 50  0000 L CNN
@@ -1976,7 +1940,7 @@ F 3 "" H 16050 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D117
+L project_library:LED_RAGB D117
 U 1 1 5A13F4C2
 P 15800 9800
 F 0 "D117" H 15800 10170 50  0000 C CNN
@@ -1987,7 +1951,7 @@ F 3 "" H 15800 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D118
+L project_library:LL4148 D118
 U 1 1 5A13F4C8
 P 16300 9800
 F 0 "D118" H 16300 9900 50  0000 C CNN
@@ -1998,7 +1962,7 @@ F 3 "" H 16300 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 12 1 5A13F4D7
 P 17300 9550
 F 0 "SW4" H 17350 9650 50  0000 L CNN
@@ -2009,7 +1973,7 @@ F 3 "" H 17300 9750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D119
+L project_library:LED_RAGB D119
 U 1 1 5A13F4DD
 P 17050 9800
 F 0 "D119" H 17050 10170 50  0000 C CNN
@@ -2020,7 +1984,7 @@ F 3 "" H 17050 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D120
+L project_library:LL4148 D120
 U 1 1 5A13F4E3
 P 17550 9800
 F 0 "D120" H 17550 9900 50  0000 C CNN
@@ -2031,7 +1995,7 @@ F 3 "" H 17550 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 13 1 5A13F508
 P 13550 10600
 F 0 "SW4" H 13600 10700 50  0000 L CNN
@@ -2042,7 +2006,7 @@ F 3 "" H 13550 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D121
+L project_library:LED_RAGB D121
 U 1 1 5A13F50E
 P 13300 10850
 F 0 "D121" H 13300 11220 50  0000 C CNN
@@ -2053,7 +2017,7 @@ F 3 "" H 13300 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D122
+L project_library:LL4148 D122
 U 1 1 5A13F514
 P 13800 10850
 F 0 "D122" H 13800 10950 50  0000 C CNN
@@ -2064,7 +2028,7 @@ F 3 "" H 13800 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 14 1 5A13F523
 P 14800 10600
 F 0 "SW4" H 14850 10700 50  0000 L CNN
@@ -2075,7 +2039,7 @@ F 3 "" H 14800 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D123
+L project_library:LED_RAGB D123
 U 1 1 5A13F529
 P 14550 10850
 F 0 "D123" H 14550 11220 50  0000 C CNN
@@ -2086,7 +2050,7 @@ F 3 "" H 14550 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D124
+L project_library:LL4148 D124
 U 1 1 5A13F52F
 P 15050 10850
 F 0 "D124" H 15050 10950 50  0000 C CNN
@@ -2097,7 +2061,7 @@ F 3 "" H 15050 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 15 1 5A13F540
 P 16050 10600
 F 0 "SW4" H 16100 10700 50  0000 L CNN
@@ -2108,7 +2072,7 @@ F 3 "" H 16050 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D125
+L project_library:LED_RAGB D125
 U 1 1 5A13F546
 P 15800 10850
 F 0 "D125" H 15800 11220 50  0000 C CNN
@@ -2119,7 +2083,7 @@ F 3 "" H 15800 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D126
+L project_library:LL4148 D126
 U 1 1 5A13F54C
 P 16300 10850
 F 0 "D126" H 16300 10950 50  0000 C CNN
@@ -2130,7 +2094,7 @@ F 3 "" H 16300 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Button_matrix_4x4 SW4
+L project_library:Button_matrix_4x4 SW4
 U 16 1 5A13F55B
 P 17300 10600
 F 0 "SW4" H 17350 10700 50  0000 L CNN
@@ -2141,7 +2105,7 @@ F 3 "" H 17300 10800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D127
+L project_library:LED_RAGB D127
 U 1 1 5A13F561
 P 17050 10850
 F 0 "D127" H 17050 11220 50  0000 C CNN
@@ -2152,7 +2116,7 @@ F 3 "" H 17050 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D128
+L project_library:LL4148 D128
 U 1 1 5A13F567
 P 17550 10850
 F 0 "D128" H 17550 10950 50  0000 C CNN
@@ -2163,7 +2127,7 @@ F 3 "" H 17550 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L BSS83P Q2
+L project_library:BSS83P Q2
 U 1 1 5A166191
 P 8200 2750
 F 0 "Q2" H 7900 2900 50  0000 L CNN
@@ -2174,7 +2138,7 @@ F 3 "" H 8200 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q1
+L project_library:BSS83P Q1
 U 1 1 5A182037
 P 7650 2750
 F 0 "Q1" H 7350 2900 50  0000 L CNN
@@ -2185,7 +2149,7 @@ F 3 "" H 7650 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q4
+L project_library:BSS83P Q4
 U 1 1 5A19ED5D
 P 9450 2750
 F 0 "Q4" H 9150 2900 50  0000 L CNN
@@ -2196,7 +2160,7 @@ F 3 "" H 9450 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q3
+L project_library:BSS83P Q3
 U 1 1 5A19ED63
 P 8900 2750
 F 0 "Q3" H 8600 2900 50  0000 L CNN
@@ -2207,7 +2171,7 @@ F 3 "" H 8900 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q6
+L project_library:BSS83P Q6
 U 1 1 5A1A0A89
 P 10700 2750
 F 0 "Q6" H 10400 2900 50  0000 L CNN
@@ -2218,7 +2182,7 @@ F 3 "" H 10700 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q5
+L project_library:BSS83P Q5
 U 1 1 5A1A0A8F
 P 10150 2750
 F 0 "Q5" H 9850 2900 50  0000 L CNN
@@ -2229,7 +2193,7 @@ F 3 "" H 10150 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q8
+L project_library:BSS83P Q8
 U 1 1 5A1A0A95
 P 11950 2750
 F 0 "Q8" H 11650 2900 50  0000 L CNN
@@ -2240,7 +2204,7 @@ F 3 "" H 11950 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q7
+L project_library:BSS83P Q7
 U 1 1 5A1A0A9B
 P 11400 2750
 F 0 "Q7" H 11100 2900 50  0000 L CNN
@@ -2251,7 +2215,7 @@ F 3 "" H 11400 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q10
+L project_library:BSS83P Q10
 U 1 1 5A1A39A5
 P 13200 2750
 F 0 "Q10" H 12900 2900 50  0000 L CNN
@@ -2262,7 +2226,7 @@ F 3 "" H 13200 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q9
+L project_library:BSS83P Q9
 U 1 1 5A1A39AB
 P 12650 2750
 F 0 "Q9" H 12350 2900 50  0000 L CNN
@@ -2273,7 +2237,7 @@ F 3 "" H 12650 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q12
+L project_library:BSS83P Q12
 U 1 1 5A1A39B1
 P 14450 2750
 F 0 "Q12" H 14150 2900 50  0000 L CNN
@@ -2284,7 +2248,7 @@ F 3 "" H 14450 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q11
+L project_library:BSS83P Q11
 U 1 1 5A1A39B7
 P 13900 2750
 F 0 "Q11" H 13600 2900 50  0000 L CNN
@@ -2295,7 +2259,7 @@ F 3 "" H 13900 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q14
+L project_library:BSS83P Q14
 U 1 1 5A1A39BD
 P 15700 2750
 F 0 "Q14" H 15400 2900 50  0000 L CNN
@@ -2306,7 +2270,7 @@ F 3 "" H 15700 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q13
+L project_library:BSS83P Q13
 U 1 1 5A1A39C3
 P 15150 2750
 F 0 "Q13" H 14850 2900 50  0000 L CNN
@@ -2317,7 +2281,7 @@ F 3 "" H 15150 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q16
+L project_library:BSS83P Q16
 U 1 1 5A1A39C9
 P 16950 2750
 F 0 "Q16" H 16650 2900 50  0000 L CNN
@@ -2328,7 +2292,7 @@ F 3 "" H 16950 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q15
+L project_library:BSS83P Q15
 U 1 1 5A1A39CF
 P 16400 2750
 F 0 "Q15" H 16100 2900 50  0000 L CNN
@@ -2403,7 +2367,7 @@ G15
 Text Label 16750 2750 1    60   ~ 0
 G16
 $Comp
-L 2N7002 Q28
+L project_library:2N7002 Q28
 U 1 1 5A27FE71
 P 4750 8350
 F 0 "Q28" H 4450 8600 50  0000 L CNN
@@ -2414,7 +2378,7 @@ F 3 "" H 4750 8350 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R40
+L project_library:R_Small R40
 U 1 1 5A290FC2
 P 4500 8500
 F 0 "R40" H 4530 8520 50  0000 L CNN
@@ -2425,7 +2389,7 @@ F 3 "" H 4500 8500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR03
+L project_library:GND #PWR03
 U 1 1 5A16CC23
 P 4850 8800
 F 0 "#PWR03" H 4850 8550 50  0001 C CNN
@@ -2436,7 +2400,7 @@ F 3 "" H 4850 8800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR04
+L project_library:GND #PWR04
 U 1 1 5A16CDDD
 P 4500 8800
 F 0 "#PWR04" H 4500 8550 50  0001 C CNN
@@ -2449,7 +2413,7 @@ $EndComp
 Entry Wire Line
 	4350 8600 4250 8700
 $Comp
-L 2N7002 Q27
+L project_library:2N7002 Q27
 U 1 1 5A174AF0
 P 4050 8350
 F 0 "Q27" H 3750 8600 50  0000 L CNN
@@ -2460,7 +2424,7 @@ F 3 "" H 4050 8350 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R39
+L project_library:R_Small R39
 U 1 1 5A174AF6
 P 3800 8500
 F 0 "R39" H 3830 8520 50  0000 L CNN
@@ -2471,7 +2435,7 @@ F 3 "" H 3800 8500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR05
+L project_library:GND #PWR05
 U 1 1 5A174B02
 P 4150 8800
 F 0 "#PWR05" H 4150 8550 50  0001 C CNN
@@ -2482,7 +2446,7 @@ F 3 "" H 4150 8800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR06
+L project_library:GND #PWR06
 U 1 1 5A174B08
 P 3800 8800
 F 0 "#PWR06" H 3800 8550 50  0001 C CNN
@@ -2495,7 +2459,7 @@ $EndComp
 Entry Wire Line
 	3650 8600 3550 8700
 $Comp
-L 2N7002 Q26
+L project_library:2N7002 Q26
 U 1 1 5A174CA6
 P 3350 8350
 F 0 "Q26" H 3050 8600 50  0000 L CNN
@@ -2506,7 +2470,7 @@ F 3 "" H 3350 8350 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R38
+L project_library:R_Small R38
 U 1 1 5A174CAC
 P 3100 8500
 F 0 "R38" H 3130 8520 50  0000 L CNN
@@ -2517,7 +2481,7 @@ F 3 "" H 3100 8500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR07
+L project_library:GND #PWR07
 U 1 1 5A174CB8
 P 3450 8800
 F 0 "#PWR07" H 3450 8550 50  0001 C CNN
@@ -2528,7 +2492,7 @@ F 3 "" H 3450 8800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR08
+L project_library:GND #PWR08
 U 1 1 5A174CBE
 P 3100 8800
 F 0 "#PWR08" H 3100 8550 50  0001 C CNN
@@ -2541,7 +2505,7 @@ $EndComp
 Entry Wire Line
 	2950 8600 2850 8700
 $Comp
-L 2N7002 Q25
+L project_library:2N7002 Q25
 U 1 1 5A174CC7
 P 2650 8350
 F 0 "Q25" H 2350 8600 50  0000 L CNN
@@ -2552,7 +2516,7 @@ F 3 "" H 2650 8350 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R37
+L project_library:R_Small R37
 U 1 1 5A174CCD
 P 2400 8500
 F 0 "R37" H 2430 8520 50  0000 L CNN
@@ -2563,7 +2527,7 @@ F 3 "" H 2400 8500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR09
+L project_library:GND #PWR09
 U 1 1 5A174CD9
 P 2750 8800
 F 0 "#PWR09" H 2750 8550 50  0001 C CNN
@@ -2574,7 +2538,7 @@ F 3 "" H 2750 8800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR010
+L project_library:GND #PWR010
 U 1 1 5A174CDF
 P 2400 8800
 F 0 "#PWR010" H 2400 8550 50  0001 C CNN
@@ -2587,7 +2551,7 @@ $EndComp
 Entry Wire Line
 	2250 8600 2150 8700
 $Comp
-L 2N7002 Q32
+L project_library:2N7002 Q32
 U 1 1 5A187039
 P 4750 10450
 F 0 "Q32" H 4450 10700 50  0000 L CNN
@@ -2598,7 +2562,7 @@ F 3 "" H 4750 10450 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R48
+L project_library:R_Small R48
 U 1 1 5A18703F
 P 4500 10600
 F 0 "R48" H 4530 10620 50  0000 L CNN
@@ -2609,7 +2573,7 @@ F 3 "" H 4500 10600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR011
+L project_library:GND #PWR011
 U 1 1 5A18704A
 P 4850 10900
 F 0 "#PWR011" H 4850 10650 50  0001 C CNN
@@ -2620,7 +2584,7 @@ F 3 "" H 4850 10900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR012
+L project_library:GND #PWR012
 U 1 1 5A187050
 P 4500 10900
 F 0 "#PWR012" H 4500 10650 50  0001 C CNN
@@ -2633,7 +2597,7 @@ $EndComp
 Entry Wire Line
 	4350 10700 4250 10800
 $Comp
-L 2N7002 Q31
+L project_library:2N7002 Q31
 U 1 1 5A187059
 P 4050 10450
 F 0 "Q31" H 3750 10700 50  0000 L CNN
@@ -2644,7 +2608,7 @@ F 3 "" H 4050 10450 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R47
+L project_library:R_Small R47
 U 1 1 5A18705F
 P 3800 10600
 F 0 "R47" H 3830 10620 50  0000 L CNN
@@ -2655,7 +2619,7 @@ F 3 "" H 3800 10600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR013
+L project_library:GND #PWR013
 U 1 1 5A18706A
 P 4150 10900
 F 0 "#PWR013" H 4150 10650 50  0001 C CNN
@@ -2666,7 +2630,7 @@ F 3 "" H 4150 10900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR014
+L project_library:GND #PWR014
 U 1 1 5A187070
 P 3800 10900
 F 0 "#PWR014" H 3800 10650 50  0001 C CNN
@@ -2679,7 +2643,7 @@ $EndComp
 Entry Wire Line
 	3650 10700 3550 10800
 $Comp
-L 2N7002 Q30
+L project_library:2N7002 Q30
 U 1 1 5A187079
 P 3350 10450
 F 0 "Q30" H 3050 10700 50  0000 L CNN
@@ -2690,7 +2654,7 @@ F 3 "" H 3350 10450 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R46
+L project_library:R_Small R46
 U 1 1 5A18707F
 P 3100 10600
 F 0 "R46" H 3130 10620 50  0000 L CNN
@@ -2701,7 +2665,7 @@ F 3 "" H 3100 10600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR015
+L project_library:GND #PWR015
 U 1 1 5A18708A
 P 3450 10900
 F 0 "#PWR015" H 3450 10650 50  0001 C CNN
@@ -2712,7 +2676,7 @@ F 3 "" H 3450 10900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR016
+L project_library:GND #PWR016
 U 1 1 5A187090
 P 3100 10900
 F 0 "#PWR016" H 3100 10650 50  0001 C CNN
@@ -2725,7 +2689,7 @@ $EndComp
 Entry Wire Line
 	2950 10700 2850 10800
 $Comp
-L 2N7002 Q29
+L project_library:2N7002 Q29
 U 1 1 5A187099
 P 2650 10450
 F 0 "Q29" H 2350 10700 50  0000 L CNN
@@ -2736,7 +2700,7 @@ F 3 "" H 2650 10450 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R45
+L project_library:R_Small R45
 U 1 1 5A18709F
 P 2400 10600
 F 0 "R45" H 2430 10620 50  0000 L CNN
@@ -2747,7 +2711,7 @@ F 3 "" H 2400 10600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR017
+L project_library:GND #PWR017
 U 1 1 5A1870AA
 P 2750 10900
 F 0 "#PWR017" H 2750 10650 50  0001 C CNN
@@ -2758,7 +2722,7 @@ F 3 "" H 2750 10900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR018
+L project_library:GND #PWR018
 U 1 1 5A1870B0
 P 2400 10900
 F 0 "#PWR018" H 2400 10650 50  0001 C CNN
@@ -2771,7 +2735,7 @@ $EndComp
 Entry Wire Line
 	2250 10700 2150 10800
 $Comp
-L 2N7002 Q24
+L project_library:2N7002 Q24
 U 1 1 5A188795
 P 4750 6250
 F 0 "Q24" H 4450 6500 50  0000 L CNN
@@ -2782,7 +2746,7 @@ F 3 "" H 4750 6250 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R32
+L project_library:R_Small R32
 U 1 1 5A18879B
 P 4500 6400
 F 0 "R32" H 4530 6420 50  0000 L CNN
@@ -2793,7 +2757,7 @@ F 3 "" H 4500 6400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR019
+L project_library:GND #PWR019
 U 1 1 5A1887A6
 P 4850 6700
 F 0 "#PWR019" H 4850 6450 50  0001 C CNN
@@ -2804,7 +2768,7 @@ F 3 "" H 4850 6700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR020
+L project_library:GND #PWR020
 U 1 1 5A1887AC
 P 4500 6700
 F 0 "#PWR020" H 4500 6450 50  0001 C CNN
@@ -2817,7 +2781,7 @@ $EndComp
 Entry Wire Line
 	4350 6500 4250 6600
 $Comp
-L 2N7002 Q23
+L project_library:2N7002 Q23
 U 1 1 5A1887B5
 P 4050 6250
 F 0 "Q23" H 3750 6500 50  0000 L CNN
@@ -2828,7 +2792,7 @@ F 3 "" H 4050 6250 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R31
+L project_library:R_Small R31
 U 1 1 5A1887BB
 P 3800 6400
 F 0 "R31" H 3830 6420 50  0000 L CNN
@@ -2839,7 +2803,7 @@ F 3 "" H 3800 6400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR021
+L project_library:GND #PWR021
 U 1 1 5A1887C6
 P 4150 6700
 F 0 "#PWR021" H 4150 6450 50  0001 C CNN
@@ -2850,7 +2814,7 @@ F 3 "" H 4150 6700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR022
+L project_library:GND #PWR022
 U 1 1 5A1887CC
 P 3800 6700
 F 0 "#PWR022" H 3800 6450 50  0001 C CNN
@@ -2863,7 +2827,7 @@ $EndComp
 Entry Wire Line
 	3650 6500 3550 6600
 $Comp
-L 2N7002 Q22
+L project_library:2N7002 Q22
 U 1 1 5A1887D5
 P 3350 6250
 F 0 "Q22" H 3050 6500 50  0000 L CNN
@@ -2874,7 +2838,7 @@ F 3 "" H 3350 6250 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R30
+L project_library:R_Small R30
 U 1 1 5A1887DB
 P 3100 6400
 F 0 "R30" H 3130 6420 50  0000 L CNN
@@ -2885,7 +2849,7 @@ F 3 "" H 3100 6400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR023
+L project_library:GND #PWR023
 U 1 1 5A1887E6
 P 3450 6700
 F 0 "#PWR023" H 3450 6450 50  0001 C CNN
@@ -2896,7 +2860,7 @@ F 3 "" H 3450 6700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR024
+L project_library:GND #PWR024
 U 1 1 5A1887EC
 P 3100 6700
 F 0 "#PWR024" H 3100 6450 50  0001 C CNN
@@ -2909,7 +2873,7 @@ $EndComp
 Entry Wire Line
 	2950 6500 2850 6600
 $Comp
-L 2N7002 Q21
+L project_library:2N7002 Q21
 U 1 1 5A1887F5
 P 2650 6250
 F 0 "Q21" H 2350 6500 50  0000 L CNN
@@ -2920,7 +2884,7 @@ F 3 "" H 2650 6250 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R29
+L project_library:R_Small R29
 U 1 1 5A1887FB
 P 2400 6400
 F 0 "R29" H 2430 6420 50  0000 L CNN
@@ -2931,7 +2895,7 @@ F 3 "" H 2400 6400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR025
+L project_library:GND #PWR025
 U 1 1 5A188806
 P 2750 6700
 F 0 "#PWR025" H 2750 6450 50  0001 C CNN
@@ -2942,7 +2906,7 @@ F 3 "" H 2750 6700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR026
+L project_library:GND #PWR026
 U 1 1 5A18880C
 P 2400 6700
 F 0 "#PWR026" H 2400 6450 50  0001 C CNN
@@ -2995,7 +2959,7 @@ PWM_GREEN[1..4]
 Text HLabel 1800 10800 0    60   Input ~ 0
 PWM_BLUE[1..4]
 $Comp
-L R_Small R1
+L project_library:R_Small R1
 U 1 1 5A2F4AD5
 P 7450 2250
 F 0 "R1" H 7480 2270 50  0000 L CNN
@@ -3006,7 +2970,7 @@ F 3 "" H 7450 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R2
+L project_library:R_Small R2
 U 1 1 5A324581
 P 8000 2250
 F 0 "R2" H 8030 2270 50  0000 L CNN
@@ -3017,7 +2981,7 @@ F 3 "" H 8000 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R3
+L project_library:R_Small R3
 U 1 1 5A326491
 P 8700 2250
 F 0 "R3" H 8730 2270 50  0000 L CNN
@@ -3028,7 +2992,7 @@ F 3 "" H 8700 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R4
+L project_library:R_Small R4
 U 1 1 5A327AC4
 P 9250 2250
 F 0 "R4" H 9280 2270 50  0000 L CNN
@@ -3039,7 +3003,7 @@ F 3 "" H 9250 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R5
+L project_library:R_Small R5
 U 1 1 5A327BDF
 P 9950 2250
 F 0 "R5" H 9980 2270 50  0000 L CNN
@@ -3050,7 +3014,7 @@ F 3 "" H 9950 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R6
+L project_library:R_Small R6
 U 1 1 5A32845B
 P 10500 2250
 F 0 "R6" H 10530 2270 50  0000 L CNN
@@ -3061,7 +3025,7 @@ F 3 "" H 10500 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R7
+L project_library:R_Small R7
 U 1 1 5A32857A
 P 11200 2250
 F 0 "R7" H 11230 2270 50  0000 L CNN
@@ -3072,7 +3036,7 @@ F 3 "" H 11200 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R8
+L project_library:R_Small R8
 U 1 1 5A3291C4
 P 11750 2250
 F 0 "R8" H 11780 2270 50  0000 L CNN
@@ -3083,7 +3047,7 @@ F 3 "" H 11750 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R9
+L project_library:R_Small R9
 U 1 1 5A3292E3
 P 12450 2250
 F 0 "R9" H 12480 2270 50  0000 L CNN
@@ -3094,7 +3058,7 @@ F 3 "" H 12450 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R10
+L project_library:R_Small R10
 U 1 1 5A3293FF
 P 13000 2250
 F 0 "R10" H 13030 2270 50  0000 L CNN
@@ -3105,7 +3069,7 @@ F 3 "" H 13000 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R11
+L project_library:R_Small R11
 U 1 1 5A32A806
 P 13700 2250
 F 0 "R11" H 13730 2270 50  0000 L CNN
@@ -3116,7 +3080,7 @@ F 3 "" H 13700 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R12
+L project_library:R_Small R12
 U 1 1 5A32A926
 P 14250 2250
 F 0 "R12" H 14280 2270 50  0000 L CNN
@@ -3127,7 +3091,7 @@ F 3 "" H 14250 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R13
+L project_library:R_Small R13
 U 1 1 5A32AA51
 P 14950 2250
 F 0 "R13" H 14980 2270 50  0000 L CNN
@@ -3138,7 +3102,7 @@ F 3 "" H 14950 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R14
+L project_library:R_Small R14
 U 1 1 5A32B6E7
 P 15500 2250
 F 0 "R14" H 15530 2270 50  0000 L CNN
@@ -3149,7 +3113,7 @@ F 3 "" H 15500 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R15
+L project_library:R_Small R15
 U 1 1 5A32B80E
 P 16200 2250
 F 0 "R15" H 16230 2270 50  0000 L CNN
@@ -3160,7 +3124,7 @@ F 3 "" H 16200 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R16
+L project_library:R_Small R16
 U 1 1 5A32B932
 P 16750 2250
 F 0 "R16" H 16780 2270 50  0000 L CNN
@@ -3171,7 +3135,7 @@ F 3 "" H 16750 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74LS138 U4
+L project_library:74LS138 U4
 U 1 1 5A34BA9A
 P 10250 13700
 F 0 "U4" H 10350 14200 50  0000 C CNN
@@ -3183,7 +3147,7 @@ F 4 "http://uk.farnell.com/texas-instruments/sn74hc138pw/ic-decoder-demux-smd/dp
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR027
+L project_library:GND #PWR027
 U 1 1 5A3577D9
 P 9550 14250
 F 0 "#PWR027" H 9550 14000 50  0001 C CNN
@@ -3202,7 +3166,7 @@ Entry Wire Line
 Entry Wire Line
 	11050 13350 11150 13250
 $Comp
-L GND #PWR028
+L project_library:GND #PWR028
 U 1 1 5A3702A6
 P 10250 14250
 F 0 "#PWR028" H 10250 14000 50  0001 C CNN
@@ -3231,7 +3195,7 @@ Entry Wire Line
 Text HLabel 1800 12900 0    60   Input ~ 0
 COLUMN[1..6]
 $Comp
-L C_Small C3
+L project_library:C_Small C3
 U 1 1 5A3D04E0
 P 9050 14350
 F 0 "C3" H 9150 14400 50  0000 L CNN
@@ -3242,7 +3206,7 @@ F 3 "" H 9050 14350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR029
+L project_library:GND #PWR029
 U 1 1 5A3E6A12
 P 9050 14450
 F 0 "#PWR029" H 9050 14200 50  0001 C CNN
@@ -3253,7 +3217,7 @@ F 3 "" H 9050 14450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74LS138 U3
+L project_library:74LS138 U3
 U 1 1 5A41B95B
 P 7700 13700
 F 0 "U3" H 7800 14200 50  0000 C CNN
@@ -3265,7 +3229,7 @@ F 4 "http://uk.farnell.com/texas-instruments/sn74hc138pw/ic-decoder-demux-smd/dp
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR030
+L project_library:GND #PWR030
 U 1 1 5A41B961
 P 7100 14250
 F 0 "#PWR030" H 7100 14000 50  0001 C CNN
@@ -3308,7 +3272,7 @@ Entry Wire Line
 Entry Wire Line
 	8500 13950 8600 13850
 $Comp
-L GND #PWR031
+L project_library:GND #PWR031
 U 1 1 5A41B977
 P 7700 14250
 F 0 "#PWR031" H 7700 14000 50  0001 C CNN
@@ -3335,7 +3299,7 @@ Entry Wire Line
 Entry Wire Line
 	6250 13850 6350 13950
 $Comp
-L C_Small C2
+L project_library:C_Small C2
 U 1 1 5A41B98B
 P 6600 14350
 F 0 "C2" H 6700 14400 50  0000 L CNN
@@ -3346,7 +3310,7 @@ F 3 "" H 6600 14350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR032
+L project_library:GND #PWR032
 U 1 1 5A41B9A4
 P 6600 14450
 F 0 "#PWR032" H 6600 14200 50  0001 C CNN
@@ -3357,7 +3321,7 @@ F 3 "" H 6600 14450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74LS138 U2
+L project_library:74LS138 U2
 U 1 1 5A4242D8
 P 5150 13700
 F 0 "U2" H 5250 14200 50  0000 C CNN
@@ -3369,7 +3333,7 @@ F 4 "http://uk.farnell.com/texas-instruments/sn74hc138pw/ic-decoder-demux-smd/dp
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR033
+L project_library:GND #PWR033
 U 1 1 5A4242DE
 P 4550 14250
 F 0 "#PWR033" H 4550 14000 50  0001 C CNN
@@ -3412,7 +3376,7 @@ Entry Wire Line
 Entry Wire Line
 	5950 13950 6050 13850
 $Comp
-L GND #PWR034
+L project_library:GND #PWR034
 U 1 1 5A4242F4
 P 5150 14250
 F 0 "#PWR034" H 5150 14000 50  0001 C CNN
@@ -3439,7 +3403,7 @@ Entry Wire Line
 Entry Wire Line
 	3100 13850 3200 13950
 $Comp
-L C_Small C1
+L project_library:C_Small C1
 U 1 1 5A424308
 P 4050 14350
 F 0 "C1" H 4150 14400 50  0000 L CNN
@@ -3450,7 +3414,7 @@ F 3 "" H 4050 14350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR035
+L project_library:GND #PWR035
 U 1 1 5A424321
 P 4050 14450
 F 0 "#PWR035" H 4050 14200 50  0001 C CNN
@@ -3465,7 +3429,7 @@ NoConn ~ 10850 13850
 NoConn ~ 10850 13950
 NoConn ~ 10850 14050
 $Comp
-L LED_RAGB D129
+L project_library:LED_RAGB D129
 U 1 1 5A20E763
 P 18800 3500
 F 0 "D129" H 18800 3870 50  0000 C CNN
@@ -3476,7 +3440,7 @@ F 3 "" H 18800 3450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D130
+L project_library:LL4148 D130
 U 1 1 5A20E769
 P 19300 3500
 F 0 "D130" H 19300 3600 50  0000 C CNN
@@ -3487,7 +3451,7 @@ F 3 "" H 19300 3500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D132
+L project_library:LED_RAGB D132
 U 1 1 5A20E775
 P 18800 4550
 F 0 "D132" H 18800 4920 50  0000 C CNN
@@ -3498,7 +3462,7 @@ F 3 "" H 18800 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D133
+L project_library:LL4148 D133
 U 1 1 5A20E77B
 P 19300 4550
 F 0 "D133" H 19300 4650 50  0000 C CNN
@@ -3509,7 +3473,7 @@ F 3 "" H 19300 4550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D136
+L project_library:LED_RAGB D136
 U 1 1 5A20E787
 P 18800 5600
 F 0 "D136" H 18800 5970 50  0000 C CNN
@@ -3520,7 +3484,7 @@ F 3 "" H 18800 5550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D137
+L project_library:LL4148 D137
 U 1 1 5A20E78D
 P 19300 5600
 F 0 "D137" H 19300 5700 50  0000 C CNN
@@ -3531,7 +3495,7 @@ F 3 "" H 19300 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D140
+L project_library:LED_RAGB D140
 U 1 1 5A20E799
 P 18800 6650
 F 0 "D140" H 18800 7020 50  0000 C CNN
@@ -3542,7 +3506,7 @@ F 3 "" H 18800 6600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D141
+L project_library:LL4148 D141
 U 1 1 5A20E79F
 P 19300 6650
 F 0 "D141" H 19300 6750 50  0000 C CNN
@@ -3553,7 +3517,7 @@ F 3 "" H 19300 6650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D142
+L project_library:LED_RAGB D142
 U 1 1 5A20E7AB
 P 18800 7700
 F 0 "D142" H 18800 8070 50  0000 C CNN
@@ -3564,7 +3528,7 @@ F 3 "" H 18800 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D143
+L project_library:LL4148 D143
 U 1 1 5A20E7B1
 P 19300 7700
 F 0 "D143" H 19300 7800 50  0000 C CNN
@@ -3575,7 +3539,7 @@ F 3 "" H 19300 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D148
+L project_library:LED_RAGB D148
 U 1 1 5A20E7BD
 P 18800 8750
 F 0 "D148" H 18800 9120 50  0000 C CNN
@@ -3586,7 +3550,7 @@ F 3 "" H 18800 8700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D149
+L project_library:LL4148 D149
 U 1 1 5A20E7C3
 P 19300 8750
 F 0 "D149" H 19300 8850 50  0000 C CNN
@@ -3597,7 +3561,7 @@ F 3 "" H 19300 8750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D150
+L project_library:LED_RAGB D150
 U 1 1 5A20E7CF
 P 18800 9800
 F 0 "D150" H 18800 10170 50  0000 C CNN
@@ -3608,7 +3572,7 @@ F 3 "" H 18800 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D151
+L project_library:LL4148 D151
 U 1 1 5A20E7D5
 P 19300 9800
 F 0 "D151" H 19300 9900 50  0000 C CNN
@@ -3619,7 +3583,7 @@ F 3 "" H 19300 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D156
+L project_library:LED_RAGB D156
 U 1 1 5A20E7E1
 P 18800 10850
 F 0 "D156" H 18800 11220 50  0000 C CNN
@@ -3630,7 +3594,7 @@ F 3 "" H 18800 10800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D157
+L project_library:LL4148 D157
 U 1 1 5A20E7E7
 P 19300 10850
 F 0 "D157" H 19300 10950 50  0000 C CNN
@@ -3641,7 +3605,7 @@ F 3 "" H 19300 10850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L BSS83P Q18
+L project_library:BSS83P Q18
 U 1 1 5A20E7ED
 P 18700 2750
 F 0 "Q18" H 18400 2900 50  0000 L CNN
@@ -3652,7 +3616,7 @@ F 3 "" H 18700 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q17
+L project_library:BSS83P Q17
 U 1 1 5A20E7F3
 P 18150 2750
 F 0 "Q17" H 17850 2900 50  0000 L CNN
@@ -3663,7 +3627,7 @@ F 3 "" H 18150 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L SW_Push SW5
+L project_library:SW_Push SW5
 U 1 1 5A228DBD
 P 19050 3250
 F 0 "SW5" H 18850 3350 50  0000 L CNN
@@ -3674,7 +3638,7 @@ F 3 "" H 19050 3450 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW7
+L project_library:SW_Push SW7
 U 1 1 5A22D137
 P 19050 4300
 F 0 "SW7" H 18850 4400 50  0000 L CNN
@@ -3685,7 +3649,7 @@ F 3 "" H 19050 4500 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW20
+L project_library:SW_Push SW20
 U 1 1 5A22EF93
 P 19050 10600
 F 0 "SW20" H 19000 10700 50  0000 R CNN
@@ -3696,7 +3660,7 @@ F 3 "" H 19050 10800 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW10
+L project_library:SW_Push SW10
 U 1 1 5A22F121
 P 19050 5350
 F 0 "SW10" H 18800 5450 50  0000 L CNN
@@ -3707,7 +3671,7 @@ F 3 "" H 19050 5550 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW13
+L project_library:SW_Push SW13
 U 1 1 5A22F64C
 P 19050 7450
 F 0 "SW13" H 18800 7550 50  0000 L CNN
@@ -3718,7 +3682,7 @@ F 3 "" H 19050 7650 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW16
+L project_library:SW_Push SW16
 U 1 1 5A2322C8
 P 19050 8500
 F 0 "SW16" H 18800 8600 50  0000 L CNN
@@ -3729,7 +3693,7 @@ F 3 "" H 19050 8700 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW17
+L project_library:SW_Push SW17
 U 1 1 5A232415
 P 19050 9550
 F 0 "SW17" H 18800 9650 50  0000 L CNN
@@ -3744,7 +3708,7 @@ Entry Wire Line
 Entry Wire Line
 	17750 2450 17850 2550
 $Comp
-L R_Small R17
+L project_library:R_Small R17
 U 1 1 5A261BED
 P 17950 2250
 F 0 "R17" H 17980 2270 50  0000 L CNN
@@ -3755,7 +3719,7 @@ F 3 "" H 17950 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R18
+L project_library:R_Small R18
 U 1 1 5A261BF9
 P 18500 2250
 F 0 "R18" H 18530 2270 50  0000 L CNN
@@ -3766,7 +3730,7 @@ F 3 "" H 18500 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LL4148 D131
+L project_library:LL4148 D131
 U 1 1 5A26AB9D
 P 21350 3900
 F 0 "D131" H 21350 3800 50  0000 C CNN
@@ -3777,7 +3741,7 @@ F 3 "" H 21350 3900 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L LED_RAGB D134
+L project_library:LED_RAGB D134
 U 1 1 5A26ABA3
 P 20650 4550
 F 0 "D134" H 20650 4920 50  0000 C CNN
@@ -3788,7 +3752,7 @@ F 3 "" H 20650 4500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D135
+L project_library:LL4148 D135
 U 1 1 5A26ABA9
 P 21200 4950
 F 0 "D135" H 21200 5050 50  0000 C CNN
@@ -3799,7 +3763,7 @@ F 3 "" H 21200 4950 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D138
+L project_library:LL4148 D138
 U 1 1 5A26ABB5
 P 20050 5600
 F 0 "D138" H 20050 5700 50  0000 C CNN
@@ -3810,7 +3774,7 @@ F 3 "" H 20050 5600 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D139
+L project_library:LL4148 D139
 U 1 1 5A26ABC7
 P 21350 5350
 F 0 "D139" H 21350 5250 50  0000 C CNN
@@ -3821,7 +3785,7 @@ F 3 "" H 21350 5350 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L SW_Push SW8
+L project_library:SW_Push SW8
 U 1 1 5A26ABD9
 P 20050 4550
 F 0 "SW8" V 20200 4600 50  0000 L CNN
@@ -3832,7 +3796,7 @@ F 3 "" H 20050 4750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L SW_Push SW11
+L project_library:SW_Push SW11
 U 1 1 5A26ABDF
 P 20650 5350
 F 0 "SW11" H 20700 5450 50  0000 L CNN
@@ -3843,7 +3807,7 @@ F 3 "" H 20650 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW9
+L project_library:SW_Push SW9
 U 1 1 5A26ABE5
 P 21200 4550
 F 0 "SW9" V 21050 4350 50  0000 L CNN
@@ -3854,7 +3818,7 @@ F 3 "" H 21200 4750 50  0001 C CNN
 	0    -1   1    0   
 $EndComp
 $Comp
-L LED_RAGB D144
+L project_library:LED_RAGB D144
 U 1 1 5A287387
 P 20050 7700
 F 0 "D144" H 20050 8070 50  0000 C CNN
@@ -3865,7 +3829,7 @@ F 3 "" H 20050 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D145
+L project_library:LL4148 D145
 U 1 1 5A28738D
 P 20550 7700
 F 0 "D145" H 20550 7800 50  0000 C CNN
@@ -3876,7 +3840,7 @@ F 3 "" H 20550 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D152
+L project_library:LED_RAGB D152
 U 1 1 5A287393
 P 20050 9800
 F 0 "D152" H 20050 10170 50  0000 C CNN
@@ -3887,7 +3851,7 @@ F 3 "" H 20050 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D153
+L project_library:LL4148 D153
 U 1 1 5A287399
 P 20550 9800
 F 0 "D153" H 20550 9900 50  0000 C CNN
@@ -3898,7 +3862,7 @@ F 3 "" H 20550 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L SW_Push SW18
+L project_library:SW_Push SW18
 U 1 1 5A28739F
 P 20300 9550
 F 0 "SW18" H 20050 9650 50  0000 L CNN
@@ -3909,7 +3873,7 @@ F 3 "" H 20300 9750 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW14
+L project_library:SW_Push SW14
 U 1 1 5A2873A5
 P 20300 7450
 F 0 "SW14" H 20050 7550 50  0000 L CNN
@@ -3920,7 +3884,7 @@ F 3 "" H 20300 7650 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED_RAGB D146
+L project_library:LED_RAGB D146
 U 1 1 5A28CB5F
 P 21300 7700
 F 0 "D146" H 21300 8070 50  0000 C CNN
@@ -3931,7 +3895,7 @@ F 3 "" H 21300 7650 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D147
+L project_library:LL4148 D147
 U 1 1 5A28CB65
 P 21800 7700
 F 0 "D147" H 21800 7800 50  0000 C CNN
@@ -3942,7 +3906,7 @@ F 3 "" H 21800 7700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LED_RAGB D154
+L project_library:LED_RAGB D154
 U 1 1 5A28CB6B
 P 21300 9800
 F 0 "D154" H 21300 10170 50  0000 C CNN
@@ -3953,7 +3917,7 @@ F 3 "" H 21300 9750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L LL4148 D155
+L project_library:LL4148 D155
 U 1 1 5A28CB71
 P 21800 9800
 F 0 "D155" H 21800 9900 50  0000 C CNN
@@ -3964,7 +3928,7 @@ F 3 "" H 21800 9800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L SW_Push SW19
+L project_library:SW_Push SW19
 U 1 1 5A28CB77
 P 21550 9550
 F 0 "SW19" H 21300 9650 50  0000 L CNN
@@ -3975,7 +3939,7 @@ F 3 "" H 21550 9750 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW15
+L project_library:SW_Push SW15
 U 1 1 5A28CB7D
 P 21550 7450
 F 0 "SW15" H 21300 7550 50  0000 L CNN
@@ -3986,7 +3950,7 @@ F 3 "" H 21550 7650 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW6
+L project_library:SW_Push SW6
 U 1 1 5A2ED1C1
 P 20650 3900
 F 0 "SW6" H 20700 4000 50  0000 L CNN
@@ -3997,7 +3961,7 @@ F 3 "" H 20650 4100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BSS83P Q20
+L project_library:BSS83P Q20
 U 1 1 5A354DD8
 P 19950 2750
 F 0 "Q20" H 19650 2900 50  0000 L CNN
@@ -4008,7 +3972,7 @@ F 3 "" H 19950 2750 50  0001 L CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L BSS83P Q19
+L project_library:BSS83P Q19
 U 1 1 5A354DDE
 P 19400 2750
 F 0 "Q19" H 19100 2900 50  0000 L CNN
@@ -4023,7 +3987,7 @@ Entry Wire Line
 Entry Wire Line
 	19000 2450 19100 2550
 $Comp
-L R_Small R19
+L project_library:R_Small R19
 U 1 1 5A354DF2
 P 19200 2250
 F 0 "R19" H 19230 2270 50  0000 L CNN
@@ -4034,7 +3998,7 @@ F 3 "" H 19200 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R20
+L project_library:R_Small R20
 U 1 1 5A354DFE
 P 19750 2250
 F 0 "R20" H 19780 2270 50  0000 L CNN
@@ -4045,7 +4009,7 @@ F 3 "" H 19750 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW12
+L project_library:SW_Push SW12
 U 1 1 5A35CC65
 P 19050 6400
 F 0 "SW12" H 18800 6500 50  0000 L CNN
@@ -4066,7 +4030,7 @@ PWM_BLUE[1..4]
 Text Label 1850 12900 0    60   ~ 0
 COLUMN[1..6]
 $Comp
-L R_Small R28
+L project_library:R_Small R28
 U 1 1 5A4E3C59
 P 4850 5800
 F 0 "R28" H 4900 5850 50  0000 L CNN
@@ -4077,7 +4041,7 @@ F 3 "" H 4850 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R27
+L project_library:R_Small R27
 U 1 1 5A4E72E9
 P 4150 5800
 F 0 "R27" H 4200 5850 50  0000 L CNN
@@ -4088,7 +4052,7 @@ F 3 "" H 4150 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R26
+L project_library:R_Small R26
 U 1 1 5A4E76B2
 P 3450 5800
 F 0 "R26" H 3500 5850 50  0000 L CNN
@@ -4099,7 +4063,7 @@ F 3 "" H 3450 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R25
+L project_library:R_Small R25
 U 1 1 5A4E7A7C
 P 2750 5800
 F 0 "R25" H 2800 5850 50  0000 L CNN
@@ -4110,7 +4074,7 @@ F 3 "" H 2750 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R44
+L project_library:R_Small R44
 U 1 1 5A4F1565
 P 4850 10000
 F 0 "R44" H 4900 10050 50  0000 L CNN
@@ -4121,7 +4085,7 @@ F 3 "" H 4850 10000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R43
+L project_library:R_Small R43
 U 1 1 5A4F156B
 P 4150 10000
 F 0 "R43" H 4200 10050 50  0000 L CNN
@@ -4132,7 +4096,7 @@ F 3 "" H 4150 10000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R42
+L project_library:R_Small R42
 U 1 1 5A4F1571
 P 3450 10000
 F 0 "R42" H 3500 10050 50  0000 L CNN
@@ -4143,7 +4107,7 @@ F 3 "" H 3450 10000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R41
+L project_library:R_Small R41
 U 1 1 5A4F1577
 P 2750 10000
 F 0 "R41" H 2800 10050 50  0000 L CNN
@@ -4154,7 +4118,7 @@ F 3 "" H 2750 10000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R36
+L project_library:R_Small R36
 U 1 1 5A4FC77F
 P 4850 7900
 F 0 "R36" H 4900 7950 50  0000 L CNN
@@ -4165,7 +4129,7 @@ F 3 "" H 4850 7900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R35
+L project_library:R_Small R35
 U 1 1 5A4FC785
 P 4150 7900
 F 0 "R35" H 4200 7950 50  0000 L CNN
@@ -4176,7 +4140,7 @@ F 3 "" H 4150 7900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R34
+L project_library:R_Small R34
 U 1 1 5A4FC78B
 P 3450 7900
 F 0 "R34" H 3500 7950 50  0000 L CNN
@@ -4187,7 +4151,7 @@ F 3 "" H 3450 7900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R33
+L project_library:R_Small R33
 U 1 1 5A4FC791
 P 2750 7900
 F 0 "R33" H 2800 7950 50  0000 L CNN
@@ -4198,7 +4162,7 @@ F 3 "" H 2750 7900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR036
+L project_library:+5V #PWR036
 U 1 1 5A51C985
 P 10250 12800
 F 0 "#PWR036" H 10250 12650 50  0001 C CNN
@@ -4209,7 +4173,7 @@ F 3 "" H 10250 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR037
+L project_library:+5V #PWR037
 U 1 1 5A51CD54
 P 7700 12800
 F 0 "#PWR037" H 7700 12650 50  0001 C CNN
@@ -4220,7 +4184,7 @@ F 3 "" H 7700 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR038
+L project_library:+5V #PWR038
 U 1 1 5A51D11C
 P 5150 12800
 F 0 "#PWR038" H 5150 12650 50  0001 C CNN
@@ -4231,7 +4195,7 @@ F 3 "" H 5150 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR039
+L project_library:+5V #PWR039
 U 1 1 5A51FB85
 P 7450 2050
 F 0 "#PWR039" H 7450 1900 50  0001 C CNN
@@ -4242,7 +4206,7 @@ F 3 "" H 7450 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR040
+L project_library:+5V #PWR040
 U 1 1 5A523621
 P 7750 2050
 F 0 "#PWR040" H 7750 1900 50  0001 C CNN
@@ -4253,7 +4217,7 @@ F 3 "" H 7750 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR041
+L project_library:+5V #PWR041
 U 1 1 5A5238AA
 P 8000 2050
 F 0 "#PWR041" H 8000 1900 50  0001 C CNN
@@ -4264,7 +4228,7 @@ F 3 "" H 8000 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR042
+L project_library:+5V #PWR042
 U 1 1 5A5238B0
 P 8300 2050
 F 0 "#PWR042" H 8300 1900 50  0001 C CNN
@@ -4275,7 +4239,7 @@ F 3 "" H 8300 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR043
+L project_library:+5V #PWR043
 U 1 1 5A5239F5
 P 8700 2050
 F 0 "#PWR043" H 8700 1900 50  0001 C CNN
@@ -4286,7 +4250,7 @@ F 3 "" H 8700 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR044
+L project_library:+5V #PWR044
 U 1 1 5A5239FB
 P 9000 2050
 F 0 "#PWR044" H 9000 1900 50  0001 C CNN
@@ -4297,7 +4261,7 @@ F 3 "" H 9000 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR045
+L project_library:+5V #PWR045
 U 1 1 5A523A01
 P 9250 2050
 F 0 "#PWR045" H 9250 1900 50  0001 C CNN
@@ -4308,7 +4272,7 @@ F 3 "" H 9250 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR046
+L project_library:+5V #PWR046
 U 1 1 5A523A07
 P 9550 2050
 F 0 "#PWR046" H 9550 1900 50  0001 C CNN
@@ -4319,7 +4283,7 @@ F 3 "" H 9550 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR047
+L project_library:+5V #PWR047
 U 1 1 5A524901
 P 9950 2050
 F 0 "#PWR047" H 9950 1900 50  0001 C CNN
@@ -4330,7 +4294,7 @@ F 3 "" H 9950 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR048
+L project_library:+5V #PWR048
 U 1 1 5A524907
 P 10250 2050
 F 0 "#PWR048" H 10250 1900 50  0001 C CNN
@@ -4341,7 +4305,7 @@ F 3 "" H 10250 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR049
+L project_library:+5V #PWR049
 U 1 1 5A52490D
 P 10500 2050
 F 0 "#PWR049" H 10500 1900 50  0001 C CNN
@@ -4352,7 +4316,7 @@ F 3 "" H 10500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR050
+L project_library:+5V #PWR050
 U 1 1 5A524913
 P 10800 2050
 F 0 "#PWR050" H 10800 1900 50  0001 C CNN
@@ -4363,7 +4327,7 @@ F 3 "" H 10800 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR051
+L project_library:+5V #PWR051
 U 1 1 5A524919
 P 11200 2050
 F 0 "#PWR051" H 11200 1900 50  0001 C CNN
@@ -4374,7 +4338,7 @@ F 3 "" H 11200 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR052
+L project_library:+5V #PWR052
 U 1 1 5A52491F
 P 11500 2050
 F 0 "#PWR052" H 11500 1900 50  0001 C CNN
@@ -4385,7 +4349,7 @@ F 3 "" H 11500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR053
+L project_library:+5V #PWR053
 U 1 1 5A524925
 P 11750 2050
 F 0 "#PWR053" H 11750 1900 50  0001 C CNN
@@ -4396,7 +4360,7 @@ F 3 "" H 11750 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR054
+L project_library:+5V #PWR054
 U 1 1 5A52492B
 P 12050 2050
 F 0 "#PWR054" H 12050 1900 50  0001 C CNN
@@ -4407,7 +4371,7 @@ F 3 "" H 12050 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR055
+L project_library:+5V #PWR055
 U 1 1 5A524E2D
 P 12450 2050
 F 0 "#PWR055" H 12450 1900 50  0001 C CNN
@@ -4418,7 +4382,7 @@ F 3 "" H 12450 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR056
+L project_library:+5V #PWR056
 U 1 1 5A524E33
 P 12750 2050
 F 0 "#PWR056" H 12750 1900 50  0001 C CNN
@@ -4429,7 +4393,7 @@ F 3 "" H 12750 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR057
+L project_library:+5V #PWR057
 U 1 1 5A524E39
 P 13000 2050
 F 0 "#PWR057" H 13000 1900 50  0001 C CNN
@@ -4440,7 +4404,7 @@ F 3 "" H 13000 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR058
+L project_library:+5V #PWR058
 U 1 1 5A524E3F
 P 13300 2050
 F 0 "#PWR058" H 13300 1900 50  0001 C CNN
@@ -4451,7 +4415,7 @@ F 3 "" H 13300 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR059
+L project_library:+5V #PWR059
 U 1 1 5A524E45
 P 13700 2050
 F 0 "#PWR059" H 13700 1900 50  0001 C CNN
@@ -4462,7 +4426,7 @@ F 3 "" H 13700 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR060
+L project_library:+5V #PWR060
 U 1 1 5A524E4B
 P 14000 2050
 F 0 "#PWR060" H 14000 1900 50  0001 C CNN
@@ -4473,7 +4437,7 @@ F 3 "" H 14000 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR061
+L project_library:+5V #PWR061
 U 1 1 5A524E51
 P 14250 2050
 F 0 "#PWR061" H 14250 1900 50  0001 C CNN
@@ -4484,7 +4448,7 @@ F 3 "" H 14250 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR062
+L project_library:+5V #PWR062
 U 1 1 5A524E57
 P 14550 2050
 F 0 "#PWR062" H 14550 1900 50  0001 C CNN
@@ -4495,7 +4459,7 @@ F 3 "" H 14550 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR063
+L project_library:+5V #PWR063
 U 1 1 5A524E5D
 P 14950 2050
 F 0 "#PWR063" H 14950 1900 50  0001 C CNN
@@ -4506,7 +4470,7 @@ F 3 "" H 14950 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR064
+L project_library:+5V #PWR064
 U 1 1 5A524E63
 P 15250 2050
 F 0 "#PWR064" H 15250 1900 50  0001 C CNN
@@ -4517,7 +4481,7 @@ F 3 "" H 15250 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR065
+L project_library:+5V #PWR065
 U 1 1 5A524E69
 P 15500 2050
 F 0 "#PWR065" H 15500 1900 50  0001 C CNN
@@ -4528,7 +4492,7 @@ F 3 "" H 15500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR066
+L project_library:+5V #PWR066
 U 1 1 5A524E6F
 P 15800 2050
 F 0 "#PWR066" H 15800 1900 50  0001 C CNN
@@ -4539,7 +4503,7 @@ F 3 "" H 15800 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR067
+L project_library:+5V #PWR067
 U 1 1 5A524E75
 P 16200 2050
 F 0 "#PWR067" H 16200 1900 50  0001 C CNN
@@ -4550,7 +4514,7 @@ F 3 "" H 16200 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR068
+L project_library:+5V #PWR068
 U 1 1 5A524E7B
 P 16500 2050
 F 0 "#PWR068" H 16500 1900 50  0001 C CNN
@@ -4561,7 +4525,7 @@ F 3 "" H 16500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR069
+L project_library:+5V #PWR069
 U 1 1 5A524E81
 P 16750 2050
 F 0 "#PWR069" H 16750 1900 50  0001 C CNN
@@ -4572,7 +4536,7 @@ F 3 "" H 16750 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR070
+L project_library:+5V #PWR070
 U 1 1 5A524E87
 P 17050 2050
 F 0 "#PWR070" H 17050 1900 50  0001 C CNN
@@ -4583,7 +4547,7 @@ F 3 "" H 17050 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR071
+L project_library:+5V #PWR071
 U 1 1 5A526EF3
 P 17950 2050
 F 0 "#PWR071" H 17950 1900 50  0001 C CNN
@@ -4594,7 +4558,7 @@ F 3 "" H 17950 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR072
+L project_library:+5V #PWR072
 U 1 1 5A526EF9
 P 18250 2050
 F 0 "#PWR072" H 18250 1900 50  0001 C CNN
@@ -4605,7 +4569,7 @@ F 3 "" H 18250 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR073
+L project_library:+5V #PWR073
 U 1 1 5A526EFF
 P 18500 2050
 F 0 "#PWR073" H 18500 1900 50  0001 C CNN
@@ -4616,7 +4580,7 @@ F 3 "" H 18500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR074
+L project_library:+5V #PWR074
 U 1 1 5A526F05
 P 18800 2050
 F 0 "#PWR074" H 18800 1900 50  0001 C CNN
@@ -4627,7 +4591,7 @@ F 3 "" H 18800 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR075
+L project_library:+5V #PWR075
 U 1 1 5A52704A
 P 19200 2050
 F 0 "#PWR075" H 19200 1900 50  0001 C CNN
@@ -4638,7 +4602,7 @@ F 3 "" H 19200 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR076
+L project_library:+5V #PWR076
 U 1 1 5A527050
 P 19500 2050
 F 0 "#PWR076" H 19500 1900 50  0001 C CNN
@@ -4649,7 +4613,7 @@ F 3 "" H 19500 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR077
+L project_library:+5V #PWR077
 U 1 1 5A527056
 P 19750 2050
 F 0 "#PWR077" H 19750 1900 50  0001 C CNN
@@ -4660,7 +4624,7 @@ F 3 "" H 19750 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR078
+L project_library:+5V #PWR078
 U 1 1 5A52705C
 P 20050 2050
 F 0 "#PWR078" H 20050 1900 50  0001 C CNN
@@ -4671,7 +4635,7 @@ F 3 "" H 20050 2050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR079
+L project_library:+5V #PWR079
 U 1 1 5A54E562
 P 9050 14250
 F 0 "#PWR079" H 9050 14100 50  0001 C CNN
@@ -4682,7 +4646,7 @@ F 3 "" H 9050 14250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR080
+L project_library:+5V #PWR080
 U 1 1 5A54F6E9
 P 6600 14250
 F 0 "#PWR080" H 6600 14100 50  0001 C CNN
@@ -4693,7 +4657,7 @@ F 3 "" H 6600 14250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR081
+L project_library:+5V #PWR081
 U 1 1 5A5509A5
 P 4050 14250
 F 0 "#PWR081" H 4050 14100 50  0001 C CNN
@@ -4744,7 +4708,7 @@ Entry Wire Line
 Entry Wire Line
 	11050 13650 11150 13550
 $Comp
-L R_Small R52
+L project_library:R_Small R52
 U 1 1 5A58386F
 P 4550 13100
 F 0 "R52" H 4580 13120 50  0000 L CNN
@@ -4755,7 +4719,7 @@ F 3 "" H 4550 13100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R51
+L project_library:R_Small R51
 U 1 1 5A593529
 P 4300 13100
 F 0 "R51" H 4330 13120 50  0000 L CNN
@@ -4766,7 +4730,7 @@ F 3 "" H 4300 13100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R50
+L project_library:R_Small R50
 U 1 1 5A593902
 P 4050 13100
 F 0 "R50" H 4080 13120 50  0000 L CNN
@@ -4777,7 +4741,7 @@ F 3 "" H 4050 13100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R49
+L project_library:R_Small R49
 U 1 1 5A5C3E91
 P 3800 13100
 F 0 "R49" H 3830 13120 50  0000 L CNN
@@ -4788,7 +4752,7 @@ F 3 "" H 3800 13100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR082
+L project_library:+5V #PWR082
 U 1 1 5A5C9C45
 P 4550 12800
 F 0 "#PWR082" H 4550 12650 50  0001 C CNN
@@ -4799,7 +4763,7 @@ F 3 "" H 4550 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR083
+L project_library:+5V #PWR083
 U 1 1 5A5CA019
 P 4300 12800
 F 0 "#PWR083" H 4300 12650 50  0001 C CNN
@@ -4810,7 +4774,7 @@ F 3 "" H 4300 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR084
+L project_library:+5V #PWR084
 U 1 1 5A5CA3ED
 P 4050 12800
 F 0 "#PWR084" H 4050 12650 50  0001 C CNN
@@ -4821,7 +4785,7 @@ F 3 "" H 4050 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR085
+L project_library:+5V #PWR085
 U 1 1 5A5CA7C1
 P 3800 12800
 F 0 "#PWR085" H 3800 12650 50  0001 C CNN
@@ -4832,7 +4796,7 @@ F 3 "" H 3800 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R53
+L project_library:R_Small R53
 U 1 1 5A5F25F5
 P 7000 13150
 F 0 "R53" H 7030 13170 50  0000 L CNN
@@ -4843,7 +4807,7 @@ F 3 "" H 7000 13150 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR086
+L project_library:+5V #PWR086
 U 1 1 5A5FCD6F
 P 7000 12800
 F 0 "#PWR086" H 7000 12650 50  0001 C CNN
@@ -4854,7 +4818,7 @@ F 3 "" H 7000 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R54
+L project_library:R_Small R54
 U 1 1 5A61367E
 P 9550 13150
 F 0 "R54" H 9580 13170 50  0000 L CNN
@@ -4865,7 +4829,7 @@ F 3 "" H 9550 13150 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR087
+L project_library:+5V #PWR087
 U 1 1 5A617BC9
 P 9550 12800
 F 0 "#PWR087" H 9550 12650 50  0001 C CNN
@@ -4876,7 +4840,7 @@ F 3 "" H 9550 12800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR088
+L project_library:+5V #PWR088
 U 1 1 5A63CFB1
 P 4550 13800
 F 0 "#PWR088" H 4550 13650 50  0001 C CNN
@@ -4887,7 +4851,7 @@ F 3 "" H 4550 13800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR089
+L project_library:+5V #PWR089
 U 1 1 5A6542E0
 P 7100 13800
 F 0 "#PWR089" H 7100 13650 50  0001 C CNN
@@ -4898,7 +4862,7 @@ F 3 "" H 7100 13800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR090
+L project_library:+5V #PWR090
 U 1 1 5A66EB35
 P 9650 13800
 F 0 "#PWR090" H 9650 13650 50  0001 C CNN
@@ -4909,7 +4873,7 @@ F 3 "" H 9650 13800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R21
+L project_library:R_Small R21
 U 1 1 5A5F1A54
 P 4500 4100
 F 0 "R21" V 4450 3850 50  0000 L CNN
@@ -4920,7 +4884,7 @@ F 3 "" H 4500 4100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R_Small R22
+L project_library:R_Small R22
 U 1 1 5A604E1C
 P 4500 4200
 F 0 "R22" V 4450 3950 50  0000 L CNN
@@ -4931,7 +4895,7 @@ F 3 "" H 4500 4200 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R_Small R23
+L project_library:R_Small R23
 U 1 1 5A605205
 P 4500 4300
 F 0 "R23" V 4450 4050 50  0000 L CNN
@@ -4942,7 +4906,7 @@ F 3 "" H 4500 4300 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R_Small R24
+L project_library:R_Small R24
 U 1 1 5A6055F1
 P 4500 4400
 F 0 "R24" V 4450 4150 50  0000 L CNN

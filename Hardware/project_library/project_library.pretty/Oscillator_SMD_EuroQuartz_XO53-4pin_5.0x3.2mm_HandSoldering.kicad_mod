@@ -1,4 +1,4 @@
-(module Oscillator_SMD_EuroQuartz_XO53-4pin_5.0x3.2mm_HandSoldering (layer F.Cu) (tedit 5A636CEE)
+(module Oscillator_SMD_EuroQuartz_XO53-4pin_5.0x3.2mm_HandSoldering (layer F.Cu) (tedit 5E9DEAAB)
   (descr "Miniature Crystal Clock Oscillator EuroQuartz XO53 series, http://cdn-reichelt.de/documents/datenblatt/B400/XO53.pdf, hand-soldering, 5.0x3.2mm^2 package")
   (tags "SMD SMT crystal oscillator hand-soldering")
   (attr smd)
@@ -31,4 +31,9 @@
   (pad 2 smd rect (at 1.34 1.4) (size 1.54 1.8) (layers F.Cu F.Paste F.Mask))
   (pad 3 smd rect (at 1.34 -1.4) (size 1.54 1.8) (layers F.Cu F.Paste F.Mask))
   (pad 4 smd rect (at -1.34 -1.4) (size 1.54 1.8) (layers F.Cu F.Paste F.Mask))
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/ABM3B.step
+    (offset (xyz 0.9 1.02 2.4))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 0))
+  )
 )

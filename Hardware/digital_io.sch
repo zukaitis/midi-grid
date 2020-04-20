@@ -1,42 +1,6 @@
-EESchema Schematic File Version 2
-LIBS:project_library
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:diode
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:stm32
-LIBS:ESD_Protection
+EESchema Schematic File Version 4
 LIBS:midi_grid-cache
-EELAYER 25 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -51,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Rotary_Encoder SW25
+L project_library:Rotary_Encoder SW25
 U 1 1 5A3979F5
 P 5700 5250
 F 0 "SW25" H 5700 5510 50  0000 C CNN
@@ -63,7 +27,7 @@ F 4 "Alps" H 5700 5250 60  0001 C CNN "Manufacturer"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0129
+L project_library:GND #PWR0129
 U 1 1 5A397ADE
 P 5200 5450
 F 0 "#PWR0129" H 5200 5200 50  0001 C CNN
@@ -74,7 +38,7 @@ F 3 "" H 5200 5450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW23
+L project_library:SW_Push SW23
 U 1 1 5A39D16C
 P 5700 4350
 F 0 "SW23" V 5700 4100 50  0000 L CNN
@@ -89,7 +53,7 @@ ROTARY1_A
 Text HLabel 4700 5350 0    60   Output ~ 0
 ROTARY1_B
 $Comp
-L GND #PWR0130
+L project_library:GND #PWR0130
 U 1 1 5A39D52F
 P 5700 4650
 F 0 "#PWR0130" H 5700 4400 50  0001 C CNN
@@ -102,7 +66,7 @@ $EndComp
 Text HLabel 4700 4150 0    60   Output ~ 0
 BUTTON1
 $Comp
-L Rotary_Encoder SW26
+L project_library:Rotary_Encoder SW26
 U 1 1 5A39DA31
 P 7600 5250
 F 0 "SW26" H 7600 5510 50  0000 C CNN
@@ -114,7 +78,7 @@ F 4 "Alps" H 7600 5250 60  0001 C CNN "Manufacturer"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0131
+L project_library:GND #PWR0131
 U 1 1 5A39DA37
 P 7100 5450
 F 0 "#PWR0131" H 7100 5200 50  0001 C CNN
@@ -125,7 +89,7 @@ F 3 "" H 7100 5450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW24
+L project_library:SW_Push SW24
 U 1 1 5A39DA5F
 P 7600 4350
 F 0 "SW24" V 7600 4100 50  0000 L CNN
@@ -140,7 +104,7 @@ ROTARY2_A
 Text HLabel 6600 5350 0    60   Output ~ 0
 ROTARY2_B
 $Comp
-L GND #PWR0132
+L project_library:GND #PWR0132
 U 1 1 5A39DA67
 P 7600 4650
 F 0 "#PWR0132" H 7600 4400 50  0001 C CNN
@@ -153,7 +117,7 @@ $EndComp
 Text HLabel 6600 4150 0    60   Output ~ 0
 BUTTON2
 $Comp
-L lcd_nokia_5110 A1
+L project_library:lcd_nokia_5110 A1
 U 1 1 5A1F0214
 P 7400 2800
 F 0 "A1" H 7150 3300 50  0000 L CNN
@@ -165,7 +129,7 @@ F 4 "https://www.ebay.com/itm/84-48-LCD-Module-White-Backlight-Adapter-PCB-for-N
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3.3V #PWR0133
+L project_library:+3.3V #PWR0133
 U 1 1 5A1F0C1A
 P 7050 2200
 F 0 "#PWR0133" H 7050 2050 50  0001 C CNN
@@ -176,7 +140,7 @@ F 3 "" H 7050 2200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0134
+L project_library:GND #PWR0134
 U 1 1 5A1F0FE5
 P 7050 3400
 F 0 "#PWR0134" H 7050 3150 50  0001 C CNN
@@ -187,7 +151,7 @@ F 3 "" H 7050 3400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 2N7002 Q34
+L project_library:2N7002 Q34
 U 1 1 5A1F45C8
 P 5600 3400
 F 0 "Q34" H 5800 3450 50  0000 L CNN
@@ -198,7 +162,7 @@ F 3 "" H 5600 3400 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_Small R63
+L project_library:R_Small R63
 U 1 1 5A1F45CF
 P 5200 3550
 F 0 "R63" H 5250 3600 50  0000 L CNN
@@ -209,7 +173,7 @@ F 3 "" H 5200 3550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0135
+L project_library:GND #PWR0135
 U 1 1 5A1F45D6
 P 5700 3700
 F 0 "#PWR0135" H 5700 3450 50  0001 C CNN
@@ -220,7 +184,7 @@ F 3 "" H 5700 3700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0136
+L project_library:GND #PWR0136
 U 1 1 5A1F45DC
 P 5200 3700
 F 0 "#PWR0136" H 5200 3450 50  0001 C CNN
@@ -288,7 +252,7 @@ Wire Wire Line
 Wire Wire Line
 	5700 3100 5700 3200
 $Comp
-L R_Small R62
+L project_library:R_Small R62
 U 1 1 5A52FA84
 P 6200 3100
 F 0 "R62" V 6300 3100 50  0000 C CNN
