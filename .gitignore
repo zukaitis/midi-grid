@@ -5,6 +5,7 @@
 *.directory
 *.clangd
 *.kicad_pcb-bak
+*.sch-bak
 Firmware/.vscode/launch.json
 Firmware/midi-grid.code-workspace
 Firmware/output/*

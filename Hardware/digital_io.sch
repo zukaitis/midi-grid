@@ -43,7 +43,7 @@ U 1 1 5A39D16C
 P 5700 4350
 F 0 "SW23" V 5700 4100 50  0000 L CNN
 F 1 "SW_Push" H 5700 4290 50  0001 C CNN
-F 2 "project_library:Tactile_switch_12x12_black_cap" H 5700 4550 50  0001 C CNN
+F 2 "project_library:Tactile_switch_12x12" H 5700 4550 50  0001 C CNN
 F 3 "" H 5700 4550 50  0001 C CNN
 	1    5700 4350
 	0    -1   -1   0   
@@ -94,7 +94,7 @@ U 1 1 5A39DA5F
 P 7600 4350
 F 0 "SW24" V 7600 4100 50  0000 L CNN
 F 1 "SW_Push" H 7600 4290 50  0001 C CNN
-F 2 "project_library:Tactile_switch_12x12_red_cap" H 7600 4550 50  0001 C CNN
+F 2 "project_library:Tactile_switch_12x12" H 7600 4550 50  0001 C CNN
 F 3 "" H 7600 4550 50  0001 C CNN
 	1    7600 4350
 	0    -1   -1   0   
@@ -231,7 +231,7 @@ Wire Wire Line
 Wire Wire Line
 	5700 4550 5700 4650
 Wire Wire Line
-	4700 3400 5400 3400
+	4700 3400 5200 3400
 Wire Wire Line
 	5200 3400 5200 3450
 Wire Wire Line
@@ -266,4 +266,6 @@ Wire Wire Line
 	6600 3100 6300 3100
 Wire Wire Line
 	6100 3100 5700 3100
+Wire Wire Line
+	5200 3400 5400 3400
 $EndSCHEMATC

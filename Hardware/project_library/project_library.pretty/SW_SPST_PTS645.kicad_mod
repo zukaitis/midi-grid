@@ -1,4 +1,4 @@
-(module SW_SPST_PTS645 (layer F.Cu) (tedit 5E9DE0AA)
+(module SW_SPST_PTS645 (layer F.Cu) (tedit 5E9F28C9)
   (descr "C&K Components SPST SMD PTS645 Series 6mm Tact Switch")
   (tags "SPST Button Switch")
   (attr smd)
