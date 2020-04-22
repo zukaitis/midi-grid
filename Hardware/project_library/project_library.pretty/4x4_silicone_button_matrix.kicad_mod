@@ -1,4 +1,4 @@
-(module ProjectLib:4x4_silicone_button_matrix (layer F.Cu) (tedit 5A5BB4CF)
+(module 4x4_silicone_button_matrix (layer F.Cu) (tedit 5E9DD72C)
   (fp_text reference SW4 (at -43.5 -47.5) (layer F.SilkS)
     (effects (font (size 1 1) (thickness 0.15)))
   )
@@ -666,9 +666,9 @@
   (pad "" smd oval (at 17.02701 10.624851 292.5) (size 0.5 3.25) (layers F.Cu F.Mask))
   (pad "" smd oval (at 15.964823 9.035177 315) (size 0.5 3.25) (layers F.Cu F.Mask))
   (pad "" smd oval (at 14.375149 7.97299 337.5) (size 0.5 3.25) (layers F.Cu F.Mask))
-  (model ${KIPRJMOD}/project_library/project_library.3dshapes/pad.wrl
-    (at (xyz 1.968504 -1.968504 -0.13))
-    (scale (xyz 0.393701 0.393701 0.393701))
-    (rotate (xyz 0 0 0))
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/button_pad_4x4.step
+    (at (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 0))
   )
 )

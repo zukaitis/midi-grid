@@ -1,4 +1,4 @@
-(module TSSOP-16_4.4x5mm_Pitch0.65mm (layer F.Cu) (tedit 5A63658E)
+(module TSSOP-16_4.4x5mm_Pitch0.65mm (layer F.Cu) (tedit 5E9DE28A)
   (descr "16-Lead Plastic Thin Shrink Small Outline (ST)-4.4 mm Body [TSSOP] (see Microchip Packaging Specification 00000049BS.pdf)")
   (tags "SSOP 0.65")
   (attr smd)
@@ -38,9 +38,9 @@
   (pad 14 smd rect (at 2.95 -0.975) (size 1.5 0.45) (layers F.Cu F.Paste F.Mask))
   (pad 15 smd rect (at 2.95 -1.625) (size 1.5 0.45) (layers F.Cu F.Paste F.Mask))
   (pad 16 smd rect (at 2.95 -2.275) (size 1.5 0.45) (layers F.Cu F.Paste F.Mask))
-  (model ${KIPRJMOD}/project_library/project_library.3dshapes/TSSOP-16_4.4x5mm_Pitch0.65mm.wrl
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/TSSOP-16.step
     (at (xyz 0 0 0))
     (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
+    (rotate (xyz -90 0 90))
   )
 )

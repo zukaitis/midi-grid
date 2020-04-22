@@ -1,42 +1,6 @@
-EESchema Schematic File Version 2
-LIBS:project_library
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:diode
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:stm32
-LIBS:ESD_Protection
+EESchema Schematic File Version 4
 LIBS:midi_grid-cache
-EELAYER 25 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -51,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L C_Small C17
+L project_library:C_Small C17
 U 1 1 5A21CDC2
 P 5350 3900
 F 0 "C17" H 5450 3950 50  0000 L CNN
@@ -62,7 +26,7 @@ F 3 "" H 5350 3900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3.3V #PWR0137
+L project_library:+3.3V #PWR0137
 U 1 1 5A21CDCF
 P 7150 3600
 F 0 "#PWR0137" H 7150 3450 50  0001 C CNN
@@ -73,7 +37,7 @@ F 3 "" H 7150 3600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0138
+L project_library:GND #PWR0138
 U 1 1 5A21CF18
 P 5350 4100
 F 0 "#PWR0138" H 5350 3850 50  0001 C CNN
@@ -88,7 +52,7 @@ Wire Wire Line
 Wire Wire Line
 	5350 3700 5350 3800
 $Comp
-L C_Small C16
+L project_library:C_Small C16
 U 1 1 5A21CF38
 P 4950 3900
 F 0 "C16" H 5050 3950 50  0000 L CNN
@@ -102,7 +66,7 @@ Wire Wire Line
 	4950 3600 4950 3800
 Connection ~ 5350 3700
 $Comp
-L GND #PWR0139
+L project_library:GND #PWR0139
 U 1 1 5A21CF81
 P 4950 4100
 F 0 "#PWR0139" H 4950 3850 50  0001 C CNN
@@ -115,7 +79,7 @@ $EndComp
 Wire Wire Line
 	4950 4000 4950 4100
 $Comp
-L C_Small C18
+L project_library:C_Small C18
 U 1 1 5A21D03A
 P 6750 3900
 F 0 "C18" H 6850 3950 50  0000 L CNN
@@ -128,7 +92,7 @@ $EndComp
 Wire Wire Line
 	6750 3700 6750 3800
 $Comp
-L GND #PWR0140
+L project_library:GND #PWR0140
 U 1 1 5A21D041
 P 6750 4100
 F 0 "#PWR0140" H 6750 3850 50  0001 C CNN
@@ -141,7 +105,7 @@ $EndComp
 Wire Wire Line
 	6750 4000 6750 4100
 $Comp
-L C_Small C19
+L project_library:C_Small C19
 U 1 1 5A21D0A4
 P 7150 3900
 F 0 "C19" H 7250 3950 50  0000 L CNN
@@ -154,7 +118,7 @@ $EndComp
 Wire Wire Line
 	7150 3600 7150 3800
 $Comp
-L GND #PWR0141
+L project_library:GND #PWR0141
 U 1 1 5A21D0AB
 P 7150 4100
 F 0 "#PWR0141" H 7150 3850 50  0001 C CNN
@@ -168,7 +132,7 @@ Wire Wire Line
 	7150 4000 7150 4100
 Connection ~ 6750 3700
 $Comp
-L R R64
+L project_library:R R64
 U 1 1 5A220887
 P 6350 3900
 F 0 "R64" H 6450 3950 50  0000 L CNN
@@ -179,7 +143,7 @@ F 3 "" H 6350 3900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R65
+L project_library:R R65
 U 1 1 5A2211BF
 P 5950 4300
 F 0 "R65" H 6050 4350 50  0000 L CNN
@@ -190,7 +154,7 @@ F 3 "" H 5950 4300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0142
+L project_library:GND #PWR0142
 U 1 1 5A221A3F
 P 5950 4500
 F 0 "#PWR0142" H 5950 4250 50  0001 C CNN
@@ -204,7 +168,7 @@ Connection ~ 7150 3700
 Text HLabel 4450 3700 0    60   Input ~ 0
 Vin
 $Comp
-L Polyfuse F1
+L project_library:Polyfuse F1
 U 1 1 5A33C036
 P 4700 3700
 F 0 "F1" V 4600 3700 50  0000 C CNN
@@ -219,7 +183,7 @@ Connection ~ 4950 3700
 Wire Wire Line
 	4450 3700 4550 3700
 $Comp
-L LM1117-ADJ U7
+L project_library:LM1117-ADJ U7
 U 1 1 5A32EC50
 P 5950 3700
 F 0 "U7" H 5800 3825 50  0000 C CNN
@@ -247,7 +211,7 @@ Wire Wire Line
 	5950 4450 5950 4500
 Connection ~ 6350 3700
 $Comp
-L +5V #PWR0143
+L project_library:+5V #PWR0143
 U 1 1 5A43721A
 P 4950 3600
 F 0 "#PWR0143" H 4950 3450 50  0001 C CNN
@@ -258,7 +222,7 @@ F 3 "" H 4950 3600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C21
+L project_library:C_Small C21
 U 1 1 5A73B3AD
 P 5350 4700
 F 0 "C21" H 5450 4750 50  0000 L CNN
@@ -269,7 +233,7 @@ F 3 "" H 5350 4700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR0144
+L project_library:+5V #PWR0144
 U 1 1 5A73B4E2
 P 5350 4600
 F 0 "#PWR0144" H 5350 4450 50  0001 C CNN
@@ -280,7 +244,7 @@ F 3 "" H 5350 4600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0145
+L project_library:GND #PWR0145
 U 1 1 5A73B508
 P 5350 4850
 F 0 "#PWR0145" H 5350 4600 50  0001 C CNN
@@ -291,7 +255,7 @@ F 3 "" H 5350 4850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C20
+L project_library:C_Small C20
 U 1 1 5A73B65D
 P 4950 4700
 F 0 "C20" H 5050 4750 50  0000 L CNN
@@ -302,7 +266,7 @@ F 3 "" H 4950 4700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR0146
+L project_library:+5V #PWR0146
 U 1 1 5A73B663
 P 4950 4600
 F 0 "#PWR0146" H 4950 4450 50  0001 C CNN
@@ -313,7 +277,7 @@ F 3 "" H 4950 4600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR0147
+L project_library:GND #PWR0147
 U 1 1 5A73B669
 P 4950 4850
 F 0 "#PWR0147" H 4950 4600 50  0001 C CNN

@@ -1,4 +1,4 @@
-(module USB_Micro-B_Molex-105017-0001 (layer F.Cu) (tedit 5A637609)
+(module USB_Micro-B_Molex-105017-0001 (layer F.Cu) (tedit 5E9DE6A9)
   (descr http://www.molex.com/pdm_docs/sd/1050170001_sd.pdf)
   (tags "Micro-USB SMD Typ-B")
   (attr smd)
@@ -47,9 +47,9 @@
   (pad 6 thru_hole oval (at 3.5 0.35) (size 2 1.9) (drill 1.2) (layers *.Cu *.Mask))
   (pad 6 smd rect (at 2.9 0.35) (size 1.2 1.9) (layers F.Cu F.Mask))
   (pad 6 smd rect (at -2.9 0.35) (size 1.2 1.9) (layers F.Cu F.Mask))
-  (model ${KIPRJMOD}/project_library/project_library.3dshapes/User Library-MicroUSB-B_Molex_105017-0001.wrl
-    (at (xyz 0 -0.006 0.045))
-    (scale (xyz 394 394 394))
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/1050170001.step
+    (offset (xyz 0 -0.1524 1.143))
+    (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
   )
 )

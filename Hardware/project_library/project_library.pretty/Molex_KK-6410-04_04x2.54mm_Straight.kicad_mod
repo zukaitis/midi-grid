@@ -1,4 +1,4 @@
-(module Molex_KK-6410-04_04x2.54mm_Straight (layer F.Cu) (tedit 5A6374AB)
+(module Molex_KK-6410-04_04x2.54mm_Straight (layer F.Cu) (tedit 5E9DD31A)
   (descr "Connector Headers with Friction Lock, 22-27-2041, http://www.molex.com/pdm_docs/sd/022272021_sd.pdf")
   (tags "connector molex kk_6410 22-27-2041")
   (fp_text reference J4 (at -2.5 0 270) (layer F.SilkS)
@@ -46,9 +46,9 @@
   (pad 2 thru_hole oval (at 2.54 0) (size 2 2.6) (drill 1) (layers *.Cu *.Mask))
   (pad 3 thru_hole oval (at 5.08 0) (size 2 2.6) (drill 1) (layers *.Cu *.Mask))
   (pad 4 thru_hole oval (at 7.62 0) (size 2 2.6) (drill 1) (layers *.Cu *.Mask))
-  (model ${KIPRJMOD}/project_library/project_library.3dshapes/Molex_KK-6410-04_04x2.54mm_Straight.wrl
-    (at (xyz 0 0 0))
+  (model ${KIPRJMOD}/project_library/project_library.3dshapes/KK-6410-4.step
+    (offset (xyz 3.81 0 1.6))
     (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
+    (rotate (xyz -90 0 180))
   )
 )

@@ -1,42 +1,6 @@
-EESchema Schematic File Version 2
-LIBS:project_library
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:diode
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:stm32
-LIBS:ESD_Protection
+EESchema Schematic File Version 4
 LIBS:midi_grid-cache
-EELAYER 25 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -157,7 +121,7 @@ Wire Wire Line
 Wire Wire Line
 	2300 3300 2500 3300
 $Comp
-L GND #PWR01
+L project_library:GND #PWR01
 U 1 1 5A326E77
 P 1800 4600
 F 0 "#PWR01" H 1800 4350 50  0001 C CNN
@@ -168,7 +132,7 @@ F 3 "" H 1800 4600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1800 4400 1800 4600
+	1800 4400 1800 4500
 Wire Wire Line
 	1800 4500 1700 4500
 Wire Wire Line
@@ -181,7 +145,7 @@ Wire Wire Line
 Wire Wire Line
 	2500 5300 2500 5400
 $Comp
-L GND #PWR02
+L project_library:GND #PWR02
 U 1 1 5A337D47
 P 2500 5400
 F 0 "#PWR02" H 2500 5150 50  0001 C CNN
@@ -192,7 +156,7 @@ F 3 "" H 2500 5400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L USB_OTG J1
+L project_library:USB_OTG J1
 U 1 1 5A33503F
 P 1800 4000
 F 0 "J1" H 1600 4450 50  0000 L CNN
@@ -205,7 +169,7 @@ F 4 "https://www.lemona.lt/?page=item&i_id=216110" H 1800 4000 60  0001 C CNN "C
 $EndComp
 NoConn ~ 2100 4200
 $Comp
-L Audio-Jack-3_2Switches J2
+L project_library:Audio-Jack-3_2Switches J2
 U 1 1 5A3F863B
 P 2700 4500
 F 0 "J2" H 2550 4800 50  0000 C CNN
@@ -217,7 +181,7 @@ F 4 "http://lt.farnell.com/cliff-electronic-components/fc68133/stereo-jack-3-5mm
 	1    0    0    -1  
 $EndComp
 $Comp
-L Audio-Jack-3_2Switches J3
+L project_library:Audio-Jack-3_2Switches J3
 U 1 1 5A422E89
 P 2700 5100
 F 0 "J3" H 2550 5400 50  0000 C CNN
@@ -255,7 +219,7 @@ NoConn ~ 2900 4900
 NoConn ~ 2900 4600
 NoConn ~ 2900 4300
 $Comp
-L Graphical GR1
+L project_library:Graphical GR1
 U 1 1 5A53D346
 P 700 7100
 F 0 "GR1" H 700 7250 50  0000 C CNN
@@ -266,7 +230,7 @@ F 3 "" H 700 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Graphical GR2
+L project_library:Graphical GR2
 U 1 1 5A53DA73
 P 1100 7100
 F 0 "GR2" H 1100 7250 50  0000 C CNN
@@ -277,7 +241,7 @@ F 3 "" H 1100 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Graphical GR3
+L project_library:Graphical GR3
 U 1 1 5A6786D2
 P 1100 7500
 F 0 "GR3" H 1100 7650 50  0000 C CNN
@@ -288,7 +252,7 @@ F 3 "" H 1150 7500 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Mounting_hole M1
+L project_library:Mounting_hole M1
 U 1 1 5A73E20A
 P 1500 7100
 F 0 "M1" H 1500 7250 60  0000 C CNN
@@ -299,7 +263,7 @@ F 3 "" H 1550 7100 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Mounting_hole M2
+L project_library:Mounting_hole M2
 U 1 1 5A740E09
 P 1900 7100
 F 0 "M2" H 1900 7250 60  0000 C CNN
@@ -310,7 +274,7 @@ F 3 "" H 1950 7100 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Mounting_hole M3
+L project_library:Mounting_hole M3
 U 1 1 5A740F4F
 P 1500 7500
 F 0 "M3" H 1500 7650 60  0000 C CNN
@@ -321,7 +285,7 @@ F 3 "" H 1550 7500 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Graphical GR4
+L project_library:Graphical GR4
 U 1 1 5A5BCF08
 P 700 7500
 F 0 "GR4" H 700 7650 50  0000 C CNN
@@ -331,4 +295,6 @@ F 3 "" H 750 7500 60  0001 C CNN
 	1    700  7500
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	1800 4500 1800 4600
 $EndSCHEMATC
