@@ -211,6 +211,7 @@ build output/src/lcd/240x320/Ili9341.o: cxx src/lcd/240x320/Ili9341.cpp
 build output/src/lcd/backlight/Backlight.o: cxx $
     src/lcd/backlight/Backlight.cpp
 build output/src/lcd/font/nokia_8p.o: cxx src/lcd/font/nokia_8p.cpp
+build output/src/lcd/image/usb_240x107.o: cxx src/lcd/image/usb_240x107.cpp
 build output/src/syslog/Log.o: cxx src/syslog/Log.cpp
 build output/src/syslog/LogContainer.o: cxx src/syslog/LogContainer.cpp
 build output/src/syslog/LogThread.o: cxx src/syslog/LogThread.cpp
@@ -288,9 +289,10 @@ build $target: link $
     output/src/lcd/Font.o output/src/lcd/Format.o output/src/lcd/Lcd.o $
     output/src/lcd/PriorityManager.o output/src/lcd/240x320/LcdContainer.o $
     output/src/lcd/240x320/Ili9341.o output/src/lcd/backlight/Backlight.o $
-    output/src/lcd/font/nokia_8p.o output/src/syslog/Log.o $
-    output/src/syslog/LogContainer.o output/src/syslog/LogThread.o $
-    output/src/syslog/Storage.o output/src/rotary_controls/RotaryControls.o $
+    output/src/lcd/font/nokia_8p.o output/src/lcd/image/usb_240x107.o $
+    output/src/syslog/Log.o output/src/syslog/LogContainer.o $
+    output/src/syslog/LogThread.o output/src/syslog/Storage.o $
+    output/src/rotary_controls/RotaryControls.o $
     output/src/testing/Testing.o output/src/usb/UsbMidi.o output/src/main.o $
     output/src/system/GlobalInterrupts.o output/src/system/System.o $
     output/src/types/Color.o $

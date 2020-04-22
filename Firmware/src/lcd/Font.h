@@ -1,11 +1,9 @@
 #pragma once
 
-#include "etl/string_view.h"
-#include "hardware/lcd/SpiInterface.h"
 #include <cstdint>
 #include <etl/array.h>
 #include <etl/array_view.h>
-#include <sys/_stdint.h>
+#include <etl/string_view.h>
 
 namespace lcd
 {
