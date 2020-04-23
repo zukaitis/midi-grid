@@ -14,17 +14,17 @@ namespace application
 namespace launchpad
 {
 
-static const lcd::Image usbSymbolSmall = { &usbSymbolSmallArray[0], 9, 8 };
-static const lcd::Image midiSymbolSmall = { &midiSymbolSmallArray[0], 8, 8 };
-static const lcd::Image arrowSmallUp = { &arrowSmallUpArray[0], 5, 8 };
-static const lcd::Image arrowSmallDown = { &arrowSmallDownArray[0], 5, 8 };
-static const lcd::Image play = { &playArray[0], 16, 16 };
-static const lcd::Image recordingOn = { &recordingOnArray[0], 16, 16 };
-static const lcd::Image sessionRecordingOn = { &sessionRecordingOnArray[0], 16, 16 };
-static const lcd::Image nudgeDownInactive = { &nudgeDownInactiveArray[0], 10, 8};
-static const lcd::Image nudgeDownActive = { &nudgeDownActiveArray[0], 10, 8};
-static const lcd::Image nudgeUpInactive = { &nudgeUpInactiveArray[0], 10, 8};
-static const lcd::Image nudgeUpActive = { &nudgeUpActiveArray[0], 10, 8};
+static const lcd::ImageLegacy usbSymbolSmall = { &usbSymbolSmallArray[0], 9, 8 };
+static const lcd::ImageLegacy midiSymbolSmall = { &midiSymbolSmallArray[0], 8, 8 };
+static const lcd::ImageLegacy arrowSmallUp = { &arrowSmallUpArray[0], 5, 8 };
+static const lcd::ImageLegacy arrowSmallDown = { &arrowSmallDownArray[0], 5, 8 };
+static const lcd::ImageLegacy play = { &playArray[0], 16, 16 };
+static const lcd::ImageLegacy recordingOn = { &recordingOnArray[0], 16, 16 };
+static const lcd::ImageLegacy sessionRecordingOn = { &sessionRecordingOnArray[0], 16, 16 };
+static const lcd::ImageLegacy nudgeDownInactive = { &nudgeDownInactiveArray[0], 10, 8};
+static const lcd::ImageLegacy nudgeDownActive = { &nudgeDownActiveArray[0], 10, 8};
+static const lcd::ImageLegacy nudgeUpInactive = { &nudgeUpInactiveArray[0], 10, 8};
+static const lcd::ImageLegacy nudgeUpActive = { &nudgeUpActiveArray[0], 10, 8};
 
 static const etl::array<etl::string<16>, 8> launchpad95ModeString = {
     "Session",

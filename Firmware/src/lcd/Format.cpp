@@ -4,8 +4,13 @@
 namespace lcd
 {
 
+namespace font // TODO(): delet
+{
+extern const Font& nokia_8p;
+}
+
 Format::Format():
-    font_( font::nokia_8p ),
+    font_( &font::nokia_8p ),
     textColor_( color::WHITE ),
     backgroundColor_( color::BLACK )
 {
@@ -13,7 +18,7 @@ Format::Format():
 
 Format& Format::font( const Font& font )
 {
-    font_ = font;
+    font_ = &font;
     return *this;
 }
 
@@ -31,7 +36,7 @@ Format& Format::backgroundColor( const Pixel& color )
 
 const Font& Format::font() const
 {
-    return font_;
+    return *font_;
 }
 
 const Pixel& Format::textColor() const

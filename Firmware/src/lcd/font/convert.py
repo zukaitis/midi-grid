@@ -88,10 +88,11 @@ def convert( input_file : str, output_file : str ):
     output.write( '};\n\n' )
     
     font_name = os.path.splitext( os.path.basename( output_file ) )[0]
-    output.write( 'Font ' + str(font_name) + '( ' + \
+    output.write( 'static const Font fnt( ' + \
         str(number_of_characters) + ', ' + str(first_symbol) + \
         ', Font::GlyphView( data ), Font::MapView( map ), ' + \
-        str(total_height) + ', ' + str(gap_width) + ' );' )
+        str(total_height) + ', ' + str(gap_width) + ' );\n\n' )
+    output.write( 'const Font& ' + str(font_name) + ' = fnt;' )
 
     output.write( output_file_footer )
     output.close() 

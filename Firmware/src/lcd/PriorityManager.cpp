@@ -31,11 +31,19 @@ void PriorityManager::clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 
     }
 }
 
-void PriorityManager::displayImage( uint8_t x, uint8_t y, const Image& image )
+void PriorityManager::displayImage( uint8_t x, uint8_t y, const ImageLegacy& image )
 {
     if (checkPriority())
     {
         lcd_.displayImage( x, y, image );
+    }
+}
+
+void PriorityManager::displayImage( const Coordinates& coords, const Image& image, const Pixel& color )
+{
+    if (checkPriority())
+    {
+        lcd_.displayImage( coords, image, color );
     }
 }
 

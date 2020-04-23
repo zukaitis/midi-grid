@@ -1,5 +1,6 @@
 #include "lcd/Lcd.h"
 
+#include "lcd/Format.h"
 #include "lcd/progressArc.h"
 #include "lcd/font.h"
 
@@ -11,7 +12,7 @@
 namespace lcd
 {
 
-static const etl::array<Image, 10> digitBig = {{
+static const etl::array<ImageLegacy, 10> digitBig = {{
         { &DIGITS_BIG[0][0], 12, 16 }, { &DIGITS_BIG[1][0], 12, 16 }, { &DIGITS_BIG[2][0], 12, 16 }, { &DIGITS_BIG[3][0], 12, 16 },
         { &DIGITS_BIG[4][0], 12, 16 }, { &DIGITS_BIG[5][0], 12, 16 }, { &DIGITS_BIG[6][0], 12, 16 }, { &DIGITS_BIG[7][0], 12, 16 },
         { &DIGITS_BIG[8][0], 12, 16 }, { &DIGITS_BIG[9][0], 12, 16 }
@@ -37,14 +38,19 @@ void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const
     driver_.clearArea( x1, y1, x2, y2 );
 }
 
-void Lcd::displayImage( const uint8_t x, const uint8_t y, const Image& image )
+void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
 {
     driver_.displayImage( x, y, image );
 }
 
+void Lcd::displayImage( const Coordinates& coords, const Image& image, const Pixel& color )
+{
+    driver_.putImage( coords, image, {color, color::BLACK} );
+}
+
 void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
 {
-    const Image arc = { &progressArcArray.at(position)[0], 38, 32 };
+    const ImageLegacy arc = { &progressArcArray.at(position)[0], 38, 32 };
     displayImage( x, y, arc );
 }
 

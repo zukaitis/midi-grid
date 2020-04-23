@@ -1,10 +1,11 @@
 #include "application/grid_test/GridTest.hpp"
 
 #include "grid/GridInterface.h"
+#include "lcd/Format.h"
+#include "lcd/Image.h"
 #include "usb/UsbMidi.hpp"
 #include "lcd/LcdInterface.h"
 #include "application/images.h"
-#include "syslog/info.h"
 
 #include <freertos/ticks.hpp>
 
@@ -14,7 +15,7 @@
 namespace application
 {
 
-static const lcd::Image usbLogo = { &usbLogoArray[0], 60, 24 };
+static const lcd::ImageLegacy usbLogo = { &usbLogoArray[0], 60, 24 };
 
 GridTest::GridTest( ApplicationController& applicationController, grid::GridInterface& grid, lcd::LcdInterface& lcd, midi::UsbMidi& usbMidi ):
     Application( applicationController ),
@@ -55,8 +56,6 @@ void GridTest::handleGridButtonEvent( const grid::ButtonEvent& event )
     if (ButtonAction::PRESSED == event.action)
     {
         color = getRandomColor();
-        syslog::info << "yo dis is syslog";
-        syslog::info << "respect it";
     }
     grid_.setLed( event.coordinates, color );
 }
@@ -130,7 +129,7 @@ Color GridTest::getRandomColor()
 void GridTest::displayWaitingForMidi()
 {
     lcd_.clear();
-    lcd_.displayImage( 12, 8, usbLogo );
+    lcd_.displayImage( {0, 100}, lcd::image::usb_240x107, lcd::color::WHITE );
     lcd_.print( "Awaiting MIDI", 40, lcd::Justification::CENTER );
 }
 

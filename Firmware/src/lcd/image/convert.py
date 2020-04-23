@@ -46,8 +46,9 @@ def convert( input_file : str, output_file : str ):
     output.write( '};\n\n' )
 
     image_name = os.path.splitext( os.path.basename( output_file ) )[0]
-    output.write( 'Image ' + str(image_name) + '( Image::DataView( data ), ' + \
-        str(image.width) + ', ' + str(image.height) + ' );' )
+    output.write( 'static const Image img( Image::DataView( data ), ' + \
+        str(image.width) + ', ' + str(image.height) + ' );\n\n' )
+    output.write( 'const Image& ' + str(image_name) + ' = img;' )
 
     output.write( output_file_footer )
     output.close() 

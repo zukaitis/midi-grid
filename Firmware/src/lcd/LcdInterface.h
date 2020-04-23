@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lcd/Format.h"
 #include "types/Coordinates.h"
 #include <cstdint>
 #include <etl/string_view.h>
@@ -7,7 +8,20 @@
 namespace lcd
 {
 
-struct Image
+class Font;
+class Image;
+
+namespace font
+{
+extern const Font& nokia_8p;
+}
+
+namespace image
+{
+extern const Image& usb_240x107;
+}
+
+struct ImageLegacy
 {
     const uint8_t* data;
     uint8_t width;
@@ -35,7 +49,8 @@ public:
 
     virtual void clear() = 0;
     virtual void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) = 0;
-    virtual void displayImage( uint8_t x, uint8_t y, const Image& image) = 0;
+    virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0;
+    virtual void displayImage( const Coordinates& coords, const Image& image, const Pixel& color ) = 0;
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) = 0;

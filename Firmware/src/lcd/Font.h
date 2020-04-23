@@ -40,9 +40,4 @@ private:
     const uint8_t letterSpacingWidth_;
 };
 
-namespace font
-{
-extern Font nokia_8p;
-}
-
 }  // namespace lcd

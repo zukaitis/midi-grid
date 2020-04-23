@@ -94,7 +94,7 @@ void Pcd8544::clearArea( const Coordinates& corner1, const Coordinates& corner2 
     clearArea( corner1.x, corner1.y, corner2.x, corner2.y );
 }
 
-void Pcd8544::displayImage( const uint8_t x, const uint8_t y, const Image& image )
+void Pcd8544::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
 {
     for (uint8_t j = 0; j < (image.height/8); j++)
     {

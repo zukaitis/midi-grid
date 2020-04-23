@@ -40,9 +40,4 @@ private:
     const uint16_t height_;
 };
 
-namespace image
-{
-extern Image usb_240x107;
-}
-
 }  // namespace lcd

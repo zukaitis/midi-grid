@@ -2,6 +2,7 @@
 #include "hardware/lcd/SpiInterface.h"
 #include "lcd/Format.h"
 #include "lcd/LcdInterface.h"
+#include "lcd/Image.h"
 #include "ThreadConfigurations.h"
 
 #include "lcd/Font.h"
@@ -9,8 +10,10 @@
 #include <freertos/ticks.hpp>
 #include <etl/algorithm.h>
 #include <etl/absolute.h>
+#include <sys/_stdint.h>
 
 #include "system/System.hpp" // TODO(unknown): remove
+#include "types/Coordinates.h"
 
 namespace lcd
 {
@@ -226,9 +229,44 @@ void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, 
     }
 }
 
-void Ili9341::displayImage( const uint8_t x, const uint8_t y, const Image& image )
+void Ili9341::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
 {
-    
+}
+
+void Ili9341::putImage( const Coordinates& coords, const Image& image, const ImageColors& colors )
+{
+    const uint16_t width = image.getWidth();
+    const uint16_t height = image.getHeight();
+    const uint8_t bytesPerColumn = (height + 7) / 8;
+
+    setWorkingArea( coords, { static_cast<uint16_t>(coords.x + width - 1),
+        static_cast<uint16_t>(coords.y + height - 1) } );
+
+    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+
+    PixelBuffer& buffer = assignPixelBuffer();
+    uint16_t x = 0;
+    uint16_t y = 0;
+
+    while (x < width)
+    {
+        const uint8_t byte = image.getData().at( x * bytesPerColumn + y / 8U );
+        const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
+        buffer.emplace_back( (pixelActive) ? colors.image : colors.background );
+
+        y++;
+        if (y == height)
+        {
+            y = 0;
+            x++;
+        }
+
+        if ((buffer.full()) || (x == width))
+        {
+            spi_.writeData( PixelView( buffer ) );
+            buffer = assignPixelBuffer();
+        }
+    }
 }
 
 void Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
@@ -248,6 +286,7 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
     const Pixel textColor = format.textColor();
     const Pixel backgroundColor = format.backgroundColor();
     const uint16_t height = format.font().getHeight();
+    const uint8_t bytesPerColumn = (height + 7) / 8;
 
     setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + height - 1) });
 
@@ -266,8 +305,8 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
     {
         if (drawGlyph)
         {
-            const uint8_t column = glyph.at( x + y / 8U );
-            const bool pixelActive = ((static_cast<uint8_t>(column >> (y % 8U)) & 0x01U) != 0U);
+            const uint8_t byte = glyph.at( x * bytesPerColumn + y / 8U );
+            const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
             buffer.emplace_back( (pixelActive) ? textColor : backgroundColor );
         }
         else  // draw space between glyphs

@@ -8,17 +8,17 @@
 namespace grid
 {
 
-static const uint8_t numberOfColumns = 10;
-static const uint8_t numberOfRows = 8;
-static const Coordinates gridLimits = { numberOfColumns, numberOfRows };
-static const uint8_t NUMBER_OF_LEDS = numberOfColumns * numberOfRows;
+const uint8_t numberOfColumns = 10;
+const uint8_t numberOfRows = 8;
+const Coordinates gridLimits = { numberOfColumns, numberOfRows };
+const uint8_t NUMBER_OF_LEDS = numberOfColumns * numberOfRows;
 
 namespace button
 {
-    static const Coordinates ARROW_UP = {9, 4};
-    static const Coordinates ARROW_DOWN = {9, 7};
-    static const Coordinates ARROW_LEFT = {9, 5};
-    static const Coordinates ARROW_RIGHT = {9, 6};
+    const Coordinates ARROW_UP = {9, 4};
+    const Coordinates ARROW_DOWN = {9, 7};
+    const Coordinates ARROW_LEFT = {9, 5};
+    const Coordinates ARROW_RIGHT = {9, 6};
 }
 
 struct ButtonEvent

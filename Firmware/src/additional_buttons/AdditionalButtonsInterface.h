@@ -12,7 +12,7 @@ enum class Button : uint8_t
     internalMenu = 1,
 };
 
-static const uint8_t NUMBER_OF_BUTTONS = 2;
+const uint8_t NUMBER_OF_BUTTONS = 2;
 
 struct Event
 {

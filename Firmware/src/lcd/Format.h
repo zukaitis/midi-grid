@@ -8,7 +8,7 @@ namespace lcd
 
 class Font;
 
-using Pixel = etl::array<uint8_t, 3>;
+using Pixel = etl::array<uint8_t, 3>; // to be replaced with Color class
 using PixelView = etl::array_view<const Pixel>;
 
 namespace color
@@ -43,7 +43,7 @@ public:
     const Pixel& backgroundColor() const;
 
 private:
-    Font& font_;
+    const Font* font_;
     Pixel textColor_;
     Pixel backgroundColor_;
 };

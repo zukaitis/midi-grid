@@ -23,7 +23,8 @@ public:
     void clearArea( uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2 ) override;
     void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) override;
     void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color );
-    void displayImage( uint8_t x, uint8_t y, const Image& image ) override;
+    void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) override;
+    void putImage( const Coordinates& coords, const Image& image, const ImageColors& colors ) override;
     void putString( const etl::string_view& string, const Coordinates& coords ) override;
     void putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) override;
 

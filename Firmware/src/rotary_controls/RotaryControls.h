@@ -22,7 +22,7 @@ public:
 private:
     void Run() override;
 
-    static int8_t calculateVelocityMultiplier( uint32_t intervalMs );
+    int8_t calculateVelocityMultiplier( uint32_t intervalMs );
 
     void copyInput();
     int8_t getRecentMicrosteps( uint8_t controlIndex ) const;

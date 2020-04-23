@@ -8,7 +8,7 @@
 namespace application
 {
 
-static const lcd::Image usbLogo = { &usbLogoArray[0], 60, 24 };
+static const lcd::ImageLegacy usbLogo = { &usbLogoArray[0], 60, 24 };
 
 Startup::Startup( ApplicationController& applicationController, hardware::grid::GridDriver& gridDriver, lcd::LcdInterface& lcd, mcu::System& system ):
         Application( applicationController ),

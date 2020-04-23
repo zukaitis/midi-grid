@@ -16,7 +16,8 @@ public:
 
     void clear() override;
     void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) override;
-    void displayImage( uint8_t x, uint8_t y, const Image& image) override;
+    void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image) override;
+    void displayImage( const Coordinates& coords, const Image& image, const Pixel& color ) override;
     void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) override;
     void initialize() override;
     void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) override;

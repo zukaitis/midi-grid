@@ -132,7 +132,7 @@ void Spi::initializeSpi() const
     lcdSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
     lcdSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
     lcdSpi.Init.NSS = SPI_NSS_HARD_OUTPUT;
-    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4; // 24MBbit
+    lcdSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2; // 48MBbit
     lcdSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
     lcdSpi.Init.TIMode = SPI_TIMODE_DISABLE;
     lcdSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
