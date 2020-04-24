@@ -33,11 +33,7 @@ void Spi::writeCommand( const uint8_t command ) const
 {
     static uint8_t buffer = 0;
 
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
-    {
-        // wait until previous transfer is done
-    }
-
+    waitWhileSpiIsBusy();
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_RESET ); //command mode
     buffer = command;
     HAL_SPI_Transmit_DMA( &lcdSpi, &buffer, 1 );
@@ -45,33 +41,21 @@ void Spi::writeCommand( const uint8_t command ) const
 
 void Spi::writeData( const uint8_t& data, const uint32_t size ) const
 {
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
-    {
-        // wait until previous transfer is done
-    }
-
+    waitWhileSpiIsBusy();
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>( &data ), size );
 }
 
 void Spi::writeData( const RawDataView& data ) const
 {
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
-    {
-        // wait until previous transfer is done
-    }
-
+    waitWhileSpiIsBusy();
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>(&data.front()), data.size() );
 }
 
 void Spi::writeData( const ::lcd::PixelView& data) const
 {
-    while (HAL_DMA_STATE_BUSY == HAL_DMA_GetState( &lcdSpiDma ))
-    {
-        // wait until previous transfer is done
-    }
-
+    waitWhileSpiIsBusy();
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
     HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>(&data.front().front()), data.size() * data.at(0).size() );
 }
@@ -143,6 +127,14 @@ void Spi::reset() const
 {
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_RESET );
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::RESET_Pin, GPIO_PIN_SET );
+}
+
+void Spi::waitWhileSpiIsBusy()
+{
+    while (lcdSpi.State != HAL_SPI_STATE_READY)
+    {
+        // wait until previous transfer is done
+    }
 }
 
 } // namespace lcd

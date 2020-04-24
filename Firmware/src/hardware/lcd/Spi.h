@@ -28,6 +28,8 @@ private:
     void initializeDma() const;
     void initializeGpio() const;
     void initializeSpi() const;
+
+    static void waitWhileSpiIsBusy();
 };
 
 }  // namespace lcd

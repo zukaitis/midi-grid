@@ -198,7 +198,7 @@ void Ili9341::initialize()
 
 void Ili9341::clear()
 {
-    clearArea( {0, 0}, {width_, height_} );
+    clearArea( {0, 0}, {width_-1, height_-1} );
 }
 
 void Ili9341::clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2 )
@@ -214,18 +214,34 @@ void Ili9341::clearArea( const Coordinates& corner1, const Coordinates& corner2 
 
 void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
 {
-    setWorkingArea(
-        {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)},
-        {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)} );
-
-    const uint32_t areaSize = etl::absolute(corner1.x - corner2.x) * etl::absolute(corner1.y - corner2.y);
+    const Coordinates topLeft = {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)};
+    const Coordinates bottomRight = {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)};
+    const uint16_t width = bottomRight.x - topLeft.x + 1;
+    const uint16_t height = bottomRight.y - topLeft.y + 1;
+    const uint32_t areaSize = width * height;
 
     PixelBuffer& buffer = assignPixelBuffer();
-    buffer.assign( buffer.capacity(), color );
-    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
-    for (uint32_t i = 0; i < ((areaSize / buffer.size()) + 1); i++)
+
+    if (areaSize <= buffer.capacity())
     {
+        setWorkingArea( topLeft, bottomRight );
+        buffer.assign( areaSize, color );
+        spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
         spi_.writeData( PixelView(buffer) );
+    }
+    else
+    {
+        // interlacing
+        buffer.assign( width, color );
+        for (uint8_t i = 0; i < 2; i++) // loop twice
+        {
+            for ( uint16_t y = topLeft.y + i; y <= bottomRight.y; y += 2)
+            {
+                setWorkingArea( {topLeft.x, y}, {bottomRight.x, y} );
+                spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+                spi_.writeData( PixelView(buffer) );
+            }
+        }
     }
 }
 
@@ -362,8 +378,9 @@ uint16_t Ili9341::numberOfTextLines() const
 
 void Ili9341::setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight )
 {
-    if (topLeft < bottomRight)
+    if (topLeft <= bottomRight)
     {
+        // extreme wtf here - can't use DataBuffer for some reason
         spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
         const etl::array<uint8_t, 4> limitsY = {
             static_cast<uint8_t>(topLeft.y / 0x100U),

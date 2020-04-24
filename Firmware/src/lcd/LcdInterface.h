@@ -11,11 +11,6 @@ namespace lcd
 class Font;
 class Image;
 
-namespace font
-{
-extern const Font& nokia_8p;
-}
-
 namespace image
 {
 extern const Image& usb_240x107;

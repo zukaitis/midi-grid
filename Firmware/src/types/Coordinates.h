@@ -22,4 +22,12 @@ struct Coordinates
         lessThan &= (this->y < coordinates.y);
         return lessThan;
     };
+
+    bool operator<=(const Coordinates& coordinates) const
+    {
+        bool lessThanOrEqual = true;
+        lessThanOrEqual &= (this->x <= coordinates.x);
+        lessThanOrEqual &= (this->y <= coordinates.y);
+        return lessThanOrEqual;
+    };
 };

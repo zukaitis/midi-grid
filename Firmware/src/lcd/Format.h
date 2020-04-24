@@ -8,6 +8,11 @@ namespace lcd
 
 class Font;
 
+namespace font
+{
+extern const Font& nokia_8p;
+}
+
 using Pixel = etl::array<uint8_t, 3>; // to be replaced with Color class
 using PixelView = etl::array_view<const Pixel>;
 

@@ -4,11 +4,6 @@
 namespace lcd
 {
 
-namespace font // TODO(): delet
-{
-extern const Font& nokia_8p;
-}
-
 Format::Format():
     font_( &font::nokia_8p ),
     textColor_( color::WHITE ),
