@@ -96,4 +96,4 @@ void InternalMenu::updateLcd() const
     lcd_.print( "Active", 24, lcd::Justification::CENTER );
 }
 
-}
+}  // namespace application

@@ -6,7 +6,6 @@
 
 namespace hardware
 {
-
 namespace lcd
 {
 
@@ -26,7 +25,5 @@ public:
     virtual void writeData( const ::lcd::PixelView& data ) const = 0;
 };
 
-}
-
-}
-
+}  // namespace lcd
+}  // namespace hardware

@@ -380,22 +380,23 @@ void Ili9341::setWorkingArea( const Coordinates& topLeft, const Coordinates& bot
 {
     if (topLeft <= bottomRight)
     {
-        // extreme wtf here - can't use DataBuffer for some reason
         spi_.writeCommand( static_cast<uint8_t>(Command::CASET) );
-        const etl::array<uint8_t, 4> limitsY = {
+        DataBuffer& buffer = assignDataBuffer();
+        buffer = {
             static_cast<uint8_t>(topLeft.y / 0x100U),
             static_cast<uint8_t>(topLeft.y % 0x100U),
             static_cast<uint8_t>(bottomRight.y / 0x100U),
             static_cast<uint8_t>(bottomRight.y % 0x100U) };
-        spi_.writeData( etl::array_view<const uint8_t>(limitsY) );
+        spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
         spi_.writeCommand( static_cast<uint8_t>(Command::PASET) );
-        const etl::array<uint8_t, 4> limitsX = {
+        buffer = assignDataBuffer();
+        buffer = {
             static_cast<uint8_t>(topLeft.x / 0x100U),
             static_cast<uint8_t>(topLeft.x % 0x100U),
             static_cast<uint8_t>(bottomRight.x / 0x100U),
             static_cast<uint8_t>(bottomRight.x % 0x100U) };
-        spi_.writeData( etl::array_view<const uint8_t>(limitsX) );
+        spi_.writeData( hardware::lcd::RawDataView(buffer) );
     }
 }
 
@@ -412,6 +413,5 @@ Ili9341::DataBuffer& Ili9341::assignDataBuffer()
     dataBuffer_.at( dataBufferIndex_ ).clear();
     return dataBuffer_.at( dataBufferIndex_ );
 }
-
 
 } // namespace lcd

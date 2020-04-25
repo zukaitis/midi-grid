@@ -135,7 +135,7 @@ arch_flags:
 
 c_flags:
 - --target=arm-none-eabi
-- -O0
+- -O1
 - -ggdb3
 - -ffunction-sections
 - -fdata-sections
