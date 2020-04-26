@@ -233,8 +233,10 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy&
 
 void Ili9341::putImage( const Coordinates& coords, const Image& image, const ImageColors& colors )
 {
-    const uint16_t width = image.getWidth();
-    const uint16_t height = image.getHeight();
+    const uint16_t width = std::min( image.getWidth(), static_cast<uint16_t>(width_ - coords.x) );
+    const uint16_t height = std::min( image.getHeight(), static_cast<uint16_t>(height_ - coords.y) );
+
+    const Image imageClipped( image.getData(), width, image.getHeight() );
 
     PixelBuffer& buffer = assignPixelBuffer();
     const uint16_t scanlineHeight = buffer.capacity() / width;
@@ -245,7 +247,7 @@ void Ili9341::putImage( const Coordinates& coords, const Image& image, const Ima
         {
             uint16_t bottomY = topY + scanlineHeight - 1;
             bottomY = std::min( bottomY, static_cast<uint16_t>(height - 1U) );  // clamp value if it's too high
-            fillPixelBuffer( &buffer, image, colors, topY, bottomY );
+            fillPixelBuffer( &buffer, imageClipped, colors, topY, bottomY );
 
             setWorkingArea( {coords.x, static_cast<uint16_t>(coords.y + topY)},
                 {static_cast<uint16_t>(coords.x + width), static_cast<uint16_t>(coords.y + bottomY)} );
