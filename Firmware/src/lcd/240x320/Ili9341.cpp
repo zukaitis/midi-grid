@@ -192,24 +192,11 @@ void Ili9341::initialize()
     buffer = assignDataBuffer();
     buffer = {0xA8}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
     spi_.writeData( hardware::lcd::RawDataView(buffer) );
-
-    clear();
 }
 
-void Ili9341::clear()
+void Ili9341::fill( const Pixel& color )
 {
-    clearArea( {0, 0}, {width_-1, height_-1} );
-}
-
-void Ili9341::clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2 )
-{
-    // deprecated
-    clearArea( {x1, y1}, {x2, y2} );
-}
-
-void Ili9341::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
-{
-    fillArea( corner1, corner2, color::BLACK );
+    fillArea( {0, 0}, {width_-1, height_-1}, color );
 }
 
 void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
@@ -402,14 +389,14 @@ void Ili9341::setWorkingArea( const Coordinates& topLeft, const Coordinates& bot
 
 Ili9341::PixelBuffer& Ili9341::assignPixelBuffer()
 {
-    pixelBufferIndex_ = (pixelBufferIndex_ + 1) / pixelBuffer_.size();
+    pixelBufferIndex_ = (pixelBufferIndex_ + 1) % pixelBuffer_.size();
     pixelBuffer_.at( pixelBufferIndex_ ).clear();
     return pixelBuffer_.at( pixelBufferIndex_ );
 }
 
 Ili9341::DataBuffer& Ili9341::assignDataBuffer()
 {
-    dataBufferIndex_ = (dataBufferIndex_ + 1) / dataBuffer_.size();
+    dataBufferIndex_ = (dataBufferIndex_ + 1) % dataBuffer_.size();
     dataBuffer_.at( dataBufferIndex_ ).clear();
     return dataBuffer_.at( dataBufferIndex_ );
 }

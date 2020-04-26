@@ -60,6 +60,7 @@ LcdGui::LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd ):
 
 void LcdGui::initialize()
 {
+    lcd_.setBackgroundColor( lcd::color::BLACK );
     lcd_.clear();
     displayLaunchpad95Info();
 }
@@ -80,7 +81,7 @@ void LcdGui::refreshStatusBar()
     {
         if (freertos::Ticks::GetTicks() >= midiInputActivityIcon_.timeToDisable)
         {
-            lcd_.clearArea( 73, 0, 77, 7 );
+            lcd_.clearArea( {73, 0}, {77, 7} );
             midiInputActivityIcon_.isOn = false;
         }
     }
@@ -89,7 +90,7 @@ void LcdGui::refreshStatusBar()
     {
         if (freertos::Ticks::GetTicks() >= midiOutputActivityIcon_.timeToDisable)
         {
-            lcd_.clearArea( 78, 0, 83, 7 );
+            lcd_.clearArea( {78, 0}, {83, 7} );
             midiOutputActivityIcon_.isOn = false;
         }
     }
@@ -137,10 +138,10 @@ void LcdGui::displayLaunchpad95Info()
     // only display other info when rotary control display timer runs out
     if (!rotaryControlValues_.isOn)
     {
-        lcd_.clearArea( 0, 16, 83, 31 );
+        lcd_.clearArea( {0, 16}, {83, 31} );
         displayStatus();
 
-        lcd_.clearArea( 0, 32, 83, 47 );
+        lcd_.clearArea( {0, 32}, {83, 47} );
         switch (launchpad_.mode_)
         {
             case Launchpad95Mode_INSTRUMENT:
@@ -181,7 +182,7 @@ void LcdGui::displayTrackName()
 
 void LcdGui::displayMode()
 {
-    lcd_.clearArea( 0, 8, 83, 15 );
+    lcd_.clearArea( {0, 8}, {83, 15} );
     if (Launchpad95Mode_UNKNOWN != launchpad_.mode_)
     {
         lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
@@ -190,7 +191,7 @@ void LcdGui::displayMode()
 
 void LcdGui::displaySubmode()
 {
-    lcd_.clearArea( 0, 8, 83, 15 );
+    lcd_.clearArea( {0, 8}, {83, 15} );
     lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
 }
 
@@ -241,7 +242,7 @@ void LcdGui::displayRotaryControlValues()
 {
     const uint8_t numberOfProgressArcPositions = 51;
     etl::string<4> str;
-    lcd_.clearArea( 0, 16, 83, 47 );
+    lcd_.clearArea( {0, 16}, {83, 47} );
 
     lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_.at( 0 ) * (numberOfProgressArcPositions - 1)) / 127 );
     etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), str );

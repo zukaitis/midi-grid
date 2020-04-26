@@ -24,9 +24,9 @@ public:
 
     virtual void initialize() = 0;
 
-    virtual void clear() = 0;
-    virtual void clearArea( uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2 ) = 0;
-    virtual void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) = 0;
+    virtual void fill( const Pixel& color ) = 0;
+    virtual void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color ) = 0;
+
     virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0; // TODO(unknown): replace with coordinates
     virtual void putImage( const Coordinates& coords, const Image& image, const ImageColors& colors ) = 0;
     virtual void putString( const etl::string_view& string, const Coordinates& coords ) = 0;

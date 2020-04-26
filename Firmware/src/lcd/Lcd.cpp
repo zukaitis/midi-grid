@@ -20,7 +20,8 @@ static const etl::array<ImageLegacy, 10> digitBig = {{
 
 Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
     driver_( driver ),
-    backlight_( backlight )
+    backlight_( backlight ),
+    backgroundColor_( color::BLACK )
 {
 }
 
@@ -28,14 +29,19 @@ Lcd::~Lcd()
 {
 }
 
-void Lcd::clear()
+void Lcd::setBackgroundColor( const Pixel& color )
 {
-    driver_.clear();
+    backgroundColor_ = color;
 }
 
-void Lcd::clearArea( const uint8_t x1, const uint8_t y1, const uint8_t x2, const uint8_t y2 )
+void Lcd::clear()
 {
-    driver_.clearArea( x1, y1, x2, y2 );
+    driver_.fill( backgroundColor_ );
+}
+
+void Lcd::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
+{
+    driver_.fillArea( corner1, corner2, backgroundColor_ );
 }
 
 void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )

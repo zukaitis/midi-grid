@@ -15,6 +15,14 @@ PriorityManager::~PriorityManager() = default;
 
 Priority PriorityManager::currentPriorityFilter_ = Priority::LOW;
 
+void PriorityManager::setBackgroundColor( const Pixel& color )
+{
+    if (checkPriority())
+    {
+        lcd_.setBackgroundColor( color );
+    }
+}
+
 void PriorityManager::clear()
 {
     if (checkPriority())
@@ -23,11 +31,11 @@ void PriorityManager::clear()
     }
 }
 
-void PriorityManager::clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 )
+void PriorityManager::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
 {
     if (checkPriority())
     {
-        lcd_.clearArea( x1, y1, x2, y2 );
+        lcd_.clearArea( corner1, corner2 );
     }
 }
 

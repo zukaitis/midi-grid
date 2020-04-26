@@ -14,8 +14,10 @@ public:
     Lcd( DriverInterface& driver, BacklightInterface& backlight );
     ~Lcd() override;
 
+    void setBackgroundColor( const Pixel& color ) override;
     void clear() override;
-    void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) override;
+    void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) override;
+
     void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image) override;
     void displayImage( const Coordinates& coords, const Image& image, const Pixel& color ) override;
     void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) override;
@@ -42,6 +44,7 @@ private:
     DriverInterface& driver_;
     BacklightInterface& backlight_;
 
+    Pixel backgroundColor_;
 };
 
 }  // namespace lcd

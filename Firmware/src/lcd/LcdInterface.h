@@ -42,8 +42,10 @@ class LcdInterface
 public:
     virtual ~LcdInterface() = default;
 
+    virtual void setBackgroundColor( const Pixel& color ) = 0;
     virtual void clear() = 0;
-    virtual void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) = 0;
+    virtual void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) = 0;
+
     virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0;
     virtual void displayImage( const Coordinates& coords, const Image& image, const Pixel& color ) = 0;
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
