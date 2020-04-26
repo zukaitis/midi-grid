@@ -235,33 +235,23 @@ void Ili9341::putImage( const Coordinates& coords, const Image& image, const Ima
 {
     const uint16_t width = image.getWidth();
     const uint16_t height = image.getHeight();
-    const uint8_t bytesPerColumn = (height + 7) / 8;
-
-    setWorkingArea( coords, { static_cast<uint16_t>(coords.x + width - 1),
-        static_cast<uint16_t>(coords.y + height - 1) } );
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
 
     PixelBuffer& buffer = assignPixelBuffer();
-    uint16_t x = 0;
-    uint16_t y = 0;
+    const uint16_t scanlineHeight = buffer.capacity() / width;
 
-    while (x < width)
+    for (uint8_t i = 0; i < 2; i++)  // loop twice
     {
-        const uint8_t byte = image.getData().at( x * bytesPerColumn + y / 8U );
-        const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
-        buffer.emplace_back( (pixelActive) ? colors.image : colors.background );
-
-        y++;
-        if (y == height)
+        for (uint16_t topY = i * scanlineHeight; topY < height; topY += 2 * scanlineHeight)
         {
-            y = 0;
-            x++;
-        }
+            uint16_t bottomY = topY + scanlineHeight - 1;
+            bottomY = std::min( bottomY, static_cast<uint16_t>(height - 1U) );  // clamp value if it's too high
+            fillPixelBuffer( &buffer, image, colors, topY, bottomY );
 
-        if ((buffer.full()) || (x == width))
-        {
-            spi_.writeData( PixelView( buffer ) );
+            setWorkingArea( {coords.x, static_cast<uint16_t>(coords.y + topY)},
+                {static_cast<uint16_t>(coords.x + width), static_cast<uint16_t>(coords.y + bottomY)} );
+            spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
+            spi_.writeData( PixelView(buffer) );
+
             buffer = assignPixelBuffer();
         }
     }
@@ -394,6 +384,23 @@ Ili9341::DataBuffer& Ili9341::assignDataBuffer()
     dataBufferIndex_ = (dataBufferIndex_ + 1) % dataBuffer_.size();
     dataBuffer_.at( dataBufferIndex_ ).clear();
     return dataBuffer_.at( dataBufferIndex_ );
+}
+
+void Ili9341::fillPixelBuffer( PixelBuffer* const buffer, const Image& image, const ImageColors& colors,
+    const uint16_t firstLine, const uint16_t lastLine )
+{
+    const uint16_t width = image.getWidth();
+    const uint8_t bytesPerColumn = (image.getHeight() + 7) / 8;
+
+    for (uint16_t x = 0; x < width; x++)
+    {
+        for (uint16_t y = firstLine; y <= lastLine; y++)
+        {
+            const uint8_t byte = image.getData().at( x * bytesPerColumn + y / 8U );
+            const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
+            buffer->emplace_back( (pixelActive) ? colors.image : colors.background );
+        }
+    }
 }
 
 } // namespace lcd

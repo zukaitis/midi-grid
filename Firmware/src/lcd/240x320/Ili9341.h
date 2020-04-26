@@ -32,17 +32,18 @@ public:
     uint16_t numberOfTextLines() const override;
 
 private:
-
-    void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );
-
-    hardware::lcd::SpiInterface& spi_;
-
     static constexpr uint16_t width_ = 240U;
     static constexpr uint16_t height_ = 320U;
     static constexpr uint16_t numberOfTextLines_ = height_ / 8;
 
     using PixelBuffer = etl::vector<Pixel, width_*2>;
     using DataBuffer = etl::vector<uint8_t, 16>;
+
+    void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );
+    static void fillPixelBuffer( PixelBuffer* buffer, const Image& image, const ImageColors& colors,
+        uint16_t firstLine, uint16_t lastLine );
+
+    hardware::lcd::SpiInterface& spi_;
 
     // single buffer seems to work without issues
     etl::array<PixelBuffer, 1> pixelBuffer_;

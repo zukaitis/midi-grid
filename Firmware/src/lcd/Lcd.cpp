@@ -51,7 +51,7 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& ima
 
 void Lcd::displayImage( const Coordinates& coords, const Image& image, const Pixel& color )
 {
-    driver_.putImage( coords, image, {color, color::BLACK} );
+    driver_.putImage( coords, image, {color, backgroundColor_} );
 }
 
 void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
