@@ -41,12 +41,13 @@ private:
     static constexpr uint16_t height_ = 320U;
     static constexpr uint16_t numberOfTextLines_ = height_ / 8;
 
-    using PixelBuffer = etl::vector<Pixel, height_>;
+    using PixelBuffer = etl::vector<Pixel, width_*2>;
     using DataBuffer = etl::vector<uint8_t, 16>;
 
-    etl::array<PixelBuffer, 2> pixelBuffer_;
+    // single buffer seems to work without issues
+    etl::array<PixelBuffer, 1> pixelBuffer_;
     uint8_t pixelBufferIndex_;
-    etl::array<DataBuffer, 2> dataBuffer_;
+    etl::array<DataBuffer, 1> dataBuffer_;
     uint8_t dataBufferIndex_;
 
     PixelBuffer& assignPixelBuffer();
