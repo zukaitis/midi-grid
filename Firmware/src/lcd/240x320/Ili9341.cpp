@@ -264,75 +264,24 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
     putString( string, coords, Format() );
 }
 
-// @Robert C. Martin - forgive me for this method pls
 void Ili9341::putString( const etl::string_view& string, const Coordinates& coords, const Format& format )
 {
-    auto limitX = static_cast<uint16_t>(coords.x + format.font().getStringWidth( string ) );
-    if (limitX > width_)
-    {
-        limitX = width_;
-    }
-
-    const Pixel textColor = format.textColor();
-    const Pixel backgroundColor = format.backgroundColor();
     const uint16_t height = format.font().getHeight();
-    const uint8_t bytesPerColumn = (height + 7) / 8;
+    const uint16_t bytesPerColumn = (height + 7) / 8;
 
-    setWorkingArea( coords, { limitX, static_cast<uint16_t>(coords.y + height - 1) });
+    StringImageBuffer imageData = {};
+    const etl::vector<uint8_t, 9> zeros( format.font().getLetterSpacingWidth() * bytesPerColumn, 0U );
 
-    uint16_t charIndex = 0;
-    uint16_t x = 0;
-    uint16_t y = 0;
-    const char c = string.at( charIndex );
-    Font::GlyphView glyph = format.font().getGlyph( c );
-    uint16_t width = format.font().getCharWidth( c );
-    bool drawGlyph = true;
+    copyToBack( &imageData, format.font().getGlyph( string.at(0) ) ); // copy first glyph
 
-    spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
-
-    PixelBuffer& buffer = assignPixelBuffer();
-    while (charIndex < string.length())
+    for (uint32_t c = 1; c < string.length(); c++)
     {
-        if (drawGlyph)
-        {
-            const uint8_t byte = glyph.at( x * bytesPerColumn + y / 8U );
-            const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
-            buffer.emplace_back( (pixelActive) ? textColor : backgroundColor );
-        }
-        else  // draw space between glyphs
-        {
-            buffer.emplace_back( backgroundColor );
-        }
-
-        y++;
-        if (y == height)
-        {
-            y = 0;
-            x++;
-            if (x == width)
-            {
-                x = 0;
-                drawGlyph = !drawGlyph;
-                if (drawGlyph)
-                {
-                    const char c = string.at( charIndex );
-                    glyph = format.font().getGlyph( c );
-                    width = format.font().getCharWidth( c );
-                }
-                else
-                {
-                    width = format.font().getLetterSpacingWidth();
-                    charIndex++;
-                }
-            }
-        }
-
-        if ((buffer.full()) || charIndex == string.length())
-        {
-            spi_.writeData( PixelView( buffer ) );
-            buffer = assignPixelBuffer();
-        }
+        copyToBack( &imageData, etl::array_view<const uint8_t>(zeros) );  // copy space between characters
+        copyToBack( &imageData, format.font().getGlyph( string.at(c) ) );  // copy glyph
     }
+
+    const Image stringImage( Image::DataView(imageData), imageData.size() / bytesPerColumn, height );
+    putImage( coords, stringImage, {format.textColor(), format.backgroundColor()} );
 }
 
 uint16_t Ili9341::width() const
@@ -401,6 +350,21 @@ void Ili9341::fillPixelBuffer( PixelBuffer* const buffer, const Image& image, co
             const uint8_t byte = image.getData().at( x * bytesPerColumn + y / 8U );
             const bool pixelActive = ((static_cast<uint8_t>(byte >> (y % 8U)) & 0x01U) != 0U);
             buffer->emplace_back( (pixelActive) ? colors.image : colors.background );
+        }
+    }
+}
+
+void Ili9341::copyToBack( StringImageBuffer* const destination, const etl::array_view<const uint8_t>& source )
+{
+    for (uint8_t i : source)
+    {
+        if (false == destination->full())
+        {
+            destination->emplace_back( i );
+        }
+        else
+        {
+            break;
         }
     }
 }

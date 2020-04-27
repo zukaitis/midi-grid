@@ -7,6 +7,7 @@
 #include <freertos/semaphore.hpp>
 #include <etl/array.h>
 #include <etl/vector.h>
+#include <etl/array_view.h>
 
 namespace lcd
 {
@@ -38,10 +39,12 @@ private:
 
     using PixelBuffer = etl::vector<Pixel, width_*2>;
     using DataBuffer = etl::vector<uint8_t, 16>;
+    using StringImageBuffer = etl::vector<uint8_t, width_>;
 
     void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );
     static void fillPixelBuffer( PixelBuffer* buffer, const Image& image, const ImageColors& colors,
         uint16_t firstLine, uint16_t lastLine );
+    static void copyToBack( StringImageBuffer* destination, const etl::array_view<const uint8_t>& source );
 
     hardware::lcd::SpiInterface& spi_;
 
