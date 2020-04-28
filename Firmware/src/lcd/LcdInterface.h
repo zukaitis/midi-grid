@@ -23,20 +23,6 @@ struct ImageLegacy
     uint8_t height;
 };
 
-enum class Justification
-{
-    LEFT,
-    RIGHT,
-    CENTER
-};
-
-enum class FontSize
-{
-    PT1,
-    PT2,
-    PT3
-};
-
 class LcdInterface
 {
 public:
@@ -53,6 +39,8 @@ public:
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) = 0;
     virtual void print( const etl::string_view& string, uint8_t y, Justification justification ) = 0;
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y ) = 0;
+    virtual void print( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
+    virtual void print( const etl::string_view& string, uint8_t y, const Format& format ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) = 0;
     virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) = 0;

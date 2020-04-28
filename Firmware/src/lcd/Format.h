@@ -11,6 +11,8 @@ class Font;
 namespace font
 {
 extern const Font& nokia_8p;
+extern const Font& monoton_80p;
+extern const Font& sarpanch_79p;
 }
 
 using Pixel = etl::array<uint8_t, 3>; // to be replaced with Color class
@@ -34,6 +36,13 @@ namespace color
     const Pixel RASPBERRY = {255, 0, 125};
 }  // namespace color
 
+enum class Justification
+{
+    LEFT,
+    RIGHT,
+    CENTER
+};
+
 class Format
 {
 public:
@@ -42,15 +51,20 @@ public:
     Format& font( const Font& font );
     Format& textColor( const Pixel& color );
     Format& backgroundColor( const Pixel& color );
+    Format& justification( Justification justification );
 
     const Font& font() const;
     const Pixel& textColor() const;
     const Pixel& backgroundColor() const;
+    bool isBackgroundColorSet() const;
+    Justification justification() const;
 
 private:
     const Font* font_;
     Pixel textColor_;
     Pixel backgroundColor_;
+    bool backgroundColorSet_;
+    Justification justification_;
 };
 
 }  // namespace lcd

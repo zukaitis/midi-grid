@@ -73,7 +73,9 @@ Ili9341::Ili9341( hardware::lcd::SpiInterface* spi ):
     pixelBuffer_(),
     pixelBufferIndex_( 0 ),
     dataBuffer_(),
-    dataBufferIndex_( 0 )
+    dataBufferIndex_( 0 ),
+    imageData_(),
+    zeros_()
 {
 }
 
@@ -269,20 +271,26 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
     const uint16_t height = format.font().getHeight();
     const uint16_t bytesPerColumn = (height + 7) / 8;
 
-    StringImageBuffer imageData = {};
-    const etl::vector<uint8_t, 9> zeros( format.font().getLetterSpacingWidth() * bytesPerColumn, 0U );
+    imageData_.clear();
+    zeros_.assign( format.font().getLetterSpacingWidth() * bytesPerColumn, 0U );
 
-    copyToBack( &imageData, format.font().getGlyph( string.at(0) ) ); // copy first glyph
+    appendToImageData( format.font().getGlyph( string.at(0) ) ); // copy first glyph
 
     for (uint32_t c = 1; c < string.length(); c++)
     {
-        copyToBack( &imageData, etl::array_view<const uint8_t>(zeros) );  // copy space between characters
-        copyToBack( &imageData, format.font().getGlyph( string.at(c) ) );  // copy glyph
+        appendToImageData( etl::array_view<const uint8_t>(zeros_) );  // copy space between characters
+        appendToImageData( format.font().getGlyph( string.at(c) ) );  // copy glyph
     }
 
-    const Image stringImage( Image::DataView(imageData), imageData.size() / bytesPerColumn, height );
+    const Image stringImage( Image::DataView(imageData_), imageData_.size() / bytesPerColumn, height );
     putImage( coords, stringImage, {format.textColor(), format.backgroundColor()} );
 }
+
+// Padauk Book bold
+// URW Gothic L - demi bold
+// Waree - bold
+
+// Monoton, Gravitas One, Kumar One
 
 uint16_t Ili9341::width() const
 {
@@ -354,13 +362,13 @@ void Ili9341::fillPixelBuffer( PixelBuffer* const buffer, const Image& image, co
     }
 }
 
-void Ili9341::copyToBack( StringImageBuffer* const destination, const etl::array_view<const uint8_t>& source )
+void Ili9341::appendToImageData( const etl::array_view<const uint8_t>& source )
 {
     for (uint8_t i : source)
     {
-        if (false == destination->full())
+        if (false == imageData_.full())
         {
-            destination->emplace_back( i );
+            imageData_.emplace_back( i );
         }
         else
         {

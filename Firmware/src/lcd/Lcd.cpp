@@ -1,6 +1,7 @@
 #include "lcd/Lcd.h"
 
 #include "lcd/Format.h"
+#include "lcd/Font.h"
 #include "lcd/progressArc.h"
 #include "lcd/font.h"
 
@@ -103,6 +104,42 @@ void Lcd::print( const etl::string_view& string, uint8_t y, const Justification 
 void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y )
 {
     print( string, x, y, Justification::LEFT );
+}
+
+void Lcd::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
+{
+    Format localFormat = format;
+    if (false == localFormat.isBackgroundColorSet())
+    {
+        localFormat.backgroundColor( backgroundColor_ );
+    }
+
+    switch (format.justification())
+    {
+        case Justification::RIGHT:
+            {
+                const uint16_t textwidth = format.font().getStringWidth( string );
+                const uint16_t x = ((coords.x + 1U) >= textwidth) ? (coords.x + 1U - textwidth) : 0;
+                driver_.putString( string, {x, coords.y}, format );
+            }
+            break;
+        case Justification::CENTER:
+            {
+                const uint16_t distanceFromMiddle = format.font().getStringWidth( string ) / 2;
+                const uint16_t x = (coords.x >= distanceFromMiddle) ? (coords.x - distanceFromMiddle) : 0;
+                driver_.putString( string, {x, coords.y}, format );
+            }
+            break;
+        case Justification::LEFT:
+        default:
+            driver_.putString( string, coords, format );
+            break;
+    }
+}
+
+void Lcd::print( const etl::string_view& string, uint8_t y, const Format& format )
+{
+    print( string, {calculateX( format.justification() ), y}, format );
 }
 
 void Lcd::putBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )

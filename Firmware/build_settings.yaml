@@ -93,6 +93,8 @@ cxx_source_files:
 - src/lcd/240x320/Ili9341.cpp
 - src/lcd/backlight/Backlight.cpp
 - src/lcd/font/nokia_8p.cpp
+- src/lcd/font/monoton_80p.cpp
+- src/lcd/font/sarpanch_79p.cpp
 - src/lcd/image/usb_240x107.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp

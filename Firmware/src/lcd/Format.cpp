@@ -7,7 +7,9 @@ namespace lcd
 Format::Format():
     font_( &font::nokia_8p ),
     textColor_( color::WHITE ),
-    backgroundColor_( color::BLACK )
+    backgroundColor_( color::BLACK ),
+    backgroundColorSet_( false ),
+    justification_( Justification::LEFT )
 {
 }
 
@@ -26,6 +28,13 @@ Format& Format::textColor( const Pixel& color )
 Format& Format::backgroundColor( const Pixel& color )
 {
     backgroundColor_ = color;
+    backgroundColorSet_ = true;
+    return *this;
+}
+
+Format& Format::justification( const Justification justification )
+{
+    justification_ = justification;
     return *this;
 }
 
@@ -42,6 +51,16 @@ const Pixel& Format::textColor() const
 const Pixel& Format::backgroundColor() const
 {
     return backgroundColor_;
+}
+
+bool Format::isBackgroundColorSet() const
+{
+    return backgroundColorSet_;
+}
+
+Justification Format::justification() const
+{
+    return justification_;
 }
 
 }  // namespace lcd

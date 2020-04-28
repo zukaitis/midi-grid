@@ -95,6 +95,23 @@ void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t 
     }
 }
 
+void PriorityManager::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
+{
+    if (checkPriority())
+    {
+        lcd_.print( string, coords, format );
+    }
+}
+
+void PriorityManager::print( const etl::string_view& string, const uint8_t y, const Format& format )
+{
+    if (checkPriority())
+    {
+        lcd_.print( string, y, format );
+    }
+}
+
+
 void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification )
 {
     if (checkPriority())

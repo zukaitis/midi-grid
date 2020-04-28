@@ -39,12 +39,11 @@ private:
 
     using PixelBuffer = etl::vector<Pixel, width_*2>;
     using DataBuffer = etl::vector<uint8_t, 16>;
-    using StringImageBuffer = etl::vector<uint8_t, width_>;
 
     void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );
     static void fillPixelBuffer( PixelBuffer* buffer, const Image& image, const ImageColors& colors,
         uint16_t firstLine, uint16_t lastLine );
-    static void copyToBack( StringImageBuffer* destination, const etl::array_view<const uint8_t>& source );
+    void appendToImageData( const etl::array_view<const uint8_t>& source );
 
     hardware::lcd::SpiInterface& spi_;
 
@@ -53,6 +52,8 @@ private:
     uint8_t pixelBufferIndex_;
     etl::array<DataBuffer, 1> dataBuffer_;
     uint8_t dataBufferIndex_;
+    etl::vector<uint8_t, width_*10> imageData_; // size to fit full line string of max size font
+    etl::vector<uint8_t, 160> zeros_;
 
     PixelBuffer& assignPixelBuffer();
     DataBuffer& assignDataBuffer();
