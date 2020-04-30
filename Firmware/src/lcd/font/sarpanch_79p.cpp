@@ -414,7 +414,7 @@ static const etl::array<uint16_t, 16> map = {
     0, 620, 860, 1180, 1420, 2020, 2600, 2970, 3550, 4130, 4790, 5350, 5920, 6460, 7020, 7580
 };
 
-static const Font fnt( 15, 43, Font::GlyphView( data ), Font::MapView( map ), 79, 10 );
+static const Font fnt( 15, 43, Font::GlyphView( data ), Font::MapView( map ), 79, 78, 10 );
 
 const Font& sarpanch_79p = fnt;
 

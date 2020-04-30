@@ -355,7 +355,7 @@ static const etl::array<uint16_t, 16> map = {
     0, 430, 580, 890, 1040, 1370, 2010, 2300, 2740, 3200, 3660, 4190, 4780, 5260, 5870, 6460
 };
 
-static const Font fnt( 15, 43, Font::GlyphView( data ), Font::MapView( map ), 80, 5 );
+static const Font fnt( 15, 43, Font::GlyphView( data ), Font::MapView( map ), 80, 79, 5 );
 
 const Font& monoton_80p = fnt;
 

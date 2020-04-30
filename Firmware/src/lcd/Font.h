@@ -15,7 +15,7 @@ public:
     using MapView = etl::array_view<const uint16_t>;
 
     Font( uint8_t numberOfCharacters, uint8_t firstCharacterOffset, GlyphView data, MapView map,
-        uint8_t height, uint8_t letterSpacingWidth );
+        uint8_t height, uint8_t baselinePosition, uint8_t letterSpacingWidth );
 
     Font& operator=( const Font& other );
 

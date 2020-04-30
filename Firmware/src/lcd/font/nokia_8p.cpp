@@ -41,7 +41,7 @@ static const etl::array<uint16_t, 96> map = {
     331, 336, 338, 346, 351, 356, 361, 366, 370, 374, 377, 382, 387, 394, 399, 404, 409, 412, 414, 417, 422
 };
 
-static const Font fnt( 95, 32, Font::GlyphView( data ), Font::MapView( map ), 8, 1 );
+static const Font fnt( 95, 32, Font::GlyphView( data ), Font::MapView( map ), 8, 7, 1 );
 
 const Font& nokia_8p = fnt;
 

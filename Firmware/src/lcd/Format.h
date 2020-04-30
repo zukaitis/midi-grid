@@ -13,6 +13,8 @@ namespace font
 extern const Font& nokia_8p;
 extern const Font& monoton_80p;
 extern const Font& sarpanch_79p;
+extern const Font& rubik_16p;
+extern const Font& rubik_24p;
 }
 
 using Pixel = etl::array<uint8_t, 3>; // to be replaced with Color class

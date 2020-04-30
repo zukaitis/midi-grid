@@ -60,9 +60,6 @@ if __name__ == '__main__':
     parser.add_argument( 'output', type = str, nargs = '?', default = None )
     arguments = parser.parse_args()
 
-    arguments.input = '../Misc/lcd_images/usb_240x107.bmp'
-    arguments.output = 'src/lcd/image/usb_240x107.cpp'
-
     if (arguments.input == None):
         sys.exit( 1 )
 

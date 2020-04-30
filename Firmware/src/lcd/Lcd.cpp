@@ -45,6 +45,11 @@ void Lcd::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
     driver_.fillArea( corner1, corner2, backgroundColor_ );
 }
 
+void Lcd::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+{
+    driver_.fillArea( corner1, corner2, color );
+}
+
 void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
 {
     driver_.displayImage( x, y, image );

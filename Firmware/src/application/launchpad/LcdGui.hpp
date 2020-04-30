@@ -1,7 +1,6 @@
-#ifndef APPLICATION_LAUNCHPAD_LCD_GUI_HPP_
-#define APPLICATION_LAUNCHPAD_LCD_GUI_HPP_
+#pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace lcd
 {
@@ -15,7 +14,7 @@ namespace launchpad
 
 struct TimedDisplay
 {
-    bool isOn;
+    bool enabled;
     uint32_t timeToDisable;
 };
 
@@ -24,7 +23,7 @@ class Launchpad;
 class LcdGui
 {
 public:
-    LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd );
+    LcdGui( Launchpad* launchpad, lcd::LcdInterface* lcd );
 
     void initialize();
     void refresh();
@@ -36,7 +35,9 @@ public:
     static const int16_t refreshPeriodMs = 250;
 private:
     void refreshStatusBar();
+    void refreshTimingArea();
     void refreshMainArea();
+    void refreshTimedItemsStatus();
     void displayLaunchpad95Info();
     void displayClipName();
     void displayDeviceName();
@@ -49,14 +50,9 @@ private:
     Launchpad& launchpad_;
     lcd::LcdInterface& lcd_;
 
-    TimedDisplay midiInputActivityIcon_;
-    TimedDisplay midiOutputActivityIcon_;
-    TimedDisplay rotaryControlValues_;
+    TimedDisplay usbMidiInputActivityIcon_;
+    TimedDisplay usbMidiOutputActivityIcon_;
 };
 
-
-}
-} // namespace
-
-
-#endif // APPLICATION_LAUNCHPAD_LCD_GUI_HPP_
+}  // namespace launchpad
+}  // namespace application

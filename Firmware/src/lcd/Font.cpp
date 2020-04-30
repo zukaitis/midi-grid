@@ -6,7 +6,7 @@ namespace lcd
 static const etl::array<uint8_t, 0> emptyArray = {};
 
 Font::Font( uint8_t numberOfCharacters, uint8_t firstCharacterOffset, GlyphView data, MapView map,
-        uint8_t height, uint8_t letterSpacingWidth ):
+        uint8_t height, uint8_t /*baselinePosition*/, uint8_t letterSpacingWidth ):
     numberOfCharacters_( numberOfCharacters ),
     firstCharacterOffset_( firstCharacterOffset ),
     data_( data ),

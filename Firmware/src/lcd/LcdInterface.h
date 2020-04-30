@@ -4,6 +4,7 @@
 #include "types/Coordinates.h"
 #include <cstdint>
 #include <etl/string_view.h>
+#include <etl/to_string.h>
 
 namespace lcd
 {
@@ -13,6 +14,13 @@ class Image;
 
 namespace image
 {
+extern const Image& circle_23x23;
+extern const Image& circle_empty_23x23;
+extern const Image& down_arrow_9x23;
+extern const Image& midi_23x23;
+extern const Image& triangle_21x23;
+extern const Image& up_arrow_9x23;
+extern const Image& usb_41x23;
 extern const Image& usb_240x107;
 }
 
@@ -31,6 +39,7 @@ public:
     virtual void setBackgroundColor( const Pixel& color ) = 0;
     virtual void clear() = 0;
     virtual void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) = 0;
+    virtual void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color ) = 0;
 
     virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0;
     virtual void displayImage( const Coordinates& coords, const Image& image, const Pixel& color ) = 0;

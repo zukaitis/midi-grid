@@ -133,7 +133,7 @@ Launchpad::Launchpad( ApplicationController* applicationController, grid::GridIn
     additional_buttons::AdditionalButtonsInterface* additionalButtons, rotary_controls::RotaryControlsInterface* rotaryControls,
     lcd::LcdInterface* lcd, midi::UsbMidi* usbMidi, mcu::System* system, testing::TestingInterface* testing ) :
         Application( *applicationController ),
-        gui_( *this, *lcd ),
+        gui_( this, lcd ),
         grid_( *grid ),
         usbMidi_( *usbMidi ),
         system_( *system ),
@@ -431,8 +431,6 @@ void Launchpad::processDawInfoMessage( const etl::string_view& message )
             break;
         default:
             break;
-
-        gui_.refresh();
     }
 }
 
@@ -461,8 +459,6 @@ void Launchpad::processChangeControlMidiMessage( const uint8_t channel, const ui
             mode_ = determineLaunchpad95Mode();
             // only melodic step sequencer can stay in submode between mode changes
             submode_ = (Launchpad95Mode_MELODIC_SEQUENCER == mode_) ? determineLaunchpad95Submode() : Launchpad95Submode_DEFAULT;
-
-            gui_.refresh();
         }
     }
 }
@@ -524,7 +520,6 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
             {
                 // possible change in submode
                 submode_ = determineLaunchpad95Submode();
-                gui_.refresh();
             }
         }
     }

@@ -55,6 +55,7 @@ class Font:
         height = self.get_max_height( font )
         negative_offset = self.get_negative_offset( font )
         total_height = height - negative_offset
+        baseline_position = height - 1
         bytes_per_column = math.ceil(total_height / 8)
 
         data_array = []
@@ -92,12 +93,12 @@ class Font:
         for line in wrapper.wrap( ', '.join( str(i) for i in font_map ) ):
             output.write( line + '\n' )
         output.write( '};\n\n' )
-        
+
         font_name = os.path.splitext( os.path.basename( output_file ) )[0]
         output.write( 'static const Font fnt( ' + \
             str(number_of_characters) + ', ' + str(self.first_symbol_) + \
             ', Font::GlyphView( data ), Font::MapView( map ), ' + \
-            str(total_height) + ', ' + str(gap_width) + ' );\n\n' )
+            str(total_height) + ', ' + str(baseline_position) + ', ' + str(gap_width) + ' );\n\n' )
         output.write( 'const Font& ' + str(font_name) + ' = fnt;' )
 
         output.write( output_file_footer )

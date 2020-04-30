@@ -39,6 +39,14 @@ void PriorityManager::clearArea( const Coordinates& corner1, const Coordinates& 
     }
 }
 
+void PriorityManager::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+{
+    if (checkPriority())
+    {
+        lcd_.fillArea( corner1, corner2, color );
+    }
+}
+
 void PriorityManager::displayImage( uint8_t x, uint8_t y, const ImageLegacy& image )
 {
     if (checkPriority())

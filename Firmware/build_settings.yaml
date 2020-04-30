@@ -94,7 +94,16 @@ cxx_source_files:
 - src/lcd/backlight/Backlight.cpp
 - src/lcd/font/nokia_8p.cpp
 - src/lcd/font/monoton_80p.cpp
+- src/lcd/font/rubik_16p.cpp
+- src/lcd/font/rubik_24p.cpp
 - src/lcd/font/sarpanch_79p.cpp
+- src/lcd/image/circle_23x23.cpp
+- src/lcd/image/circle_empty_23x23.cpp
+- src/lcd/image/down_arrow_9x23.cpp
+- src/lcd/image/midi_23x23.cpp
+- src/lcd/image/triangle_21x23.cpp
+- src/lcd/image/up_arrow_9x23.cpp
+- src/lcd/image/usb_41x23.cpp
 - src/lcd/image/usb_240x107.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp

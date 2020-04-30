@@ -4,6 +4,7 @@
 #include "application/launchpad/Images.hpp"
 
 #include "lcd/LcdInterface.h"
+#include "lcd/Font.h"
 #include <freertos/ticks.hpp>
 
 #include <etl/cstring.h>
@@ -52,76 +53,105 @@ static const etl::array<etl::string<16>, 9> launchpad95SubmodeString = {
 static const uint32_t kMidiActivityTimeoutMs = 1000;
 static const uint32_t kRotaryControlTimeoutMs = 1000;
 
-LcdGui::LcdGui( Launchpad& launchpad, lcd::LcdInterface& lcd ):
-        launchpad_( launchpad ),
-        lcd_( lcd )
+static const lcd::Pixel background = {110, 110, 110};
+static const lcd::Pixel playActive = {10, 255, 128};
+static const lcd::Pixel recordingActive = {255, 54, 64};
+static const lcd::Pixel midiActive = {255, 181, 50};
+static const lcd::Pixel inactive = lcd::color::BLACK;
+static const lcd::Pixel tempo = lcd::color::YELLOW;
+
+static const lcd::Font& smallFont = lcd::font::rubik_24p;
+static const lcd::Font& bigFont = lcd::font::monoton_80p;
+
+static const uint16_t leftX = 5;
+static const uint16_t rightX = 234;
+static const uint16_t topY = 5;
+static const uint16_t bottomY = 314;
+
+LcdGui::LcdGui( Launchpad* launchpad, lcd::LcdInterface* lcd ):
+    launchpad_( *launchpad ),
+    lcd_( *lcd )
 {
 }
 
 void LcdGui::initialize()
 {
-    lcd_.setBackgroundColor( lcd::color::BLACK );
+    lcd_.setBackgroundColor( background );
     lcd_.clear();
-    displayLaunchpad95Info();
+    // displayLaunchpad95Info();
 }
 
 void LcdGui::refresh()
 {
+    refreshTimedItemsStatus();
     refreshStatusBar();
-    refreshMainArea();
+    // refreshTimingArea();
 }
 
 void LcdGui::refreshStatusBar()
 {
-    lcd_.print( "L95", 0, lcd::Justification::CENTER );
-    lcd_.displayImage( 63, 0, usbSymbolSmall );
-    lcd_.displayImage( 0, 0, midiSymbolSmall );
+    lcd_.displayImage( {leftX, topY}, lcd::image::triangle_21x23, (launchpad_.isPlaying_ ? playActive : inactive) );
+    lcd_.displayImage( {42, topY}, lcd::image::circle_23x23, (launchpad_.isRecording_ ? recordingActive : inactive) );
+    lcd_.displayImage( {81, topY}, lcd::image::circle_empty_23x23, (launchpad_.isSessionRecording_ ? recordingActive : inactive) );
 
-    if (midiInputActivityIcon_.isOn)
+    lcd_.displayImage( {174, topY}, lcd::image::usb_41x23,
+        ((usbMidiInputActivityIcon_.enabled || usbMidiOutputActivityIcon_.enabled) ? midiActive : inactive) );
+    lcd_.displayImage( {217, topY}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
+    lcd_.displayImage( {226, topY}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
+}
+
+void LcdGui::refreshTimingArea()
+{
+    if (0 != launchpad_.tempo_)
     {
-        if (freertos::Ticks::GetTicks() >= midiInputActivityIcon_.timeToDisable)
-        {
-            lcd_.clearArea( {73, 0}, {77, 7} );
-            midiInputActivityIcon_.isOn = false;
-        }
+        lcd_.print( "bpm", {rightX, 64}, lcd::Format().font( smallFont ).textColor( tempo ).justification( lcd::Justification::RIGHT ));
+
+        etl::string<3> tempoString = {};
+        etl::to_string( launchpad_.tempo_, tempoString );
+        lcd_.print( tempoString, {200, 64}, lcd::Format().font( bigFont ).textColor( tempo ).justification( lcd::Justification::RIGHT ));
     }
-
-    if (midiOutputActivityIcon_.isOn)
+    else
     {
-        if (freertos::Ticks::GetTicks() >= midiOutputActivityIcon_.timeToDisable)
-        {
-            lcd_.clearArea( {78, 0}, {83, 7} );
-            midiOutputActivityIcon_.isOn = false;
-        }
+        lcd_.clearArea( {leftX, 64}, {rightX, 144} );
     }
 }
 
 void LcdGui::refreshMainArea()
 {
-    if (rotaryControlValues_.isOn)
-    {
-        if (freertos::Ticks::GetTicks() >= rotaryControlValues_.timeToDisable)
-        {
-            rotaryControlValues_.isOn = false;
-        }
-    }
 
     displayLaunchpad95Info();
 }
 
+void LcdGui::refreshTimedItemsStatus()
+{
+    if (usbMidiInputActivityIcon_.enabled)
+    {
+        if (freertos::Ticks::GetTicks() >= usbMidiInputActivityIcon_.timeToDisable)
+        {
+            usbMidiInputActivityIcon_.enabled = false;
+        }
+    }
+
+    if (usbMidiOutputActivityIcon_.enabled)
+    {
+        if (freertos::Ticks::GetTicks() >= usbMidiOutputActivityIcon_.timeToDisable)
+        {
+            usbMidiOutputActivityIcon_.enabled = false;
+        }
+    }
+}
+
 void LcdGui::registerMidiInputActivity()
 {
-    lcd_.displayImage( 73, 0, arrowSmallDown );
-    midiInputActivityIcon_.isOn = true;
-    midiInputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
+    usbMidiInputActivityIcon_.enabled = true;
+    usbMidiInputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
 }
 
 
 void LcdGui::registerMidiOutputActivity()
 {
-    lcd_.displayImage( 78, 0, arrowSmallUp );
-    midiOutputActivityIcon_.isOn = true;
-    midiOutputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
+    usbMidiOutputActivityIcon_.enabled = true;
+    usbMidiOutputActivityIcon_.timeToDisable = freertos::Ticks::GetTicks() + kMidiActivityTimeoutMs;
 }
 
 void LcdGui::displayLaunchpad95Info()
@@ -136,8 +166,6 @@ void LcdGui::displayLaunchpad95Info()
     }
 
     // only display other info when rotary control display timer runs out
-    if (!rotaryControlValues_.isOn)
-    {
         lcd_.clearArea( {0, 16}, {83, 31} );
         displayStatus();
 
@@ -162,7 +190,6 @@ void LcdGui::displayLaunchpad95Info()
                 displayTimingStatus();
                 break;
         }
-    }
 }
 
 void LcdGui::displayClipName()
@@ -251,9 +278,6 @@ void LcdGui::displayRotaryControlValues()
     lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_.at( 1 ) * (numberOfProgressArcPositions - 1)) / 127 );
     etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), str );
     lcd_.print( &str[0], 63, 32, lcd::Justification::CENTER );
-
-    rotaryControlValues_.isOn = true;
-    rotaryControlValues_.timeToDisable = freertos::Ticks::GetTicks() + kRotaryControlTimeoutMs;
 }
 
 }  // namespace launchpad
