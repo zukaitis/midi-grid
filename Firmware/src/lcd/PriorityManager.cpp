@@ -119,31 +119,6 @@ void PriorityManager::print( const etl::string_view& string, const uint8_t y, co
     }
 }
 
-
-void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification )
-{
-    if (checkPriority())
-    {
-        lcd_.printNumberInBigDigits( number, x, y, justification );
-    }
-}
-
-void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification )
-{
-    if (checkPriority())
-    {
-        lcd_.printNumberInBigDigits( number, y, justification );
-    }
-}
-
-void PriorityManager::printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y )
-{
-    if (checkPriority())
-    {
-        lcd_.printNumberInBigDigits( number, x, y );
-    }
-}
-
 void PriorityManager::setBacklightIntensity( uint8_t intensity )
 {
     if (checkPriority())

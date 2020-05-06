@@ -178,7 +178,7 @@ void Snake::updateLcd() const
     lcd_.clear();
     lcd_.print( "Snake", lcd_.line( 0 ), lcd::Justification::CENTER );
     lcd_.print( "Score:", 0, 16 );
-    lcd_.printNumberInBigDigits( getScore(), 16, lcd::Justification::RIGHT );
+    // lcd_.printNumberInBigDigits( getScore(), 16, lcd::Justification::RIGHT );
     
     etl::string<16> bestScoreString = "Best: ";
     etl::to_string( bestScore_, bestScoreString, true );

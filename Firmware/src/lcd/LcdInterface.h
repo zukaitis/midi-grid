@@ -50,9 +50,6 @@ public:
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y ) = 0;
     virtual void print( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
     virtual void print( const etl::string_view& string, uint8_t y, const Format& format ) = 0;
-    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) = 0;
-    virtual void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) = 0;
-    virtual void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) = 0;
     virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 
     virtual uint8_t maximumBacklightIntensity() const = 0;

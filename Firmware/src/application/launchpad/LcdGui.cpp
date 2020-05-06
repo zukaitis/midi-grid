@@ -58,15 +58,17 @@ static const lcd::Pixel playActive = {10, 255, 128};
 static const lcd::Pixel recordingActive = {255, 54, 64};
 static const lcd::Pixel midiActive = {255, 181, 50};
 static const lcd::Pixel inactive = lcd::color::BLACK;
-static const lcd::Pixel tempo = lcd::color::YELLOW;
 
 static const lcd::Font& smallFont = lcd::font::rubik_24p;
 static const lcd::Font& bigFont = lcd::font::monoton_80p;
 
 static const uint16_t leftX = 5;
 static const uint16_t rightX = 234;
+static const uint16_t centerX = 120;
 static const uint16_t topY = 5;
 static const uint16_t bottomY = 314;
+static const uint16_t activeAreaWidth = rightX - leftX + 1;
+static const uint16_t activeAreaHeight = bottomY - topY + 1;
 
 LcdGui::LcdGui( Launchpad* launchpad, lcd::LcdInterface* lcd ):
     launchpad_( *launchpad ),
@@ -85,7 +87,7 @@ void LcdGui::refresh()
 {
     refreshTimedItemsStatus();
     refreshStatusBar();
-    // refreshTimingArea();
+    refreshTimingArea();
 }
 
 void LcdGui::refreshStatusBar()
@@ -102,17 +104,45 @@ void LcdGui::refreshStatusBar()
 
 void LcdGui::refreshTimingArea()
 {
+    static const uint16_t timingTopY = 64;
+    static const uint16_t timingBottomY = 143;
+    static const lcd::Pixel timingColor = lcd::color::YELLOW;
+    static const auto numberFormat = lcd::Format().font( bigFont ).textColor( timingColor );
+    static const auto textFormat = lcd::Format().textColor( timingColor ).font( smallFont );
+
     if (0 != launchpad_.tempo_)
     {
-        lcd_.print( "bpm", {rightX, 64}, lcd::Format().font( smallFont ).textColor( tempo ).justification( lcd::Justification::RIGHT ));
+        etl::string<3> numberString = {};
+        etl::to_string( launchpad_.tempo_, numberString );
 
-        etl::string<3> tempoString = {};
-        etl::to_string( launchpad_.tempo_, tempoString );
-        lcd_.print( tempoString, {200, 64}, lcd::Format().font( bigFont ).textColor( tempo ).justification( lcd::Justification::RIGHT ));
+        const uint16_t numberWidth = numberFormat.font().getStringWidth( numberString );
+        uint16_t textWidth = textFormat.font().getStringWidth( " bpm" );
+        const uint16_t textHeight = textFormat.font().getHeight();
+        const bool showText = ((numberWidth + textWidth) <= activeAreaWidth);
+
+        if (false == showText)
+        {
+            textWidth = 0;
+        }
+        const uint16_t totalWidth = numberWidth + textWidth;
+        const uint16_t numberLeftX = centerX - totalWidth / 2;
+
+        lcd_.clearArea( {0, timingTopY}, {static_cast<uint16_t>(numberLeftX - 1U), timingBottomY} );
+        lcd_.print( numberString, {numberLeftX, timingTopY}, numberFormat );
+
+        if (showText)
+        {
+            lcd_.print( " bpm", {static_cast<uint16_t>(numberLeftX + numberWidth), timingTopY}, textFormat );
+        }
+
+        lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + totalWidth), timingTopY},
+            {239, static_cast<uint16_t>(timingTopY + textHeight - 1U)} );
+        lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + numberWidth), static_cast<uint16_t>(timingTopY + textHeight)},
+            {239, timingBottomY} );
     }
     else
     {
-        lcd_.clearArea( {leftX, 64}, {rightX, 144} );
+        lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
     }
 }
 
@@ -254,7 +284,7 @@ void LcdGui::displayTimingStatus()
         lcd_.displayImage( 0, 40, (launchpad_.nudgeDownActive_ ? nudgeDownActive : nudgeDownInactive) );
         lcd_.displayImage( 10, 40, (launchpad_.nudgeUpActive_ ? nudgeUpActive : nudgeUpInactive) );
 
-        lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification::RIGHT );
+        // lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification::RIGHT );
         lcd_.print( "bpm", 66, 32 );
 
         etl::string<6> signatureString;

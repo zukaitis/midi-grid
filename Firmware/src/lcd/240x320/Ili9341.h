@@ -47,12 +47,11 @@ private:
 
     hardware::lcd::SpiInterface& spi_;
 
-    // single buffer seems to work without issues
-    etl::array<PixelBuffer, 1> pixelBuffer_;
+    etl::array<PixelBuffer, 2> pixelBuffer_;
     uint8_t pixelBufferIndex_;
-    etl::array<DataBuffer, 1> dataBuffer_;
+    etl::array<DataBuffer, 2> dataBuffer_;
     uint8_t dataBufferIndex_;
-    etl::vector<uint8_t, width_*10> imageData_; // size to fit full line string of max size font
+    etl::vector<uint8_t, 9600> imageData_;
     etl::vector<uint8_t, 160> zeros_;
 
     PixelBuffer& assignPixelBuffer();

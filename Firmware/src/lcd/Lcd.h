@@ -28,9 +28,6 @@ public:
     void print( const etl::string_view& string, uint8_t x, uint8_t y) override;
     void print( const etl::string_view& string, const Coordinates& coords, const Format& format ) override;
     void print( const etl::string_view& string, uint8_t y, const Format& format ) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) override;
     void setBacklightIntensity( uint8_t intensity ) override;
 
     uint8_t maximumBacklightIntensity() const override;
@@ -39,8 +36,6 @@ public:
     void release() override;
 
 private:
-
-    void putBigDigits( uint16_t number, uint8_t x, uint8_t y, uint8_t numberOfDigits );
 
     uint16_t calculateX( Justification justification );
 

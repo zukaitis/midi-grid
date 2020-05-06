@@ -422,9 +422,9 @@ void Launchpad::processDawInfoMessage( const etl::string_view& message )
             break;
         case 'T':
             {
-                // tempo_ = (message.at( 1 ) - '0')*100 + (message.at( 2 ) - '0')*10 + (message.at( 3 ) - '0');
-                // signatureNumerator_ = (message.at( 4 ) - '0')*10 + (message.at( 5 ) - '0');
-                // signatureDenominator_ = (message.at( 6 ) - '0')*10 + (message.at( 7 ) - '0');
+                tempo_ = (message.at( 1 ) - '0')*100 + (message.at( 2 ) - '0')*10 + (message.at( 3 ) - '0');
+                signatureNumerator_ = (message.at( 4 ) - '0')*10 + (message.at( 5 ) - '0');
+                signatureDenominator_ = (message.at( 6 ) - '0')*10 + (message.at( 7 ) - '0');
                 nudgeDownActive_ = ('D' == message.at( 8 ));
                 nudgeUpActive_ = ('U' == message.at( 8 ));
             }

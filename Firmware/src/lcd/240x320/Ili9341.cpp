@@ -204,29 +204,20 @@ void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, 
 {
     const Coordinates topLeft = {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)};
     const Coordinates bottomRight = {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)};
+
     const uint16_t width = bottomRight.x - topLeft.x + 1;
+    const uint16_t height = bottomRight.y - topLeft.y + 1;
+    const uint16_t bytesPerColumn = (height + 7) / 8;
+    const uint16_t dataSize = width * bytesPerColumn;
 
-    PixelBuffer& buffer = assignPixelBuffer();
-    const uint16_t scanlineHeight = buffer.capacity() / width;
-    buffer.assign( width * scanlineHeight, color );
-
-    for (uint8_t i = 0; i < 2; i++)  // loop twice
+    imageData_.clear();
+    if (dataSize <= imageData_.capacity())
     {
-        for (uint16_t topY = topLeft.y + i * scanlineHeight; topY <= bottomRight.y; topY += 2 * scanlineHeight)
-        {
-            uint16_t bottomY = topY + scanlineHeight -1;
-            if (bottomY > bottomRight.y)
-            {
-                bottomY = bottomRight.y;  // clamp value if it's too high
-                buffer = assignPixelBuffer();
-                buffer.assign( (bottomY - topY + 1) * width, color );  // shorten the vector
-            }
-            
-            setWorkingArea( {topLeft.x, topY}, {bottomRight.x, bottomY} );
-            spi_.writeCommand( static_cast<uint8_t>(Command::RAMWR) );
-            spi_.writeData( PixelView(buffer) );
-        }
+        imageData_.assign( dataSize, 0U );
     }
+
+    const Image fillImage( Image::DataView(imageData_), width, height );
+    putImage( topLeft, fillImage, {color::RED, color} );
 }
 
 void Ili9341::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
@@ -285,12 +276,6 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
     const Image stringImage( Image::DataView(imageData_), imageData_.size() / bytesPerColumn, height );
     putImage( coords, stringImage, {format.textColor(), format.backgroundColor()} );
 }
-
-// Padauk Book bold
-// URW Gothic L - demi bold
-// Waree - bold
-
-// Monoton, Gravitas One, Kumar One
 
 uint16_t Ili9341::width() const
 {

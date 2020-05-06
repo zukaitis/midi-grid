@@ -13,12 +13,6 @@
 namespace lcd
 {
 
-static const etl::array<ImageLegacy, 10> digitBig = {{
-        { &DIGITS_BIG[0][0], 12, 16 }, { &DIGITS_BIG[1][0], 12, 16 }, { &DIGITS_BIG[2][0], 12, 16 }, { &DIGITS_BIG[3][0], 12, 16 },
-        { &DIGITS_BIG[4][0], 12, 16 }, { &DIGITS_BIG[5][0], 12, 16 }, { &DIGITS_BIG[6][0], 12, 16 }, { &DIGITS_BIG[7][0], 12, 16 },
-        { &DIGITS_BIG[8][0], 12, 16 }, { &DIGITS_BIG[9][0], 12, 16 }
-}};
-
 Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
     driver_( driver ),
     backlight_( backlight ),
@@ -123,21 +117,21 @@ void Lcd::print( const etl::string_view& string, const Coordinates& coords, cons
     {
         case Justification::RIGHT:
             {
-                const uint16_t textwidth = format.font().getStringWidth( string );
+                const uint16_t textwidth = localFormat.font().getStringWidth( string );
                 const uint16_t x = ((coords.x + 1U) >= textwidth) ? (coords.x + 1U - textwidth) : 0;
-                driver_.putString( string, {x, coords.y}, format );
+                driver_.putString( string, {x, coords.y}, localFormat );
             }
             break;
         case Justification::CENTER:
             {
-                const uint16_t distanceFromMiddle = format.font().getStringWidth( string ) / 2;
+                const uint16_t distanceFromMiddle = localFormat.font().getStringWidth( string ) / 2;
                 const uint16_t x = (coords.x >= distanceFromMiddle) ? (coords.x - distanceFromMiddle) : 0;
-                driver_.putString( string, {x, coords.y}, format );
+                driver_.putString( string, {x, coords.y}, localFormat );
             }
             break;
         case Justification::LEFT:
         default:
-            driver_.putString( string, coords, format );
+            driver_.putString( string, coords, localFormat );
             break;
     }
 }
@@ -145,69 +139,6 @@ void Lcd::print( const etl::string_view& string, const Coordinates& coords, cons
 void Lcd::print( const etl::string_view& string, uint8_t y, const Format& format )
 {
     print( string, {calculateX( format.justification() ), y}, format );
-}
-
-void Lcd::putBigDigits( uint16_t number, uint8_t x, const uint8_t y, const uint8_t numberOfDigits )
-{
-    uint16_t divisor = pow( 10, numberOfDigits );
-    while (divisor > 1)
-    {
-        number %= divisor;
-        divisor /= 10;
-        displayImage( x, y, digitBig[number/divisor] );
-        x += digitBig[0].width;
-    }
-}
-
-void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y, const Justification justification )
-{
-    uint8_t numberOfDigits = 5; // 5 digit numbers max
-    uint16_t divisor = 10000;
-    while (divisor > 1)
-    {
-        if (0 != (number / divisor))
-        {
-            break;
-        }
-        --numberOfDigits;
-        divisor /= 10;
-    }
-
-    uint8_t textwidth_ = numberOfDigits * digitBig[0].width;
-
-    switch (justification)
-    {
-        case Justification::RIGHT:
-            if (textwidth_ < x)
-            {
-                putBigDigits( number, (x - textwidth_), y, numberOfDigits );
-            }
-            break;
-        case Justification::CENTER:
-            textwidth_ = textwidth_ / 2;
-            if ((textwidth_ <= x) && (textwidth_ <= (driver_.width() - x)))
-            {
-                putBigDigits( number, (x - textwidth_), y, numberOfDigits );
-            }
-            break;
-        case Justification::LEFT:
-        default:
-            if (textwidth_ < (driver_.width() - x))
-            {
-                putBigDigits( number, x, y, numberOfDigits );
-            }
-            break;
-    }
-}
-
-void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t y, const Justification justification )
-{
-    printNumberInBigDigits( number, calculateX( justification ), y, justification );
-}
-
-void Lcd::printNumberInBigDigits( const uint16_t number, const uint8_t x, const uint8_t y )
-{
-    printNumberInBigDigits( number, x, y, Justification::LEFT );
 }
 
 void Lcd::setBacklightIntensity( const uint8_t intensity )
