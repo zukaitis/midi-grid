@@ -145,6 +145,11 @@ void PriorityManager::release()
     }
 }
 
+DrawInterface& PriorityManager::draw()
+{
+    return lcd_.draw();
+}
+
 bool PriorityManager::checkPriority()
 {
     bool allow = false;

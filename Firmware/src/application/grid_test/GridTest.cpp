@@ -2,7 +2,6 @@
 
 #include "grid/GridInterface.h"
 #include "lcd/Format.h"
-#include "lcd/Image.h"
 #include "usb/UsbMidi.hpp"
 #include "lcd/LcdInterface.h"
 #include "application/images.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lcd/LcdInterface.h"
+#include "lcd/Draw.h"
 
 namespace lcd
 {
@@ -35,10 +36,13 @@ public:
 
     void release() override;
 
+    DrawInterface& draw() override;
+
 private:
 
     uint16_t calculateX( Justification justification );
 
+    Draw draw_;
     DriverInterface& driver_;
     BacklightInterface& backlight_;
 

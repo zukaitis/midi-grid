@@ -19,6 +19,13 @@ public:
     {
     }
 
+    Image():
+        data_(),
+        width_( 0 ),
+        height_( 0 )
+    {
+    }
+
     uint16_t getWidth() const
     {
         return width_;
@@ -35,9 +42,9 @@ public:
     }
 
 private:
-    const DataView data_;
-    const uint16_t width_;
-    const uint16_t height_;
+    DataView data_;
+    uint16_t width_;
+    uint16_t height_;
 };
 
 }  // namespace lcd

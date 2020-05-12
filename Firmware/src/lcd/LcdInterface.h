@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lcd/DrawInterface.h"
 #include "lcd/Format.h"
 #include "types/Coordinates.h"
 #include <cstdint>
@@ -56,6 +57,8 @@ public:
     virtual uint16_t line( uint8_t lineNumber ) const = 0;
 
     virtual void release() = 0;
+
+    virtual DrawInterface& draw() = 0;
 };
 
 }  // namespace lcd

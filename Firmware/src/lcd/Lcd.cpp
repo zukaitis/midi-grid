@@ -14,15 +14,14 @@ namespace lcd
 {
 
 Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
+    draw_( this ),
     driver_( driver ),
     backlight_( backlight ),
     backgroundColor_( color::BLACK )
 {
 }
 
-Lcd::~Lcd()
-{
-}
+Lcd::~Lcd() = default;
 
 void Lcd::setBackgroundColor( const Pixel& color )
 {
@@ -158,6 +157,11 @@ uint16_t Lcd::line( uint8_t lineNumber ) const
 
 void Lcd::release()
 {
+}
+
+DrawInterface& Lcd::draw()
+{
+    return draw_;
 }
 
 uint16_t Lcd::calculateX( const Justification justification )

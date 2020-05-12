@@ -38,6 +38,8 @@ public:
 
     void release() override;
 
+    DrawInterface& draw() override;
+
 private:
     bool checkPriority();
 

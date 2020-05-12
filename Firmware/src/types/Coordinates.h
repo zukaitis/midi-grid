@@ -15,6 +15,11 @@ struct Coordinates
         return equal;
     };
 
+    bool operator!=(const Coordinates& coordinates) const
+    {
+        return !(*this == coordinates);
+    };
+
     bool operator<(const Coordinates& coordinates) const
     {
         bool lessThan = true;

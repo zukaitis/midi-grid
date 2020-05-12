@@ -327,7 +327,6 @@ void Launchpad::handleRotaryControlEvent( const rotary_controls::Event& event )
     }
     usbMidi_.sendControlChange( kAdditionalControlMidiChannel, event.control, rotaryControlValue_.at( event.control ) );
     gui_.registerMidiOutputActivity();
-    gui_.displayRotaryControlValues();
 }
 
 void Launchpad::handleAdditionalButtonEvent( const additional_buttons::Event& event )

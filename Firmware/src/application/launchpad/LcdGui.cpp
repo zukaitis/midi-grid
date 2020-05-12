@@ -3,6 +3,7 @@
 #include "application/launchpad/Launchpad.hpp"
 #include "application/launchpad/Images.hpp"
 
+#include "lcd/Format.h"
 #include "lcd/LcdInterface.h"
 #include "lcd/Font.h"
 #include <freertos/ticks.hpp>
@@ -88,6 +89,7 @@ void LcdGui::refresh()
     refreshTimedItemsStatus();
     refreshStatusBar();
     refreshTimingArea();
+    refreshRotaryControlArea();
 }
 
 void LcdGui::refreshStatusBar()
@@ -144,6 +146,18 @@ void LcdGui::refreshTimingArea()
     {
         lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
     }
+}
+
+void LcdGui::refreshRotaryControlArea()
+{
+    static const uint16_t minAngle = 60;
+    static const uint16_t maxAngle = 300;
+    static const lcd::Pixel arcColor = lcd::color::BLUE;
+    static const uint16_t arcInnerRadius = 20;
+    static const uint16_t arcOuterRadius = 30;
+
+    const uint16_t angle = minAngle + ((maxAngle - minAngle) / midi::kMaximumControlValue) * launchpad_.rotaryControlValue_.at( 0 );
+    lcd_.draw().arc( {33, 280}, arcInnerRadius, arcOuterRadius, minAngle, angle, arcColor );
 }
 
 void LcdGui::refreshMainArea()
@@ -312,4 +326,3 @@ void LcdGui::displayRotaryControlValues()
 
 }  // namespace launchpad
 }  // namespace application
-

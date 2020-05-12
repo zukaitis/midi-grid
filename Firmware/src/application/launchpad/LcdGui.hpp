@@ -36,6 +36,8 @@ public:
 private:
     void refreshStatusBar();
     void refreshTimingArea();
+    void refreshRotaryControlArea();
+
     void refreshMainArea();
     void refreshTimedItemsStatus();
     void displayLaunchpad95Info();

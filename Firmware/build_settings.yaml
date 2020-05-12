@@ -85,6 +85,7 @@ cxx_source_files:
 - src/grid/GridContainer.cpp
 - src/grid/LedOutput.cpp
 - src/grid/PulsingLeds.cpp
+- src/lcd/Draw.cpp
 - src/lcd/Font.cpp
 - src/lcd/Format.cpp
 - src/lcd/Lcd.cpp
