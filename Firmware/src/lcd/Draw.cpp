@@ -1,11 +1,12 @@
 #include "lcd/Draw.h"
+
 #include "lcd/LcdInterface.h"
 #include "types/Coordinates.h"
 
-#include <algorithm>
-
 namespace lcd
 {
+
+constexpr auto M_PI = 3.14159265358979323846;
 
 Draw::Draw( LcdInterface* lcd ):
     lcd_( *lcd ),
@@ -39,17 +40,15 @@ void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uin
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
     imageData_.assign( edgeLength * bytesPerColumn, 0U );
     image_ = Image( Image::DataView(imageData_), edgeLength, edgeLength );
+    const Coordinates imageCenter = {static_cast<uint16_t>(outerRadius - 1), static_cast<uint16_t>(outerRadius - 1)};
 
-    for (uint16_t radius = innerRadius; radius <= outerRadius; radius++)
+    uint16_t sectionStart = startAngle;
+    while (sectionStart < endAngle)
     {
-        uint16_t sectionStart = startAngle;
-        while (sectionStart < endAngle)
-        {
-            const uint16_t ceiling = ((sectionStart / 45) + 1) * 45;
-            const uint16_t sectionEnd = std::min( ceiling, endAngle );
-            putArc( {outerRadius, outerRadius}, radius, sectionStart, sectionEnd );
-            sectionStart = ceiling;
-        }
+        const uint16_t ceiling = ((sectionStart / 45) + 1) * 45;
+        const uint16_t sectionEnd = std::min( ceiling, endAngle );
+        putPie( imageCenter, outerRadius, sectionStart, sectionEnd );
+        sectionStart = ceiling;
     }
 
     const Coordinates imageStart = { static_cast<uint16_t>(center.x - outerRadius), static_cast<uint16_t>(center.y - outerRadius) };
@@ -87,11 +86,11 @@ void Draw::putLine( const Coordinates& point1, const Coordinates& point2 )
     }
 }
 
-void Draw::putArc( const Coordinates& center, const uint16_t radius, uint16_t startAngle, uint16_t endAngle )
+void Draw::putPie( const Coordinates& center, const uint16_t radius, uint16_t startAngle, uint16_t endAngle )
 {
     const uint16_t sectionIndex = (endAngle - 1) / 45;
 
-    auto getCoordinates = [&]( uint16_t opp, uint16_t adj ) 
+    auto getCoordinates = [&](const uint16_t opp, const uint16_t adj)
     {
         Coordinates coords = {};
         switch (sectionIndex)
@@ -129,44 +128,48 @@ void Draw::putArc( const Coordinates& center, const uint16_t radius, uint16_t st
     {
         uint16_t opposite = 0;
         uint16_t adjacent = radius;
-        Coordinates endPixel = {0, 0};
+        volatile uint16_t oppositeLimitLow = 0;
+        uint16_t oppositeLimitHigh = radius;
 
         if (0 != (sectionIndex % 2))  // counter-clockwise
         {
             std::swap( startAngle, endAngle );
+            startAngle = 45 - (startAngle % 45);
+            endAngle = 45 - (endAngle % 45);
         }
 
         if (0 != (startAngle % 45))
         {
-            opposite = std::sin( startAngle % 45 ) * radius;
-            adjacent = std::cos( startAngle % 45 ) * radius;
+            oppositeLimitLow = std::sin( (startAngle % 45) * M_PI / 180.0 ) * radius;
         }
 
         if (0 != (endAngle % 45))
         {
-            endPixel = getCoordinates( std::sin( endAngle % 45 ) * radius, std::cos( endAngle % 45 ) * radius );
+            oppositeLimitHigh = std::sin( (endAngle % 45) * M_PI / 180.0 ) * radius;
         }
 
         int err = 0;
-        Coordinates pixel = {};
-    
-        do
+
+        while ((opposite <= adjacent) && (opposite <= oppositeLimitHigh))
         {
-            pixel = getCoordinates( opposite, adjacent );
-            putPixel( pixel );
+            if (opposite >= oppositeLimitLow)
+            {
+                putPixel( getCoordinates( opposite, adjacent ) );
+                // putLine( center, getCoordinates( opposite, adjacent ) );
+            }
         
             if (err <= 0)
             {
-                opposite += 1;
+                opposite++;
                 err += 2 * opposite + 1;
             }
         
             if (err > 0)
             {
-                adjacent -= 1;
-                err -= 2*adjacent + 1;
+                adjacent--;
+                err -= 2 * adjacent + 1;
             }
-        } while ((pixel != endPixel) && (adjacent >= opposite));
+        }
     }
 }
 

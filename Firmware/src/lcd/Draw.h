@@ -22,7 +22,7 @@ public:
 
 private:
     void putLine( const Coordinates& point1, const Coordinates& point2 );
-    void putArc( const Coordinates& center, uint16_t radius, uint16_t startAngle, uint16_t endAngle );
+    void putPie( const Coordinates& center, uint16_t radius, uint16_t startAngle, uint16_t endAngle );
     void putPixel( const Coordinates& coords );
 
     LcdInterface& lcd_;
