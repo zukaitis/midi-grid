@@ -47,15 +47,17 @@ void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uin
     {
         const uint16_t ceiling = ((sectionStart / 45) + 1) * 45;
         const uint16_t sectionEnd = std::min( ceiling, endAngle );
-        putPie( imageCenter, outerRadius, sectionStart, sectionEnd );
+        putPie( imageCenter, outerRadius - 1, sectionStart, sectionEnd );
         sectionStart = ceiling;
     }
+
+    putCircle( imageCenter, innerRadius, CircleType::FULL, true );
 
     const Coordinates imageStart = { static_cast<uint16_t>(center.x - outerRadius), static_cast<uint16_t>(center.y - outerRadius) };
     lcd_.displayImage( imageStart, image_, color );
 }
 
-void Draw::putLine( const Coordinates& point1, const Coordinates& point2 )
+void Draw::putLine( const Coordinates& point1, const Coordinates& point2, const bool inverted )
 {
     // https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
     const int16_t dx = std::abs( point1.x - point2.x );
@@ -67,7 +69,15 @@ void Draw::putLine( const Coordinates& point1, const Coordinates& point2 )
     Coordinates pnt = point1;
     while (true)
     {
-        putPixel( pnt );
+        if (inverted)
+        {
+            clearPixel( pnt );
+        }
+        else
+        {
+            putPixel( pnt );
+        }
+
         if (pnt == point2)
         {
             break;
@@ -82,6 +92,44 @@ void Draw::putLine( const Coordinates& point1, const Coordinates& point2 )
         {
             err += dx;
             pnt.y += sy;
+        }
+    }
+}
+
+void Draw::putCircle( const Coordinates& center, const uint16_t radius, const CircleType type, const bool inverted )
+{
+    uint16_t opposite = 0;
+    uint16_t adjacent = radius;
+    int16_t err = 0;
+
+    while (opposite <= adjacent)
+    {
+        if ((CircleType::LEFT_HALF == type) || (CircleType::FULL == type))
+        {
+            putLine( {static_cast<uint16_t>(center.x - adjacent), static_cast<uint16_t>(center.y + opposite)},
+                {static_cast<uint16_t>(center.x - adjacent), static_cast<uint16_t>(center.y - opposite)}, inverted );
+            putLine( {static_cast<uint16_t>(center.x - opposite), static_cast<uint16_t>(center.y + adjacent)},
+                {static_cast<uint16_t>(center.x - opposite),static_cast<uint16_t>(center.y - adjacent)}, inverted );
+        }
+        
+        if ((CircleType::RIGHT_HALF == type) || (CircleType::FULL == type))
+        {
+            putLine( {static_cast<uint16_t>(center.x + adjacent), static_cast<uint16_t>(center.y + opposite)},
+                {static_cast<uint16_t>(center.x + adjacent), static_cast<uint16_t>(center.y - opposite)}, inverted );
+            putLine( {static_cast<uint16_t>(center.x + opposite), static_cast<uint16_t>(center.y + adjacent)},
+                {static_cast<uint16_t>(center.x + opposite),static_cast<uint16_t>(center.y - adjacent)}, inverted );
+        }
+    
+        if (err <= 0)
+        {
+            opposite++;
+            err += 2 * opposite + 1;
+        }
+    
+        if (err > 0)
+        {
+            adjacent--;
+            err -= 2 * adjacent + 1;
         }
     }
 }
@@ -148,14 +196,15 @@ void Draw::putPie( const Coordinates& center, const uint16_t radius, uint16_t st
             oppositeLimitHigh = std::sin( (endAngle % 45) * M_PI / 180.0 ) * radius;
         }
 
-        int err = 0;
+        int16_t err = 0;
 
         while ((opposite <= adjacent) && (opposite <= oppositeLimitHigh))
         {
             if (opposite >= oppositeLimitLow)
             {
-                putPixel( getCoordinates( opposite, adjacent ) );
-                // putLine( center, getCoordinates( opposite, adjacent ) );
+                putLine( center, getCoordinates( opposite, adjacent ) );
+                putLine( getCoordinates( 0, 1 ), getCoordinates( opposite - 1, adjacent ) );
+                putLine( getCoordinates( 1, 0 ), getCoordinates( opposite, adjacent - 1 ) );
             }
         
             if (err <= 0)
@@ -181,6 +230,17 @@ void Draw::putPixel( const Coordinates& coords )
         const uint16_t bytesPerColumn = (image_.getHeight() + 7) / 8;
         const uint16_t byteIndex = coords.x * bytesPerColumn + coords.y / 8;
         imageData_.at(byteIndex) |= 1U << (coords.y % 8U);
+    }
+}
+
+void Draw::clearPixel( const Coordinates& coords )
+{
+    const Coordinates imageLimits = {image_.getWidth(), image_.getHeight()};
+    if (coords < imageLimits)
+    {
+        const uint16_t bytesPerColumn = (image_.getHeight() + 7) / 8;
+        const uint16_t byteIndex = coords.x * bytesPerColumn + coords.y / 8;
+        imageData_.at(byteIndex) &= ~(1U << (coords.y % 8U));
     }
 }
 

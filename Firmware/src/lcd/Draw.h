@@ -21,9 +21,18 @@ public:
         uint16_t startAngle, uint16_t endAngle, const Pixel& color ) override;
 
 private:
-    void putLine( const Coordinates& point1, const Coordinates& point2 );
+    enum class CircleType : uint8_t
+    {
+        FULL = 0,
+        LEFT_HALF,
+        RIGHT_HALF
+    };
+
+    void putLine( const Coordinates& point1, const Coordinates& point2, bool inverted = false );
+    void putCircle( const Coordinates& center, uint16_t radius, CircleType type = CircleType::FULL, bool inverted = false );
     void putPie( const Coordinates& center, uint16_t radius, uint16_t startAngle, uint16_t endAngle );
     void putPixel( const Coordinates& coords );
+    void clearPixel( const Coordinates& coords );
 
     LcdInterface& lcd_;
 

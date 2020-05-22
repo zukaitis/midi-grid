@@ -150,17 +150,31 @@ void LcdGui::refreshTimingArea()
 
 void LcdGui::refreshRotaryControlArea()
 {
-    static const uint16_t minAngle = 60;
-    static const uint16_t maxAngle = 300;
-    static const lcd::Pixel arcColor = lcd::color::ORANGE;
-    static const uint16_t arcInnerRadius = 30;
-    static const uint16_t arcOuterRadius = 30;
+    static const uint16_t minAngle = 45;
+    static const uint16_t maxAngle = 315;
+    static const lcd::Pixel color = {114, 206, 243};
+    static const uint16_t innerRadius = 16;
+    static const uint16_t outerRadius = 33;
+    static const uint16_t centerY = 290;
+    static const uint16_t textY = 290;
+    lcd::Format textFormat;
+    textFormat.font( lcd::font::rubik_24p ).textColor( color );
+    
+    uint16_t angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 0 ) ) / midi::kMaximumControlValue;
+    lcd_.draw().arc( {leftX + outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    etl::string<4> stringControl0 = " ";
+    etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), stringControl0, true );
+    lcd_.print( stringControl0, {leftX + 2 * outerRadius, textY}, textFormat );
 
-    const uint16_t angle = minAngle + ((maxAngle - minAngle) / midi::kMaximumControlValue) * launchpad_.rotaryControlValue_.at( 0 );
-    // lcd_.draw().arc( {33, 280}, arcInnerRadius, arcOuterRadius, minAngle, angle, arcColor );
+    angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 1 ) ) / midi::kMaximumControlValue;
+    lcd_.draw().arc( {rightX - outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    etl::string<4> stringControl1;
+    etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), stringControl1 );
+    stringControl1 += " ";
+    lcd_.print( stringControl1, {rightX - 2 * outerRadius, textY}, textFormat.justification( lcd::Justification::RIGHT ) );
 
-    lcd_.draw().arc( {190, 270}, 40, 40, (freertos::Ticks::GetTicks() / 100) % 360, 360, lcd::color::YELLOW );
-    lcd_.draw().arc( {50, 270}, 40, 40, 0, (freertos::Ticks::GetTicks() / 100) % 360, lcd::color::YELLOW );
+    lcd_.clearArea( {static_cast<uint16_t>(leftX + 2 * outerRadius + textFormat.font().getStringWidth( stringControl0 ))},
+        {static_cast<uint16_t>(rightX - 2 * outerRadius - textFormat.font().getStringWidth( stringControl1 )), bottomY} );
 }
 
 void LcdGui::refreshMainArea()
