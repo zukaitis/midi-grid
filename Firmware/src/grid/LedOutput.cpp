@@ -43,15 +43,15 @@ void LedOutput::set( const Coordinates& coordinates, const Color& color )
 
     if (coordinates.x < kNumberOfDiffusedColumns)
     {
-        gridDriver_.setRedOutput( hardwareCoordinates, kBrightnessDiffused[color.red()] );
-        gridDriver_.setGreenOutput( hardwareCoordinates, kBrightnessDiffused[color.green()] );
-        gridDriver_.setBlueOutput( hardwareCoordinates, kBrightnessDiffused[color.blue()] );
+        gridDriver_.setRedOutput( hardwareCoordinates, kBrightnessDiffused.at(color.red()>>2U) );
+        gridDriver_.setGreenOutput( hardwareCoordinates, kBrightnessDiffused.at(color.green()>>2U) );
+        gridDriver_.setBlueOutput( hardwareCoordinates, kBrightnessDiffused.at(color.blue()>>2U) );
     }
     else
     {
-        gridDriver_.setRedOutput( hardwareCoordinates, kBrightnessDirect[color.red()] );
-        gridDriver_.setGreenOutput( hardwareCoordinates, kBrightnessDirect[color.green()] );
-        gridDriver_.setBlueOutput( hardwareCoordinates, kBrightnessDirect[color.blue()] );
+        gridDriver_.setRedOutput( hardwareCoordinates, kBrightnessDirect.at(color.red()>>2U) );
+        gridDriver_.setGreenOutput( hardwareCoordinates, kBrightnessDirect.at(color.green()>>2U) );
+        gridDriver_.setBlueOutput( hardwareCoordinates, kBrightnessDirect.at(color.blue()>>2U) );
     }
 }
 

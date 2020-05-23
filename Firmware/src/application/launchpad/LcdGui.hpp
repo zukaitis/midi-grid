@@ -35,6 +35,7 @@ public:
     static const int16_t refreshPeriodMs = 250;
 private:
     void refreshStatusBar();
+    void refreshMode();
     void refreshTimingArea();
     void refreshRotaryControlArea();
 

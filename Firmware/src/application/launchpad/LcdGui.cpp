@@ -28,13 +28,13 @@ static const lcd::ImageLegacy nudgeDownActive = { &nudgeDownActiveArray[0], 10, 
 static const lcd::ImageLegacy nudgeUpInactive = { &nudgeUpInactiveArray[0], 10, 8};
 static const lcd::ImageLegacy nudgeUpActive = { &nudgeUpActiveArray[0], 10, 8};
 
-static const etl::array<etl::string<16>, 8> launchpad95ModeString = {
+static const etl::array<etl::string<20>, 8> launchpad95ModeString = {
     "Session",
     "Instrument",
     "Device control",
     "User 1",
-    "Drum step seq.",
-    "Melodic seq.",
+    "Drum step sequencer",
+    "Melodic sequencer",
     "User 2",
     "Mixer"
 };
@@ -87,7 +87,9 @@ void LcdGui::initialize()
 void LcdGui::refresh()
 {
     refreshTimedItemsStatus();
+
     refreshStatusBar();
+    refreshMode();
     refreshTimingArea();
     refreshRotaryControlArea();
 }
@@ -102,6 +104,11 @@ void LcdGui::refreshStatusBar()
         ((usbMidiInputActivityIcon_.enabled || usbMidiOutputActivityIcon_.enabled) ? midiActive : inactive) );
     lcd_.displayImage( {217, topY}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
     lcd_.displayImage( {226, topY}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
+}
+
+void LcdGui::refreshMode()
+{
+    
 }
 
 void LcdGui::refreshTimingArea()
