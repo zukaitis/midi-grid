@@ -19,13 +19,13 @@ Format& Format::font( const Font& font )
     return *this;
 }
 
-Format& Format::textColor( const Pixel& color )
+Format& Format::textColor( const Color& color )
 {
     textColor_ = color;
     return *this;
 }
 
-Format& Format::backgroundColor( const Pixel& color )
+Format& Format::backgroundColor( const Color& color )
 {
     backgroundColor_ = color;
     backgroundColorSet_ = true;
@@ -43,12 +43,12 @@ const Font& Format::font() const
     return *font_;
 }
 
-const Pixel& Format::textColor() const
+const Color& Format::textColor() const
 {
     return textColor_;
 }
 
-const Pixel& Format::backgroundColor() const
+const Color& Format::backgroundColor() const
 {
     return backgroundColor_;
 }

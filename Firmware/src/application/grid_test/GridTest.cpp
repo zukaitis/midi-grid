@@ -127,9 +127,9 @@ Color GridTest::getRandomColor()
 
 void GridTest::displayWaitingForMidi()
 {
-    lcd_.setBackgroundColor( lcd::color::BLACK );
+    lcd_.setBackgroundColor( color::BLACK );
     lcd_.clear();
-    lcd_.displayImage( {0, 100}, lcd::image::usb_240x107, lcd::color::WHITE );
+    lcd_.displayImage( {0, 100}, lcd::image::usb_240x107, color::WHITE );
     lcd_.print( "Awaiting MIDI", 40, lcd::Justification::CENTER );
 }
 

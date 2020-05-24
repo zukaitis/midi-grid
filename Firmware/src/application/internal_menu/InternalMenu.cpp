@@ -91,7 +91,7 @@ void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent& event )
 
 void InternalMenu::updateLcd() const
 {
-    lcd_.setBackgroundColor( lcd::color::RED );
+    lcd_.setBackgroundColor( color::RED );
     lcd_.clear();
     lcd_.print( "Internal Menu", 16, lcd::Justification::CENTER );
     lcd_.print( "Active", 24, lcd::Justification::CENTER );

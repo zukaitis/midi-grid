@@ -20,8 +20,8 @@ public:
 
     void initialize() override;
 
-    void fill( const Pixel& color ) override;
-    void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color ) override;
+    void fill( const Color& color ) override;
+    void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color ) override;
 
     void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) override;
     void putImage( const Coordinates& coords, const Image& image, const ImageColors& colors ) override;
@@ -37,7 +37,7 @@ private:
     static constexpr uint16_t height_ = 320U;
     static constexpr uint16_t numberOfTextLines_ = height_ / 8;
 
-    using PixelBuffer = etl::vector<Pixel, width_*2>;
+    using PixelBuffer = etl::vector<Color, width_*2>;
     using DataBuffer = etl::vector<uint8_t, 16>;
 
     void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );

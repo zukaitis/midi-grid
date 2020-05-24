@@ -15,7 +15,7 @@ PriorityManager::~PriorityManager() = default;
 
 Priority PriorityManager::currentPriorityFilter_ = Priority::LOW;
 
-void PriorityManager::setBackgroundColor( const Pixel& color )
+void PriorityManager::setBackgroundColor( const Color& color )
 {
     if (checkPriority())
     {
@@ -39,7 +39,7 @@ void PriorityManager::clearArea( const Coordinates& corner1, const Coordinates& 
     }
 }
 
-void PriorityManager::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+void PriorityManager::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color )
 {
     if (checkPriority())
     {
@@ -55,7 +55,7 @@ void PriorityManager::displayImage( uint8_t x, uint8_t y, const ImageLegacy& ima
     }
 }
 
-void PriorityManager::displayImage( const Coordinates& coords, const Image& image, const Pixel& color )
+void PriorityManager::displayImage( const Coordinates& coords, const Image& image, const Color& color )
 {
     if (checkPriority())
     {

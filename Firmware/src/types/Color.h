@@ -42,4 +42,5 @@ namespace color
     const Color OCEAN( 0, 127, 255 );
     const Color VIOLET( 127, 0, 255 );
     const Color RASPBERRY( 255, 0, 127 );
+    const Color BLACK( 0, 0, 0 );
 }  // namespace color

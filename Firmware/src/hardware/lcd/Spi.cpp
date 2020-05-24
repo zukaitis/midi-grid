@@ -57,7 +57,7 @@ void Spi::writeData( const ::lcd::PixelView& data) const
 {
     waitWhileSpiIsBusy();
     HAL_GPIO_WritePin( mcu::LCD_GPIO_Port, mcu::DC_Pin, GPIO_PIN_SET );  //data mode
-    HAL_SPI_Transmit_DMA( &lcdSpi, const_cast<uint8_t*>(&data.front().front()), data.size() * data.at(0).size() );
+    HAL_SPI_Transmit_DMA( &lcdSpi, reinterpret_cast<uint8_t*>(const_cast<Color*>(&data.front())), data.size() * sizeof( Color ) );
 }
 
 void Spi::initializeDma() const

@@ -17,7 +17,7 @@ Draw::Draw( LcdInterface* lcd ):
 
 Draw::~Draw() = default;
 
-void Draw::line( const Coordinates& point1, const Coordinates& point2, const Pixel& color )
+void Draw::line( const Coordinates& point1, const Coordinates& point2, const Color& color )
 {
     const uint16_t width = std::abs( point1.x - point2.x ) + 1;
     const uint16_t height = std::abs( point1.y - point2.y ) + 1;
@@ -34,7 +34,7 @@ void Draw::line( const Coordinates& point1, const Coordinates& point2, const Pix
 }
 
 void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uint16_t outerRadius,
-    const uint16_t startAngle, const uint16_t endAngle, const Pixel& color )
+    const uint16_t startAngle, const uint16_t endAngle, const Color& color )
 {
     const uint16_t edgeLength = outerRadius * 2 + 1;
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
@@ -57,7 +57,7 @@ void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uin
     lcd_.displayImage( imageStart, image_, color );
 }
 
-void Draw::circle( const Coordinates& center, const uint16_t radius, const Pixel& color )
+void Draw::circle( const Coordinates& center, const uint16_t radius, const Color& color )
 {
     const uint16_t edgeLength = radius * 2 + 1;
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
@@ -71,7 +71,7 @@ void Draw::circle( const Coordinates& center, const uint16_t radius, const Pixel
     lcd_.displayImage( imageStart, image_, color );
 }
 
-void Draw::halfCircleLeft( const Coordinates& center, const uint16_t radius, const Pixel& color )
+void Draw::halfCircleLeft( const Coordinates& center, const uint16_t radius, const Color& color )
 {
     const uint16_t width = radius + 1;
     const uint16_t height = radius * 2 + 1;
@@ -86,7 +86,7 @@ void Draw::halfCircleLeft( const Coordinates& center, const uint16_t radius, con
     lcd_.displayImage( imageStart, image_, color );
 }
 
-void Draw::halfCircleRight( const Coordinates& center, const uint16_t radius, const Pixel& color )
+void Draw::halfCircleRight( const Coordinates& center, const uint16_t radius, const Color& color )
 {
     const uint16_t width = radius + 1;
     const uint16_t height = radius * 2 + 1;

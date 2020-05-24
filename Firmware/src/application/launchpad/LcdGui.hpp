@@ -47,8 +47,6 @@ private:
     void displayTrackName();
     void displayMode();
     void displaySubmode();
-    void displayStatus();
-    void displayTimingStatus();
 
     Launchpad& launchpad_;
     lcd::LcdInterface& lcd_;

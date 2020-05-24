@@ -33,7 +33,7 @@ static const etl::array<etl::string<20>, 8> launchpad95ModeString = {
     "Instrument",
     "Device control",
     "User 1",
-    "Drum step sequencer",
+    "Drum sequencer",
     "Melodic sequencer",
     "User 2",
     "Mixer"
@@ -54,11 +54,11 @@ static const etl::array<etl::string<16>, 9> launchpad95SubmodeString = {
 static const uint32_t kMidiActivityTimeoutMs = 1000;
 static const uint32_t kRotaryControlTimeoutMs = 1000;
 
-static const lcd::Pixel background = {110, 110, 110};
-static const lcd::Pixel playActive = {10, 255, 128};
-static const lcd::Pixel recordingActive = {255, 54, 64};
-static const lcd::Pixel midiActive = {255, 181, 50};
-static const lcd::Pixel inactive = lcd::color::BLACK;
+static const Color background = {110, 110, 110};
+static const Color playActive = {10, 255, 128};
+static const Color recordingActive = {255, 54, 64};
+static const Color midiActive = {255, 181, 50};
+static const Color inactive = color::BLACK;
 
 static const lcd::Font& smallFont = lcd::font::rubik_24p;
 static const lcd::Font& bigFont = lcd::font::monoton_80p;
@@ -113,7 +113,7 @@ void LcdGui::refreshMode()
     if ((Launchpad95Submode_DEFAULT != launchpad_.submode_) || (Launchpad95Mode_UNKNOWN != launchpad_.mode_))
     {
         etl::string<20> text = "";
-        lcd::Pixel color = lcd::color::TURQUOISE;
+        Color color = color::TURQUOISE;
         if (Launchpad95Submode_DEFAULT == launchpad_.submode_)
         {
             text = launchpad95ModeString.at( launchpad_.mode_ );
@@ -124,7 +124,7 @@ void LcdGui::refreshMode()
         }
         
         lcd::Format textFormat;
-        textFormat.font( lcd::font::rubik_24p ).textColor( lcd::color::WHITE ).backgroundColor( color );
+        textFormat.font( lcd::font::rubik_24p ).textColor( color::WHITE ).backgroundColor( color );
         const uint16_t textWidth = textFormat.font().getStringWidth( text );
         const uint16_t textHeight = textFormat.font().getHeight();
         const Coordinates textStart = {static_cast<uint16_t>(centerX - textWidth / 2), 32};
@@ -147,7 +147,7 @@ void LcdGui::refreshTimingArea()
 {
     static const uint16_t timingTopY = 64;
     static const uint16_t timingBottomY = 143;
-    static const lcd::Pixel timingColor = lcd::color::YELLOW;
+    static const Color timingColor = color::YELLOW;
     static const auto numberFormat = lcd::Format().font( bigFont ).textColor( timingColor );
     static const auto textFormat = lcd::Format().textColor( timingColor ).font( smallFont );
 
@@ -191,7 +191,7 @@ void LcdGui::refreshRotaryControlArea()
 {
     static const uint16_t minAngle = 45;
     static const uint16_t maxAngle = 315;
-    static const lcd::Pixel color = {114, 206, 243};
+    static const Color color = {114, 206, 243};
     static const uint16_t innerRadius = 16;
     static const uint16_t outerRadius = 33;
     static const uint16_t centerY = 290;
@@ -267,7 +267,7 @@ void LcdGui::displayLaunchpad95Info()
 
     // only display other info when rotary control display timer runs out
         lcd_.clearArea( {0, 16}, {83, 31} );
-        displayStatus();
+        //displayStatus();
 
         lcd_.clearArea( {0, 32}, {83, 47} );
         switch (launchpad_.mode_)
@@ -287,7 +287,7 @@ void LcdGui::displayLaunchpad95Info()
             case Launchpad95Mode_USER1:
             case Launchpad95Mode_USER2:
             default:
-                displayTimingStatus();
+                //displayTimingStatus();
                 break;
         }
 }
@@ -320,64 +320,6 @@ void LcdGui::displaySubmode()
 {
     lcd_.clearArea( {0, 8}, {83, 15} );
     lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
-}
-
-void LcdGui::displayStatus()
-{
-    uint8_t numberOfDisplayedSymbols = (launchpad_.isPlaying_) ? 1 : 0;
-    numberOfDisplayedSymbols += (launchpad_.isRecording_) ? 1 : 0;
-    numberOfDisplayedSymbols += (launchpad_.isSessionRecording_) ? 1 : 0;
-
-    switch (numberOfDisplayedSymbols)
-    {
-        case 1:
-            lcd_.displayImage( 32, 16, play );
-            break;
-        case 2:
-            lcd_.displayImage( 23, 16, play );
-            lcd_.displayImage( 43, 16, (launchpad_.isRecording_ ? recordingOn : sessionRecordingOn) );
-            break;
-        case 3:
-            lcd_.displayImage( 12, 16, play );
-            lcd_.displayImage( 32, 16, recordingOn );
-            lcd_.displayImage( 52, 16, sessionRecordingOn );
-            break;
-        default:
-            break;
-    }
-}
-
-void LcdGui::displayTimingStatus()
-{
-    if (0 != launchpad_.tempo_) // tempo of 0 means there's no info, so no need to display it
-    {
-        lcd_.displayImage( 0, 40, (launchpad_.nudgeDownActive_ ? nudgeDownActive : nudgeDownInactive) );
-        lcd_.displayImage( 10, 40, (launchpad_.nudgeUpActive_ ? nudgeUpActive : nudgeUpInactive) );
-
-        // lcd_.printNumberInBigDigits( launchpad_.tempo_, 65, 32, lcd::Justification::RIGHT );
-        lcd_.print( "bpm", 66, 32 );
-
-        etl::string<6> signatureString;
-        etl::to_string( launchpad_.signatureNumerator_, signatureString );
-        signatureString += "/";
-        etl::to_string( launchpad_.signatureDenominator_, signatureString, true );
-        lcd_.print( &signatureString[0], 0, 32 );
-    }
-}
-
-void LcdGui::displayRotaryControlValues()
-{
-    const uint8_t numberOfProgressArcPositions = 51;
-    etl::string<4> str;
-    lcd_.clearArea( {0, 16}, {83, 47} );
-
-    lcd_.displayProgressArc( 0, 20, (launchpad_.rotaryControlValue_.at( 0 ) * (numberOfProgressArcPositions - 1)) / 127 );
-    etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), str );
-    lcd_.print( &str[0], 18, 32, lcd::Justification::CENTER );
-
-    lcd_.displayProgressArc( 45, 20, (launchpad_.rotaryControlValue_.at( 1 ) * (numberOfProgressArcPositions - 1)) / 127 );
-    etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), str );
-    lcd_.print( &str[0], 63, 32, lcd::Justification::CENTER );
 }
 
 }  // namespace launchpad

@@ -17,8 +17,6 @@
 namespace lcd
 {
 
-static const uint8_t asciiOffset = 0x20; // TODO(unknown): delet
-
 enum class Command : uint8_t
 {
     NOP = 0x00,
@@ -195,12 +193,12 @@ void Ili9341::initialize()
     spi_.writeData( hardware::lcd::RawDataView(buffer) );
 }
 
-void Ili9341::fill( const Pixel& color )
+void Ili9341::fill( const Color& color )
 {
     fillArea( {0, 0}, {width_-1, height_-1}, color );
 }
 
-void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color )
 {
     const Coordinates topLeft = {std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y)};
     const Coordinates bottomRight = {std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y)};

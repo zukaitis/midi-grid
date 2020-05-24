@@ -23,7 +23,7 @@ Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
 
 Lcd::~Lcd() = default;
 
-void Lcd::setBackgroundColor( const Pixel& color )
+void Lcd::setBackgroundColor( const Color& color )
 {
     backgroundColor_ = color;
 }
@@ -38,7 +38,7 @@ void Lcd::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
     driver_.fillArea( corner1, corner2, backgroundColor_ );
 }
 
-void Lcd::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Pixel& color )
+void Lcd::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color )
 {
     driver_.fillArea( corner1, corner2, color );
 }
@@ -48,7 +48,7 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& ima
     driver_.displayImage( x, y, image );
 }
 
-void Lcd::displayImage( const Coordinates& coords, const Image& image, const Pixel& color )
+void Lcd::displayImage( const Coordinates& coords, const Image& image, const Color& color )
 {
     driver_.putImage( coords, image, {color, backgroundColor_} );
 }
