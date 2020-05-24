@@ -108,7 +108,39 @@ void LcdGui::refreshStatusBar()
 
 void LcdGui::refreshMode()
 {
-    
+    static const uint16_t radius = 12;
+
+    if ((Launchpad95Submode_DEFAULT != launchpad_.submode_) || (Launchpad95Mode_UNKNOWN != launchpad_.mode_))
+    {
+        etl::string<20> text = "";
+        lcd::Pixel color = lcd::color::TURQUOISE;
+        if (Launchpad95Submode_DEFAULT == launchpad_.submode_)
+        {
+            text = launchpad95ModeString.at( launchpad_.mode_ );
+        }
+        else
+        {
+            text = launchpad95SubmodeString.at( launchpad_.submode_ );
+        }
+        
+        lcd::Format textFormat;
+        textFormat.font( lcd::font::rubik_24p ).textColor( lcd::color::WHITE ).backgroundColor( color );
+        const uint16_t textWidth = textFormat.font().getStringWidth( text );
+        const uint16_t textHeight = textFormat.font().getHeight();
+        const Coordinates textStart = {static_cast<uint16_t>(centerX - textWidth / 2), 32};
+
+        lcd_.print( text, textStart, textFormat );
+        lcd_.draw().halfCircleLeft( {static_cast<uint16_t>(textStart.x - 1),
+            static_cast<uint16_t>(textStart.y + radius)}, radius, color );
+        lcd_.draw().halfCircleRight( {static_cast<uint16_t>(textStart.x + textWidth),
+            static_cast<uint16_t>(textStart.y + radius)}, radius, color );
+        lcd_.fillArea({textStart.x, static_cast<uint16_t>(textStart.y + textHeight)},
+            {static_cast<uint16_t>(textStart.x + textWidth), static_cast<uint16_t>(textStart.y + textHeight)}, color );
+        lcd_.clearArea( {0, textStart.y}, {static_cast<uint16_t>(textStart.x - radius - 1),
+            static_cast<uint16_t>(textStart.y + textHeight + 1)} );
+        lcd_.clearArea( {239, textStart.y}, {static_cast<uint16_t>(textStart.x + textWidth + radius + 1),
+            static_cast<uint16_t>(textStart.y + textHeight + 1)} );
+    }
 }
 
 void LcdGui::refreshTimingArea()

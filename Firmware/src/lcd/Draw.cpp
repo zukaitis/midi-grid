@@ -36,24 +36,68 @@ void Draw::line( const Coordinates& point1, const Coordinates& point2, const Pix
 void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uint16_t outerRadius,
     const uint16_t startAngle, const uint16_t endAngle, const Pixel& color )
 {
-    const uint16_t edgeLength = outerRadius * 2 - 1;
+    const uint16_t edgeLength = outerRadius * 2 + 1;
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
     imageData_.assign( edgeLength * bytesPerColumn, 0U );
     image_ = Image( Image::DataView(imageData_), edgeLength, edgeLength );
-    const Coordinates imageCenter = {static_cast<uint16_t>(outerRadius - 1), static_cast<uint16_t>(outerRadius - 1)};
+    const Coordinates imageCenter = {outerRadius, outerRadius};
 
     uint16_t sectionStart = startAngle;
     while (sectionStart < endAngle)
     {
         const uint16_t ceiling = ((sectionStart / 45) + 1) * 45;
         const uint16_t sectionEnd = std::min( ceiling, endAngle );
-        putPie( imageCenter, outerRadius - 1, sectionStart, sectionEnd );
+        putPie( imageCenter, outerRadius, sectionStart, sectionEnd );
         sectionStart = ceiling;
     }
 
     putCircle( imageCenter, innerRadius, CircleType::FULL, true );
 
     const Coordinates imageStart = { static_cast<uint16_t>(center.x - outerRadius), static_cast<uint16_t>(center.y - outerRadius) };
+    lcd_.displayImage( imageStart, image_, color );
+}
+
+void Draw::circle( const Coordinates& center, const uint16_t radius, const Pixel& color )
+{
+    const uint16_t edgeLength = radius * 2 + 1;
+    const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
+    imageData_.assign( edgeLength * bytesPerColumn, 0U );
+    image_ = Image( Image::DataView(imageData_), edgeLength, edgeLength );
+    const Coordinates imageCenter = {radius, radius};
+
+    putCircle( imageCenter, radius );
+
+    const Coordinates imageStart = { static_cast<uint16_t>(center.x - radius), static_cast<uint16_t>(center.y - radius) };
+    lcd_.displayImage( imageStart, image_, color );
+}
+
+void Draw::halfCircleLeft( const Coordinates& center, const uint16_t radius, const Pixel& color )
+{
+    const uint16_t width = radius + 1;
+    const uint16_t height = radius * 2 + 1;
+    const uint16_t bytesPerColumn = (height + 7) / 8;
+    imageData_.assign( width * bytesPerColumn, 0U );
+    image_ = Image( Image::DataView(imageData_), width, height );
+    const Coordinates imageCenter = {radius, radius};
+
+    putCircle( imageCenter, radius, CircleType::LEFT_HALF );
+
+    const Coordinates imageStart = { static_cast<uint16_t>(center.x - radius), static_cast<uint16_t>(center.y - radius) };
+    lcd_.displayImage( imageStart, image_, color );
+}
+
+void Draw::halfCircleRight( const Coordinates& center, const uint16_t radius, const Pixel& color )
+{
+    const uint16_t width = radius + 1;
+    const uint16_t height = radius * 2 + 1;
+    const uint16_t bytesPerColumn = (height + 7) / 8;
+    imageData_.assign( width * bytesPerColumn, 0U );
+    image_ = Image( Image::DataView(imageData_), width, height );
+    const Coordinates imageCenter = {0, radius};
+
+    putCircle( imageCenter, radius, CircleType::RIGHT_HALF );
+
+    const Coordinates imageStart = { center.x, static_cast<uint16_t>(center.y - radius) };
     lcd_.displayImage( imageStart, image_, color );
 }
 
@@ -203,8 +247,12 @@ void Draw::putPie( const Coordinates& center, const uint16_t radius, uint16_t st
             if (opposite >= oppositeLimitLow)
             {
                 putLine( center, getCoordinates( opposite, adjacent ) );
-                putLine( getCoordinates( 0, 1 ), getCoordinates( opposite - 1, adjacent ) );
-                putLine( getCoordinates( 1, 0 ), getCoordinates( opposite, adjacent - 1 ) );
+                if ((opposite > 10) && (opposite < oppositeLimitHigh))
+                {
+                    // only draw additional lines, when they are necessary to ensure that no pixels stay unset
+                    putLine( getCoordinates( 0, 1 ), getCoordinates( opposite - 1, adjacent ) );
+                    putLine( getCoordinates( 1, 0 ), getCoordinates( opposite, adjacent - 1 ) );
+                }
             }
         
             if (err <= 0)

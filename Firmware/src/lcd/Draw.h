@@ -19,6 +19,9 @@ public:
     void line( const Coordinates& point1, const Coordinates& point2, const Pixel& color ) override;
     void arc( const Coordinates& center, uint16_t innerRadius, uint16_t outerRadius,
         uint16_t startAngle, uint16_t endAngle, const Pixel& color ) override;
+    void circle( const Coordinates& center, uint16_t radius, const Pixel& color ) override;
+    void halfCircleLeft( const Coordinates& center, uint16_t radius, const Pixel& color ) override;
+    void halfCircleRight( const Coordinates& center, uint16_t radius, const Pixel& color ) override;
 
 private:
     enum class CircleType : uint8_t
