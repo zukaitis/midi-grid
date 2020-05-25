@@ -1,6 +1,7 @@
 
 #include "application/launchpad/LcdGui.hpp"
 #include "application/launchpad/Launchpad.hpp"
+#include "application/launchpad/Assets.h"
 #include "application/launchpad/Images.hpp"
 
 #include "lcd/Format.h"
@@ -27,29 +28,6 @@ static const lcd::ImageLegacy nudgeDownInactive = { &nudgeDownInactiveArray[0], 
 static const lcd::ImageLegacy nudgeDownActive = { &nudgeDownActiveArray[0], 10, 8};
 static const lcd::ImageLegacy nudgeUpInactive = { &nudgeUpInactiveArray[0], 10, 8};
 static const lcd::ImageLegacy nudgeUpActive = { &nudgeUpActiveArray[0], 10, 8};
-
-static const etl::array<etl::string<20>, 8> launchpad95ModeString = {
-    "Session",
-    "Instrument",
-    "Device control",
-    "User 1",
-    "Drum sequencer",
-    "Melodic sequencer",
-    "User 2",
-    "Mixer"
-};
-
-static const etl::array<etl::string<16>, 9> launchpad95SubmodeString = {
-    " ",
-    "Scale",
-    "Volume",
-    "Pan",
-    "Send A",
-    "Send B",
-    "MSS: Length",
-    "MSS: Octave",
-    "MSS: Velocity"
-};
 
 static const uint32_t kMidiActivityTimeoutMs = 1000;
 static const uint32_t kRotaryControlTimeoutMs = 1000;
@@ -110,17 +88,19 @@ void LcdGui::refreshMode()
 {
     static const uint16_t radius = 12;
 
-    if ((Launchpad95Submode_DEFAULT != launchpad_.submode_) || (Launchpad95Mode_UNKNOWN != launchpad_.mode_))
+    if ((Submode::DEFAULT != launchpad_.submode_) || (Mode::UNKNOWN != launchpad_.mode_))
     {
         etl::string<20> text = "";
-        Color color = color::TURQUOISE;
-        if (Launchpad95Submode_DEFAULT == launchpad_.submode_)
+        Color color = background;
+        if (Submode::DEFAULT == launchpad_.submode_)
         {
-            text = launchpad95ModeString.at( launchpad_.mode_ );
+            text = modeAttributes.at( launchpad_.mode_ ).displayString;
+            color = modeAttributes.at( launchpad_.mode_ ).color;
         }
         else
         {
-            text = launchpad95SubmodeString.at( launchpad_.submode_ );
+            text = submodeAttributes.at( launchpad_.submode_ ).displayString;
+            color = submodeAttributes.at( launchpad_.submode_ ).color;
         }
         
         lcd::Format textFormat;
@@ -256,7 +236,7 @@ void LcdGui::registerMidiOutputActivity()
 
 void LcdGui::displayLaunchpad95Info()
 {
-    if (Launchpad95Submode_DEFAULT == launchpad_.submode_)
+    if (Submode::DEFAULT == launchpad_.submode_)
     {
         displayMode();
     }
@@ -272,20 +252,20 @@ void LcdGui::displayLaunchpad95Info()
         lcd_.clearArea( {0, 32}, {83, 47} );
         switch (launchpad_.mode_)
         {
-            case Launchpad95Mode_INSTRUMENT:
-            case Launchpad95Mode_DRUM_STEP_SEQUENCER:
-            case Launchpad95Mode_MELODIC_SEQUENCER:
+            case Mode::INSTRUMENT:
+            case Mode::DRUM_STEP_SEQUENCER:
+            case Mode::MELODIC_SEQUENCER:
                 displayTrackName();
                 displayClipName();
                 break;
-            case Launchpad95Mode_DEVICE_CONTROLLER:
+            case Mode::DEVICE_CONTROLLER:
                 displayTrackName();
                 displayDeviceName();
                 break;
-            case Launchpad95Mode_SESSION:
-            case Launchpad95Mode_MIXER:
-            case Launchpad95Mode_USER1:
-            case Launchpad95Mode_USER2:
+            case Mode::SESSION:
+            case Mode::MIXER:
+            case Mode::USER1:
+            case Mode::USER2:
             default:
                 //displayTimingStatus();
                 break;
@@ -310,16 +290,16 @@ void LcdGui::displayTrackName()
 void LcdGui::displayMode()
 {
     lcd_.clearArea( {0, 8}, {83, 15} );
-    if (Launchpad95Mode_UNKNOWN != launchpad_.mode_)
+    if (Mode::UNKNOWN != launchpad_.mode_)
     {
-        lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
+        //lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
     }
 }
 
 void LcdGui::displaySubmode()
 {
     lcd_.clearArea( {0, 8}, {83, 15} );
-    lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
+    //lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
 }
 
 }  // namespace launchpad

@@ -55,30 +55,31 @@ enum Layout : uint8_t
     kMaximumLayoutIndex = Layout_PAN
 };
 
-enum Launchpad95Mode : uint8_t
+enum class Mode : uint8_t
 {
-    Launchpad95Mode_SESSION = 0,
-    Launchpad95Mode_INSTRUMENT,
-    Launchpad95Mode_DEVICE_CONTROLLER,
-    Launchpad95Mode_USER1,
-    Launchpad95Mode_DRUM_STEP_SEQUENCER,
-    Launchpad95Mode_MELODIC_SEQUENCER,
-    Launchpad95Mode_USER2,
-    Launchpad95Mode_MIXER,
-    Launchpad95Mode_UNKNOWN
+    SESSION = 0,
+    INSTRUMENT,
+    DEVICE_CONTROLLER,
+    USER1,
+    DRUM_STEP_SEQUENCER,
+    MELODIC_SEQUENCER,
+    USER2,
+    MIXER,
+    UNKNOWN
 };
 
-enum Launchpad95Submode : uint8_t
+enum Submode : uint8_t
 {
-    Launchpad95Submode_DEFAULT = 0,
-    Launchpad95Submode_SCALE, // Instrument and Drum step sequencer
-    Launchpad95Submode_VOLUME, // Mixer
-    Launchpad95Submode_PAN, // Mixer
-    Launchpad95Submode_SEND_A, // Mixer
-    Launchpad95Submode_SEND_B, // Mixer
-    Launchpad95Submode_LENGTH, // Melodic step sequencer
-    Launchpad95Submode_OCTAVE, // Melodic step sequencer
-    Launchpad95Submode_VELOCITY // Melodic step sequencer
+    DEFAULT = 0,
+    SCALE_INSTRUMENT, // Instrument
+    SCALE, // Drum step sequencer
+    VOLUME, // Mixer
+    PAN, // Mixer
+    SEND_A, // Mixer
+    SEND_B, // Mixer
+    LENGTH, // Melodic step sequencer
+    OCTAVE, // Melodic step sequencer
+    VELOCITY // Melodic step sequencer
 };
 
 using SystemExclussiveMessage = etl::string<64>;
@@ -100,8 +101,8 @@ private:
     void handleMidiPacket( const midi::MidiPacket& packet ) override;
     void handleRotaryControlEvent( const rotary_controls::Event& event ) override;
 
-    Launchpad95Mode determineLaunchpad95Mode();
-    Launchpad95Submode determineLaunchpad95Submode();
+    Mode determineMode();
+    Submode determineSubmode();
 
     void processDawInfoMessage( const etl::string_view& message );
     void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
@@ -118,8 +119,8 @@ private:
     testing::TestingInterface& testing_;
 
     bool applicationEnded_;
-    Launchpad95Mode mode_;
-    Launchpad95Submode submode_;
+    Mode mode_;
+    Submode submode_;
     Layout layout_;
     etl::array<int16_t, 2> rotaryControlValue_;
     bool isPlaying_;

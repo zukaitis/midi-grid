@@ -1,6 +1,7 @@
 #include "grid/Grid.h"
 
 #include "grid/ButtonInputInterface.h"
+#include "grid/GridInterface.h"
 #include "grid/LedOutputInterface.h"
 #include "grid/FlashingLedsInterface.h"
 #include "grid/PulsingLedsInterface.h"
@@ -32,7 +33,12 @@ void Grid::discardPendingInput()
 
 Color Grid::getLedColor( const Coordinates& coordinates ) const
 {
-    return led_.at(coordinates.x).at(coordinates.y).color;
+    Color color(0, 0, 0);
+    if (coordinates < gridLimits)
+    {
+        color = led_.at(coordinates.x).at(coordinates.y).color;
+    }
+    return color;
 }
 
 void Grid::setLed( const Coordinates& coordinates, const Color& color, const LedLightingType lightingType )
