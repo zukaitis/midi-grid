@@ -28,7 +28,7 @@
 |  | 1 |  | Button cap, round, d=12mm, red | 
 | SW21, SW22 | 2 |  | Tactile switch, 6mm x 6mm, h=4.3mm | 
 | SW25, SW26 | 2 | EC12E24204A9 | Rotary encoder, incremental, 24 pulses/revolution | 
-| U1 | 1 | STM32F411RCT6 | Microcontroller, ARM Cortex-M4, LQFP64, Flash: 256KB Ram: 128KB,100MHz Voltage: 1.7..3.6V IO-pins: 50 | 
+| U1 | 1 | STM32F413RHT6 | Microcontroller, ARM Cortex-M4, LQFP64, Flash: 1536KB Ram: 320KB,100MHz Voltage: 1.7..3.6V IO-pins: 50 | 
 | U4, U3, U2 | 3 | SN74HC138PW | Decoder 3 to 8 (active low outputs), TSSOP-16 | http://uk.farnell.com/texas-instruments/sn74hc138pw/ic-decoder-demux-smd/dp/9591095
 | U5 | 1 | USBUF02W6 | 2-line EMI filter and ESD protection with R pull-up, for USB interfaces, SOT-363 | http://uk.farnell.com/stmicroelectronics/usbuf02w6/filter-low-pass-1ghz-sot-323-6/dp/2341659
 | U6 | 1 | VO617A | Optocoupler, SO-4 | https://eu.mouser.com/ProductDetail/Vishay-Semiconductors/VO617A-8X017T?qs=%2fha2pyFaduga7JDI9Y4HlZSPCPCm8mReb3LRegGLigzOqtsvsZdCeQ%3d%3d

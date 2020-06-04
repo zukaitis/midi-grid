@@ -21,7 +21,7 @@ size = llvm-size-9
 dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
-arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
+arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F413xx -mthumb $
     -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fshort-enums $
     --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
 c_flags = --target=arm-none-eabi -O1 -ggdb3 -ffunction-sections $
@@ -40,7 +40,7 @@ inc_flags = -Isubmodules/cmsis_device_f4/Include $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
     -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
-    -specs=nano.specs -specs=nosys.specs -T STM32F411RCTx_FLASH.ld $
+    -specs=nano.specs -specs=nosys.specs -T linker_script.ld $
     -Wl,-Map=output/midi-grid.map
 
 # Rules for different types of inputs and outputs
@@ -95,8 +95,8 @@ rule compdb
 
 # Instructions to build each file
 build $
-    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.o: $
-    as submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.s
+    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f413xx.o: $
+    as submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f413xx.s
 
 build output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.o: cc $
     submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.c
@@ -216,18 +216,19 @@ build output/src/lcd/font/monoton_80p.o: cxx src/lcd/font/monoton_80p.cpp
 build output/src/lcd/font/rubik_16p.o: cxx src/lcd/font/rubik_16p.cpp
 build output/src/lcd/font/rubik_24p.o: cxx src/lcd/font/rubik_24p.cpp
 build output/src/lcd/font/sarpanch_79p.o: cxx src/lcd/font/sarpanch_79p.cpp
-build output/src/lcd/image/circle_23x23.o: cxx src/lcd/image/circle_23x23.cpp
-build output/src/lcd/image/circle_empty_23x23.o: cxx $
-    src/lcd/image/circle_empty_23x23.cpp
-build output/src/lcd/image/down_arrow_9x23.o: cxx $
-    src/lcd/image/down_arrow_9x23.cpp
-build output/src/lcd/image/midi_23x23.o: cxx src/lcd/image/midi_23x23.cpp
-build output/src/lcd/image/triangle_21x23.o: cxx $
-    src/lcd/image/triangle_21x23.cpp
-build output/src/lcd/image/up_arrow_9x23.o: cxx $
-    src/lcd/image/up_arrow_9x23.cpp
-build output/src/lcd/image/usb_41x23.o: cxx src/lcd/image/usb_41x23.cpp
-build output/src/lcd/image/usb_240x107.o: cxx src/lcd/image/usb_240x107.cpp
+build output/src/lcd/images/circle_23x23.o: cxx $
+    src/lcd/images/circle_23x23.cpp
+build output/src/lcd/images/circle_empty_23x23.o: cxx $
+    src/lcd/images/circle_empty_23x23.cpp
+build output/src/lcd/images/down_arrow_9x23.o: cxx $
+    src/lcd/images/down_arrow_9x23.cpp
+build output/src/lcd/images/midi_23x23.o: cxx src/lcd/images/midi_23x23.cpp
+build output/src/lcd/images/triangle_21x23.o: cxx $
+    src/lcd/images/triangle_21x23.cpp
+build output/src/lcd/images/up_arrow_9x23.o: cxx $
+    src/lcd/images/up_arrow_9x23.cpp
+build output/src/lcd/images/usb_41x23.o: cxx src/lcd/images/usb_41x23.cpp
+build output/src/lcd/images/usb_240x107.o: cxx src/lcd/images/usb_240x107.cpp
 build output/src/syslog/Log.o: cxx src/syslog/Log.cpp
 build output/src/syslog/LogContainer.o: cxx src/syslog/LogContainer.cpp
 build output/src/syslog/LogThread.o: cxx src/syslog/LogThread.cpp
@@ -252,7 +253,7 @@ build output/submodules/freertos-addons/c++/Source/cmutex.o: cxx $
 
 # Target linker instruction
 build $target: link $
-    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.o $
+    output/submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f413xx.o $
     output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.o $
     output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc.o $
     output/submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal_adc_ex.o $
@@ -308,12 +309,13 @@ build $target: link $
     output/src/lcd/backlight/Backlight.o output/src/lcd/font/nokia_8p.o $
     output/src/lcd/font/monoton_80p.o output/src/lcd/font/rubik_16p.o $
     output/src/lcd/font/rubik_24p.o output/src/lcd/font/sarpanch_79p.o $
-    output/src/lcd/image/circle_23x23.o $
-    output/src/lcd/image/circle_empty_23x23.o $
-    output/src/lcd/image/down_arrow_9x23.o $
-    output/src/lcd/image/midi_23x23.o output/src/lcd/image/triangle_21x23.o $
-    output/src/lcd/image/up_arrow_9x23.o output/src/lcd/image/usb_41x23.o $
-    output/src/lcd/image/usb_240x107.o output/src/syslog/Log.o $
+    output/src/lcd/images/circle_23x23.o $
+    output/src/lcd/images/circle_empty_23x23.o $
+    output/src/lcd/images/down_arrow_9x23.o $
+    output/src/lcd/images/midi_23x23.o $
+    output/src/lcd/images/triangle_21x23.o $
+    output/src/lcd/images/up_arrow_9x23.o output/src/lcd/images/usb_41x23.o $
+    output/src/lcd/images/usb_240x107.o output/src/syslog/Log.o $
     output/src/syslog/LogContainer.o output/src/syslog/LogThread.o $
     output/src/syslog/Storage.o output/src/rotary_controls/RotaryControls.o $
     output/src/testing/Testing.o output/src/usb/UsbMidi.o output/src/main.o $

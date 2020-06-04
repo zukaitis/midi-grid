@@ -38,6 +38,12 @@ Format& Format::justification( const Justification justification )
     return *this;
 }
 
+Format& Format::maxWidth( const uint16_t width )
+{
+    maxWidth_ = width;
+    return *this;
+}
+
 const Font& Format::font() const
 {
     return *font_;
@@ -61,6 +67,11 @@ bool Format::isBackgroundColorSet() const
 Justification Format::justification() const
 {
     return justification_;
+}
+
+uint16_t Format::maxWidth() const
+{
+    return maxWidth_;
 }
 
 }  // namespace lcd

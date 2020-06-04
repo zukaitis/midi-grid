@@ -3,14 +3,14 @@
 import argparse
 import sys
 import os
-from PIL import Image
+from PIL import ImageMono
 import math
 import textwrap
 
 output_file_header = '// This file is generated using ' + os.path.basename( __file__ ) + ' script' + '''
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/Image.h"
+#include "lcd/ImageMono.h"
 
 namespace lcd
 {
@@ -26,7 +26,7 @@ output_file_footer = '''
 '''
 
 def convert( input_file : str, output_file : str ):
-    image = Image.open( input_file ).convert('1')
+    image = ImageMono.open( input_file ).convert('1')
     bytes_per_column = math.ceil(image.height / 8)
     
     data_array = [0] * image.width * bytes_per_column
@@ -46,9 +46,9 @@ def convert( input_file : str, output_file : str ):
     output.write( '};\n\n' )
 
     image_name = os.path.splitext( os.path.basename( output_file ) )[0]
-    output.write( 'static const Image img( Image::DataView( data ), ' + \
+    output.write( 'static const ImageMono img( ImageMono::DataView( data ), ' + \
         str(image.width) + ', ' + str(image.height) + ' );\n\n' )
-    output.write( 'const Image& ' + str(image_name) + ' = img;' )
+    output.write( 'const ImageMono& ' + str(image_name) + ' = img;' )
 
     output.write( output_file_footer )
     output.close() 

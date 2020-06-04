@@ -1,7 +1,7 @@
 // This file is generated using convert.py script
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/Image.h"
+#include "lcd/ImageMono.h"
 
 namespace lcd
 {
@@ -18,9 +18,9 @@ static const etl::array<uint8_t, 123> data = {
     0x00, 0x1C, 0x00, 0x00, 0x1C, 0x00, 0x00, 0x08, 0x00
 };
 
-static const Image img( Image::DataView( data ), 41, 23 );
+static const ImageMono img( ImageMono::DataView( data ), 41, 23 );
 
-const Image& usb_41x23 = img;
+const ImageMono& usb_41x23 = img;
 
 }  // namespace image
 }  // namespace lcd

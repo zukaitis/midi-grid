@@ -11,18 +11,18 @@ namespace lcd
 {
 
 class Font;
-class Image;
+class ImageMono;
 
 namespace image
 {
-extern const Image& circle_23x23;
-extern const Image& circle_empty_23x23;
-extern const Image& down_arrow_9x23;
-extern const Image& midi_23x23;
-extern const Image& triangle_21x23;
-extern const Image& up_arrow_9x23;
-extern const Image& usb_41x23;
-extern const Image& usb_240x107;
+extern const ImageMono& circle_23x23;
+extern const ImageMono& circle_empty_23x23;
+extern const ImageMono& down_arrow_9x23;
+extern const ImageMono& midi_23x23;
+extern const ImageMono& triangle_21x23;
+extern const ImageMono& up_arrow_9x23;
+extern const ImageMono& usb_41x23;
+extern const ImageMono& usb_240x107;
 }
 
 struct ImageLegacy
@@ -43,13 +43,13 @@ public:
     virtual void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color ) = 0;
 
     virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0;
-    virtual void displayImage( const Coordinates& coords, const Image& image, const Color& color ) = 0;
+    virtual void displayImage( const Coordinates& coords, const ImageMono& image, const Color& color ) = 0;
     virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) = 0;
     virtual void print( const etl::string_view& string, uint8_t y, Justification justification ) = 0;
     virtual void print( const etl::string_view& string, uint8_t x, uint8_t y ) = 0;
-    virtual void print( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
+    virtual uint16_t print( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
     virtual void print( const etl::string_view& string, uint8_t y, const Format& format ) = 0;
     virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 

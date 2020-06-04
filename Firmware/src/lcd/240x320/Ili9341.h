@@ -24,9 +24,9 @@ public:
     void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color ) override;
 
     void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) override;
-    void putImage( const Coordinates& coords, const Image& image, const ImageColors& colors ) override;
-    void putString( const etl::string_view& string, const Coordinates& coords ) override;
-    void putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) override;
+    void putImage( const Coordinates& coords, const ImageMono& image, const ImageColors& colors ) override;
+    uint16_t putString( const etl::string_view& string, const Coordinates& coords ) override;
+    uint16_t putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) override;
 
     uint16_t width() const override;
     uint16_t height() const override;
@@ -41,7 +41,7 @@ private:
     using DataBuffer = etl::vector<uint8_t, 16>;
 
     void setWorkingArea( const Coordinates& topLeft, const Coordinates& bottomRight );
-    static void fillPixelBuffer( PixelBuffer* buffer, const Image& image, const ImageColors& colors,
+    static void fillPixelBuffer( PixelBuffer* buffer, const ImageMono& image, const ImageColors& colors,
         uint16_t firstLine, uint16_t lastLine );
     void appendToImageData( const etl::array_view<const uint8_t>& source );
 

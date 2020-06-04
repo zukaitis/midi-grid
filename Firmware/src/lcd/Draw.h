@@ -2,7 +2,7 @@
 
 #include "lcd/DrawInterface.h"
 #include "lcd/LcdInterface.h"
-#include "lcd/Image.h"
+#include "lcd/ImageMono.h"
 #include "types/Coordinates.h"
 
 #include <etl/vector.h>
@@ -39,7 +39,7 @@ private:
 
     LcdInterface& lcd_;
 
-    Image image_;
+    ImageMono image_;
     etl::vector<uint8_t, 9600> imageData_;
 };
 

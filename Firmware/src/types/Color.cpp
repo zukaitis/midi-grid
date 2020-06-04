@@ -24,20 +24,25 @@ uint8_t Color::blue() const
     return blue_;
 };
 
-bool Color::operator==(const Color& color) const
+bool Color::operator==(const Color& other) const
 {
     bool equal = true;
-    equal &= (this->red_ == color.red_);
-    equal &= (this->green_ == color.green_);
-    equal &= (this->blue_ == color.blue_);
+    equal &= (this->red_ == other.red_);
+    equal &= (this->green_ == other.green_);
+    equal &= (this->blue_ == other.blue_);
     return equal;
 };
 
-Color Color::operator+(const Color& color) const
+bool Color::operator!=(const Color& other) const
 {
-    const uint16_t sumRed = this->red_ + color.red_;
-    const uint16_t sumGreen = this->green_ + color.green_;
-    const uint16_t sumBlue = this->blue_ + color.blue_;
+    return !(other == *this);
+};
+
+Color Color::operator+(const Color& addend) const
+{
+    const uint16_t sumRed = this->red_ + addend.red_;
+    const uint16_t sumGreen = this->green_ + addend.green_;
+    const uint16_t sumBlue = this->blue_ + addend.blue_;
 
     const Color sum( (sumRed > maxValue) ? maxValue : sumRed,
         (sumGreen > maxValue) ? maxValue : sumGreen,

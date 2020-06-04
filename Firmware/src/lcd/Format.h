@@ -36,12 +36,14 @@ public:
     Format& textColor( const Color& color );
     Format& backgroundColor( const Color& color );
     Format& justification( Justification justification );
+    Format& maxWidth( uint16_t width );
 
     const Font& font() const;
     const Color& textColor() const;
     const Color& backgroundColor() const;
     bool isBackgroundColorSet() const;
     Justification justification() const;
+    uint16_t maxWidth() const;
 
 private:
     const Font* font_;
@@ -49,6 +51,7 @@ private:
     Color backgroundColor_;
     bool backgroundColorSet_;
     Justification justification_;
+    uint16_t maxWidth_;
 };
 
 }  // namespace lcd

@@ -7,19 +7,19 @@
 namespace lcd
 {
 
-class Image
+class ImageMono
 {
 public:
     using DataView = etl::array_view<const uint8_t>;
 
-    Image( DataView data, uint16_t width, uint16_t height ):
+    ImageMono( DataView data, uint16_t width, uint16_t height ):
         data_( data ),
         width_( width ),
         height_( height )
     {
     }
 
-    Image():
+    ImageMono():
         data_(),
         width_( 0 ),
         height_( 0 )

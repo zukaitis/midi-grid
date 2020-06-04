@@ -37,6 +37,8 @@ private:
     void refreshStatusBar();
     void refreshMode();
     void refreshTimingArea();
+    void refreshModeDependentArea();
+    void displayClipView();
     void refreshRotaryControlArea();
 
     void refreshMainArea();

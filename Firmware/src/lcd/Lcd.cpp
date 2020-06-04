@@ -48,7 +48,7 @@ void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& ima
     driver_.displayImage( x, y, image );
 }
 
-void Lcd::displayImage( const Coordinates& coords, const Image& image, const Color& color )
+void Lcd::displayImage( const Coordinates& coords, const ImageMono& image, const Color& color )
 {
     driver_.putImage( coords, image, {color, backgroundColor_} );
 }
@@ -104,13 +104,15 @@ void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t 
     print( string, x, y, Justification::LEFT );
 }
 
-void Lcd::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
+uint16_t Lcd::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
 {
     Format localFormat = format;
     if (false == localFormat.isBackgroundColorSet())
     {
         localFormat.backgroundColor( backgroundColor_ );
     }
+
+    uint16_t width = 0;
 
     switch (format.justification())
     {
@@ -133,6 +135,8 @@ void Lcd::print( const etl::string_view& string, const Coordinates& coords, cons
             driver_.putString( string, coords, localFormat );
             break;
     }
+
+    return width;
 }
 
 void Lcd::print( const etl::string_view& string, uint8_t y, const Format& format )

@@ -55,7 +55,7 @@ void PriorityManager::displayImage( uint8_t x, uint8_t y, const ImageLegacy& ima
     }
 }
 
-void PriorityManager::displayImage( const Coordinates& coords, const Image& image, const Color& color )
+void PriorityManager::displayImage( const Coordinates& coords, const ImageMono& image, const Color& color )
 {
     if (checkPriority())
     {
@@ -103,12 +103,14 @@ void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t 
     }
 }
 
-void PriorityManager::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
+uint16_t PriorityManager::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
 {
+    uint16_t result = 0;
     if (checkPriority())
     {
-        lcd_.print( string, coords, format );
+        result = lcd_.print( string, coords, format );
     }
+    return result;
 }
 
 void PriorityManager::print( const etl::string_view& string, const uint8_t y, const Format& format )

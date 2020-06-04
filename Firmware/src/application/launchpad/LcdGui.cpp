@@ -65,10 +65,10 @@ void LcdGui::initialize()
 void LcdGui::refresh()
 {
     refreshTimedItemsStatus();
-
     refreshStatusBar();
     refreshMode();
     refreshTimingArea();
+    refreshModeDependentArea();
     refreshRotaryControlArea();
 }
 
@@ -94,7 +94,15 @@ void LcdGui::refreshMode()
         Color color = background;
         if (Submode::DEFAULT == launchpad_.submode_)
         {
-            text = modeAttributes.at( launchpad_.mode_ ).displayString;
+            // Display device name instead of mode if it is present
+            if ((Mode::DEVICE_CONTROLLER == launchpad_.mode_) && (0 != launchpad_.deviceName_.length()))
+            {
+                text = launchpad_.deviceName_;
+            }
+            else
+            {
+                text = modeAttributes.at( launchpad_.mode_ ).displayString;
+            }
             color = modeAttributes.at( launchpad_.mode_ ).color;
         }
         else
@@ -165,6 +173,30 @@ void LcdGui::refreshTimingArea()
     {
         lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
     }
+}
+
+void LcdGui::refreshModeDependentArea()
+{
+    switch (launchpad_.mode_)
+    {
+        case Mode::INSTRUMENT:
+        case Mode::DRUM_STEP_SEQUENCER:
+        case Mode::MELODIC_SEQUENCER:
+        case Mode::DEVICE_CONTROLLER:
+            displayClipView();
+        case Mode::SESSION:
+        case Mode::MIXER:
+        case Mode::USER1:
+        case Mode::USER2:
+        default:
+            // think of a name for this view later
+            break;
+    }
+}
+
+void LcdGui::displayClipView()
+{
+    
 }
 
 void LcdGui::refreshRotaryControlArea()

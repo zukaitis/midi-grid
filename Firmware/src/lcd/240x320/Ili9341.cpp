@@ -2,7 +2,7 @@
 #include "hardware/lcd/SpiInterface.h"
 #include "lcd/Format.h"
 #include "lcd/LcdInterface.h"
-#include "lcd/Image.h"
+#include "lcd/ImageMono.h"
 #include "ThreadConfigurations.h"
 
 #include "lcd/Font.h"
@@ -214,7 +214,7 @@ void Ili9341::fillArea( const Coordinates& corner1, const Coordinates& corner2, 
         imageData_.assign( dataSize, 0U );
     }
 
-    const Image fillImage( Image::DataView(imageData_), width, height );
+    const ImageMono fillImage( ImageMono::DataView(imageData_), width, height );
     putImage( topLeft, fillImage, {color::RED, color} );
 }
 
@@ -222,12 +222,12 @@ void Ili9341::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy&
 {
 }
 
-void Ili9341::putImage( const Coordinates& coords, const Image& image, const ImageColors& colors )
+void Ili9341::putImage( const Coordinates& coords, const ImageMono& image, const ImageColors& colors )
 {
     const uint16_t width = std::min( image.getWidth(), static_cast<uint16_t>(width_ - coords.x) );
     const uint16_t height = std::min( image.getHeight(), static_cast<uint16_t>(height_ - coords.y) );
 
-    const Image imageClipped( image.getData(), width, image.getHeight() );
+    const ImageMono imageClipped( image.getData(), width, image.getHeight() );
 
     PixelBuffer& buffer = assignPixelBuffer();
     const uint16_t scanlineHeight = buffer.capacity() / width;
@@ -250,12 +250,12 @@ void Ili9341::putImage( const Coordinates& coords, const Image& image, const Ima
     }
 }
 
-void Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
+uint16_t Ili9341::putString( const etl::string_view& string, const Coordinates& coords )
 {
-    putString( string, coords, Format() );
+    return putString( string, coords, Format() );
 }
 
-void Ili9341::putString( const etl::string_view& string, const Coordinates& coords, const Format& format )
+uint16_t Ili9341::putString( const etl::string_view& string, const Coordinates& coords, const Format& format )
 {
     const uint16_t height = format.font().getHeight();
     const uint16_t bytesPerColumn = (height + 7) / 8;
@@ -271,8 +271,10 @@ void Ili9341::putString( const etl::string_view& string, const Coordinates& coor
         appendToImageData( format.font().getGlyph( string.at(c) ) );  // copy glyph
     }
 
-    const Image stringImage( Image::DataView(imageData_), imageData_.size() / bytesPerColumn, height );
+    const ImageMono stringImage( ImageMono::DataView(imageData_), imageData_.size() / bytesPerColumn, height );
     putImage( coords, stringImage, {format.textColor(), format.backgroundColor()} );
+
+    return stringImage.getWidth();
 }
 
 uint16_t Ili9341::width() const
@@ -328,7 +330,7 @@ Ili9341::DataBuffer& Ili9341::assignDataBuffer()
     return dataBuffer_.at( dataBufferIndex_ );
 }
 
-void Ili9341::fillPixelBuffer( PixelBuffer* const buffer, const Image& image, const ImageColors& colors,
+void Ili9341::fillPixelBuffer( PixelBuffer* const buffer, const ImageMono& image, const ImageColors& colors,
     const uint16_t firstLine, const uint16_t lastLine )
 {
     const uint16_t width = image.getWidth();

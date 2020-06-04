@@ -9,7 +9,7 @@ namespace lcd
 {
 
 struct ImageLegacy;
-class Image;
+class ImageMono;
 
 struct ImageColors
 {
@@ -28,9 +28,9 @@ public:
     virtual void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color ) = 0;
 
     virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0; // TODO(unknown): replace with coordinates
-    virtual void putImage( const Coordinates& coords, const Image& image, const ImageColors& colors ) = 0;
-    virtual void putString( const etl::string_view& string, const Coordinates& coords ) = 0;
-    virtual void putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
+    virtual void putImage( const Coordinates& coords, const ImageMono& image, const ImageColors& colors ) = 0;
+    virtual uint16_t putString( const etl::string_view& string, const Coordinates& coords ) = 0;
+    virtual uint16_t putString( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
 
     virtual uint16_t width() const = 0;
     virtual uint16_t height() const = 0;

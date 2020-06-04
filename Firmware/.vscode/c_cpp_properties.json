@@ -4,7 +4,7 @@
             "name": "default",
             "defines": [
                 "USE_HAL_DRIVER",
-                "STM32F411xE",
+                "STM32F413xE",
                 "CPP_FREERTOS_NO_EXCEPTIONS",
                 "CPP_FREERTOS_NO_CPP_STRINGS"
             ],

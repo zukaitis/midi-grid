@@ -13,8 +13,9 @@ public:
     uint8_t green() const;
     uint8_t blue() const;
 
-    bool operator==( const Color& color ) const;
-    Color operator+( const Color& color ) const;
+    bool operator==( const Color& other ) const;
+    bool operator!=( const Color& other ) const;
+    Color operator+( const Color& addend ) const;
     Color operator*( uint8_t multiplier ) const;
     Color operator*( float multiplier ) const;
     Color operator/( uint8_t divisor ) const;

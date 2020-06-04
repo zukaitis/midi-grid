@@ -24,7 +24,7 @@ void Draw::line( const Coordinates& point1, const Coordinates& point2, const Col
     const uint16_t bytesPerColumn = (height + 7) / 8;
 
     imageData_.assign( width * bytesPerColumn, 0U );
-    image_ = Image( Image::DataView(imageData_), width, height );
+    image_ = ImageMono( ImageMono::DataView(imageData_), width, height );
 
     const Coordinates imageStart = { std::min( point1.x, point2.x ), std::min( point1.y, point2.y ) };
     putLine( {static_cast<uint16_t>(point1.x - imageStart.x), static_cast<uint16_t>(point1.y - imageStart.y)},
@@ -39,7 +39,7 @@ void Draw::arc( const Coordinates& center, const uint16_t innerRadius, const uin
     const uint16_t edgeLength = outerRadius * 2 + 1;
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
     imageData_.assign( edgeLength * bytesPerColumn, 0U );
-    image_ = Image( Image::DataView(imageData_), edgeLength, edgeLength );
+    image_ = ImageMono( ImageMono::DataView(imageData_), edgeLength, edgeLength );
     const Coordinates imageCenter = {outerRadius, outerRadius};
 
     uint16_t sectionStart = startAngle;
@@ -62,7 +62,7 @@ void Draw::circle( const Coordinates& center, const uint16_t radius, const Color
     const uint16_t edgeLength = radius * 2 + 1;
     const uint16_t bytesPerColumn = (edgeLength + 7) / 8;
     imageData_.assign( edgeLength * bytesPerColumn, 0U );
-    image_ = Image( Image::DataView(imageData_), edgeLength, edgeLength );
+    image_ = ImageMono( ImageMono::DataView(imageData_), edgeLength, edgeLength );
     const Coordinates imageCenter = {radius, radius};
 
     putCircle( imageCenter, radius );
@@ -77,7 +77,7 @@ void Draw::halfCircleLeft( const Coordinates& center, const uint16_t radius, con
     const uint16_t height = radius * 2 + 1;
     const uint16_t bytesPerColumn = (height + 7) / 8;
     imageData_.assign( width * bytesPerColumn, 0U );
-    image_ = Image( Image::DataView(imageData_), width, height );
+    image_ = ImageMono( ImageMono::DataView(imageData_), width, height );
     const Coordinates imageCenter = {radius, radius};
 
     putCircle( imageCenter, radius, CircleType::LEFT_HALF );
@@ -92,7 +92,7 @@ void Draw::halfCircleRight( const Coordinates& center, const uint16_t radius, co
     const uint16_t height = radius * 2 + 1;
     const uint16_t bytesPerColumn = (height + 7) / 8;
     imageData_.assign( width * bytesPerColumn, 0U );
-    image_ = Image( Image::DataView(imageData_), width, height );
+    image_ = ImageMono( ImageMono::DataView(imageData_), width, height );
     const Coordinates imageCenter = {0, radius};
 
     putCircle( imageCenter, radius, CircleType::RIGHT_HALF );
