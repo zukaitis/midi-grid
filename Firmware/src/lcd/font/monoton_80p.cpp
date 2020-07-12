@@ -1,7 +1,7 @@
 // This file is generated using convert.py script
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/Font.h"
+#include "lcd/text/Font.h"
 
 namespace lcd
 {

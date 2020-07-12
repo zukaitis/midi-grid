@@ -1,7 +1,6 @@
 #include "application/grid_test/GridTest.hpp"
 
 #include "grid/GridInterface.h"
-#include "lcd/Format.h"
 #include "usb/UsbMidi.hpp"
 #include "lcd/LcdInterface.h"
 #include "application/images.h"
@@ -127,10 +126,7 @@ Color GridTest::getRandomColor()
 
 void GridTest::displayWaitingForMidi()
 {
-    lcd_.setBackgroundColor( color::BLACK );
-    lcd_.clear();
-    lcd_.displayImage( {0, 100}, lcd::image::usb_240x107, color::WHITE );
-    lcd_.print( "Awaiting MIDI", 40, lcd::Justification::CENTER );
+    lcd_.text().print( "Awaiting MIDI", 40, lcd::Format().justification( lcd::Justification::CENTER ) );
 }
 
 }  // namespace application

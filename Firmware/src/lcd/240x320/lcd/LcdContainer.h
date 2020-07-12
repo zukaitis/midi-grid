@@ -2,7 +2,7 @@
 
 #include "lcd/Lcd.h"
 #include "lcd/PriorityManager.h"
-#include "lcd/240x320/Ili9341.h"
+#include "lcd/Ili9341.h"
 #include "lcd/backlight/Backlight.h"
 
 namespace lcd
@@ -18,7 +18,6 @@ public:
     LcdInterface& getLcdHighPriority();
 
 private:
-    Backlight backlight_;
     Ili9341 ili9341_;
     Lcd lcd_;
     PriorityManager managerPriorityLow_;

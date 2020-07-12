@@ -25,7 +25,7 @@
                 "${workspaceFolder}/submodules/FreeRTOS-Kernel/include",
                 "${workspaceFolder}/submodules/freertos-addons/c++/Source/include",
                 "${workspaceFolder}/unit_tests/mocks",
-                "${workspaceFolder}/src/lcd/84x48_mono",
+                "${workspaceFolder}/src/lcd/240x320",
                 "/usr/src/googletest/googletest/include",
                 "/usr/src/googletest/googlemock/include"
             ],

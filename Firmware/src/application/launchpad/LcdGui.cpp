@@ -4,9 +4,7 @@
 #include "application/launchpad/Assets.h"
 #include "application/launchpad/Images.hpp"
 
-#include "lcd/Format.h"
 #include "lcd/LcdInterface.h"
-#include "lcd/Font.h"
 #include <freertos/ticks.hpp>
 
 #include <etl/cstring.h>
@@ -57,9 +55,8 @@ LcdGui::LcdGui( Launchpad* launchpad, lcd::LcdInterface* lcd ):
 
 void LcdGui::initialize()
 {
-    lcd_.setBackgroundColor( background );
-    lcd_.clear();
-    // displayLaunchpad95Info();
+    lcd_.image().createNew( background );
+    lcd_.image().display();
 }
 
 void LcdGui::refresh()
@@ -74,14 +71,14 @@ void LcdGui::refresh()
 
 void LcdGui::refreshStatusBar()
 {
-    lcd_.displayImage( {leftX, topY}, lcd::image::triangle_21x23, (launchpad_.isPlaying_ ? playActive : inactive) );
-    lcd_.displayImage( {42, topY}, lcd::image::circle_23x23, (launchpad_.isRecording_ ? recordingActive : inactive) );
-    lcd_.displayImage( {81, topY}, lcd::image::circle_empty_23x23, (launchpad_.isSessionRecording_ ? recordingActive : inactive) );
+    lcd_.shapes().drawImage( {leftX, topY}, lcd::image::triangle_21x23, (launchpad_.isPlaying_ ? playActive : inactive) );
+    lcd_.shapes().drawImage( {42, topY}, lcd::image::circle_23x23, (launchpad_.isRecording_ ? recordingActive : inactive) );
+    lcd_.shapes().drawImage( {81, topY}, lcd::image::circle_empty_23x23, (launchpad_.isSessionRecording_ ? recordingActive : inactive) );
 
-    lcd_.displayImage( {174, topY}, lcd::image::usb_41x23,
+    lcd_.shapes().drawImage( {174, topY}, lcd::image::usb_41x23,
         ((usbMidiInputActivityIcon_.enabled || usbMidiOutputActivityIcon_.enabled) ? midiActive : inactive) );
-    lcd_.displayImage( {217, topY}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
-    lcd_.displayImage( {226, topY}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
+    lcd_.shapes().drawImage( {217, topY}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
+    lcd_.shapes().drawImage( {226, topY}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
 }
 
 void LcdGui::refreshMode()
@@ -117,17 +114,19 @@ void LcdGui::refreshMode()
         const uint16_t textHeight = textFormat.font().getHeight();
         const Coordinates textStart = {static_cast<uint16_t>(centerX - textWidth / 2), 32};
 
-        lcd_.print( text, textStart, textFormat );
-        lcd_.draw().halfCircleLeft( {static_cast<uint16_t>(textStart.x - 1),
+        lcd_.text().print( text, textStart, textFormat );
+        lcd_.shapes().drawHalfCircleLeft( {static_cast<uint16_t>(textStart.x - 1),
             static_cast<uint16_t>(textStart.y + radius)}, radius, color );
-        lcd_.draw().halfCircleRight( {static_cast<uint16_t>(textStart.x + textWidth),
+        lcd_.shapes().drawHalfCircleRight( {static_cast<uint16_t>(textStart.x + textWidth),
             static_cast<uint16_t>(textStart.y + radius)}, radius, color );
+#if 0
         lcd_.fillArea({textStart.x, static_cast<uint16_t>(textStart.y + textHeight)},
             {static_cast<uint16_t>(textStart.x + textWidth), static_cast<uint16_t>(textStart.y + textHeight)}, color );
         lcd_.clearArea( {0, textStart.y}, {static_cast<uint16_t>(textStart.x - radius - 1),
             static_cast<uint16_t>(textStart.y + textHeight + 1)} );
         lcd_.clearArea( {239, textStart.y}, {static_cast<uint16_t>(textStart.x + textWidth + radius + 1),
             static_cast<uint16_t>(textStart.y + textHeight + 1)} );
+#endif
     }
 }
 
@@ -156,22 +155,24 @@ void LcdGui::refreshTimingArea()
         const uint16_t totalWidth = numberWidth + textWidth;
         const uint16_t numberLeftX = centerX - totalWidth / 2;
 
-        lcd_.clearArea( {0, timingTopY}, {static_cast<uint16_t>(numberLeftX - 1U), timingBottomY} );
-        lcd_.print( numberString, {numberLeftX, timingTopY}, numberFormat );
+        //lcd_.clearArea( {0, timingTopY}, {static_cast<uint16_t>(numberLeftX - 1U), timingBottomY} );
+        lcd_.text().print( numberString, {numberLeftX, timingTopY}, numberFormat );
 
         if (showText)
         {
-            lcd_.print( " bpm", {static_cast<uint16_t>(numberLeftX + numberWidth), timingTopY}, textFormat );
+            lcd_.text().print( " bpm", {static_cast<uint16_t>(numberLeftX + numberWidth), timingTopY}, textFormat );
         }
 
+#if 0
         lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + totalWidth), timingTopY},
             {239, static_cast<uint16_t>(timingTopY + textHeight - 1U)} );
         lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + numberWidth), static_cast<uint16_t>(timingTopY + textHeight)},
             {239, timingBottomY} );
+#endif
     }
     else
     {
-        lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
+        //lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
     }
 }
 
@@ -212,20 +213,22 @@ void LcdGui::refreshRotaryControlArea()
     textFormat.font( lcd::font::rubik_24p ).textColor( color );
     
     uint16_t angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 0 ) ) / midi::kMaximumControlValue;
-    lcd_.draw().arc( {leftX + outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    lcd_.shapes().drawArc( {leftX + outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
     etl::string<4> stringControl0 = " ";
     etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), stringControl0, true );
-    lcd_.print( stringControl0, {leftX + 2 * outerRadius, textY}, textFormat );
+    lcd_.text().print( stringControl0, {leftX + 2 * outerRadius, textY}, textFormat );
 
     angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 1 ) ) / midi::kMaximumControlValue;
-    lcd_.draw().arc( {rightX - outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    lcd_.shapes().drawArc( {rightX - outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
     etl::string<4> stringControl1;
     etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), stringControl1 );
     stringControl1 += " ";
-    lcd_.print( stringControl1, {rightX - 2 * outerRadius, textY}, textFormat.justification( lcd::Justification::RIGHT ) );
+    lcd_.text().print( stringControl1, {rightX - 2 * outerRadius, textY}, textFormat.justification( lcd::Justification::RIGHT ) );
 
+#if 0
     lcd_.clearArea( {static_cast<uint16_t>(leftX + 2 * outerRadius + textFormat.font().getStringWidth( stringControl0 ))},
         {static_cast<uint16_t>(rightX - 2 * outerRadius - textFormat.font().getStringWidth( stringControl1 )), bottomY} );
+#endif
 }
 
 void LcdGui::refreshMainArea()
@@ -277,11 +280,13 @@ void LcdGui::displayLaunchpad95Info()
         displaySubmode();
     }
 
+#if 0
     // only display other info when rotary control display timer runs out
         lcd_.clearArea( {0, 16}, {83, 31} );
         //displayStatus();
 
         lcd_.clearArea( {0, 32}, {83, 47} );
+#endif
         switch (launchpad_.mode_)
         {
             case Mode::INSTRUMENT:
@@ -306,32 +311,32 @@ void LcdGui::displayLaunchpad95Info()
 
 void LcdGui::displayClipName()
 {
-    lcd_.print( &launchpad_.clipName_[0], lcd_.line( 5 ), lcd::Justification::CENTER );
+    //lcd_.text().print( &launchpad_.clipName_[0], lcd_.line( 5 ), lcd::Format().justification( lcd::Justification::CENTER ) );
 }
 
 void LcdGui::displayDeviceName()
 {
-    lcd_.print( &launchpad_.deviceName_[0], lcd_.line( 5 ), lcd::Justification::CENTER );
+    //lcd_.text().print( &launchpad_.deviceName_[0], lcd_.line( 5 ), lcd::Format().justification( lcd::Justification::CENTER ) );
 }
 
 void LcdGui::displayTrackName()
 {
-    lcd_.print( &launchpad_.trackName_[0], lcd_.line( 4 ), lcd::Justification::CENTER );
+    //lcd_.text().print( &launchpad_.trackName_[0], lcd_.line( 4 ), lcd::Format().justification( lcd::Justification::CENTER ) );
 }
 
 void LcdGui::displayMode()
 {
-    lcd_.clearArea( {0, 8}, {83, 15} );
+    //lcd_.clearArea( {0, 8}, {83, 15} );
     if (Mode::UNKNOWN != launchpad_.mode_)
     {
-        //lcd_.print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
+        //lcd_.text().print( &launchpad95ModeString.at(launchpad_.mode_)[0], lcd_.line( 1 ), lcd::Format().justification( lcd::Justification::CENTER ) );
     }
 }
 
 void LcdGui::displaySubmode()
 {
-    lcd_.clearArea( {0, 8}, {83, 15} );
-    //lcd_.print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Justification::CENTER );
+    //lcd_.clearArea( {0, 8}, {83, 15} );
+    //lcd_.text().print( &launchpad95SubmodeString.at(launchpad_.submode_)[0], lcd_.line( 1 ), lcd::Format().justification( lcd::Justification::CENTER ) );
 }
 
 }  // namespace launchpad

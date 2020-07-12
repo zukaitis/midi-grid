@@ -1,7 +1,10 @@
 #pragma once
 
-#include "lcd/DrawInterface.h"
-#include "lcd/Format.h"
+#include "lcd/backlight/BacklightInterface.h"
+#include "lcd/image/ImageInterface.h"
+#include "lcd/shapes/ShapesInterface.h"
+#include "lcd/text/TextInterface.h"
+
 #include "types/Coordinates.h"
 #include <cstdint>
 #include <etl/string_view.h>
@@ -37,28 +40,17 @@ class LcdInterface
 public:
     virtual ~LcdInterface() = default;
 
-    virtual void setBackgroundColor( const Color& color ) = 0;
-    virtual void clear() = 0;
-    virtual void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) = 0;
-    virtual void fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color ) = 0;
-
-    virtual void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) = 0;
-    virtual void displayImage( const Coordinates& coords, const ImageMono& image, const Color& color ) = 0;
-    virtual void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) = 0;
     virtual void initialize() = 0;
-    virtual void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) = 0;
-    virtual void print( const etl::string_view& string, uint8_t y, Justification justification ) = 0;
-    virtual void print( const etl::string_view& string, uint8_t x, uint8_t y ) = 0;
-    virtual uint16_t print( const etl::string_view& string, const Coordinates& coords, const Format& format ) = 0;
-    virtual void print( const etl::string_view& string, uint8_t y, const Format& format ) = 0;
-    virtual void setBacklightIntensity( uint8_t intensity ) = 0;
 
-    virtual uint8_t maximumBacklightIntensity() const = 0;
-    virtual uint16_t line( uint8_t lineNumber ) const = 0;
+    virtual ShapesInterface& shapes() = 0;
+    virtual TextInterface& text() = 0;
+    virtual ImageInterface& image() = 0;
+    virtual BacklightInterface& backlight() = 0;
+
+    virtual uint16_t width() = 0;
+    virtual uint16_t height() = 0;
 
     virtual void release() = 0;
-
-    virtual DrawInterface& draw() = 0;
 };
 
 }  // namespace lcd

@@ -19,7 +19,7 @@ public:
     MOCK_METHOD( void, writeCommand, (const uint8_t command), (const, override) );
     MOCK_METHOD( void, writeData, (const uint8_t& data, uint32_t size), (const, override) );
     MOCK_METHOD( void, writeData, (const RawDataView& data), (const, override) );
-    MOCK_METHOD( void, writeData, (const ::lcd::PixelView& data), (const, override) );
+    MOCK_METHOD( void, writeData, (const ColorView& data), (const, override) );
 };
 
 }

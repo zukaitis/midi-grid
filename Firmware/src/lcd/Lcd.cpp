@@ -1,63 +1,23 @@
 #include "lcd/Lcd.h"
 
-#include "lcd/Format.h"
-#include "lcd/Font.h"
-#include "lcd/progressArc.h"
-#include "lcd/font.h"
-
+#include "lcd/Parameters.h"
 #include "lcd/DriverInterface.h"
-#include "lcd/backlight/BacklightInterface.h"
 
 #include <cmath>
 
 namespace lcd
 {
 
-Lcd::Lcd( DriverInterface& driver, BacklightInterface& backlight ) :
-    draw_( this ),
-    driver_( driver ),
-    backlight_( backlight ),
-    backgroundColor_( color::BLACK )
+Lcd::Lcd( DriverInterface* driver, hardware::lcd::BacklightDriverInterface* backlightDriver ) :
+    backlight_( backlightDriver ),
+    driver_( *driver ),
+    image_( &driver_ ),
+    shapes_( &image_ ),
+    text_( &image_ )
 {
 }
 
 Lcd::~Lcd() = default;
-
-void Lcd::setBackgroundColor( const Color& color )
-{
-    backgroundColor_ = color;
-}
-
-void Lcd::clear()
-{
-    driver_.fill( backgroundColor_ );
-}
-
-void Lcd::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
-{
-    driver_.fillArea( corner1, corner2, backgroundColor_ );
-}
-
-void Lcd::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color )
-{
-    driver_.fillArea( corner1, corner2, color );
-}
-
-void Lcd::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
-{
-    driver_.displayImage( x, y, image );
-}
-
-void Lcd::displayImage( const Coordinates& coords, const ImageMono& image, const Color& color )
-{
-    driver_.putImage( coords, image, {color, backgroundColor_} );
-}
-
-void Lcd::displayProgressArc( const uint8_t x, const uint8_t y, const uint8_t position )
-{
-    const ImageLegacy arc = { &progressArcArray.at(position)[0], 38, 32 };
-    displayImage( x, y, arc );
-}
 
 void Lcd::initialize()
 {
@@ -65,126 +25,38 @@ void Lcd::initialize()
     backlight_.initialize();
 }
 
-void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y, const Justification justification )
+BacklightInterface& Lcd::backlight()
 {
-    uint8_t textwidth = string.length() * FONT_WIDTH;
-
-    switch (justification)
-    {
-        case Justification::RIGHT:
-            if (textwidth < x)
-            {
-                driver_.putString( string, {static_cast<uint16_t>(x - textwidth), y} );
-            }
-            break;
-        case Justification::CENTER:
-            textwidth = textwidth / 2;
-            if ((textwidth <= x) && (textwidth <= (driver_.width() - x)))
-            {
-                driver_.putString( string, {static_cast<uint16_t>(x - textwidth), y} );
-            }
-            break;
-        case Justification::LEFT:
-        default:
-            if (textwidth < (driver_.width() - x))
-            {
-                driver_.putString( string, {x, y} );
-            }
-            break;
-    }
+    return backlight_;
 }
 
-void Lcd::print( const etl::string_view& string, uint8_t y, const Justification justification )
+ImageInterface& Lcd::image()
 {
-    print( string, calculateX( justification ), y, justification );
+    return image_;
 }
 
-void Lcd::print( const etl::string_view& string, const uint8_t x, const uint8_t y )
+ShapesInterface& Lcd::shapes()
 {
-    print( string, x, y, Justification::LEFT );
+    return shapes_;
 }
 
-uint16_t Lcd::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
+TextInterface& Lcd::text()
 {
-    Format localFormat = format;
-    if (false == localFormat.isBackgroundColorSet())
-    {
-        localFormat.backgroundColor( backgroundColor_ );
-    }
-
-    uint16_t width = 0;
-
-    switch (format.justification())
-    {
-        case Justification::RIGHT:
-            {
-                const uint16_t textwidth = localFormat.font().getStringWidth( string );
-                const uint16_t x = ((coords.x + 1U) >= textwidth) ? (coords.x + 1U - textwidth) : 0;
-                driver_.putString( string, {x, coords.y}, localFormat );
-            }
-            break;
-        case Justification::CENTER:
-            {
-                const uint16_t distanceFromMiddle = localFormat.font().getStringWidth( string ) / 2;
-                const uint16_t x = (coords.x >= distanceFromMiddle) ? (coords.x - distanceFromMiddle) : 0;
-                driver_.putString( string, {x, coords.y}, localFormat );
-            }
-            break;
-        case Justification::LEFT:
-        default:
-            driver_.putString( string, coords, localFormat );
-            break;
-    }
-
-    return width;
+    return text_;
 }
 
-void Lcd::print( const etl::string_view& string, uint8_t y, const Format& format )
+uint16_t Lcd::width()
 {
-    print( string, {calculateX( format.justification() ), y}, format );
+    return parameters::width;
 }
 
-void Lcd::setBacklightIntensity( const uint8_t intensity )
+uint16_t Lcd::height()
 {
-    backlight_.setIntensity( intensity );
-}
-
-uint8_t Lcd::maximumBacklightIntensity() const
-{
-    return 64; // TODO(unknown): fix
-}
-
-uint16_t Lcd::line( uint8_t lineNumber ) const
-{
-    return lineNumber * 8;
+    return parameters::height;
 }
 
 void Lcd::release()
 {
-}
-
-DrawInterface& Lcd::draw()
-{
-    return draw_;
-}
-
-uint16_t Lcd::calculateX( const Justification justification )
-{
-    uint16_t x = 0;
-    switch (justification)
-    {
-        case Justification::LEFT:
-            x = 0;
-            break;
-        case Justification::RIGHT:
-            x = driver_.width() - 1;
-            break;
-        case Justification::CENTER:
-            x = driver_.width() / 2;
-            break;
-    }
-
-    return x;
 }
 
 }  // namespace lcd

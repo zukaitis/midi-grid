@@ -15,128 +15,60 @@ PriorityManager::~PriorityManager() = default;
 
 Priority PriorityManager::currentPriorityFilter_ = Priority::LOW;
 
-void PriorityManager::setBackgroundColor( const Color& color )
-{
-    if (checkPriority())
-    {
-        lcd_.setBackgroundColor( color );
-    }
-}
-
-void PriorityManager::clear()
-{
-    if (checkPriority())
-    {
-        lcd_.clear();
-    }
-}
-
-void PriorityManager::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
-{
-    if (checkPriority())
-    {
-        lcd_.clearArea( corner1, corner2 );
-    }
-}
-
-void PriorityManager::fillArea( const Coordinates& corner1, const Coordinates& corner2, const Color& color )
-{
-    if (checkPriority())
-    {
-        lcd_.fillArea( corner1, corner2, color );
-    }
-}
-
-void PriorityManager::displayImage( uint8_t x, uint8_t y, const ImageLegacy& image )
-{
-    if (checkPriority())
-    {
-        lcd_.displayImage( x, y, image );
-    }
-}
-
-void PriorityManager::displayImage( const Coordinates& coords, const ImageMono& image, const Color& color )
-{
-    if (checkPriority())
-    {
-        lcd_.displayImage( coords, image, color );
-    }
-}
-
-void PriorityManager::displayProgressArc( uint8_t x, uint8_t y, uint8_t position )
-{
-    if (checkPriority())
-    {
-        lcd_.displayProgressArc( x, y, position );
-    }
-}
+ShapesInterface PriorityManager::emptyShapesInterface_ = {};
+TextInterface PriorityManager::emptyTextInterface_ = {};
+ImageInterface PriorityManager::emptyImageInterface_ = {};
+BacklightInterface PriorityManager::emptyBacklightInterface_ = {};
 
 void PriorityManager::initialize()
 {
-    if (checkPriority())
-    {
-        lcd_.initialize();
-    }
+    lcd_.initialize();
 }
 
-void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification )
+BacklightInterface& PriorityManager::backlight()
 {
     if (checkPriority())
     {
-        lcd_.print( string, x, y, justification );
+        return lcd_.backlight();
     }
+    return emptyBacklightInterface_;
 }
 
-void PriorityManager::print( const etl::string_view& string, uint8_t y, Justification justification )
+ImageInterface& PriorityManager::image()
 {
     if (checkPriority())
     {
-        lcd_.print( string, y, justification );
+        return lcd_.image();
     }
+    return emptyImageInterface_;
 }
 
-void PriorityManager::print( const etl::string_view& string, uint8_t x, uint8_t y )
+ShapesInterface& PriorityManager::shapes()
 {
     if (checkPriority())
     {
-        lcd_.print( string, x, y );
+        return lcd_.shapes();
     }
+    return emptyShapesInterface_;
 }
 
-uint16_t PriorityManager::print( const etl::string_view& string, const Coordinates& coords, const Format& format )
-{
-    uint16_t result = 0;
-    if (checkPriority())
-    {
-        result = lcd_.print( string, coords, format );
-    }
-    return result;
-}
-
-void PriorityManager::print( const etl::string_view& string, const uint8_t y, const Format& format )
+TextInterface& PriorityManager::text()
 {
     if (checkPriority())
     {
-        lcd_.print( string, y, format );
+        return lcd_.text();
     }
+    return emptyTextInterface_;
 }
 
-void PriorityManager::setBacklightIntensity( uint8_t intensity )
+uint16_t PriorityManager::width()
 {
-    if (checkPriority())
-    {
-        lcd_.setBacklightIntensity( intensity );
-    }
+    return lcd_.width();
 }
 
-uint8_t PriorityManager::maximumBacklightIntensity() const
+uint16_t PriorityManager::height()
 {
-    return lcd_.maximumBacklightIntensity();
-}
-
-uint16_t PriorityManager::line( uint8_t lineNumber ) const
-{
-    return lcd_.line( lineNumber );
+    return lcd_.height();
 }
 
 void PriorityManager::release()
@@ -145,11 +77,6 @@ void PriorityManager::release()
     {
         currentPriorityFilter_ = Priority::LOW;
     }
-}
-
-DrawInterface& PriorityManager::draw()
-{
-    return lcd_.draw();
 }
 
 bool PriorityManager::checkPriority()

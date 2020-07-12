@@ -167,9 +167,4 @@ uint16_t Pcd8544::height() const
     return height_;
 }
 
-uint16_t Pcd8544::numberOfTextLines() const
-{
-    return numberOfTextLines_;
-}
-
 } // namespace lcd

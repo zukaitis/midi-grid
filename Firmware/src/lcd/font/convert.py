@@ -9,7 +9,7 @@ import textwrap
 output_file_header = '// This file is generated using ' + os.path.basename( __file__ ) + ' script' + '''
 // Editing it by hand would not be the best idea if you value your time
 
-#include "lcd/Font.h"
+#include "lcd/text/Font.h"
 
 namespace lcd
 {

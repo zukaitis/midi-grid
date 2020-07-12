@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <etl/array_view.h>
 
 class Color
 {
@@ -21,12 +22,14 @@ public:
     Color operator/( uint8_t divisor ) const;
 
 private:
-    static const uint8_t maxValue;
+    static const uint8_t maxValue_;
 
     uint8_t red_;
     uint8_t green_;
     uint8_t blue_;
 };
+
+using ColorView = etl::array_view<const Color>;
 
 namespace color
 {

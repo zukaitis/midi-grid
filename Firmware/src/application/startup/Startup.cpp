@@ -3,7 +3,9 @@
 #include "hardware/grid/GridDriver.h"
 #include "lcd/LcdInterface.h"
 #include "application/images.h"
+#include "lcd/text/Format.h"
 #include "system/System.hpp"
+#include "types/Color.h"
 
 namespace application
 {
@@ -21,7 +23,7 @@ Startup::Startup( ApplicationController& applicationController, hardware::grid::
 void Startup::run( ApplicationThread& thread )
 {
     lcd_.initialize();
-    lcd_.setBacklightIntensity( 60 );
+    lcd_.backlight().setIntensity( 60 );
 
     gridDriver_.initialize();
     gridDriver_.start();
@@ -37,9 +39,9 @@ void Startup::run( ApplicationThread& thread )
 
 void Startup::displayUsbConnecting()
 {
-    lcd_.clear();
-    lcd_.displayImage( 12, 8, usbLogo );
-    lcd_.print( "USB Connecting", lcd_.line( 5 ), lcd::Justification::CENTER );
+    lcd_.image().createNew( color::BLACK );
+    lcd_.text().print( "USB Connecting", 120, lcd::Format().justification( lcd::Justification::CENTER ) );
+    lcd_.image().display();
 }
 
 }  // namespace application

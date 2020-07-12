@@ -1,4 +1,4 @@
-#include "lcd/Font.h"
+#include "lcd/text/Font.h"
 
 namespace lcd
 {

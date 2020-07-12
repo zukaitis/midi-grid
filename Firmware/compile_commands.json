@@ -337,9 +337,9 @@
   },
   {
     "directory": "/mnt/hdd/Documents/projects/midi-grid/Firmware",
-    "command": "clang++-9 -MMD -MT output/src/lcd/Draw.o -MF output/src/lcd/Draw.o.d -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F413xx -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fshort-enums --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi --target=arm-none-eabi -O1 -ggdb3 -ffunction-sections -fdata-sections -fdiagnostics-color=always -fno-rtti -fno-strict-aliasing -std=c++11 -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS -Isubmodules/cmsis_device_f4/Include -Isubmodules/cmsis_core/Include -Isubmodules/stm32f4xx_hal_driver/Inc -Isubmodules/stm32f4xx_hal_driver/Inc/Legacy -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/240x320 -Isubmodules/etl/include -Isubmodules/freertos-addons/c++/Source/include -Isubmodules/FreeRTOS-Kernel/include -Isubmodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/ -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi -c src/lcd/Draw.cpp -o output/src/lcd/Draw.o",
-    "file": "src/lcd/Draw.cpp",
-    "output": "output/src/lcd/Draw.o"
+    "command": "clang++-9 -MMD -MT output/src/lcd/Shapes.o -MF output/src/lcd/Shapes.o.d -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F413xx -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fshort-enums --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi --target=arm-none-eabi -O1 -ggdb3 -ffunction-sections -fdata-sections -fdiagnostics-color=always -fno-rtti -fno-strict-aliasing -std=c++11 -DCPP_FREERTOS_NO_EXCEPTIONS -DCPP_FREERTOS_NO_CPP_STRINGS -Isubmodules/cmsis_device_f4/Include -Isubmodules/cmsis_core/Include -Isubmodules/stm32f4xx_hal_driver/Inc -Isubmodules/stm32f4xx_hal_driver/Inc/Legacy -Imiddlewares/ST/STM32_USB_Device_Library/Core/Inc -Imiddlewares/USBMIDI/Inc -Isrc -Isrc/configs -Isrc/lcd/240x320 -Isubmodules/etl/include -Isubmodules/freertos-addons/c++/Source/include -Isubmodules/FreeRTOS-Kernel/include -Isubmodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/ -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi -c src/lcd/Shapes.cpp -o output/src/lcd/Shapes.o",
+    "file": "src/lcd/Shapes.cpp",
+    "output": "output/src/lcd/Shapes.o"
   },
   {
     "directory": "/mnt/hdd/Documents/projects/midi-grid/Firmware",

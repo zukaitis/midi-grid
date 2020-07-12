@@ -1,5 +1,5 @@
-#include "lcd/Format.h"
-#include "lcd/Font.h"
+#include "lcd/text/Format.h"
+#include "lcd/text/Font.h"
 
 namespace lcd
 {
@@ -44,6 +44,12 @@ Format& Format::maxWidth( const uint16_t width )
     return *this;
 }
 
+Format& Format::abbreviationSuffix( const AbbreviationSuffix suffix )
+{
+    abbreviationSuffix_ = suffix;
+    return *this;
+}
+
 const Font& Format::font() const
 {
     return *font_;
@@ -72,6 +78,11 @@ Justification Format::justification() const
 uint16_t Format::maxWidth() const
 {
     return maxWidth_;
+}
+
+AbbreviationSuffix Format::abbreviationSuffix() const
+{
+    return abbreviationSuffix_;
 }
 
 }  // namespace lcd

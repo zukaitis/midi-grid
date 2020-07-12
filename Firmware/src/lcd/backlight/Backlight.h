@@ -19,12 +19,10 @@ namespace lcd
 class Backlight : private freertos::Thread, public BacklightInterface
 {
 public:
-    Backlight( hardware::lcd::BacklightDriverInterface& driver );
+    Backlight( hardware::lcd::BacklightDriverInterface* driver );
 
     void initialize() override;
-    void setIntensity( const uint8_t intensity ) override;
-
-    uint8_t getMaximumIntensity() const override;
+    void setIntensity( uint8_t intensity ) override;
 
 private:
     void Run() override;

@@ -3,6 +3,7 @@
 #include "grid/GridInterface.h"
 #include "additional_buttons/AdditionalButtonsInterface.h"
 #include "lcd/LcdInterface.h"
+#include "lcd/text/Format.h"
 #include "system/System.hpp"
 
 #include "types/Color.h"
@@ -91,10 +92,19 @@ void InternalMenu::handleGridButtonEvent( const grid::ButtonEvent& event )
 
 void InternalMenu::updateLcd() const
 {
-    lcd_.setBackgroundColor( color::RED );
-    lcd_.clear();
-    lcd_.print( "Internal Menu", 16, lcd::Justification::CENTER );
-    lcd_.print( "Active", 24, lcd::Justification::CENTER );
+    lcd_.image().createNew( color::RED );
+
+    lcd::Format format;
+    format.justification( lcd::Justification::CENTER ).font( lcd::font::rubik_24p ).textColor( color::BLACK );
+    lcd_.text().print( "Internal Menu", 136, format );
+    lcd_.text().print( "Active", 160, format );
+    lcd_.shapes().drawCircle({120, 200}, 20, color::BLUE);
+    lcd_.shapes().drawCircle({90, 200}, 20, color::YELLOW);
+    lcd_.shapes().drawCircle({150, 200}, 20, color::MAGENTA);
+    lcd_.shapes().drawCircle({60, 200}, 20, color::GREEN);
+    lcd_.shapes().drawCircle({180, 200}, 20, color::WHITE);
+
+    lcd_.image().display();
 }
 
 }  // namespace application

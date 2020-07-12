@@ -201,14 +201,13 @@ build output/src/grid/Grid.o: cxx src/grid/Grid.cpp
 build output/src/grid/GridContainer.o: cxx src/grid/GridContainer.cpp
 build output/src/grid/LedOutput.o: cxx src/grid/LedOutput.cpp
 build output/src/grid/PulsingLeds.o: cxx src/grid/PulsingLeds.cpp
-build output/src/lcd/Draw.o: cxx src/lcd/Draw.cpp
-build output/src/lcd/Font.o: cxx src/lcd/Font.cpp
-build output/src/lcd/Format.o: cxx src/lcd/Format.cpp
 build output/src/lcd/Lcd.o: cxx src/lcd/Lcd.cpp
 build output/src/lcd/PriorityManager.o: cxx src/lcd/PriorityManager.cpp
-build output/src/lcd/240x320/LcdContainer.o: cxx $
-    src/lcd/240x320/LcdContainer.cpp
-build output/src/lcd/240x320/Ili9341.o: cxx src/lcd/240x320/Ili9341.cpp
+build output/src/lcd/240x320/lcd/LcdContainer.o: cxx $
+    src/lcd/240x320/lcd/LcdContainer.cpp
+build output/src/lcd/240x320/lcd/Ili9341.o: cxx $
+    src/lcd/240x320/lcd/Ili9341.cpp
+build output/src/lcd/240x320/lcd/Pixel.o: cxx src/lcd/240x320/lcd/Pixel.cpp
 build output/src/lcd/backlight/Backlight.o: cxx $
     src/lcd/backlight/Backlight.cpp
 build output/src/lcd/font/nokia_8p.o: cxx src/lcd/font/nokia_8p.cpp
@@ -216,6 +215,7 @@ build output/src/lcd/font/monoton_80p.o: cxx src/lcd/font/monoton_80p.cpp
 build output/src/lcd/font/rubik_16p.o: cxx src/lcd/font/rubik_16p.cpp
 build output/src/lcd/font/rubik_24p.o: cxx src/lcd/font/rubik_24p.cpp
 build output/src/lcd/font/sarpanch_79p.o: cxx src/lcd/font/sarpanch_79p.cpp
+build output/src/lcd/image/Image.o: cxx src/lcd/image/Image.cpp
 build output/src/lcd/images/circle_23x23.o: cxx $
     src/lcd/images/circle_23x23.cpp
 build output/src/lcd/images/circle_empty_23x23.o: cxx $
@@ -229,6 +229,10 @@ build output/src/lcd/images/up_arrow_9x23.o: cxx $
     src/lcd/images/up_arrow_9x23.cpp
 build output/src/lcd/images/usb_41x23.o: cxx src/lcd/images/usb_41x23.cpp
 build output/src/lcd/images/usb_240x107.o: cxx src/lcd/images/usb_240x107.cpp
+build output/src/lcd/shapes/Shapes.o: cxx src/lcd/shapes/Shapes.cpp
+build output/src/lcd/text/Font.o: cxx src/lcd/text/Font.cpp
+build output/src/lcd/text/Format.o: cxx src/lcd/text/Format.cpp
+build output/src/lcd/text/Text.o: cxx src/lcd/text/Text.cpp
 build output/src/syslog/Log.o: cxx src/syslog/Log.cpp
 build output/src/syslog/LogContainer.o: cxx src/syslog/LogContainer.cpp
 build output/src/syslog/LogThread.o: cxx src/syslog/LogThread.cpp
@@ -303,19 +307,21 @@ build $target: link $
     output/src/grid/ButtonInput.o output/src/grid/FlashingLeds.o $
     output/src/grid/Grid.o output/src/grid/GridContainer.o $
     output/src/grid/LedOutput.o output/src/grid/PulsingLeds.o $
-    output/src/lcd/Draw.o output/src/lcd/Font.o output/src/lcd/Format.o $
     output/src/lcd/Lcd.o output/src/lcd/PriorityManager.o $
-    output/src/lcd/240x320/LcdContainer.o output/src/lcd/240x320/Ili9341.o $
+    output/src/lcd/240x320/lcd/LcdContainer.o $
+    output/src/lcd/240x320/lcd/Ili9341.o output/src/lcd/240x320/lcd/Pixel.o $
     output/src/lcd/backlight/Backlight.o output/src/lcd/font/nokia_8p.o $
     output/src/lcd/font/monoton_80p.o output/src/lcd/font/rubik_16p.o $
     output/src/lcd/font/rubik_24p.o output/src/lcd/font/sarpanch_79p.o $
-    output/src/lcd/images/circle_23x23.o $
+    output/src/lcd/image/Image.o output/src/lcd/images/circle_23x23.o $
     output/src/lcd/images/circle_empty_23x23.o $
     output/src/lcd/images/down_arrow_9x23.o $
     output/src/lcd/images/midi_23x23.o $
     output/src/lcd/images/triangle_21x23.o $
     output/src/lcd/images/up_arrow_9x23.o output/src/lcd/images/usb_41x23.o $
-    output/src/lcd/images/usb_240x107.o output/src/syslog/Log.o $
+    output/src/lcd/images/usb_240x107.o output/src/lcd/shapes/Shapes.o $
+    output/src/lcd/text/Font.o output/src/lcd/text/Format.o $
+    output/src/lcd/text/Text.o output/src/syslog/Log.o $
     output/src/syslog/LogContainer.o output/src/syslog/LogThread.o $
     output/src/syslog/Storage.o output/src/rotary_controls/RotaryControls.o $
     output/src/testing/Testing.o output/src/usb/UsbMidi.o output/src/main.o $

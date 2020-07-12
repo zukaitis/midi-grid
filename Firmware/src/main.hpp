@@ -9,7 +9,7 @@
 
 #include "hardware/lcd/Spi.h"
 #include "hardware/lcd/BacklightDriver.h"
-#include "LcdContainer.h"
+#include "lcd/LcdContainer.h"
 #include "syslog/LogContainer.h"
 
 #include "application/internal_menu/InternalMenu.hpp"

@@ -34,7 +34,6 @@ public:
 
     uint16_t width() const override;
     uint16_t height() const override;
-    uint16_t numberOfTextLines() const override;
 
 private:
     void Run() override;

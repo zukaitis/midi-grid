@@ -1,6 +1,6 @@
 #include "types/Color.h"
 
-const uint8_t Color::maxValue = 255;
+const uint8_t Color::maxValue_ = 255;
 
 Color::Color( const uint8_t r, const uint8_t g, const uint8_t b ):
     red_( r ),
@@ -44,9 +44,9 @@ Color Color::operator+(const Color& addend) const
     const uint16_t sumGreen = this->green_ + addend.green_;
     const uint16_t sumBlue = this->blue_ + addend.blue_;
 
-    const Color sum( (sumRed > maxValue) ? maxValue : sumRed,
-        (sumGreen > maxValue) ? maxValue : sumGreen,
-        (sumBlue > maxValue) ? maxValue : sumBlue );
+    const Color sum( (sumRed > maxValue_) ? maxValue_ : sumRed,
+        (sumGreen > maxValue_) ? maxValue_ : sumGreen,
+        (sumBlue > maxValue_) ? maxValue_ : sumBlue );
     return sum;
 };
 
@@ -56,9 +56,9 @@ Color Color::operator*(const uint8_t multiplier) const
     const uint16_t productGreen = this->green_ * multiplier;
     const uint16_t productBlue = this->blue_ * multiplier;
 
-    const Color product( (productRed > maxValue) ? maxValue : productRed,
-        (productGreen > maxValue) ? maxValue : productGreen,
-        (productBlue > maxValue) ? maxValue : productBlue );
+    const Color product( (productRed > maxValue_) ? maxValue_ : productRed,
+        (productGreen > maxValue_) ? maxValue_ : productGreen,
+        (productBlue > maxValue_) ? maxValue_ : productBlue );
     return product;
 }
 
@@ -68,9 +68,9 @@ Color Color::operator*(const float multiplier) const
     const uint16_t productGreen = this->green_ * multiplier;
     const uint16_t productBlue = this->blue_ * multiplier;
 
-    const Color product( (productRed > maxValue) ? maxValue : productRed,
-        (productGreen > maxValue) ? maxValue : productGreen,
-        (productBlue > maxValue) ? maxValue : productBlue );
+    const Color product( (productRed > maxValue_) ? maxValue_ : productRed,
+        (productGreen > maxValue_) ? maxValue_ : productGreen,
+        (productBlue > maxValue_) ? maxValue_ : productBlue );
     return product;
 }
 
@@ -80,8 +80,8 @@ Color Color::operator/(const uint8_t divisor) const
     const uint16_t quotientGreen = this->green_ / divisor;
     const uint16_t quotientBlue = this->blue_ / divisor;
 
-    const Color quotient( (quotientRed > maxValue) ? maxValue : quotientRed,
-        (quotientGreen > maxValue) ? maxValue : quotientGreen,
-        (quotientBlue > maxValue) ? maxValue : quotientBlue );
+    const Color quotient( (quotientRed > maxValue_) ? maxValue_ : quotientRed,
+        (quotientGreen > maxValue_) ? maxValue_ : quotientGreen,
+        (quotientBlue > maxValue_) ? maxValue_ : quotientBlue );
     return quotient;
 }
