@@ -83,7 +83,10 @@ void Image::display( const Coordinates& coords )
             const uint8_t colorIndex = getColorIndex( {x, y} );
             if (0 != colorIndex)
             {
+                if (palette_.size() > colorIndex - 1)
+                {
                 driver_.putPixel( {static_cast<uint16_t>(coords.x + x), static_cast<uint16_t>(coords.y + y)}, palette_.at(colorIndex - 1) );
+                }
             }
         }
     }
@@ -141,7 +144,7 @@ uint8_t Image::assignColorIndex( const Color& color )
         if (false == palette_.full())
         {
             palette_.emplace_back( color );
-            index = palette_.size() - 1;
+            index = palette_.size();
         }
     }
 

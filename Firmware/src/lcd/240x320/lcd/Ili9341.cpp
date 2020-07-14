@@ -132,16 +132,6 @@ void Ili9341::initialize()
     buffer = {0x86};
     spi_.writeData( hardware::lcd::RawDataView(buffer) );
 
-    spi_.writeCommand( static_cast<uint8_t>(Command::MADCTL) );
-    buffer = assignDataBuffer();
-    buffer = {0xA8}; // ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR
-    spi_.writeData( hardware::lcd::RawDataView(buffer) );
-
-    spi_.writeCommand( static_cast<uint8_t>(Command::PIXFMT) );
-    buffer = assignDataBuffer();
-    buffer = {0x55};
-    spi_.writeData( hardware::lcd::RawDataView(buffer) );
-
     spi_.writeCommand( static_cast<uint8_t>(Command::FRMCTR1) );
     buffer = assignDataBuffer();
     buffer = {0x00, 0x18};
@@ -210,21 +200,13 @@ void Ili9341::flush()
 {
     if (refreshAreaTopLeft_ <= refreshAreaBottomRight_)
     {
-        const uint16_t refreshAreaWidth = refreshAreaBottomRight_.x - refreshAreaTopLeft_.x + 1U;
-
-        if (refreshAreaWidth < 80)
-        {
-            refresh();
-        }
-        else
-        {
-            refreshInterlaced();
-        }
+        refreshInterlaced();
     }
 
     resetRefreshArea();
 }
 
+// does not work (yet?)
 void Ili9341::refresh()
 {
     const uint16_t areaWidth = refreshAreaBottomRight_.x - refreshAreaTopLeft_.x + 1U;

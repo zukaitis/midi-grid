@@ -3,16 +3,18 @@
 namespace lcd
 {
 
-static const uint8_t redShift = 3U;
-static const uint8_t redMask = 0b11111000U;
-static const uint8_t greenShift = 3U;
-static const uint8_t greenMask = 0b11111100U;
-static const uint8_t blueShift = 8U;
-static const uint8_t blueMask = 0b11111000U;
+static const uint16_t redMask = 0b11111000U;
+static const uint16_t greenShiftHigh = 5U;
+static const uint16_t greenMaskHigh = 0b11100000U;
+static const uint16_t greenShiftLow = 11U;
+static const uint16_t greenMaskLow = 0b00011100U;
+static const uint16_t blueShift = 5U;
+static const uint16_t blueMask = 0b11111000U;
 
 Pixel::Pixel( Color color ):
-    value_( ((color.red() & redMask) >> redShift) |
-        ((color.green() & greenMask) << greenShift) |
+    value_( (color.red() & redMask) |
+        ((color.green() & greenMaskHigh) >> greenShiftHigh) |
+        ((color.green() & greenMaskLow) << greenShiftLow) |
         ((color.blue() & blueMask) << blueShift) )
 {
 }

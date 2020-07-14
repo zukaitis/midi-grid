@@ -168,9 +168,9 @@ void (*SysMemBootJump)(void);
   */
 void SystemInit(void)
 {
-    if (*((unsigned long *)0x2001FFF0) == 0xDEADBEEF)
+    if (*((unsigned long *)0x2004FFF0) == 0xDEADBEEF)
     {
-        *((unsigned long *)0x2001FFF0) =  0x00000000; // Reset our trigger
+        *((unsigned long *)0x2004FFF0) =  0x00000000; // Reset our trigger
         __set_MSP(0x20020000); // 0x1FFF0000 is "System Memory" start address for STM32 F413
         SysMemBootJump = (void (*)(void)) (*((uint32_t *) 0x1FFF0004)); // Point the PC to the System Memory reset vector (+4)
         SysMemBootJump();
