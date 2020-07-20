@@ -17,6 +17,8 @@ public:
     ~Shapes() override;
 
     void drawLine( const Coordinates& point1, const Coordinates& point2, const Color& color ) override;
+    void drawLine( const Coordinates& point1, const Coordinates& point2, uint16_t thickness, const Color& color ) override;
+    void drawLine( const Coordinates& point1, uint16_t angle, uint16_t length, uint16_t thickness, const Color& color ) override;
     void drawArc( const Coordinates& center, uint16_t innerRadius, uint16_t outerRadius,
         uint16_t startAngle, uint16_t endAngle, const Color& color ) override;
     void drawCircle( const Coordinates& center, uint16_t radius, const Color& color ) override;

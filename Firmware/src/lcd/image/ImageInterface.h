@@ -30,6 +30,7 @@ public:
 
     virtual bool putPixel( const Coordinates& coords, uint8_t colorIndex ) { return false; };
     virtual uint8_t assignColorIndex( const Color& color ) { return 0; };
+    virtual uint8_t getBackgroundColorIndex() { return 0; };
 };
 
 }  // namespace lcd

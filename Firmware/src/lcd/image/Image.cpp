@@ -1,6 +1,7 @@
 #include "lcd/image/Image.h"
 #include "lcd/DriverInterface.h"
 #include "types/Coordinates.h"
+#include "types/Vector.h"
 
 namespace lcd
 {
@@ -47,6 +48,7 @@ void Image::createNew()
 void Image::clear()
 {
     palette_.clear();
+    backgroundColorIndex_ = 0;
     data_.assign( width_ * wordsPerColumn_, 0U );
 }
 
@@ -54,6 +56,7 @@ void Image::fill( const Color& color )
 {
     palette_.clear();
     palette_.emplace_back( color );  // add fill color to palette;
+    backgroundColorIndex_ = 1;
 
     uint32_t filler = 0;
     for (uint8_t i = 0; i < pixelsPerWord_; i++)
@@ -83,10 +86,7 @@ void Image::display( const Coordinates& coords )
             const uint8_t colorIndex = getColorIndex( {x, y} );
             if (0 != colorIndex)
             {
-                if (palette_.size() > colorIndex - 1)
-                {
-                driver_.putPixel( {static_cast<uint16_t>(coords.x + x), static_cast<uint16_t>(coords.y + y)}, palette_.at(colorIndex - 1) );
-                }
+                driver_.putPixel( coords + Vector( x, y ), palette_.at(colorIndex - 1) );
             }
         }
     }
@@ -149,6 +149,11 @@ uint8_t Image::assignColorIndex( const Color& color )
     }
 
     return index;
+}
+
+uint8_t Image::getBackgroundColorIndex() 
+{
+    return backgroundColorIndex_;
 }
 
 void Image::initialize( const uint16_t width, const uint16_t height )

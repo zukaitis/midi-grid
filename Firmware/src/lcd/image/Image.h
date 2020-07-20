@@ -38,6 +38,7 @@ public:
 
     bool putPixel( const Coordinates& coords, uint8_t colorIndex ) override;
     uint8_t assignColorIndex( const Color& color ) override;
+    uint8_t getBackgroundColorIndex() override;
 
 private:
     void initialize( uint16_t width, uint16_t height );
@@ -61,6 +62,7 @@ private:
     etl::vector<Color, numberOfColors_> palette_;
 
     bool drawingInProgress_;
+    uint8_t backgroundColorIndex_;
 };
 
 }  // namespace lcd

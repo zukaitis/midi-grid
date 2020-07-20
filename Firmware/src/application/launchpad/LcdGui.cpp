@@ -5,6 +5,9 @@
 #include "application/launchpad/Images.hpp"
 
 #include "lcd/LcdInterface.h"
+#include "lcd/text/Format.h"
+#include "types/Color.h"
+#include "types/Coordinates.h"
 #include <freertos/ticks.hpp>
 
 #include <etl/cstring.h>
@@ -62,6 +65,7 @@ void LcdGui::initialize()
 void LcdGui::refresh()
 {
     refreshTimedItemsStatus();
+
     refreshStatusBar();
     refreshMode();
     refreshTimingArea();
@@ -71,14 +75,17 @@ void LcdGui::refresh()
 
 void LcdGui::refreshStatusBar()
 {
-    lcd_.shapes().drawImage( {leftX, topY}, lcd::image::triangle_21x23, (launchpad_.isPlaying_ ? playActive : inactive) );
-    lcd_.shapes().drawImage( {42, topY}, lcd::image::circle_23x23, (launchpad_.isRecording_ ? recordingActive : inactive) );
-    lcd_.shapes().drawImage( {81, topY}, lcd::image::circle_empty_23x23, (launchpad_.isSessionRecording_ ? recordingActive : inactive) );
+    lcd_.image().createNew( 230, 23 );
 
-    lcd_.shapes().drawImage( {174, topY}, lcd::image::usb_41x23,
+    lcd_.shapes().drawImage( {0, 0}, lcd::image::triangle_21x23, (launchpad_.isPlaying_ ? playActive : inactive) );
+    lcd_.shapes().drawImage( {37, 0}, lcd::image::circle_23x23, (launchpad_.isRecording_ ? recordingActive : inactive) );
+    lcd_.shapes().drawImage( {76, 0}, lcd::image::circle_empty_23x23, (launchpad_.isSessionRecording_ ? recordingActive : inactive) );
+    lcd_.shapes().drawImage( {169, 0}, lcd::image::usb_41x23,
         ((usbMidiInputActivityIcon_.enabled || usbMidiOutputActivityIcon_.enabled) ? midiActive : inactive) );
-    lcd_.shapes().drawImage( {217, topY}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
-    lcd_.shapes().drawImage( {226, topY}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
+    lcd_.shapes().drawImage( {212, 0}, lcd::image::down_arrow_9x23, (usbMidiInputActivityIcon_.enabled ? midiActive : inactive) );
+    lcd_.shapes().drawImage( {221, 0}, lcd::image::up_arrow_9x23, (usbMidiOutputActivityIcon_.enabled ? midiActive : inactive) );
+
+    lcd_.image().display( {leftX, topY} );
 }
 
 void LcdGui::refreshMode()
@@ -108,35 +115,30 @@ void LcdGui::refreshMode()
             color = submodeAttributes.at( launchpad_.submode_ ).color;
         }
         
+        lcd_.image().createNew( 240, 25, background );
+
         lcd::Format textFormat;
         textFormat.font( lcd::font::rubik_24p ).textColor( color::WHITE ).backgroundColor( color );
-        const uint16_t textWidth = textFormat.font().getStringWidth( text );
-        const uint16_t textHeight = textFormat.font().getHeight();
-        const Coordinates textStart = {static_cast<uint16_t>(centerX - textWidth / 2), 32};
+        textFormat.justification( lcd::Justification::CENTER );
 
-        lcd_.text().print( text, textStart, textFormat );
-        lcd_.shapes().drawHalfCircleLeft( {static_cast<uint16_t>(textStart.x - 1),
-            static_cast<uint16_t>(textStart.y + radius)}, radius, color );
-        lcd_.shapes().drawHalfCircleRight( {static_cast<uint16_t>(textStart.x + textWidth),
-            static_cast<uint16_t>(textStart.y + radius)}, radius, color );
-#if 0
-        lcd_.fillArea({textStart.x, static_cast<uint16_t>(textStart.y + textHeight)},
-            {static_cast<uint16_t>(textStart.x + textWidth), static_cast<uint16_t>(textStart.y + textHeight)}, color );
-        lcd_.clearArea( {0, textStart.y}, {static_cast<uint16_t>(textStart.x - radius - 1),
-            static_cast<uint16_t>(textStart.y + textHeight + 1)} );
-        lcd_.clearArea( {239, textStart.y}, {static_cast<uint16_t>(textStart.x + textWidth + radius + 1),
-            static_cast<uint16_t>(textStart.y + textHeight + 1)} );
-#endif
+        const uint16_t textWidth = lcd_.text().print( text, {centerX, 0}, textFormat );
+        lcd_.shapes().drawHalfCircleLeft( {static_cast<uint16_t>(centerX - (textWidth / 2)),
+            radius}, radius, color );
+        lcd_.shapes().drawHalfCircleRight( {static_cast<uint16_t>(centerX + (textWidth / 2)),
+            radius}, radius, color );
+
+        lcd_.image().display( {0, 32} );
     }
 }
 
 void LcdGui::refreshTimingArea()
 {
     static const uint16_t timingTopY = 64;
-    static const uint16_t timingBottomY = 143;
     static const Color timingColor = color::YELLOW;
     static const auto numberFormat = lcd::Format().font( bigFont ).textColor( timingColor );
-    static const auto textFormat = lcd::Format().textColor( timingColor ).font( smallFont );
+    static const auto suffixFormat = lcd::Format().textColor( timingColor ).font( smallFont );
+
+    lcd_.image().createNew( 240, 80 , background );
 
     if (0 != launchpad_.tempo_)
     {
@@ -144,36 +146,26 @@ void LcdGui::refreshTimingArea()
         etl::to_string( launchpad_.tempo_, numberString );
 
         const uint16_t numberWidth = numberFormat.font().getStringWidth( numberString );
-        uint16_t textWidth = textFormat.font().getStringWidth( " bpm" );
-        const uint16_t textHeight = textFormat.font().getHeight();
-        const bool showText = ((numberWidth + textWidth) <= activeAreaWidth);
+        uint16_t suffixWidth = suffixFormat.font().getStringWidth( " bpm" );
+        const bool displaySuffix = ((numberWidth + suffixWidth) <= activeAreaWidth);
 
-        if (false == showText)
+        if (false == displaySuffix)
         {
-            textWidth = 0;
+            suffixWidth = 0;
         }
-        const uint16_t totalWidth = numberWidth + textWidth;
+
+        const uint16_t totalWidth = numberWidth + suffixWidth;
         const uint16_t numberLeftX = centerX - totalWidth / 2;
 
-        //lcd_.clearArea( {0, timingTopY}, {static_cast<uint16_t>(numberLeftX - 1U), timingBottomY} );
-        lcd_.text().print( numberString, {numberLeftX, timingTopY}, numberFormat );
+        lcd_.text().print( numberString, {numberLeftX, 0}, numberFormat );
 
-        if (showText)
+        if (displaySuffix)
         {
-            lcd_.text().print( " bpm", {static_cast<uint16_t>(numberLeftX + numberWidth), timingTopY}, textFormat );
+            lcd_.text().print( " bpm", {static_cast<uint16_t>(numberLeftX + numberWidth), 0}, suffixFormat );
         }
+    }
 
-#if 0
-        lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + totalWidth), timingTopY},
-            {239, static_cast<uint16_t>(timingTopY + textHeight - 1U)} );
-        lcd_.clearArea( {static_cast<uint16_t>(numberLeftX + numberWidth), static_cast<uint16_t>(timingTopY + textHeight)},
-            {239, timingBottomY} );
-#endif
-    }
-    else
-    {
-        //lcd_.clearArea( {0, timingTopY}, {239, timingBottomY} );
-    }
+    lcd_.image().display( {0, timingTopY} );
 }
 
 void LcdGui::refreshModeDependentArea()
@@ -202,33 +194,42 @@ void LcdGui::displayClipView()
 
 void LcdGui::refreshRotaryControlArea()
 {
-    static const uint16_t minAngle = 45;
-    static const uint16_t maxAngle = 315;
-    static const Color color = {114, 206, 243};
-    static const uint16_t innerRadius = 16;
-    static const uint16_t outerRadius = 33;
-    static const uint16_t centerY = 290;
-    static const uint16_t textY = 290;
+    static const uint16_t minAngle = 30;
+    static const uint16_t maxAngle = 330;
+    static const uint16_t gapAngle = 16;
+    static const Color color( 114, 206, 243 );
+    static const Color inactive = color::BLACK;
+    static const uint16_t innerRadius = 25;
+    static const uint16_t outerRadius = 29;
+    static const uint16_t lineLength = (innerRadius + outerRadius) / 2;
+    static const uint16_t lineThickness = 5;
+    static const uint16_t centerY = outerRadius;
+    static const uint16_t textY = outerRadius;
     lcd::Format textFormat;
     textFormat.font( lcd::font::rubik_24p ).textColor( color );
     
+    lcd_.image().createNew( 240, 64, background );
+
     uint16_t angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 0 ) ) / midi::kMaximumControlValue;
-    lcd_.shapes().drawArc( {leftX + outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    Coordinates center = {leftX + outerRadius, centerY};
+    lcd_.shapes().drawArc( center, innerRadius, outerRadius, minAngle, angle, color );
+    lcd_.shapes().drawArc( center, innerRadius, outerRadius, angle + gapAngle, maxAngle, inactive );
+    lcd_.shapes().drawLine( center, angle, lineLength, lineThickness, inactive );
     etl::string<4> stringControl0 = " ";
     etl::to_string( launchpad_.rotaryControlValue_.at( 0 ), stringControl0, true );
     lcd_.text().print( stringControl0, {leftX + 2 * outerRadius, textY}, textFormat );
 
     angle = minAngle + ((maxAngle - minAngle) * launchpad_.rotaryControlValue_.at( 1 ) ) / midi::kMaximumControlValue;
-    lcd_.shapes().drawArc( {rightX - outerRadius, centerY}, innerRadius, outerRadius, minAngle, angle, color );
+    center = {rightX - outerRadius, centerY};
+    lcd_.shapes().drawArc( center, innerRadius, outerRadius, minAngle, angle, color );
+    lcd_.shapes().drawArc( center, innerRadius, outerRadius, angle + gapAngle, maxAngle, inactive );
+    lcd_.shapes().drawLine( center, angle, lineLength, lineThickness, inactive );
     etl::string<4> stringControl1;
     etl::to_string( launchpad_.rotaryControlValue_.at( 1 ), stringControl1 );
     stringControl1 += " ";
     lcd_.text().print( stringControl1, {rightX - 2 * outerRadius, textY}, textFormat.justification( lcd::Justification::RIGHT ) );
 
-#if 0
-    lcd_.clearArea( {static_cast<uint16_t>(leftX + 2 * outerRadius + textFormat.font().getStringWidth( stringControl0 ))},
-        {static_cast<uint16_t>(rightX - 2 * outerRadius - textFormat.font().getStringWidth( stringControl1 )), bottomY} );
-#endif
+    lcd_.image().display( {0, 256} );
 }
 
 void LcdGui::refreshMainArea()

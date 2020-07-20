@@ -39,7 +39,7 @@ void Startup::run( ApplicationThread& thread )
 
 void Startup::displayUsbConnecting()
 {
-    lcd_.image().createNew( color::BLACK );
+    lcd_.image().createNew( Color( 250, 250, 250 ) );
     lcd_.text().print( "USB Connecting", 120, lcd::Format().justification( lcd::Justification::CENTER ) );
     lcd_.image().display();
 }

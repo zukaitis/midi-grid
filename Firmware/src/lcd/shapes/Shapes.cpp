@@ -1,6 +1,8 @@
 #include "lcd/shapes/Shapes.h"
 
 #include "types/Coordinates.h"
+#include "types/Vector.h"
+#include <sys/_stdint.h>
 
 namespace lcd
 {
@@ -19,6 +21,36 @@ void Shapes::drawLine( const Coordinates& point1, const Coordinates& point2, con
     putLine( point1, point2, image_.assignColorIndex( color ) );
 }
 
+void Shapes::drawLine( const Coordinates& point1, const Coordinates& point2, const uint16_t thickness, const Color& color )
+{
+    const uint8_t colorIndex = image_.assignColorIndex( color );
+    const uint16_t radius = (thickness - 1) / 2;
+
+    putCircle( point1, radius, colorIndex );
+    putCircle( point2, radius, colorIndex );
+
+    const Vector line = point1 - point2;
+    Vector delta0 = (std::abs( line.x ) > std::abs( line.y )) ? Vector( 0, 1 ) : Vector( 1, 0 );
+    Vector delta = delta0;
+
+    putLine( point1, point2, colorIndex );
+    for (uint16_t i = 0; i < radius; i++)
+    {
+        putLine( point1 + delta, point2 + delta, colorIndex );
+        putLine( point1 - delta, point2 - delta, colorIndex );
+
+        delta += delta0;
+    }
+}
+
+void Shapes::drawLine( const Coordinates& point1, const uint16_t angle, const uint16_t length,
+    const uint16_t thickness, const Color& color )
+{
+    const Coordinates point2 = point1 +
+        Vector( - std::sin( angle * M_PI / 180.0 ) * length, std::cos( angle * M_PI / 180.0 ) * length );
+    drawLine( point1, point2, thickness, color );
+}
+
 void Shapes::drawArc( const Coordinates& center, const uint16_t innerRadius, const uint16_t outerRadius,
     const uint16_t startAngle, const uint16_t endAngle, const Color& color )
 {
@@ -33,7 +65,7 @@ void Shapes::drawArc( const Coordinates& center, const uint16_t innerRadius, con
         sectionStart = ceiling;
     }
 
-    putCircle( center, innerRadius, 0, CircleType::FULL );
+    putCircle( center, innerRadius, image_.getBackgroundColorIndex(), CircleType::FULL );
 }
 
 void Shapes::drawCircle( const Coordinates& center, const uint16_t radius, const Color& color )
@@ -211,7 +243,7 @@ void Shapes::putPie( const Coordinates& center, const uint16_t radius, uint16_t 
             if (opposite >= oppositeLimitLow)
             {
                 putLine( center, getCoordinates( opposite, adjacent ), colorIndex );
-                if ((opposite > 10) && (opposite < oppositeLimitHigh))
+                if ((opposite > 7) && (opposite < oppositeLimitHigh))
                 {
                     // only draw additional lines, when they are necessary to ensure that no pixels stay unset
                     putLine( getCoordinates( 0, 1 ), getCoordinates( opposite - 1, adjacent ), colorIndex );
