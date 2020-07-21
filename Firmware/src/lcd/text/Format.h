@@ -1,9 +1,11 @@
 #pragma once
 
+#include "etl/string_view.h"
 #include "lcd/text/Font.h"
 #include "types/Color.h"
 #include <etl/array.h>
 #include <etl/array_view.h>
+#include <etl/cstring.h>
 
 namespace lcd
 {
@@ -24,13 +26,6 @@ enum class Justification : uint8_t
     CENTER
 };
 
-enum class AbbreviationSuffix : uint8_t
-{
-    NONE,
-    TWO_DOTS,
-    THREE_DOTS
-};
-
 class Format
 {
 public:
@@ -41,7 +36,7 @@ public:
     Format& backgroundColor( const Color& color );
     Format& justification( Justification justification );
     Format& maxWidth( uint16_t width );
-    Format& abbreviationSuffix( AbbreviationSuffix suffix );
+    Format& abbreviationSuffix( const etl::string_view& suffix );
 
     const Font& font() const;
     const Color& textColor() const;
@@ -49,7 +44,9 @@ public:
     bool isBackgroundColorSet() const;
     Justification justification() const;
     uint16_t maxWidth() const;
-    AbbreviationSuffix abbreviationSuffix() const;
+    etl::string_view abbreviationSuffix() const;
+
+    static const uint16_t unlimitedWidth = 0xFFFF;
 
 private:
     const Font* font_;
@@ -58,6 +55,8 @@ private:
     bool backgroundColorSet_;
     Justification justification_;
     uint16_t maxWidth_;
+
+    using AbbreviationSuffix = etl::string<3>;
     AbbreviationSuffix abbreviationSuffix_;
 };
 

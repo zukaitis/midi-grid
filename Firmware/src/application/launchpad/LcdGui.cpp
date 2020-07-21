@@ -5,6 +5,7 @@
 #include "application/launchpad/Images.hpp"
 
 #include "lcd/LcdInterface.h"
+#include "lcd/Parameters.h"
 #include "lcd/text/Format.h"
 #include "types/Color.h"
 #include "types/Coordinates.h"
@@ -42,13 +43,14 @@ static const Color inactive = color::BLACK;
 static const lcd::Font& smallFont = lcd::font::rubik_24p;
 static const lcd::Font& bigFont = lcd::font::monoton_80p;
 
-static const uint16_t leftX = 5;
-static const uint16_t rightX = 234;
-static const uint16_t centerX = 120;
-static const uint16_t topY = 5;
-static const uint16_t bottomY = 314;
-static const uint16_t activeAreaWidth = rightX - leftX + 1;
-static const uint16_t activeAreaHeight = bottomY - topY + 1;
+static const uint16_t margin = 5;
+static const uint16_t leftX = margin;
+static const uint16_t rightX = lcd::parameters::width - margin;
+static const uint16_t centerX = lcd::parameters::width / 2;
+static const uint16_t topY = margin;
+static const uint16_t bottomY = lcd::parameters::height - margin;
+static const uint16_t activeAreaWidth = rightX - leftX;
+static const uint16_t activeAreaHeight = bottomY - topY;
 
 LcdGui::LcdGui( Launchpad* launchpad, lcd::LcdInterface* lcd ):
     launchpad_( *launchpad ),
@@ -91,10 +93,11 @@ void LcdGui::refreshStatusBar()
 void LcdGui::refreshMode()
 {
     static const uint16_t radius = 12;
+    static const uint16_t textMaxWidth = activeAreaWidth - 2 * (radius + 1);
 
     if ((Submode::DEFAULT != launchpad_.submode_) || (Mode::UNKNOWN != launchpad_.mode_))
     {
-        etl::string<20> text = "";
+        etl::string<Launchpad::maximumDawInfoStringLength> text = "";
         Color color = background;
         if (Submode::DEFAULT == launchpad_.submode_)
         {
@@ -115,17 +118,19 @@ void LcdGui::refreshMode()
             color = submodeAttributes.at( launchpad_.submode_ ).color;
         }
         
-        lcd_.image().createNew( 240, 25, background );
+        lcd_.image().createNew( lcd::parameters::width, 25, background );
 
         lcd::Format textFormat;
         textFormat.font( lcd::font::rubik_24p ).textColor( color::WHITE ).backgroundColor( color );
-        textFormat.justification( lcd::Justification::CENTER );
+        textFormat.justification( lcd::Justification::CENTER ).maxWidth( textMaxWidth ).abbreviationSuffix( ".." );
 
         const uint16_t textWidth = lcd_.text().print( text, {centerX, 0}, textFormat );
-        lcd_.shapes().drawHalfCircleLeft( {static_cast<uint16_t>(centerX - (textWidth / 2)),
+        lcd_.shapes().drawHalfCircleLeft( {static_cast<uint16_t>(centerX - (textWidth / 2) - 1),
             radius}, radius, color );
         lcd_.shapes().drawHalfCircleRight( {static_cast<uint16_t>(centerX + (textWidth / 2)),
             radius}, radius, color );
+        lcd_.shapes().drawLine( {static_cast<uint16_t>(centerX - (textWidth / 2) - 1), 24},
+            {static_cast<uint16_t>(centerX + (textWidth / 2)), 24}, color );
 
         lcd_.image().display( {0, 32} );
     }

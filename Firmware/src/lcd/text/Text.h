@@ -1,3 +1,4 @@
+#include "etl/string_view.h"
 #include "lcd/text/TextInterface.h"
 
 namespace lcd
@@ -21,6 +22,8 @@ private:
 
     uint16_t calculateX( Justification justification );
     static Coordinates calculateCoordinates( const etl::string_view& string, const Coordinates& coords, const Format& format );
+
+    static etl::string_view abbreviate( const etl::string_view& input, Format* format );
 
     ImageInterface& image_;
 };

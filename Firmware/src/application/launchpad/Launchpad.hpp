@@ -126,10 +126,10 @@ private:
     bool isPlaying_;
     bool isRecording_;
     bool isSessionRecording_;
-    static const uint8_t kMaximumDawInfoStringLength = 15;
-    etl::string<15> clipName_;
-    etl::string<15> deviceName_;
-    etl::string<15> trackName_;
+    static const uint8_t maximumDawInfoStringLength = 32;
+    etl::string<maximumDawInfoStringLength> clipName_;
+    etl::string<maximumDawInfoStringLength> deviceName_;
+    etl::string<maximumDawInfoStringLength> trackName_;
     bool nudgeDownActive_;
     bool nudgeUpActive_;
     uint16_t tempo_;

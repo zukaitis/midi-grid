@@ -1,4 +1,5 @@
 #include "lcd/text/Format.h"
+#include "etl/string_view.h"
 #include "lcd/text/Font.h"
 
 namespace lcd
@@ -9,7 +10,9 @@ Format::Format():
     textColor_( color::WHITE ),
     backgroundColor_( color::BLACK ),
     backgroundColorSet_( false ),
-    justification_( Justification::LEFT )
+    justification_( Justification::LEFT ),
+    maxWidth_( unlimitedWidth ),
+    abbreviationSuffix_( "" )
 {
 }
 
@@ -44,9 +47,9 @@ Format& Format::maxWidth( const uint16_t width )
     return *this;
 }
 
-Format& Format::abbreviationSuffix( const AbbreviationSuffix suffix )
+Format& Format::abbreviationSuffix( const etl::string_view& suffix )
 {
-    abbreviationSuffix_ = suffix;
+    abbreviationSuffix_ = AbbreviationSuffix( suffix );
     return *this;
 }
 
@@ -80,7 +83,7 @@ uint16_t Format::maxWidth() const
     return maxWidth_;
 }
 
-AbbreviationSuffix Format::abbreviationSuffix() const
+etl::string_view Format::abbreviationSuffix() const
 {
     return abbreviationSuffix_;
 }

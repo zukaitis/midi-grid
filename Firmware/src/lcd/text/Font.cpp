@@ -52,8 +52,12 @@ uint16_t Font::getStringWidth( const etl::string_view& string ) const
     {
         width += getCharWidth( c );
     }
-
-    width += (string.length() - 1) * letterSpacingWidth_;
+    
+    if (string.length() != 0)
+    {
+        width += (string.length() - 1) * letterSpacingWidth_;
+    }
+    
     return width;
 }
 
