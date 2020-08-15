@@ -34,6 +34,8 @@ jobs:
           wget https://github.com/mozilla/grcov/releases/download/v0.5.9/grcov-linux-x86_64.tar.bz2 &&
           tar xjf grcov-linux-x86_64.tar.bz2
           sudo mv grcov /usr/bin/
+      - name: Setup clang-11
+        run: sudo apt install clang-11
       - name: Run
         run: Firmware/unit_tests/run -c
       - name: Upload coverage report
