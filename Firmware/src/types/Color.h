@@ -2,13 +2,12 @@
 
 #include <cstdint>
 #include <etl/array_view.h>
-#include <sys/_stdint.h>
 
 class Color
 {
 public:
 
-    Color() = default;
+    Color();
     Color( uint8_t r, uint8_t g, uint8_t b );
     explicit Color( uint32_t hexValue );
 

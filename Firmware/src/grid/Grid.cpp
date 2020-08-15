@@ -58,7 +58,7 @@ void Grid::setLed( const Coordinates& coordinates, const Color& color, const Led
         switch (lightingType)
         {
             case LedLightingType::FLASH:
-                flashingLeds_.add( coordinates, { led_[coordinates.x][coordinates.y].color, color } );
+                flashingLeds_.add( coordinates, { led_.at(coordinates.x).at(coordinates.y).color, color } );
                 break;
             case LedLightingType::PULSE:
                 pulsingLeds_.add( coordinates, color );
@@ -69,8 +69,8 @@ void Grid::setLed( const Coordinates& coordinates, const Color& color, const Led
                 break;
         }
 
-        led_[coordinates.x][coordinates.y].lightingType = lightingType;
-        led_[coordinates.x][coordinates.y].color = color;
+        led_.at(coordinates.x).at(coordinates.y).lightingType = lightingType;
+        led_.at(coordinates.x).at(coordinates.y).color = color;
     }
 }
 

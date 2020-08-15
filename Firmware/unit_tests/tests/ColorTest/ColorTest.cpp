@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include "types/Color.h"
 
-const uint8_t colorMaxValue = 64;
-
 int main( int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
@@ -13,6 +11,7 @@ int main( int argc, char **argv)
 TEST( ColorConstructor, CreateWithParameters )
 {
     const Color color( 4, 2, 0 );
+    const Color color1( 2323232U );
     SUCCEED();
 }
 
@@ -20,19 +19,10 @@ TEST( ColorConstructor, CreateWithoutParameters )
 {
     Color color;
 
-    // EXPECT_EQ( 0, color.red() );
-    // EXPECT_EQ( 0, color.green() );
-    // EXPECT_EQ( 0, color.blue() );
+    EXPECT_EQ( 0, color.red() );
+    EXPECT_EQ( 0, color.green() );
+    EXPECT_EQ( 0, color.blue() );
     SUCCEED(); // TODO: fix this
-}
-
-TEST( ColorConstructor, TruncateValues )
-{
-    const Color color( 0xFF, 0xFF, 0xFF );
-    
-    EXPECT_EQ( colorMaxValue, color.red() );
-    EXPECT_EQ( colorMaxValue, color.green() );
-    EXPECT_EQ( colorMaxValue, color.blue() );
 }
 
 TEST( EqualityOperator, SameValues )
@@ -41,6 +31,7 @@ TEST( EqualityOperator, SameValues )
     const Color color2( 4, 2, 0 );
     
     EXPECT_TRUE( color1 == color2 );
+    EXPECT_FALSE( color1 != color2 );
 }
 
 TEST( EqualityOperator, DifferentPositions )
@@ -49,6 +40,7 @@ TEST( EqualityOperator, DifferentPositions )
     const Color color2( 0, 4, 2 );
     
     EXPECT_FALSE( color1 == color2 );
+    EXPECT_TRUE( color1 != color2 );
 }
 
 TEST( AdditionOperator, Addition )
@@ -65,14 +57,14 @@ TEST( AdditionOperator, Addition )
 
 TEST( AdditionOperator, AdditionTruncated )
 {
-    const Color color1( 33, 45, 19 );
-    const Color color2( 55, 20, 50 );
+    const Color color1( 129, 111, 254 );
+    const Color color2( 222, 254, 77 );
 
     const Color sum = color1 + color2;
 
-    EXPECT_EQ( colorMaxValue, sum.red() );
-    EXPECT_EQ( colorMaxValue, sum.green() );
-    EXPECT_EQ( colorMaxValue, sum.blue() );
+    EXPECT_EQ( 255, sum.red() );
+    EXPECT_EQ( 255, sum.green() );
+    EXPECT_EQ( 255, sum.blue() );
 }
 
 TEST( MultiplicationOperator, Multiplication )
@@ -90,13 +82,13 @@ TEST( MultiplicationOperator, Multiplication )
 TEST( MultiplicationOperator, MultiplicationTruncated )
 {
     const Color color( 10, 11, 12 );
-    const uint8_t multiplier = 7;
+    const uint8_t multiplier = 26;
 
     const Color product = color * multiplier;
 
-    EXPECT_EQ( colorMaxValue, product.red() );
-    EXPECT_EQ( colorMaxValue, product.green() );
-    EXPECT_EQ( colorMaxValue, product.blue() );
+    EXPECT_EQ( 255, product.red() );
+    EXPECT_EQ( 255, product.green() );
+    EXPECT_EQ( 255, product.blue() );
 }
 
 TEST( MultiplicationOperator, MultiplicationWithFloat )

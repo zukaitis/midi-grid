@@ -1,4 +1,0 @@
----
-
-test_file: LcdTest.cpp
-file_under_test: ${source_dir}/lcd/Shapes.cpp
