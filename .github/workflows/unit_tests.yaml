@@ -35,7 +35,7 @@ jobs:
           tar xjf grcov-linux-x86_64.tar.bz2
           sudo mv grcov /usr/bin/
       - name: Setup clang-11
-        run: sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main" && sudo apt update && sudo apt install clang-11 lldb-11 lld-11
+        run: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add - && sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main" && sudo apt update && sudo apt install clang-11 lldb-11 lld-11
       - name: Run
         run: Firmware/unit_tests/run -c
       - name: Upload coverage report
