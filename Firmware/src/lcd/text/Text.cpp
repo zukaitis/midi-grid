@@ -39,7 +39,11 @@ uint16_t Text::putString( const etl::string_view& string, const Coordinates& coo
         backgroundColorIndex = image_.assignColorIndex( format.backgroundColor() );
     }
 
-    charCoords.x += putChar( string.at(0), charCoords, font, textColorIndex, backgroundColorIndex );
+    if (false == string.empty())
+    {
+        charCoords.x += putChar( string.at(0), charCoords, font, textColorIndex, backgroundColorIndex );
+    }
+
     for (uint32_t c = 1; c < string.length(); c++)
     {
         charCoords.x += putCharacterSpace( charCoords, font, backgroundColorIndex );

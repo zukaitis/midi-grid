@@ -17,12 +17,14 @@ const uint8_t kControlValueHigh = 127;
 
 const etl::array<uint8_t, 10> kChallengeResponse = { 0xF0, 0x00, 0x20, 0x29, 0x02, 0x18, 0x40, 0x00, 0x00, 0xF7 };
 
-const etl::string<6> kStandardSystemExclussiveMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x18 };
+const char sysExStartChar = static_cast<char>(0xF0);
+const char sysExEndChar = static_cast<char>(0xF7);
+const etl::string<6> kStandardSystemExclussiveMessageHeader = { sysExStartChar, 0x00, 0x20, 0x29, 0x02, 0x18 };
 const etl::string_view standardSystemExclussiveMessageHeaderView( kStandardSystemExclussiveMessageHeader );
 const uint8_t kStandardSystemExclussiveMessageMinimumLength = 8;
 
-const etl::string<9> systemExclussiveBootloaderMessage = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x00, 0x71, 0x00, 0x69,
-    static_cast<char>(0xF7) };
+const etl::string<9> systemExclussiveBootloaderMessage = { sysExStartChar, 0x00, 0x20, 0x29, 0x00, 0x71, 0x00, 0x69,
+    sysExEndChar };
 const etl::string_view systemExclussiveBootloaderMessageView( systemExclussiveBootloaderMessage );
 
 enum class LaunchpadSysExCommand
@@ -40,7 +42,7 @@ enum class LaunchpadSysExCommand
     DISCONNECT_OR_CHALLENGE = 0x40
 };
 
-const etl::string<6> customSysExMessageHeader = { static_cast<char>(0xF0), 0x00, 0x20, 0x29, 0x02, 0x07 };
+const etl::string<6> customSysExMessageHeader = { sysExStartChar, 0x00, 0x20, 0x29, 0x02, 0x07 };
 const etl::string_view customSysExMessageHeaderView( customSysExMessageHeader );
 
 enum class CustomSysExCommand

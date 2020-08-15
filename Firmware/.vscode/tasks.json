@@ -32,7 +32,7 @@
         {
             "label": "Rebuild",
             "type": "shell",
-            "command": "rm -rf output && ninja",
+            "command": "rm -rf output && rm compile_commands.json && ninja",
             "group": "build",
             "presentation": {
                 "reveal": "always",

@@ -1,4 +1,5 @@
 #include "types/Color.h"
+#include <sys/_stdint.h>
 
 const uint8_t Color::maxValue_ = 255;
 
@@ -6,6 +7,13 @@ Color::Color( const uint8_t r, const uint8_t g, const uint8_t b ):
     red_( r ),
     green_( g ),
     blue_( b )
+{
+}
+
+Color::Color( const uint32_t hexValue ):
+    red_( (hexValue & 0xFF0000U) >> 16U ),
+    green_( (hexValue & 0xFF00U) >> 8U ),
+    blue_( hexValue & 0xFFU )
 {
 }
 

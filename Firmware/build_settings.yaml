@@ -23,8 +23,8 @@ include_directories:
 - submodules/FreeRTOS-Kernel/include
 - submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/
   # using c and c++ libraries from arm-none-eabi-gcc atm
-- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/
-- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
+- /opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/
+- /opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/arm-none-eabi
 
 c_source_files:
 - submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.c
@@ -120,6 +120,7 @@ cxx_source_files:
 - src/system/GlobalInterrupts.cpp
 - src/system/System.cpp
 - src/types/Color.cpp
+- src/utilities/atoi.cpp
 - submodules/freertos-addons/c++/Source/cqueue.cpp
 - submodules/freertos-addons/c++/Source/csemaphore.cpp
 - submodules/freertos-addons/c++/Source/cthread.cpp
@@ -129,13 +130,13 @@ asm_source_files:
 - submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f413xx.s
 
 linker_script: linker_script.ld
-c_compiler: clang-9
-cxx_compiler: clang++-9
-asm_compiler: clang-9
+c_compiler: clang-11
+cxx_compiler: clang++-11
+asm_compiler: clang-11
 linker: arm-none-eabi-g++
-object_copy_utility: llvm-objcopy-9
-object_information_utility: llvm-objdump-9
-output_size_report_utility: llvm-size-9
+object_copy_utility: llvm-objcopy-11
+object_information_utility: llvm-objdump-11
+output_size_report_utility: llvm-size-11
 dfu_conversion_utility: submodules/dfuse-tool/dfu-convert
 
 arch_flags:
@@ -147,7 +148,7 @@ arch_flags:
 - -mfpu=fpv4-sp-d16
 - -mlittle-endian
 - -fshort-enums
-- --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
+- --sysroot=/opt/gcc-arm-none-eabi-9/arm-none-eabi
 
 c_flags:
 - --target=arm-none-eabi

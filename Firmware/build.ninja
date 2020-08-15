@@ -11,19 +11,19 @@ out_dir = output/
 target = output/midi-grid.elf
 
 # Compilers and utilities to be used in the build
-cc = clang-9
-cxx = clang++-9
-as = clang-9
+cc = clang-11
+cxx = clang++-11
+as = clang-11
 ld = arm-none-eabi-g++
-objcopy = llvm-objcopy-9
-objdump = llvm-objdump-9
-size = llvm-size-9
+objcopy = llvm-objcopy-11
+objdump = llvm-objdump-11
+size = llvm-size-11
 dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F413xx -mthumb $
     -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mlittle-endian -fshort-enums $
-    --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
+    --sysroot=/opt/gcc-arm-none-eabi-9/arm-none-eabi
 c_flags = --target=arm-none-eabi -O1 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
@@ -37,8 +37,8 @@ inc_flags = -Isubmodules/cmsis_device_f4/Include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/ $
-    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
-    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
+    -I/opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/ $
+    -I/opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
     -specs=nano.specs -specs=nosys.specs -T linker_script.ld $
     -Wl,-Map=output/midi-grid.map
@@ -246,6 +246,7 @@ build output/src/system/GlobalInterrupts.o: cxx $
     src/system/GlobalInterrupts.cpp
 build output/src/system/System.o: cxx src/system/System.cpp
 build output/src/types/Color.o: cxx src/types/Color.cpp
+build output/src/utilities/atoi.o: cxx src/utilities/atoi.cpp
 build output/submodules/freertos-addons/c++/Source/cqueue.o: cxx $
     submodules/freertos-addons/c++/Source/cqueue.cpp
 build output/submodules/freertos-addons/c++/Source/csemaphore.o: cxx $
@@ -326,7 +327,7 @@ build $target: link $
     output/src/syslog/Storage.o output/src/rotary_controls/RotaryControls.o $
     output/src/testing/Testing.o output/src/usb/UsbMidi.o output/src/main.o $
     output/src/system/GlobalInterrupts.o output/src/system/System.o $
-    output/src/types/Color.o $
+    output/src/types/Color.o output/src/utilities/atoi.o $
     output/submodules/freertos-addons/c++/Source/cqueue.o $
     output/submodules/freertos-addons/c++/Source/csemaphore.o $
     output/submodules/freertos-addons/c++/Source/cthread.o $

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <sys/_stdint.h>
 
 struct Vector
 {

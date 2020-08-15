@@ -11,6 +11,7 @@
 #include <cstring>
 #include <etl/array.h>
 #include <etl/string_view.h>
+#include "utilities/atoi.h"
 
 namespace application
 {
@@ -33,6 +34,13 @@ Launchpad::Launchpad( ApplicationController* applicationController, grid::GridIn
         isPlaying_( false ),
         isRecording_( false ),
         isSessionRecording_( false ),
+        hasClip_( false ),
+        clipName_( "" ),
+        clipColor_( 255, 255, 255 ),
+        clipIsPlaying_( false ),
+        deviceName_( "" ),
+        trackName_( "" ),
+        trackColor_( 255, 255, 255 ),
         nudgeDownActive_( false ),
         nudgeUpActive_( false ),
         tempo_( 0 ),
@@ -193,13 +201,45 @@ void Launchpad::handleGridButtonEvent( const grid::ButtonEvent& event )
 
 void Launchpad::processDawInfoMessage( const etl::string_view& message )
 {
-    switch (message.at( 0 ))
+    switch (message.at(0))
     {
         case 't':
-            trackName_.assign( &message.at( 1 ) );
+        {
+            const uint32_t pipePosition = message.find_first_of('|');
+            if (etl::string_view::npos != pipePosition)
+            {
+                trackName_.assign( &message.at( 1 ), pipePosition - 1 );
+
+                const int32_t colorCode = utilities::atoi( message.substr( pipePosition + 1, 8 ) );
+                if (colorCode >= 0)
+                {
+                    trackColor_ = Color( colorCode );
+                }
+            }
+        }
             break;
         case 'c':
-            clipName_.assign( &message.at( 1 ) );
+            if (1 == message.length())
+            {
+                hasClip_ = false;
+            }
+            else
+            {
+                const uint32_t pipePosition = message.find_first_of('|');
+                if (etl::string_view::npos != pipePosition)
+                {
+                    hasClip_ = true;
+                    clipName_.assign( &message.at( 1 ), pipePosition - 1 );
+
+                    const int32_t colorCode = utilities::atoi( message.substr( pipePosition + 1, 8 ) );
+                    if (colorCode >= 0)
+                    {
+                        clipColor_ = Color( colorCode );
+                    }
+
+                    clipIsPlaying_ = ('P' == message.at(pipePosition + 9));
+                }
+            }
             break;
         case 'd':
             deviceName_.assign( &message.at( 1 ) );
@@ -316,9 +356,9 @@ void Launchpad::processNoteOnMidiMessage( uint8_t channel, const uint8_t note, c
     }
 }
 
-void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& message )
+void Launchpad::processSystemExclusiveMessage( const etl::string_view& message )
 {
-    if (message.size() >= kStandardSystemExclussiveMessageMinimumLength)
+    if ((message.size() >= kStandardSystemExclussiveMessageMinimumLength) && (message.ends_with( sysExEndChar )))
     {
         const etl::string_view header( message.begin(), kStandardSystemExclussiveMessageHeader.size() );
         if (header == standardSystemExclussiveMessageHeaderView)
@@ -355,7 +395,7 @@ void Launchpad::processSystemExclusiveMessage( const SystemExclussiveMessage& me
                     break;
                 case LaunchpadSysExCommand::TEXT_SCROLL:
                     {
-                        const etl::string_view dawInfo( &message.at( 7 ), message.end() );
+                        const etl::string_view dawInfo( &message.at( 7 ), message.end() - 1 );
                         processDawInfoMessage( dawInfo );
                     }
                     break;

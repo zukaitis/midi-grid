@@ -1,0 +1,13 @@
+---
+
+test_file: TextTest.cpp
+file_under_test: ${source_dir}/lcd/text/Text.cpp
+source_files:
+- ${source_dir}/types/Color.cpp
+- ${source_dir}/lcd/text/Font.cpp
+- ${source_dir}/lcd/text/Format.cpp
+- ${source_dir}/lcd/font/nokia_8p.cpp
+- ${source_dir}/lcd/font/monoton_80p.cpp
+- ${source_dir}/lcd/font/rubik_16p.cpp
+- ${source_dir}/lcd/font/rubik_24p.cpp
+- ${source_dir}/lcd/font/sarpanch_79p.cpp

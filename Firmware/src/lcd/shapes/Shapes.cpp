@@ -2,7 +2,6 @@
 
 #include "types/Coordinates.h"
 #include "types/Vector.h"
-#include <sys/_stdint.h>
 
 namespace lcd
 {
@@ -50,6 +49,27 @@ void Shapes::drawLine( const Coordinates& point1, const uint16_t angle, const ui
         Vector( - std::sin( angle * M_PI / 180.0 ) * length, std::cos( angle * M_PI / 180.0 ) * length );
     drawLine( point1, point2, thickness, color );
 }
+
+void Shapes::drawRectangle( const Coordinates& topLeft, const Coordinates& bottomRight, const Color& color )
+{
+    if (topLeft <= bottomRight)
+    {
+        uint8_t colorIndex = image_.assignColorIndex( color );
+        for (uint16_t x = topLeft.x; x <= bottomRight.x; x++)
+        {
+            for (uint16_t y = topLeft.y; y <= bottomRight.y; y++)
+            {
+                image_.putPixel( {x, y}, colorIndex );
+            }
+        }
+    }
+}
+
+void Shapes::drawRectangle( const Coordinates& topLeft, uint16_t width, uint16_t height, const Color& color )
+{
+    drawRectangle( topLeft, topLeft + Vector( width, height ), color );
+}
+
 
 void Shapes::drawArc( const Coordinates& center, const uint16_t innerRadius, const uint16_t outerRadius,
     const uint16_t startAngle, const uint16_t endAngle, const Color& color )

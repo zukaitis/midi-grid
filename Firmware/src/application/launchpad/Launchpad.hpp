@@ -2,6 +2,7 @@
 
 #include "application/Application.hpp"
 #include "application/launchpad/LcdGui.hpp"
+#include "etl/string_view.h"
 #include "testing/TestingInterface.h"
 #include "types/Color.h"
 
@@ -82,8 +83,6 @@ enum Submode : uint8_t
     VELOCITY // Melodic step sequencer
 };
 
-using SystemExclussiveMessage = etl::string<64>;
-
 class Launchpad : public Application
 {
 public:
@@ -107,7 +106,7 @@ private:
     void processDawInfoMessage( const etl::string_view& message );
     void processChangeControlMidiMessage( uint8_t channel, uint8_t control, uint8_t value );
     void processNoteOnMidiMessage( uint8_t channel, uint8_t note, uint8_t velocity );
-    void processSystemExclusiveMessage( const SystemExclussiveMessage& message );
+    void processSystemExclusiveMessage( const etl::string_view& message );
     void processSystemExclusiveMidiPacket( const midi::MidiPacket& packet );
 
     void sendMixerModeControlMessage();
@@ -127,16 +126,20 @@ private:
     bool isRecording_;
     bool isSessionRecording_;
     static const uint8_t maximumDawInfoStringLength = 32;
+    bool hasClip_;
     etl::string<maximumDawInfoStringLength> clipName_;
+    Color clipColor_;
+    bool clipIsPlaying_;
     etl::string<maximumDawInfoStringLength> deviceName_;
     etl::string<maximumDawInfoStringLength> trackName_;
+    Color trackColor_;
     bool nudgeDownActive_;
     bool nudgeUpActive_;
     uint16_t tempo_;
     uint8_t signatureNumerator_;
     uint8_t signatureDenominator_;
 
-    SystemExclussiveMessage systemExclusiveInputMessage_;
+    etl::string<64> systemExclusiveInputMessage_;
 };
 
 }  // namespace launchpad
