@@ -39,16 +39,10 @@ private:
     void refreshTimingArea();
     void refreshModeDependentArea();
     void displayClipView();
+    void displayMixerView();
     void refreshRotaryControlArea();
 
-    void refreshMainArea();
     void refreshTimedItemsStatus();
-    void displayLaunchpad95Info();
-    void displayClipName();
-    void displayDeviceName();
-    void displayTrackName();
-    void displayMode();
-    void displaySubmode();
 
     Launchpad& launchpad_;
     lcd::LcdInterface& lcd_;

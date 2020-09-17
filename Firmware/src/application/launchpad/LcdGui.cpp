@@ -191,7 +191,7 @@ void LcdGui::refreshModeDependentArea()
         case Mode::USER1:
         case Mode::USER2:
         default:
-            // think of a name for this view later
+            displayMixerView();
             break;
     }
 }
@@ -251,6 +251,18 @@ void LcdGui::displayClipView()
     }
 
     lcd_.image().display( mixerClipPosition );
+}
+
+void LcdGui::displayMixerView()
+{
+    lcd::Format format;
+    format.font( lcd::font::nokia_8p ).textColor( color::WHITE );
+
+    lcd_.image().createNew( lcd::parameters::width, mixerClipHeight, background );
+
+    lcd_.text().print( launchpad_.deviceName_, {5, 0}, format );
+    lcd_.image().display( mixerClipPosition );
+
 }
 
 void LcdGui::refreshRotaryControlArea()

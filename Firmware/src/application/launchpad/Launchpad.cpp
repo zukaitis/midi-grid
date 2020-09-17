@@ -201,6 +201,7 @@ void Launchpad::handleGridButtonEvent( const grid::ButtonEvent& event )
 
 void Launchpad::processDawInfoMessage( const etl::string_view& message )
 {
+    // TODO(unknown): move all this stuff into separate methods
     switch (message.at(0))
     {
         case 't':
@@ -253,12 +254,16 @@ void Launchpad::processDawInfoMessage( const etl::string_view& message )
             break;
         case 'T':
             {
+                // TODO(unknown): use atoi
                 tempo_ = (message.at( 1 ) - '0')*100 + (message.at( 2 ) - '0')*10 + (message.at( 3 ) - '0');
                 signatureNumerator_ = (message.at( 4 ) - '0')*10 + (message.at( 5 ) - '0');
                 signatureDenominator_ = (message.at( 6 ) - '0')*10 + (message.at( 7 ) - '0');
                 nudgeDownActive_ = ('D' == message.at( 8 ));
                 nudgeUpActive_ = ('U' == message.at( 8 ));
             }
+            break;
+        case 'm':
+            deviceName_.assign( &message.at( 1 ) );
             break;
         default:
             break;
