@@ -1,0 +1,293 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L power:GND #PWR04
+U 1 1 5F645CDF
+P 8400 4100
+F 0 "#PWR04" H 8400 3850 50  0001 C CNN
+F 1 "GND" H 8405 3927 50  0000 C CNN
+F 2 "" H 8400 4100 50  0001 C CNN
+F 3 "" H 8400 4100 50  0001 C CNN
+	1    8400 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8300 3900 8400 3900
+Wire Wire Line
+	8400 3900 8400 4000
+Connection ~ 8400 4000
+Wire Wire Line
+	8400 4000 8400 4100
+Wire Wire Line
+	8300 4000 8400 4000
+Wire Wire Line
+	8300 3000 8400 3000
+Wire Wire Line
+	8400 3000 8400 2900
+Wire Wire Line
+	8400 2900 8300 2900
+Connection ~ 8400 2900
+Wire Wire Line
+	8400 2900 8400 2800
+$Comp
+L power:+3.3V #PWR03
+U 1 1 5F646A08
+P 8400 2800
+F 0 "#PWR03" H 8400 2650 50  0001 C CNN
+F 1 "+3.3V" H 8415 2973 50  0000 C CNN
+F 2 "" H 8400 2800 50  0001 C CNN
+F 3 "" H 8400 2800 50  0001 C CNN
+	1    8400 2800
+	1    0    0    -1  
+$EndComp
+NoConn ~ 7300 3000
+$Comp
+L project_library:BL22019 LCD1
+U 1 1 5F64F4D1
+P 7800 3400
+F 0 "LCD1" H 7800 4166 50  0000 C CNN
+F 1 "BL22019" H 7800 4075 50  0000 C CNN
+F 2 "project_library:BL22019" H 7650 3600 50  0001 C CNN
+F 3 "" H 7650 3600 50  0001 C CNN
+	1    7800 3400
+	1    0    0    -1  
+$EndComp
+Text Label 5850 3400 0    50   ~ 0
+MOSI
+Text Label 5850 3500 0    50   ~ 0
+SCLK
+Text Label 5850 3200 0    50   ~ 0
+CS
+Text Label 5850 3300 0    50   ~ 0
+DC
+Text Label 5850 3700 0    50   ~ 0
+LED
+Text Label 5850 3100 0    50   ~ 0
+RESET
+$Comp
+L power:GND #PWR02
+U 1 1 5F65AF43
+P 5750 3900
+F 0 "#PWR02" H 5750 3650 50  0001 C CNN
+F 1 "GND" H 5755 3727 50  0000 C CNN
+F 2 "" H 5750 3900 50  0001 C CNN
+F 3 "" H 5750 3900 50  0001 C CNN
+	1    5750 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x08_Male J1
+U 1 1 5F65B90D
+P 5450 3400
+F 0 "J1" H 5450 3850 50  0000 C CNN
+F 1 "Conn_01x08_Male" H 5300 2900 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical_SMD_Pin1Left" H 5450 3400 50  0001 C CNN
+F 3 "~" H 5450 3400 50  0001 C CNN
+	1    5450 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5650 3800 5750 3800
+Wire Wire Line
+	5750 3800 5750 3900
+Wire Wire Line
+	5650 3600 5750 3600
+Wire Wire Line
+	7300 4000 7200 4000
+Wire Wire Line
+	7200 4000 7200 3900
+Wire Wire Line
+	7200 3700 7300 3700
+Wire Wire Line
+	7300 3800 7200 3800
+Connection ~ 7200 3800
+Wire Wire Line
+	7200 3800 7200 3700
+Wire Wire Line
+	7300 3900 7200 3900
+Connection ~ 7200 3900
+Wire Wire Line
+	7200 3900 7200 3800
+Wire Wire Line
+	5650 3700 7200 3700
+Connection ~ 7200 3700
+Wire Wire Line
+	5650 3300 7300 3300
+Wire Wire Line
+	5650 3200 7300 3200
+Wire Wire Line
+	6950 3500 6950 3100
+Wire Wire Line
+	6950 3100 7300 3100
+Wire Wire Line
+	5650 3500 6950 3500
+Wire Wire Line
+	6850 3400 6850 2900
+Wire Wire Line
+	6850 2900 7300 2900
+Wire Wire Line
+	5650 3400 6850 3400
+Wire Wire Line
+	6250 3100 6250 3600
+Wire Wire Line
+	6250 3600 7200 3600
+Wire Wire Line
+	7200 3600 7200 3500
+Wire Wire Line
+	7200 3500 7300 3500
+Wire Wire Line
+	5650 3100 6250 3100
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5F651587
+P 1700 6950
+F 0 "H1" H 1800 6996 50  0000 L CNN
+F 1 "MountingHole" H 1800 6905 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2" H 1700 6950 50  0001 C CNN
+F 3 "~" H 1700 6950 50  0001 C CNN
+	1    1700 6950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5F651E1F
+P 1700 7150
+F 0 "H2" H 1800 7196 50  0000 L CNN
+F 1 "MountingHole" H 1800 7105 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2" H 1700 7150 50  0001 C CNN
+F 3 "~" H 1700 7150 50  0001 C CNN
+	1    1700 7150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 5F6525AA
+P 1700 7350
+F 0 "H3" H 1800 7396 50  0000 L CNN
+F 1 "MountingHole" H 1800 7305 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2" H 1700 7350 50  0001 C CNN
+F 3 "~" H 1700 7350 50  0001 C CNN
+	1    1700 7350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 5F652C7A
+P 1700 7550
+F 0 "H4" H 1800 7596 50  0000 L CNN
+F 1 "MountingHole" H 1800 7505 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2" H 1700 7550 50  0001 C CNN
+F 3 "~" H 1700 7550 50  0001 C CNN
+	1    1700 7550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:BSS84 Q1
+U 1 1 5F670E55
+P 6550 2700
+F 0 "Q1" V 6892 2700 50  0000 C CNN
+F 1 "BSS84" V 6801 2700 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 6750 2625 50  0001 L CIN
+F 3 "http://assets.nexperia.com/documents/data-sheet/BSS84.pdf" H 6550 2700 50  0001 L CNN
+	1    6550 2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C1
+U 1 1 5F67299B
+P 8700 2950
+F 0 "C1" H 8815 2996 50  0000 L CNN
+F 1 "1uF" H 8815 2905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 8738 2800 50  0001 C CNN
+F 3 "~" H 8700 2950 50  0001 C CNN
+	1    8700 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR06
+U 1 1 5F67660C
+P 8700 2800
+F 0 "#PWR06" H 8700 2650 50  0001 C CNN
+F 1 "+3.3V" H 8715 2973 50  0000 C CNN
+F 2 "" H 8700 2800 50  0001 C CNN
+F 3 "" H 8700 2800 50  0001 C CNN
+	1    8700 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR07
+U 1 1 5F676D12
+P 8700 3100
+F 0 "#PWR07" H 8700 2850 50  0001 C CNN
+F 1 "GND" H 8705 2927 50  0000 C CNN
+F 2 "" H 8700 3100 50  0001 C CNN
+F 3 "" H 8700 3100 50  0001 C CNN
+	1    8700 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR05
+U 1 1 5F6821B4
+P 6550 2900
+F 0 "#PWR05" H 6550 2650 50  0001 C CNN
+F 1 "GND" H 6555 2727 50  0000 C CNN
+F 2 "" H 6550 2900 50  0001 C CNN
+F 3 "" H 6550 2900 50  0001 C CNN
+	1    6550 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR01
+U 1 1 5F65F161
+P 6850 2500
+F 0 "#PWR01" H 6850 2350 50  0001 C CNN
+F 1 "+3.3V" H 6865 2673 50  0000 C CNN
+F 2 "" H 6850 2500 50  0001 C CNN
+F 3 "" H 6850 2500 50  0001 C CNN
+	1    6850 2500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6750 2600 6850 2600
+Wire Wire Line
+	6850 2600 6850 2500
+Wire Wire Line
+	6350 2600 5750 2600
+Wire Wire Line
+	5750 2600 5750 3600
+$Comp
+L Graphic:Logo_Open_Hardware_Small LOGO1
+U 1 1 5F6B1C6F
+P 2600 7100
+F 0 "LOGO1" H 2600 7375 50  0001 C CNN
+F 1 "OSHW logo" H 2400 7400 50  0000 L CNN
+F 2 "Symbol:OSHW-Logo_11.4x12mm_Copper" H 2600 7100 50  0001 C CNN
+F 3 "~" H 2600 7100 50  0001 C CNN
+	1    2600 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Graphic:Logo_Open_Hardware_Small LOGO2
+U 1 1 5F6B246F
+P 3150 7100
+F 0 "LOGO2" H 3150 7375 50  0001 C CNN
+F 1 "KiCad logo" H 2950 7400 50  0000 L CNN
+F 2 "Symbol:KiCad-Logo2_6mm_Copper" H 3150 7100 50  0001 C CNN
+F 3 "~" H 3150 7100 50  0001 C CNN
+	1    3150 7100
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
