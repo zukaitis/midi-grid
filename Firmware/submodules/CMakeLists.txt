@@ -36,14 +36,14 @@ add_library(StHal STATIC
 )
 
 target_include_directories(StHal PUBLIC ${st_hal_dir}/Inc)
-target_link_libraries(StHal PRIVATE
+target_link_libraries(StHal PUBLIC
     StdLib
     Configs
     CmsisCore
     CmsisDevice
 )
 
-target_compile_definitions(StHal PRIVATE STM32F411xE)
+target_compile_definitions(StHal PUBLIC STM32F411xE) # USE_HAL_DRIVER)
 
 # FreeRTOS kernel
 set(freertos_kernel_dir ./FreeRTOS-Kernel)
@@ -77,7 +77,7 @@ add_library(FreertosWrappers STATIC
 )
 
 target_include_directories(FreertosWrappers PUBLIC ${freertos_wrappers_dir}/include)
-target_link_libraries(FreertosWrappers PRIVATE
+target_link_libraries(FreertosWrappers PUBLIC
     StdLib
     FreertosKernel
 )
@@ -85,3 +85,8 @@ target_compile_definitions(FreertosWrappers PRIVATE
     CPP_FREERTOS_NO_EXCEPTIONS
     CPP_FREERTOS_NO_CPP_STRINGS
 )
+
+# ETL
+add_library(Etl INTERFACE)
+target_include_directories(Etl INTERFACE ./etl/include)
+target_link_libraries(Etl INTERFACE Configs)

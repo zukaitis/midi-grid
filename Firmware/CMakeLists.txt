@@ -42,7 +42,7 @@ set(cxx_flags
 set(CMAKE_CXX_FLAGS "${c_flags_string}")
 
 # add the executable
-add_executable(Firmware src/types/Color.cpp)
+add_executable(Firmware src/main.cpp)
 
 target_include_directories(Firmware
     PRIVATE
@@ -50,9 +50,7 @@ target_include_directories(Firmware
 )
 
 target_link_libraries(Firmware PRIVATE
-    StdLib
-    StHal
-    FreertosWrappers
+    Src
 )
 
 add_subdirectory(src)
