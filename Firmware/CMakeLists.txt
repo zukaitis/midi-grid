@@ -44,15 +44,16 @@ set(CMAKE_CXX_FLAGS "${c_flags_string}")
 # add the executable
 add_executable(Firmware src/main.cpp)
 
-target_include_directories(Firmware
-    PRIVATE
-    src
-)
-
-target_link_libraries(Firmware PRIVATE
-    Src
+target_link_libraries(Firmware PRIVATE Src)
+target_link_options(Firmware PRIVATE
+    -fuse-ld=/usr/bin/arm-none-eabi-g++
+    # -Wl,--gc-sections
+    # -Wl,--warn-once
+    -fdiagnostics-color=always
+    -specs=nano.specs
+    -specs=nosys.specs
 )
 
 add_subdirectory(src)
 add_subdirectory(submodules)
-#add_subdirectory(middlewares)
+add_subdirectory(middlewares)

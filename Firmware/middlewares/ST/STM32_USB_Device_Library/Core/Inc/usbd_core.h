@@ -34,7 +34,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "usb/usbd_conf.h"
+#include "usbd_conf.h"
 #include "usbd_def.h"
 #include "usbd_ioreq.h"
 #include "usbd_ctlreq.h"

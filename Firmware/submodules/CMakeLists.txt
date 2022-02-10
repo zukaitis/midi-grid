@@ -8,7 +8,7 @@ add_library(CmsisDevice INTERFACE)
 target_include_directories(CmsisDevice INTERFACE ./cmsis_device_f4/Include)
 
 # ST HAL
-set(st_hal_dir stm32f4xx_hal_driver)
+set(st_hal_dir ./stm32f4xx_hal_driver)
 set(st_hal_source_dir ${st_hal_dir}/Src)
 
 add_library(StHal STATIC

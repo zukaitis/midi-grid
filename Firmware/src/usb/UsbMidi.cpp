@@ -4,7 +4,7 @@
 #include <freertos/queue.hpp>
 
 #include "usbd_midi.h"
-#include "usb/usbd_desc.h"
+#include "usbd_desc.h"
 
 #include <etl/array.h>
 
