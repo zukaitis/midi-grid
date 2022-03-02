@@ -81,7 +81,7 @@ target_link_libraries(FreertosWrappers PUBLIC
     StdLib
     FreertosKernel
 )
-target_compile_definitions(FreertosWrappers PRIVATE
+target_compile_definitions(FreertosWrappers PUBLIC
     CPP_FREERTOS_NO_EXCEPTIONS
     CPP_FREERTOS_NO_CPP_STRINGS
 )

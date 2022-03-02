@@ -11,19 +11,19 @@ out_dir = output/
 target = output/midi-grid.elf
 
 # Compilers and utilities to be used in the build
-cc = clang-9
-cxx = clang++-9
-as = clang-9
+cc = clang
+cxx = clang++
+as = clang
 ld = arm-none-eabi-g++
-objcopy = llvm-objcopy-9
-objdump = llvm-objdump-9
-size = llvm-size-9
+objcopy = llvm-objcopy
+objdump = llvm-objdump
+size = llvm-size
 dfu = submodules/dfuse-tool/dfu-convert
 
 # Build flags
 arch_flags = -mcpu=cortex-m4 -DUSE_HAL_DRIVER -DSTM32F411xE -mthumb $
     -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fshort-enums $
-    --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
+    --sysroot=/usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi
 c_flags = --target=arm-none-eabi -O0 -ggdb3 -ffunction-sections $
     -fdata-sections -fdiagnostics-color=always
 cxx_flags = -fno-rtti -fno-strict-aliasing -std=c++11 $
@@ -37,8 +37,8 @@ inc_flags = -Isubmodules/cmsis_device_f4/Include $
     -Isubmodules/freertos-addons/c++/Source/include $
     -Isubmodules/FreeRTOS-Kernel/include $
     -Isubmodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/ $
-    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/ $
-    -I/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
+    -I/usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/ $
+    -I/usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/arm-none-eabi
 ld_flags = -Wl,--gc-sections -Wl,--warn-once -fdiagnostics-color=always $
     -specs=nano.specs -specs=nosys.specs -T STM32F411RCTx_FLASH.ld $
     -Wl,-Map=output/midi-grid.map
@@ -150,9 +150,12 @@ build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o: $
     cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
 build output/middlewares/USBMIDI/Src/usbd_midi.o: cc $
     middlewares/USBMIDI/Src/usbd_midi.c
-build output/src/usb/usbd_conf.o: cc src/usb/usbd_conf.c
-build output/src/usb/usbd_desc.o: cc src/usb/usbd_desc.c
-build output/src/usb/usb_device.o: cc src/usb/usb_device.c
+build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf.c
+build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_desc.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_desc.c
+build output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usb_device.o: $
+    cc middlewares/ST/STM32_USB_Device_Library/Core/Src/usb_device.c
 build output/src/system/stm32f4xx_it.o: cc src/system/stm32f4xx_it.c
 build output/src/system/system_stm32f4xx.o: cc src/system/system_stm32f4xx.c
 build output/submodules/FreeRTOS-Kernel/croutine.o: cc $
@@ -257,8 +260,10 @@ build $target: link $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o $
     output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o $
-    output/middlewares/USBMIDI/Src/usbd_midi.o output/src/usb/usbd_conf.o $
-    output/src/usb/usbd_desc.o output/src/usb/usb_device.o $
+    output/middlewares/USBMIDI/Src/usbd_midi.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_desc.o $
+    output/middlewares/ST/STM32_USB_Device_Library/Core/Src/usb_device.o $
     output/src/system/stm32f4xx_it.o output/src/system/system_stm32f4xx.o $
     output/submodules/FreeRTOS-Kernel/croutine.o $
     output/submodules/FreeRTOS-Kernel/event_groups.o $

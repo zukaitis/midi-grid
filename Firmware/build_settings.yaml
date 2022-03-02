@@ -23,8 +23,8 @@ include_directories:
 - submodules/FreeRTOS-Kernel/include
 - submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/
   # using c and c++ libraries from arm-none-eabi-gcc atm
-- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/
-- /opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi/include/c++/9.2.1/arm-none-eabi
+- /usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/
+- /usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/arm-none-eabi
 
 c_source_files:
 - submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.c
@@ -52,9 +52,9 @@ c_source_files:
 - middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
 - middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
 - middlewares/USBMIDI/Src/usbd_midi.c
-- src/usb/usbd_conf.c
-- src/usb/usbd_desc.c
-- src/usb/usb_device.c
+- middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf.c
+- middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_desc.c
+- middlewares/ST/STM32_USB_Device_Library/Core/Src/usb_device.c
 - src/system/stm32f4xx_it.c
 - src/system/system_stm32f4xx.c
 - submodules/FreeRTOS-Kernel/croutine.c
@@ -110,13 +110,13 @@ asm_source_files:
 - submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.s
 
 linker_script: STM32F411RCTx_FLASH.ld
-c_compiler: clang-9
-cxx_compiler: clang++-9
-asm_compiler: clang-9
+c_compiler: clang
+cxx_compiler: clang++
+asm_compiler: clang
 linker: arm-none-eabi-g++
-object_copy_utility: llvm-objcopy-9
-object_information_utility: llvm-objdump-9
-output_size_report_utility: llvm-size-9
+object_copy_utility: llvm-objcopy
+object_information_utility: llvm-objdump
+output_size_report_utility: llvm-size
 dfu_conversion_utility: submodules/dfuse-tool/dfu-convert
 
 arch_flags:
@@ -127,7 +127,7 @@ arch_flags:
 - -mfloat-abi=hard
 - -mfpu=fpv4-sp-d16
 - -fshort-enums
-- --sysroot=/opt/gcc-arm-none-eabi-9-2019-q4-major/arm-none-eabi
+- --sysroot=/usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi
 
 c_flags:
 - --target=arm-none-eabi
@@ -145,6 +145,7 @@ cxx_flags:
 - -DCPP_FREERTOS_NO_CPP_STRINGS
 
 linker_flags:
+# - -fuse-ld=/usr/bin/arm-none-eabi-g++
 - -Wl,--gc-sections
 - -Wl,--warn-once
 - -fdiagnostics-color=always
