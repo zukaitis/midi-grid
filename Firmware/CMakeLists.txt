@@ -27,7 +27,7 @@ set(arch_flags
 
 set(c_flags
     ${arch_flags}
-    -O0  # optimization level
+    -O1  # optimization level
     -ggdb3
     -ffunction-sections
     -fdata-sections

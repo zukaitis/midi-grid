@@ -38,7 +38,7 @@ void LogThread::append( const etl::string_view& message )
 
 void LogThread::display()
 {
-    lcd_.print( "System Log", lcd_.line( 0 ), lcd::Justification::CENTER );
+    lcd_.text().print( "System Log", 0, lcd::Format().justification( lcd::Justification::CENTER ) );
 
     uint8_t line = 5;
     if (storage_.getEntryCount() < 5)
@@ -52,7 +52,7 @@ void LogThread::display()
         etl::string_view entry;
         if (storage_.getEntry( &entry, index ))
         {
-            lcd_.print( entry, lcd_.line( line ), lcd::Justification::LEFT );
+            lcd_.text().print( entry, line * 8, lcd::Format() );
         }
         index++;
         line--;

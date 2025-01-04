@@ -17,21 +17,15 @@ public:
     PriorityManager( LcdInterface* lcd, Priority priority );
     ~PriorityManager() override;
 
-    void clear() override;
-    void clearArea( uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2 ) override;
-    void displayImage( uint8_t x, uint8_t y, const Image& image) override;
-    void displayProgressArc( uint8_t x, uint8_t y, uint8_t position ) override;
     void initialize() override;
-    void print( const etl::string_view& string, uint8_t x, uint8_t y, Justification justification ) override;
-    void print( const etl::string_view& string, uint8_t y, Justification justification ) override;
-    void print( const etl::string_view& string, uint8_t x, uint8_t y) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y, Justification justification ) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t y, Justification justification ) override;
-    void printNumberInBigDigits( uint16_t number, uint8_t x, uint8_t y ) override;
-    void setBacklightIntensity( uint8_t intensity ) override;
 
-    uint8_t maximumBacklightIntensity() const override;
-    uint16_t line( uint8_t lineNumber ) const override;
+    BacklightInterface& backlight() override;
+    ImageInterface& image() override;
+    ShapesInterface& shapes() override;
+    TextInterface& text() override;
+
+    uint16_t width() override;
+    uint16_t height() override;
 
     void release() override;
 
@@ -42,6 +36,11 @@ private:
 
     const Priority priority_;
     static Priority currentPriorityFilter_;
+
+    static ShapesInterface emptyShapesInterface_;
+    static TextInterface emptyTextInterface_;
+    static ImageInterface emptyImageInterface_;
+    static BacklightInterface emptyBacklightInterface_;
 };
 
-}
+}  // namespace lcd

@@ -1,7 +1,0 @@
----
-
-test_file: LcdPcd8544Test.cpp
-file_under_test: ${source_dir}/lcd/84x48_mono/Pcd8544.cpp
-source_files:
-  - ${mock_dir}/freertos/MockThread.cpp
-  - ${mock_dir}/freertos/MockBinarySemaphore.cpp

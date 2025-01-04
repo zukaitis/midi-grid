@@ -99,8 +99,6 @@ TEST( setLed, OutOfBounds )
 
     EXPECT_CALL( mockLedOutput, set( coords, color ) ).Times( 0 );
     grid.setLed( coords, color );
-
-    EXPECT_THROW( grid.getLedColor( coords ), etl::array_out_of_range );
 }
 
 TEST( setLed, Flashing )

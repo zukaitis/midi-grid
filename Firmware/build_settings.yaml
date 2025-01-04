@@ -17,14 +17,14 @@ include_directories:
 - middlewares/USBMIDI/Inc
 - src
 - src/configs
-- src/lcd/84x48_mono
+- src/lcd/240x320
 - submodules/etl/include
 - submodules/freertos-addons/c++/Source/include
 - submodules/FreeRTOS-Kernel/include
 - submodules/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/
   # using c and c++ libraries from arm-none-eabi-gcc atm
-- /usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/
-- /usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi/include/c++/10.3.1/arm-none-eabi
+- /opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/
+- /opt/gcc-arm-none-eabi-9/arm-none-eabi/include/c++/9.3.1/arm-none-eabi
 
 c_source_files:
 - submodules/stm32f4xx_hal_driver/Src/stm32f4xx_hal.c
@@ -87,9 +87,28 @@ cxx_source_files:
 - src/grid/PulsingLeds.cpp
 - src/lcd/Lcd.cpp
 - src/lcd/PriorityManager.cpp
-- src/lcd/84x48_mono/LcdContainer.cpp
-- src/lcd/84x48_mono/Pcd8544.cpp
+- src/lcd/240x320/lcd/LcdContainer.cpp
+- src/lcd/240x320/lcd/Ili9341.cpp
+- src/lcd/240x320/lcd/Pixel.cpp
 - src/lcd/backlight/Backlight.cpp
+- src/lcd/font/nokia_8p.cpp
+- src/lcd/font/monoton_80p.cpp
+- src/lcd/font/rubik_16p.cpp
+- src/lcd/font/rubik_24p.cpp
+- src/lcd/font/sarpanch_79p.cpp
+- src/lcd/image/Image.cpp
+- src/lcd/images/circle_23x23.cpp
+- src/lcd/images/circle_empty_23x23.cpp
+- src/lcd/images/down_arrow_9x23.cpp
+- src/lcd/images/midi_23x23.cpp
+- src/lcd/images/triangle_21x23.cpp
+- src/lcd/images/up_arrow_9x23.cpp
+- src/lcd/images/usb_41x23.cpp
+- src/lcd/images/usb_240x107.cpp
+- src/lcd/shapes/Shapes.cpp
+- src/lcd/text/Font.cpp
+- src/lcd/text/Format.cpp
+- src/lcd/text/Text.cpp
 - src/syslog/Log.cpp
 - src/syslog/LogContainer.cpp
 - src/syslog/LogThread.cpp
@@ -101,37 +120,39 @@ cxx_source_files:
 - src/system/GlobalInterrupts.cpp
 - src/system/System.cpp
 - src/types/Color.cpp
+- src/utilities/atoi.cpp
 - submodules/freertos-addons/c++/Source/cqueue.cpp
 - submodules/freertos-addons/c++/Source/csemaphore.cpp
 - submodules/freertos-addons/c++/Source/cthread.cpp
 - submodules/freertos-addons/c++/Source/cmutex.cpp
 
 asm_source_files:
-- submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f411xe.s
+- submodules/cmsis_device_f4/Source/Templates/gcc/startup_stm32f413xx.s
 
-linker_script: STM32F411RCTx_FLASH.ld
-c_compiler: clang
-cxx_compiler: clang++
-asm_compiler: clang
+linker_script: linker_script.ld
+c_compiler: clang-11
+cxx_compiler: clang++-11
+asm_compiler: clang-11
 linker: arm-none-eabi-g++
-object_copy_utility: llvm-objcopy
-object_information_utility: llvm-objdump
-output_size_report_utility: llvm-size
+object_copy_utility: llvm-objcopy-11
+object_information_utility: llvm-objdump-11
+output_size_report_utility: llvm-size-11
 dfu_conversion_utility: submodules/dfuse-tool/dfu-convert
 
 arch_flags:
 - -mcpu=cortex-m4
 - -DUSE_HAL_DRIVER
-- -DSTM32F411xE
+- -DSTM32F413xx
 - -mthumb
 - -mfloat-abi=hard
 - -mfpu=fpv4-sp-d16
+- -mlittle-endian
 - -fshort-enums
-- --sysroot=/usr/share/gcc-arm-none-eabi-10.3-2021.10/arm-none-eabi
+- --sysroot=/opt/gcc-arm-none-eabi-9/arm-none-eabi
 
 c_flags:
 - --target=arm-none-eabi
-- -O0
+- -O1
 - -ggdb3
 - -ffunction-sections
 - -fdata-sections

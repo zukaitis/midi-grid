@@ -6,7 +6,7 @@
 namespace rotary_controls
 {
 
-static const uint8_t NUMBER_OF_CONTROLS = 2;
+const uint8_t NUMBER_OF_CONTROLS = 2;
 
 struct Event
 {

@@ -8,7 +8,7 @@ struct Coordinates;
 namespace grid
 {
 
-static const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
+const uint8_t NUMBER_OF_FLASHING_COLORS = 2;
 typedef etl::array<Color, NUMBER_OF_FLASHING_COLORS> FlashingColors;
 
 class FlashingLedsInterface

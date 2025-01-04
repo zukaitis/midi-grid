@@ -89,7 +89,12 @@ void Pcd8544::clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2
     updateRequired_.Give();
 }
 
-void Pcd8544::displayImage( const uint8_t x, const uint8_t y, const Image& image )
+void Pcd8544::clearArea( const Coordinates& corner1, const Coordinates& corner2 )
+{
+    clearArea( corner1.x, corner1.y, corner2.x, corner2.y );
+}
+
+void Pcd8544::displayImage( const uint8_t x, const uint8_t y, const ImageLegacy& image )
 {
     for (uint8_t j = 0; j < (image.height/8); j++)
     {
@@ -139,6 +144,19 @@ void Pcd8544::putChar( const uint8_t x, const uint8_t y, const char c )
     }
 }
 
+void Pcd8544::putString( const etl::string_view& string, const Coordinates& coords )
+{
+    uint16_t x = coords.x;
+    if (coords.y < height_) // width_ is checked in putChar
+    {
+        for (char c : string)
+        {
+            putChar( x, coords.y, c );
+            x += 6;
+        }
+    }
+}
+
 uint16_t Pcd8544::width() const
 {
     return width_;
@@ -147,11 +165,6 @@ uint16_t Pcd8544::width() const
 uint16_t Pcd8544::height() const
 {
     return height_;
-}
-
-uint16_t Pcd8544::numberOfTextLines() const
-{
-    return numberOfTextLines_;
 }
 
 } // namespace lcd

@@ -1,0 +1,4 @@
+---
+
+test_file: AtoiTest.cpp
+file_under_test: ${source_dir}/utilities/atoi.cpp

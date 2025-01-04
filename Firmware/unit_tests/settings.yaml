@@ -10,15 +10,16 @@ directories:
 ninja_variables:
   coverage_flag: --coverage
   color_flag: -fcolor-diagnostics
-  compiler: clang++
-  compiler_flags: "${color_flag} -c -Wall"
-  linker: clang++
-  linker_flags: "${coverage_flag} ${color_flag} -L ${lib_dir} -lgtest -lpthread -lgmock"
+  compiler: clang++-11
+  compiler_flags: "${color_flag} -c -g -Wall"
+  linker: clang++-11
+  linker_flags: "${coverage_flag} ${color_flag} -g -L ${lib_dir} -lgtest -lpthread -lgmock"
 
 include_directories:
 - ${mock_dir}
 - ${source_dir}
 - ${source_dir}/configs
+- ${source_dir}/lcd/240x320
 - ${ut_dir}/../submodules/etl/include
 - /usr/src/googletest/googletest/include
 - /usr/src/googletest/googlemock/include

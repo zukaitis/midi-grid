@@ -1,6 +1,7 @@
 #include "system/System.hpp"
 #include "stm32f4xx_hal.h"
 #include "usb_device.h"
+#include <freertos/ticks.hpp>
 
 namespace mcu
 {
@@ -26,7 +27,7 @@ void System::resetIntoBootloader()
 {
     // write these bytes into the end of RAM, so processor would jump into bootloader after reset
     // (there is conditional in system_stm32f4xx.c that checks for this value at the beginning of a program)
-    *((unsigned long *)0x2001FFF0) = 0xDEADBEEF;
+    *((unsigned long *)0x2004FFF0) = 0xDEADBEEF;
     // Reset the processor
     NVIC_SystemReset();
 }
@@ -87,6 +88,14 @@ void System::configureSystemClock()
 
     // Configure the Systick
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+}
+
+void System::delayDirty( uint32_t timeMs )
+{
+    const uint32_t releaseTime = freertos::Ticks::GetTicks() + timeMs;
+    while (freertos::Ticks::GetTicks() < releaseTime)
+    {
+    }
 }
 
 } // namespace mcu

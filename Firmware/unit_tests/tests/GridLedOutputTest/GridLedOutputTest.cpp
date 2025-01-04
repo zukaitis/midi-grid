@@ -47,7 +47,7 @@ TEST( set, CheckOutputValues )
             EXPECT_CALL( mockGridDriver, setRedOutput( testing::_, expectedValue ) ).Times( 1 );
             EXPECT_CALL( mockGridDriver, setGreenOutput( testing::_, expectedValue ) ).Times( 1 );
             EXPECT_CALL( mockGridDriver, setBlueOutput( testing::_, expectedValue ) ).Times( 1 );
-            ledOutput.set( {x, y}, {64, 64, 64} );
+            ledOutput.set( {x, y}, Color(255, 255, 255) );
         }
     }
 }

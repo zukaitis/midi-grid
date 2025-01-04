@@ -9,9 +9,9 @@
 namespace lcd
 {
 
-Backlight::Backlight( hardware::lcd::BacklightDriverInterface& driver ):
+Backlight::Backlight( hardware::lcd::BacklightDriverInterface* driver ):
     Thread( "Backlight", kBacklight.stackDepth, kBacklight.priority ),
-    driver_( driver ),
+    driver_( *driver ),
     appointedIntensity_( 0 ),
     currentIntensity_( 0 ),
     appointedIntensityChanged_( false )
@@ -48,21 +48,15 @@ void Backlight::initialize()
     Thread::Start();
 }
 
-void Backlight::setIntensity( const uint8_t intensity )
+void Backlight::setIntensity( uint8_t intensity )
 {
-    uint8_t intensityValue = intensity;
-    if (intensityValue > driver_.getMaximumIntensity())
+    if (intensity > maxIntensity())
     {
-        intensityValue = driver_.getMaximumIntensity();
+        intensity = maxIntensity();
     }
 
-    appointedIntensity_ = intensityValue;
+    appointedIntensity_ = intensity;
     appointedIntensityChanged_.Give();
-}
-
-uint8_t Backlight::getMaximumIntensity() const
-{
-    return driver_.getMaximumIntensity();
 }
 
 } // namespace lcd

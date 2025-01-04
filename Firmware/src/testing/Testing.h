@@ -21,7 +21,7 @@ public:
     void injectButtonPress( const Coordinates& coords ) override;
 
 private:
-    static Coordinates calculateHardwareCoordinates( const Coordinates& coordinates );
+    Coordinates calculateHardwareCoordinates( const Coordinates& coordinates );
 
     hardware::grid::TestingInterface& gridDriver_;
 };

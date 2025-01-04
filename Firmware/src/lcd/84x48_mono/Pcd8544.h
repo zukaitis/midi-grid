@@ -26,23 +26,25 @@ public:
     void initialize() override;
 
     void clear() override;
-    void clearArea( const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2 ) override;
-    void displayImage( const uint8_t x, const uint8_t y, const Image& image ) override;
-    void putChar( const uint8_t x, const uint8_t y, const char c ) override;
+    void clearArea( uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2 ) override;
+    void clearArea( const Coordinates& corner1, const Coordinates& corner2 ) override;
+    void displayImage( uint8_t x, uint8_t y, const ImageLegacy& image ) override;
+    
+    void putString( const etl::string_view& string, const Coordinates& coords ) override;
 
     uint16_t width() const override;
     uint16_t height() const override;
-    uint16_t numberOfTextLines() const override;
 
 private:
     void Run() override;
 
-    void setCursor( const uint8_t column, const uint8_t row8Bit );
+    void putChar( uint8_t x, uint8_t y, char c );
+    void setCursor( uint8_t column, uint8_t row8Bit );
     void transmit();
 
-    static constexpr uint16_t width_ = 84;
-    static constexpr uint16_t height_ = 48;
-    static constexpr uint16_t numberOfTextLines_ = height_ / 8;
+    constexpr uint16_t width_ = 84;
+    constexpr uint16_t height_ = 48;
+    constexpr uint16_t numberOfTextLines_ = height_ / 8;
 
     hardware::lcd::SpiInterface& spi_;
 
@@ -50,4 +52,4 @@ private:
     freertos::BinarySemaphore updateRequired_;
 };
 
-}
+}  // namespace lcd
