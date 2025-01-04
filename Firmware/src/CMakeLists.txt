@@ -50,7 +50,6 @@ target_include_directories(Src PUBLIC
 target_link_libraries(Src PUBLIC
     Etl
     FreertosWrappers
-    StdLib
     StHal
     Usbd
     UsbMidi

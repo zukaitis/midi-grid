@@ -37,13 +37,12 @@ add_library(StHal STATIC
 
 target_include_directories(StHal PUBLIC ${st_hal_dir}/Inc)
 target_link_libraries(StHal PUBLIC
-    StdLib
     Configs
     CmsisCore
     CmsisDevice
 )
 
-target_compile_definitions(StHal PUBLIC STM32F411xE) # USE_HAL_DRIVER)
+target_compile_definitions(StHal PUBLIC STM32F413xx) # USE_HAL_DRIVER)
 
 # FreeRTOS kernel
 set(freertos_kernel_dir ./FreeRTOS-Kernel)
@@ -78,7 +77,6 @@ add_library(FreertosWrappers STATIC
 
 target_include_directories(FreertosWrappers PUBLIC ${freertos_wrappers_dir}/include)
 target_link_libraries(FreertosWrappers PUBLIC
-    StdLib
     FreertosKernel
 )
 target_compile_definitions(FreertosWrappers PUBLIC

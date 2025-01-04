@@ -29,4 +29,4 @@ sendmidi dev ${device_name} syx 00h 20h 29h 00h 71h 00h 69h # reset to bootloade
 sleep 1 # wait for the device to restart
 
 dfu-util --alt 0 --download ${file} # flash firmware file
-python2 ${dfuse_tool} --leave # leave DFU mode and jump to main aplication
+python ${dfuse_tool} --leave # leave DFU mode and jump to main aplication
